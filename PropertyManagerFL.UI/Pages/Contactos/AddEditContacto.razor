@@ -1,0 +1,118 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.Contactos;
+@using PropertyManagerFL.Application.ViewModels.EstadoCivil;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.UI.ApiWrappers;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="home-owner"></HeaderDialogComponent>
+    <hr class="divider"/>
+</div>
+<div class="container-fluid">
+    <EditForm Model="Contact">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-group">
+                    <SfTextBox Enabled="true"
+                               Placeholder="Nome"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Always"
+                               @bind-Value="@Contact!.Nome">
+                    </SfTextBox>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Enabled="true"
+                               Placeholder="Morada"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Contact!.Morada">
+                    </SfTextBox>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Enabled="true"
+                               Placeholder="Localidade"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Contact!.Localidade">
+                    </SfTextBox>
+                </div>
+
+                <div class="group-box">
+                    <SfTextBox Placeholder="Contacto" Width="150px"
+                               CssClass="e-field  e-corner custom-class"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Contact!.Contacto">
+                    </SfTextBox>
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxTipoContacto" ShowClearButton="true" Width="250px"
+                                    FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Tipo Contacto" DataSource="@ContactTypes" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoContacto"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Enabled="true"
+                               Placeholder="e-mail"
+                               CssClass="e-field e-corner"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Contact!.eMail">
+                    </SfTextBox>
+                </div>
+            </div>
+
+            <div class="form-group mt-2">
+                <SfTextBox Multiline=true Placeholder="Observações"
+                           HtmlAttributes="NotesAttribute"
+                           CssClass="e-field e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Contact.Notas">
+                </SfTextBox>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] public IContactosService? contactsService { get; set; }
+
+    [Parameter] public ContactoVM? Contact { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+
+    protected int idxTipoContacto;
+
+
+    public IEnumerable<LookupTableVM>? ContactTypes { get; set; }
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+{
+            {"rows", "3" }
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ContactTypes = (await LookupTablesService!.GetLookupTableData("TipoContacto")).ToList();
+        idxTipoContacto = Contact!.ID_TipoContacto;
+    }
+
+    protected void onChangeTipoContacto(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxTipoContacto = args.Value;
+        Contact!.ID_TipoContacto = idxTipoContacto;
+    }
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+</style>

@@ -1,0 +1,339 @@
+﻿@using Microsoft.Extensions.Localization;
+@using Microsoft.AspNetCore.Components.Authorization;
+@using Microsoft.AspNetCore.Identity;
+
+@inject NavigationManager Navigation
+@inject IStringLocalizer<App> L
+
+<div class="top-row pl-4 navbar navbar-dark">
+    <a class="navbar-brand" href="">Property Manager</a><i class="fa fa-house"></i>
+    <button class="navbar-toggler" @onclick="ToggleNavMenu">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+</div>
+<div class="scrollbar-auto">
+    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+        <BlazoredMenu IconClassToClose="oi oi-arrow-circle-top mt-3"
+                      IconClassToOpen="oi oi-arrow-circle-bottom mt-3">
+            <BlazoredMenuItem>
+                <NavLink class="navbar-link" href="" Match="NavLinkMatch.All">
+                    <i class="fa fa-home" aria-hidden="true" /> Home
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="imoveis">
+                    <i class="fa fa-house" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuImoveis"]
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="inquilinos">
+                    <i class="fa fa-users" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuInquilinos"]
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredSubMenu Header="@L["TituloMenuArrendamentos"]">
+                <HeaderTemplate>
+                    <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuArrendamentos"]
+                </HeaderTemplate>
+                <MenuTemplate>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="arrendamentos">
+                            <i class="fa fa-file-contract" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="updaterentsletter">
+                            <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                </MenuTemplate>
+            </BlazoredSubMenu>
+
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredSubMenu Header="Despesas">
+                <HeaderTemplate>
+                    <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloDespesas"]
+                </HeaderTemplate>
+                <MenuTemplate>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/expenses/dashboard">
+                            <i class="fas fa-table-cells-large" aria-hidden="true" />&nbsp;&nbsp;Dashboard
+                        </NavLink>
+                        <NavLink href="/despesas/manutencao">
+                            <i class="fas fa-table-cells-large" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
+                        </NavLink>
+                        <NavLink href="/despesas/tipodespesas">
+                            <i class="fas fa-cogs" aria-hidden="true" />&nbsp;&nbsp;@L["TituloSubCategorias"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                </MenuTemplate>
+            </BlazoredSubMenu>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredSubMenu Header="@L["TituloPagamentos"]">
+                <HeaderTemplate>
+                    <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloPagamentos"]
+                </HeaderTemplate>
+                <MenuTemplate>
+
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/payments/dashboard">
+                            <i class="fa fa-money-bill" aria-hidden="true" />&nbsp;&nbsp;Dashboard
+                        </NavLink>
+                    </BlazoredMenuItem>
+
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/recebimentos/manutencao">
+                            <i class="fa fa-money-bill" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/monthlyrentprocessing">
+                            <i class="fa fa-money-bill" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuProcessaRendas"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                </MenuTemplate>
+            </BlazoredSubMenu>
+
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="Contactos">
+                    <i class="fa fa-users" aria-hidden="true" />&nbsp;&nbsp;@L["Site_Menu_Contactos"]
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="documentos">
+                    <i class="fas fa-file-pdf" aria-hidden="true" />&nbsp;&nbsp;@L["TituloDocumentacao"]
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="messages">
+                    <i class="fas fa-paper-plane" aria-hidden="true" />&nbsp;&nbsp;Mensagens
+                </NavLink>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="scheduler/reminder">
+                    <i class="fas fa-calendar" aria-hidden="true" />&nbsp;&nbsp;Scheduler
+                </NavLink>
+            </BlazoredMenuItem>
+
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredSubMenu Header="Manutenção">
+                <HeaderTemplate>
+                    <i class="fas fa-cog position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
+                </HeaderTemplate>
+                <MenuTemplate>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="ProprietarioPage">
+                            <i class="fa fa-user" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuProprietario"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="updatecoefficients">
+                            <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuCoeficientesRendas"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/admin/configapptables">
+                            <i class="fas fa-table-list" aria-hidden="true" />&nbsp;&nbsp;@L["menu-admin-lookup-tables"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/backupdatabase">
+                            <i class="fas fa-database" aria-hidden="true" />&nbsp;&nbsp;@L["mnuBackup"]
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/backupuploads/1">
+                            <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;@L["MSG_Ficheiro"]s
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/admin/viewapplogs">
+                            <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;View logs
+                        </NavLink>
+                    </BlazoredMenuItem>
+                </MenuTemplate>
+            </BlazoredSubMenu>
+        </BlazoredMenu>
+    </div>
+</div>
+
+@code {
+
+    [CascadingParameter]
+    protected Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    protected System.Security.Claims.ClaimsPrincipal CurrentUser;
+    protected int doctorId;
+    protected string urlStats;
+
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    //protected async override Task OnInitializedAsync()
+    //{
+    //    try
+    //    {
+    //        CurrentUser = (await authenticationStateTask).User;
+
+    //        var user = await _UserManager.FindByNameAsync(CurrentUser.Identity.Name);
+    //        if (user.IsDoctor)
+    //        {
+    //            doctorId = user.CodMedico;
+    //            urlStats = $"/doctors/stats/{doctorId}";
+    //            StateHasChanged();
+    //        }
+
+    //    }
+    //    catch
+    //    {
+    //        urlStats = $"/error";
+    //        StateHasChanged();
+
+    //    }
+    //}
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
+
+    }
+<style>
+    .separator {
+        border: 1px solid #FFFFFF;
+        opacity: 0.14;
+        width: 247px;
+        margin: 1rem;
+        margin-top: 0px;
+    }
+
+    ﻿.blazored-menu {
+        list-style: none;
+        display: block;
+        padding: 1rem 0;
+    }
+
+    .blazored-menu li.hidden {
+        display: none;
+    }
+
+    .blazored-menu li a {
+        display: block;
+        padding: .75rem 1rem;
+        color: #333;
+        cursor: pointer;
+    }
+
+        .blazored-menu li a:hover {
+            text-decoration: none;
+        }
+
+        .blazored-menu li a.active {
+            color: white;
+            background-image: linear-gradient(90deg, #71818e 0%, #122d42 70%);
+        }
+
+    .blazored-menu .disabled {
+        display: block;
+        padding: .75rem 1rem;
+        color: #d6d5d5;
+        cursor: not-allowed;
+    }
+
+    .blazored-sub-menu-header {
+        display: block;
+        color: #fff;
+        cursor: pointer;
+    }
+
+        .blazored-sub-menu-header span:hover {
+            text-decoration: none;
+        }
+
+        .blazored-sub-menu-header span {
+            display: block;
+            padding: .75rem 1rem;
+            position: relative;
+        }
+
+            .blazored-sub-menu-header span i {
+                position: absolute;
+                right: 0;
+            }
+
+        .blazored-sub-menu-header.open span {
+            padding-bottom: .75rem;
+        }
+
+    .blazored-sub-menu {
+        display: none;
+        padding: 0;
+        margin-left: 1rem;
+        list-style: none;
+    }
+
+
+    .blazored-sub-menu-header.open .blazored-sub-menu {
+        display: block;
+    }
+
+    .nav-active {
+        background-color: orange;
+        color: black;
+        font-style: normal;
+    }
+
+    /*scrollbar*/
+    div.scrollbar-auto {
+        max-height: 95%;
+        overflow-y: auto;
+    }
+</style>

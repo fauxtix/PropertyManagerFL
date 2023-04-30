@@ -1,0 +1,247 @@
+﻿@page "/updaterentsletter"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+@inject IStringLocalizer<App> L
+@implements IDisposable
+
+@if (leases is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div></div>
+    <div class="container-fluid d-flex">
+        <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                       DialogTitle= "@L["TituloMenuAtualizacaoRendas"]"
+                       Message="@currentYearAsString"
+                       Visible="@AlertVisibility"
+                       MessageSeverityType=MessageSeverity.Warning
+                       AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                       PositionX="center"
+                       PositionY="bottom"
+                       OnConfirmationYes="@(async ()=>await SendRentUpdateLetters())"
+                       OnConfirmationNo="CloseDialog" />
+    </div>
+}
+
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@WarningVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="@(()=>WarningVisibility = false)"></AlertUserComponent>
+
+
+<SfToast ID="toast_custom" @ref="ToastObj"
+         Title="@ToastTitle" Icon="fas fa-user"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="5000"
+         ShowProgressBar="true"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="CloseDialog"></ToastButton>
+    </ToastButtons>
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+
+@code {
+    [Inject] public IArrendamentoService? arrendamentosService { get; set; }
+    [Inject] public IRecebimentoService? rentsService { get; set; }
+    [Inject] public NavigationManager? navigationManager { get; set; }
+
+    protected IEnumerable<ArrendamentoVM>? leases { get; set; }
+    protected IEnumerable<ArrendamentoVM>? activeLeases { get; set; }
+    protected string? alertTitle = "";
+    protected bool WarningVisibility { get; set; } = true;
+    protected bool AlertVisibility { get; set; } = true;
+    protected string? WarningMessage { get; set; }
+    protected OpcoesRegisto RecordMode { get; set; } = OpcoesRegisto.Warning;
+
+    protected SfToast? ToastObj { get; set; }
+    protected string? ToastTitle;
+    protected string? ToastMessage;
+    protected string? ToastCss;
+
+    protected SfSpinner? SpinnerObj { get; set; }
+
+    protected int currentYear = DateTime.Now.Year;
+    protected string currentYearAsString;
+
+    protected override async Task OnInitializedAsync()
+    {
+        currentYearAsString = $"{L["TituloAno"]}: {DateTime.Now.Year.ToString()}";
+        ToastTitle = "";
+        ToastMessage = "";
+        ToastCss = "e-toast-success";
+
+        alertTitle = "";
+        WarningVisibility = false;
+        WarningMessage = "";
+
+        leases = await GetAll();
+    }
+
+    /// <summary>
+    /// Get all leases
+    /// </summary>
+    /// <returns></returns>
+    protected async Task<IEnumerable<ArrendamentoVM>> GetAll()
+    {
+        try
+        {
+            return await arrendamentosService!.GetAll();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    protected async Task SendRentUpdateLetters()
+    {
+        alertTitle = L["TituloMenuAtualizacaoRendas"];
+
+        activeLeases = leases!.Where(l => l.Ativo == true);
+        if (activeLeases.Count() == 0)
+        {
+            WarningVisibility = true;
+            WarningMessage = L["TituloAlertaSemArrendamentos"];
+
+            StateHasChanged();
+            return;
+        }
+
+        if (await arrendamentosService!.CartaAtualizacaoRendasEmitida(currentYear))
+        {
+            WarningVisibility = true;
+            WarningMessage = $"{L["TituloRendasJaProcessadasParaOAno"]}. {L["TituloVerificar"]}.";
+
+            StateHasChanged();
+            return;
+        }
+
+        if ((await rentsService.GetAll()).Count() == 0)
+        {
+            WarningVisibility = true;
+            WarningMessage = L["TituloNaoHaPagamentosAProcessar"];
+            StateHasChanged();
+            return;
+        }
+
+
+        try
+        {
+            foreach (var lease in activeLeases!)
+            {
+                // verificar se contrato começou há mais de um ano
+                var leaseStart = lease.Data_Inicio;
+                if (CanUpdateRentsLetterBeSent(leaseStart) == false)
+                {
+                    continue; // check the next one
+                }
+
+                var leaseData = await arrendamentosService!.GetDadosCartaAtualizacao(lease);
+                if (leaseData != null)
+                {
+
+                    var docGerado = await arrendamentosService.EmiteCartaAtualizacao(leaseData);
+                    if (string.IsNullOrEmpty(docGerado))
+                    {
+                        ToastTitle = L["TituloAtualizacaoRendas"];
+                        ToastMessage = $"{L["TituloCartaNaoGerada"]}. {L["TituloVerificar"]}.";
+                        ToastCss = "e-toast-danger";
+                        StateHasChanged();
+                        await Task.Delay(100);
+                        await ToastObj!.ShowAsync();
+                    }
+                    else
+                    {
+                        // Marca carta de atualização como emitida
+                        await AtualizaSituacaoEnvioAtualizacaoRendas(leaseData.Id, docGerado);
+
+                        ToastTitle = L["TituloAtualizacaoRendas"];
+                        ToastMessage = $"{L["TituloOperacaoComSucesso"]}. Id {leaseData.Id}.";
+                        ToastCss = "e-toast-success";
+
+                        StateHasChanged();
+                        await Task.Delay(100);
+                        await ToastObj!.ShowAsync();
+                    }
+                }
+            }
+
+            // cartas emitidas, criar registo de controlo
+            var okToContinue = await RegistaEnvioAtualizacaoRendas();
+            if (okToContinue == false)
+            {
+                WarningVisibility = true;
+                WarningMessage = $"{L["TituloOperacaoComErro"]}. {L["TituloVerificarLog"]}";
+                StateHasChanged();
+            }
+
+            await CloseDialog();
+        }
+        catch (Exception ex)
+        {
+            WarningVisibility = true;
+            WarningMessage = $"{L["TituloOperacaoComErro"]} ({ex.Message}). {L["TituloVerificarLog"]}..";
+            StateHasChanged();
+        }
+    }
+
+    private bool CanUpdateRentsLetterBeSent(DateTime start)
+    {
+
+        var result = (DateTime.Now.Year - start.Year - 1) +
+            (((DateTime.Now.Month > start.Month) ||
+            ((DateTime.Now.Month == start.Month) && (DateTime.Now.Day >= start.Day)))
+            ? 1
+            : 0);
+        return result >= 1;
+    }
+
+    private async Task AtualizaSituacaoEnvioAtualizacaoRendas(int idArrendamento, string docGerado)
+    {
+        await arrendamentosService!.MarcaCartaAtualizacaoComoEmitida(idArrendamento, docGerado);
+    }
+
+    private async Task<bool> RegistaEnvioAtualizacaoRendas()
+    {
+        return await arrendamentosService!.RegistaProcessamentoAtualizacaoRendas();
+    }
+
+    protected async Task CloseDialog()
+    {
+
+        ToastTitle = L["TituloAtualizacaoRendas"];
+        ToastMessage = L["TituloProcessoTerminado"];
+        ToastCss = "e-toast-success";
+        StateHasChanged();
+        await Task.Delay(100);
+        await ToastObj!.ShowAsync();
+        await Task.Delay(1000);
+
+        AlertVisibility = false;
+        WarningVisibility = false;
+        navigationManager?.NavigateTo("/");
+    }
+    protected async Task HideToast()
+    {
+        await ToastObj!.HideAsync();
+    }
+
+    public void Dispose()
+    {
+        SpinnerObj?.Dispose();
+        ToastObj?.Dispose();
+    }
+}

@@ -1,0 +1,136 @@
+﻿@page "/Inquilinos/Detalhe"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
+@using Syncfusion.Blazor.Data;
+
+@using Syncfusion.Blazor.DropDowns
+@using Syncfusion.Blazor.Navigations
+@using Syncfusion.Blazor.Buttons    
+
+<h3>Detalhe Inquilinos</h3>
+@if (Tenants is null)
+{
+    <LoadingData />
+}
+else
+{
+    <SfAccordion @ref="@accObj" ID="acc" ExpandMode="ExpandMode.Single">
+        <AccordionEvents  Expanded="OnExpanded"></AccordionEvents>
+        <AccordionItems>
+            @foreach (var Item in Tenants)
+            {
+                <AccordionItem >
+                    <HeaderTemplate>
+                        <div>@(Item.Nome)</div>
+                    </HeaderTemplate>                    
+                    <ContentTemplate>
+                        <div class="w-50">
+                            <SfMessage>Conta-corrente</SfMessage>
+                            <table class="table table-success table-responsive-md" border="1">
+                                <thead>
+                                    <tr>
+                                        <th width="5%" align="center">Valor Pago</th>
+                                        <th width="5%" align="center">Em dívida</th>
+                                        <th width="40%" align="center">Notas</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        foreach (var linha in TenantChekingAcount!)
+                                        {
+                                            <tr>
+                                                <td width="5%" align="right">@linha.ValorPago</td>
+                                                <td width="5%" align="right">@linha.ValorEmDivida</td>
+                                                <td width="40%">@linha.Notas</td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="w-50">
+                            <SfMessage>Documentos</SfMessage>
+                            <table class="table table-success table-responsive-md" border="1">
+                                <thead>
+                                    <tr>
+                                        <th width="25%" align="center">Path</th>
+                                        <th width="20%" align="center">Descrição</th>
+                                        <th width="5%" align="center">Data</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        if (TenantDocuments is not null)
+                                        {
+                                            foreach (var linha in TenantDocuments!)
+                                            {
+                                                <tr>
+                                                    <td width="25%" align="right">@linha.DocumentPath</td>
+                                                    <td width="25%" align="right">@linha.Descricao</td>
+                                                    <td width="5%">@linha.UploadDate</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                        <SfMessage>Sem documentos para mostrar</SfMessage>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </ContentTemplate>
+                </AccordionItem>
+            }
+        </AccordionItems>
+    </SfAccordion>
+}
+@code {
+    [Inject] IInquilinoService? TenantsService { get; set; }
+
+    public Query QueryData = new Query();
+    bool IsExpanded = true;
+    protected SfAccordion accObj { get; set; }
+
+    protected IEnumerable<InquilinoVM>? Tenants { get; set; }
+    protected IEnumerable<DocumentoInquilinoVM>? TenantDocuments { get; set; }
+    protected IEnumerable<CC_InquilinoVM>? TenantChekingAcount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTenantsDetails();
+        await GetTenantCheckingAcount(1013);
+    }
+
+    private async Task GetTenantsDetails()
+    {
+        Tenants = (await TenantsService!.GetAll()).ToList();
+    }
+
+    private async Task GetTenantDocuments(int Id)
+    {
+        TenantDocuments = (await TenantsService!.GetDocumentosInquilino(Id)).ToList();
+    }
+    private async Task GetTenantCheckingAcount(int Id)
+    {
+        TenantChekingAcount = (await TenantsService!.GetTenantPaymentsHistory(Id)).ToList();
+    }
+
+
+    private async Task OnExpanded(ExpandedEventArgs args)
+    {
+        var idx = args.Index;
+        var key = Tenants.ElementAt(idx).Id;
+        await GetTenantCheckingAcount(key);
+        await GetTenantDocuments(key);
+    }
+
+    private void ChangePanel()
+    {
+        IsExpanded = !IsExpanded;
+    }
+
+
+}

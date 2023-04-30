@@ -1,0 +1,78 @@
+﻿@page "/ProprietarioPage"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Proprietarios
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@inherits ProprietariosBase
+
+@if (Owner is null)
+{
+    <LoadingData />
+}
+else
+{
+    <SfDialog CssClass="responsive-dialog-30"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditVisibility">
+        <DialogTemplates>
+            <Content>
+                <AddEditProprietario EditMode="@RecordMode"
+                                 HeaderCaption="@HeaderCaption" Owner="@Owner" />
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveLandlordData" Content="@L["btnSalvar"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="GotoIndex" Content="@L["BtnSalir"]">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+    </SfDialog>
+
+    <SfSpinner @ref="SpinnerObj"
+           Label="@L["MSG_PreparandoDados"]"
+           Type="SpinnerType.Bootstrap5"
+           CssClass="e-spin-overlay">
+    </SfSpinner>
+
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+         Title="@ToastTitle" Icon="@ToastIcon"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="2000"
+         ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+}
+
+<ValidateErrorComponent Visible="@ErrorVisibility"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="CloseValidationErrorBox" />
+
+@*<style>
+    #landlord-dialog.e-dialog {
+        width: 30%;
+        height: auto;
+    }
+
+    @@media (max-width: 768px) {
+        #landlord-dialog.e-dialog {
+            width: 80%;
+            height: auto;
+        }
+    }
+</style>*@

@@ -1,0 +1,536 @@
+﻿@using PropertyManagerFL.Application.Formatting;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Application.Validator
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.EstadoCivil;
+@using PropertyManagerFL.Application.ViewModels.Imoveis;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.UI.ApiWrappers;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+@using PropertyManagerFL.UI.Pages.GoogleMaps
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="property48"></HeaderDialogComponent>
+    <hr />
+</div>
+
+<div class="d-flex justify-content-center align-items-center container">
+    <SfTab>
+        <TabItems>
+            <TabItem>
+                <HeaderTemplate>@L["TituloIdentificacao"]</HeaderTemplate>
+                <ContentTemplate>
+                    <EditForm Model="Property" style="margin:auto;padding:10px;">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <SfTextBox Enabled="true"
+                                           Placeholder="@L["rbtDescricao"]"
+                                           CssClass="e-field"
+                                           FloatLabelType="@FloatLabelType.Always"
+                                           @bind-Value="@Property!.Descricao">
+                                </SfTextBox>
+                                <div class="group-box">
+                                    <SfTextBox Enabled="true"
+                                               Placeholder="@L["TituloMorada"]"
+                                               CssClass="e-field"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@Property!.Morada">
+                                    </SfTextBox>
+                                    <SfTextBox Enabled="true" @ref="txtPorta"
+                                               Placeholder="@L["TituloPorta"]"
+                                               Width="90px"
+                                               CssClass="e-field custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@Property!.Numero">
+                                    </SfTextBox>
+                                </div>
+                                <div class="group-box">
+                                    <SfTextBox Enabled="true" Width="120px"
+                                               Placeholder="Cod. Pst."
+                                               CssClass="e-field custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@Property!.CodPst">
+                                    </SfTextBox>
+                                    <SfTextBox Enabled="true"
+                                               Placeholder="" Width="100px"
+                                               CssClass="e-field custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               ValueChange="OnPstChange"
+                                               @bind-Value="@Property!.CodPstEx">
+                                    </SfTextBox>
+                                    <SfTextBox Enabled="true"
+                                               Placeholder="@L["TituloFreguesia"]"
+                                               CssClass="e-field"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@Property!.FreguesiaImovel">
+                                    </SfTextBox>
+                                </div>
+                                <div class="group-box">
+                                    <div class="mb-2">
+                                        <SfTextBox Enabled="true"
+                                                   Placeholder="@L["TituloConcelho"]" Width="200px"
+                                                   CssClass="e-field"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                                   @bind-Value="@Property!.ConcelhoImovel">
+                                        </SfTextBox>
+                                    </div>
+                                    <div class="mb-2">
+                                        <SfTextBox Enabled="true"
+                                                   Width="110px"
+                                                   Placeholder="@L["TituloAnoConstrucao"]"
+                                                   CssClass="e-field custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                                   ValueChange="OnYearChange"
+                                                   @bind-Value="@Property!.AnoConstrucao">
+                                        </SfTextBox>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <SfMessage Variant="MessageVariant.Text" ShowIcon=false Severity="MessageSeverity.Info">Gás</SfMessage>
+                                </div>
+                                <div class="group-box">
+                                    <SfDatePicker Placeholder="@L["TituloUltimaInspecao"]" Width="150px"
+                                                  CssClass="e-align-middle"
+                                                  FloatLabelType="FloatLabelType.Always"
+                                                  @bind-Value="@Property.DataUltimaInspecaoGas">
+                                        <DatePickerEvents TValue="DateTime" ValueChange="UltDataInspecaoChanged"></DatePickerEvents>
+                                    </SfDatePicker>
+                                    <SfDatePicker Placeholder="@L["TituloProximaInspecao"]" Width="140px" Enabled="false"
+                                                  CssClass="e-align-middle" AllowEdit="false"
+                                                  FloatLabelType="FloatLabelType.Always"
+                                                  @bind-Value="@DataProxInspecaoGas">
+                                    </SfDatePicker>
+                                </div>
+                                @if (!string.IsNullOrEmpty(InspecaoCaption))
+                                {
+                                    <div class="w-75">
+                                        <SfTextBox Readonly="true"
+                                               Placeholder="@L["TituloProximaInspecaoEm"]"
+                                               CssClass="e-field p-1 e-corner"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@InspecaoCaption">
+                                        </SfTextBox>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-6 mt-3">
+                                <div class="mb-2">@L["TituloElevador"]</div>
+                                <div class="group-box">
+                                    <SfRadioButton Name="rdElevador"
+                                                   Value=true
+                                                   Label="@L["Sim"]"
+                                                   TChecked="bool"
+                                                   @bind-Checked="@(Property.Elevador)">
+                                    </SfRadioButton>
+                                    <SfRadioButton Name="rdElevador"
+                                                   Label="@L["Nao"]"
+                                                   Value=false
+                                                   TChecked="bool"
+                                                   @bind-Checked="@(Property.Elevador)">
+                                    </SfRadioButton>
+                                </div>
+                                <div class="group-box mt-3">
+                                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Value="@idxConservationState" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloConservacao"]" DataSource="@ConservationStates" FloatLabelType="FloatLabelType.Always">
+                                        <DropDownListTemplates TItem="LookupTableVM">
+                                        </DropDownListTemplates>
+                                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeConservationState"></DropDownListEvents>
+                                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                    </SfDropDownList>
+                                </div>
+                                <div class="form-row mt-2">
+                                    <SfTextBox Multiline=true Placeholder="@L["MSG_Appt_Validation_Remarks"]"
+                                               HtmlAttributes="NotesAttribute"
+                                               CssClass="e-field "
+                                               FloatLabelType="FloatLabelType.Always"
+                                               @bind-Value="@Property.Notas">
+                                    </SfTextBox>
+                                </div>
+
+                            </div>
+                        </div>
+                    </EditForm>
+                </ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>@L["TituloImagem"]</HeaderTemplate>
+                <ContentTemplate>
+                    <div class="my-1">
+                        <SfMessage Variant="MessageVariant.Text" ShowIcon=false Severity="MessageSeverity.Info">@L["TituloImagem"]</SfMessage>
+                    </div>
+                    <div class="image-container">
+                        <div class="item">
+                            <img src="/uploads/properties/@Property.Foto" alt="Imagem da propriedade">
+                        </div>
+                    </div>
+                    <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
+                                DropArea=".control-fluid"
+                                AllowMultiple=false AllowedExtensions=" .jpg, .jpeg, .png, .gif"
+                                MaxFileSize="@MaxFileSize">
+                        <UploaderAsyncSettings SaveUrl="api/uploadproperties/Save" RemoveUrl="api/uploadproperties/remove"></UploaderAsyncSettings>
+                        <UploaderEvents ValueChange="@OnChangeUpload" OnActionComplete="@OnActionCompleteHandler" />
+                    </SfUploader>
+                </ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>@L["lblLocalArquivo"]</HeaderTemplate>
+                <ContentTemplate>
+                    @if (latitude > 0)
+                    {
+                        <Maps latitude="@latitude" longitude="@longitude" />
+                    }
+                    else
+                    {
+                        <SfMessage Severity="MessageSeverity.Error" ShowIcon="true" Variant="MessageVariant.Text">Problema no acesso à API do Google Maps. Ìnternet indisponível?</SfMessage>
+                    }
+                </ContentTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+</div>
+
+
+@code {
+
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] public IImovelService? imovelService { get; set; }
+    [Inject] public IWebHostEnvironment? HostingEnvironment { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
+    [Parameter] public ImovelVM? Property { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+
+    protected SfUploader? sfUploader;
+    protected string uploadedFile { get; set; } = "";
+
+    protected string? InspecaoCaption;
+    protected DateTime DataProxInspecaoGas;
+    protected bool InibeSelecaoUltimaInspecao = false;
+
+    List<string> AllowedFileTypes = new List<string>() { ".jpg", ".jpeg", ".png", ".gif" };
+    int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+    public string? propertyImage { get; set; }
+
+    protected int idxConservationState;
+    protected int idxCertificate;
+
+    public IEnumerable<LookupTableVM>? ConservationStates { get; set; }
+
+    protected SfTextBox? txtPorta { get; set; }
+
+    protected float latitude;
+    protected float longitude;
+
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "4" }
+    };
+    protected override async Task OnParametersSetAsync()
+    {
+        ConservationStates = (await LookupTablesService!.GetLookupTableData("EstadoConservacao")).ToList();
+        idxConservationState = Property!.Conservacao;
+
+        if (EditMode == OpcoesRegisto.Gravar)
+        {
+            var _pstEx = Property.CodPstEx;
+            var _pst = Property!.CodPst;
+            var result = await imovelService!.GetFreguesiaConcelho(_pst, _pstEx);
+            if (result.centro is not null)
+            {
+                latitude = result.centro![0];
+                longitude = result.centro![1];
+            }
+        }
+
+        CalcDataProxInspecao();
+    }
+
+    protected void onChangeConservationState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxConservationState = args.Value;
+        Property!.Conservacao = idxConservationState;
+    }
+
+    protected void UltDataInspecaoChanged(ChangedEventArgs<DateTime> args)
+    {
+        //Property!.DataUltimaInspecaoGas = args.Value;
+        //CalcDataProxInspecao();
+
+    }
+
+    private void CalcDataProxInspecao()
+    {
+        var DPIG_Dia = Property!.DataUltimaInspecaoGas.Day;
+        var DPIG_Mes = Property.DataUltimaInspecaoGas.Month;
+        var AnoC = Convert.ToInt32(Property!.AnoConstrucao);
+
+        DateTime DataPrimeiraInspecaoRequerida;
+        int AnosDesdeConstrucao = DateTime.Now.Year - AnoC;
+        int AnoPrimeiraInspecaoRequerida = AnoC + 20;
+
+        //InibeSelecaoUltimaInspecao = true;
+        //DataPrimeiraInspecaoRequerida = new DateTime(AnoPrimeiraInspecaoRequerida, DPIG_Mes, DPIG_Dia);
+        //DataProxInspecaoGas = DataPrimeiraInspecaoRequerida.AddYears(5);
+
+        //switch (AnosDesdeConstrucao)
+        //{
+        //    case int x when x is > 0 and  < 20:
+        //        InibeSelecaoUltimaInspecao = false;
+
+        //        break;
+        //}
+
+
+
+
+        AnoPrimeiraInspecaoRequerida = AnoC + 20;
+        int AnoCorrente = DateTime.Now.Year;
+        if (AnoPrimeiraInspecaoRequerida >= AnoCorrente)
+        {
+            DataProxInspecaoGas = new DateTime(AnoPrimeiraInspecaoRequerida, DPIG_Mes, DPIG_Dia);
+            //Property.DataUltimaInspecaoGas = new DateTime(AnoC, DPIG_Mes, DPIG_Dia);
+
+        }
+        else
+        {
+            var AnoProximaInspGas = AnoC + 5;
+            while (AnoProximaInspGas < AnoCorrente)
+            {
+                AnoProximaInspGas += 5;
+            }
+
+            DataProxInspecaoGas = new DateTime(AnoProximaInspGas, DPIG_Mes, DPIG_Dia);
+            //Property.DataUltimaInspecaoGas = DataProxInspecaoGas.AddYears(-5);
+        }
+
+        InspecaoCaption = DateDifference(DataProxInspecaoGas.Date, DateTime.Now.ToLocalTime().Date).Trim();
+        StateHasChanged();
+    }
+
+    protected async Task OnPstChange(Syncfusion.Blazor.Inputs.ChangedEventArgs args)
+    {
+        var _pstEx = args.Value;
+        var _pst = Property!.CodPst;
+        var result = await imovelService!.GetFreguesiaConcelho(_pst, _pstEx);
+        if (result.centro is not null)
+        {
+            Property.FreguesiaImovel = result.Localidade;
+            Property.ConcelhoImovel = result.Concelho;
+
+            latitude = result.centro![0];
+            longitude = result.centro![1];
+
+            if (!string.IsNullOrEmpty(result!.ruas![0]))
+            {
+                Property.Morada = result!.ruas![0];
+                await txtPorta!.FocusAsync();
+            }
+        }
+    }
+
+    protected async Task OnYearChange(Syncfusion.Blazor.Inputs.ChangedEventArgs args)
+    {
+        var ConstrYear = int.Parse(args.Value);
+        if (DataFormat.IsInteger(ConstrYear))
+        {
+            var dUltInsp = new DateTime(ConstrYear, 1, 1);
+            if (DataFormat.IsValidDate(dUltInsp))
+            {
+                Property!.DataUltimaInspecaoGas = new DateTime(ConstrYear, 1, 1);
+                CalcDataProxInspecao();
+                StateHasChanged();
+            }
+        }
+    }
+
+
+    protected void OnChangeUpload(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)
+    {
+        string sExtensao = "";
+        if (args.Files is null) return;
+
+        foreach (var file in args.Files)
+        {
+            uploadedFile = Path.Combine(HostingEnvironment!.WebRootPath, "uploads", "properties", file.FileInfo.Name);
+            if (File.Exists(uploadedFile))
+            {
+                Property!.Foto = Path.GetFileName(uploadedFile);
+                StateHasChanged();
+            }
+            else
+            {
+                if (uploadedFile != Property!.Foto)
+                {
+                    sExtensao = Path.GetExtension(uploadedFile);
+
+                    FileStream filestream = new FileStream(uploadedFile, FileMode.Create, FileAccess.Write);
+                    file.Stream.WriteTo(filestream);
+                    filestream.Close();
+                    file.Stream.Close();
+
+                    propertyImage = uploadedFile;
+                    Property.Foto = uploadedFile;
+                    StateHasChanged();
+                }
+            }
+        }
+    }
+
+    private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        string? fileExtension = "";
+
+        var fileName = args.FileData[0].Name;
+        uploadedFile = Path.Combine(HostingEnvironment!.WebRootPath, "uploads", "properties", fileName);
+        if (File.Exists(uploadedFile))
+        {
+            Property!.Foto = Path.GetFileName(uploadedFile);
+
+            StateHasChanged();
+        }
+        else
+        {
+            if (uploadedFile != Property!.Foto)
+            {
+                propertyImage = uploadedFile;
+                Property!.Foto = Path.GetFileName(uploadedFile);
+                StateHasChanged();
+            }
+        }
+    }
+
+    private string DateDifference(DateTime d1, DateTime d2)
+    {
+        int[] monthDay = new int[12] { 31, -1, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+        DateTime fromDate;
+        DateTime toDate;
+        int year;
+        int month;
+        int increment;
+        int day;
+
+        if (d1 > d2)
+        {
+            fromDate = d2;
+            toDate = d1;
+        }
+        else
+        {
+            fromDate = d1;
+            toDate = d2;
+        }
+
+        // day calculation
+        increment = 0;
+        if (fromDate.Day > toDate.Day)
+        {
+            increment = monthDay[fromDate.Month - 1];
+        }
+
+        if (increment == -1)
+        {
+            if (DateTime.IsLeapYear(fromDate.Year))
+            {
+                increment = 29;
+            }
+            else
+            {
+                increment = 28;
+            }
+        }
+
+        if (increment != 0)
+        {
+            day = (toDate.Day + increment) - fromDate.Day;
+            increment = 1;
+        }
+        else
+        {
+            day = toDate.Day - fromDate.Day;
+        }
+
+        // Month Calculation
+        if ((fromDate.Month + increment) > toDate.Month)
+        {
+            month = (toDate.Month + 12) - (fromDate.Month + increment);
+            increment = 1;
+        }
+        else
+        {
+            month = (toDate.Month) - (fromDate.Month + increment);
+            increment = 0;
+        }
+
+        // Year Calculation
+        year = toDate.Year - (fromDate.Year + increment);
+        var yearToShow = year > 0 ? year.ToString() : "";
+        var monthToShow = month > 0 ? month.ToString() : "";
+
+        var yearLabel = year == 1 ? "ano" : year > 1 ? "anos" : "";
+        var monthLabel = month == 1 ? "mês" : month > 1 ? "meses" : "";
+        var _em = !string.IsNullOrEmpty(monthLabel) && year > 0 ? "e" : "";
+
+
+        return $"{yearToShow} {yearLabel} {_em} {monthToShow} {monthLabel}";
+    }
+
+    void SubmitValidForm()
+    {
+        Console.WriteLine("Form Submitted Successfully!");
+    }
+
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        padding: 0;
+        text-align: center;
+    }
+
+    .limit {
+        width: 200px;
+        height: 200px;
+        max-height: 250px;
+        overflow: hidden;
+    }
+
+        .limit img {
+            width: 100%;
+            height: auto;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+    .image-container {
+        width: inherit;
+    }
+
+    .item {
+        border: 1px solid pink;
+        width: 260px;
+        float: inherit;
+        margin: 3px;
+        padding: 3px;
+    }
+
+    img {
+        width: inherit
+    }
+
+    //Tabs
+    .e-content .e-item {
+        font-size: 12px;
+        padding: 10px;
+        text-align: justify;
+    }
+
+</style>
+

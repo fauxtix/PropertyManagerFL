@@ -1,0 +1,322 @@
+﻿@page "/imoveis"
+
+@using PropertyManagerFL.Application.Shared.Enums
+@using PropertyManagerFL.Application.ViewModels.Fracoes
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using PropertyManagerFL.Application.ViewModels.Imoveis
+@using Syncfusion.Blazor.Spinner
+@using PropertyManagerFL.UI.Pages.Fracoes
+@using System.Globalization
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@*@inject IStringLocalizer<App> L*@
+
+@inherits ImoveisBase
+
+<PageTitle>@L["TituloMenuImoveis"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuImoveis"]"></PageTitleComponent>
+
+@{
+    var Tool = (new List<object>() {
+        "Search",
+        "PdfExport",
+     new ItemModel() 
+     { 
+         Text = "Expand all", 
+         TooltipText = "Expand all", 
+         PrefixIcon = "e-expand"
+     },
+     new ItemModel() 
+     { 
+         Text = "Collapse all", 
+         TooltipText = "Collapse all", 
+         PrefixIcon = "e-collapse"
+     }
+    });
+}
+
+
+<SfSpinner @ref="SpinnerObj"
+           Label="@L["MSG_PreparandoDados"]"
+           Type="SpinnerType.Bootstrap5"
+           CssClass="e-spin-overlay">
+</SfSpinner>
+
+@if (properties is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="col-lg-12 control-section">
+        <div class="source-options">
+            <SfButton CssClass="e-success e-round-corner mx-3 pull-left" IconCss="fa fa-plus" Content="@L["btnNovo"]"
+                  @onclick="@onAddProperty" IsPrimary="true">
+            </SfButton>
+        </div>
+        <hr class="divider" />
+        <div>
+            <SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
+                   Visible=@WarningVisibility>@WarningMessage</SfMessage>
+        </div>
+        <div id="target" class="table table-stripped table-hover">
+            <SfGrid ID="Properties_Grid"
+                @ref="propertiesGridObj"
+                DataSource="@properties"
+                Toolbar="@Tool"
+                AllowFiltering="false"
+                AllowGrouping="false"
+                AllowPaging="true"
+                AllowSorting="true"
+                RowHeight="32"
+                AllowPdfExport=true
+                AllowSelection="true"
+                AllowTextWrap="true">
+
+                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                <GridEvents OnToolbarClick="ToolbarClickHandler"
+                        OnRecordDoubleClick="PropertyDoubleClickHandler" CommandClicked="OnPropertyCommandClicked" TValue="ImovelVM" />
+                <GridTemplates>
+                    <DetailTemplate>
+                        <SfTab CssClass="e-outline e-info e-round-corner py-3" HeaderPlacement="HeaderPosition.Top">
+                            <TabItems>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="@L["TituloMenuFracoes"]"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @{
+                                            PropertyId = (context as ImovelVM)!.Id;
+                                            var units = GetProperty_Units(PropertyId);
+                                            <div class="row my-2">
+                                                <div>
+                                                    <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
+                                                          @onclick="@onAddUnit">
+                                                    </SfButton>
+                                                </div>
+                                            </div>
+                                            <SfGrid TValue="FracaoVM"
+                                            DataSource="units"
+                                            AllowFiltering="false"
+                                            AllowGrouping="false"
+                                            Width="90%"
+                                            AllowPaging="true"
+                                            AllowSorting="true"
+                                            RowHeight="32"
+                                            AllowTextWrap="true">
+                                                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                                                <GridEvents OnRecordDoubleClick="UnitDoubleClickHandler" CommandClicked="OnUnitCommandClicked" TValue="FracaoVM" />
+                                                <GridColumns>
+                                                    <GridColumn Field=@nameof(FracaoVM.Descricao) HeaderText="@L["TituloIdentificacao"]" Width="320"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.Andar) HeaderText="@L["TituloAndar"]" Width="90" TextAlign="TextAlign.Center"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.Lado) HeaderText="@L["TituloLado"]" Width="90" TextAlign="TextAlign.Center"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.ValorRenda) HeaderText="@L["TituloRenda"]" Width="100" Format="C2">
+                                                        <Template Context="Registo">
+                                                            @{
+                                                                var currenUnit = (Registo as FracaoVM);
+                                                                <span>@currenUnit!.ValorRenda.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                                                            }
+                                                        </Template>
+                                                    </GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.EstadoConservacao) HeaderText="@L["TituloConservacao"]" Width="130"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.SituacaoFracao) HeaderText="@L["TituloSituacao"]" Width="130">
+                                                    </GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.TipologiaFracao) HeaderText="@L["TituloTipologia"]" Width="130" TextAlign="TextAlign.Center"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.TipoPropriedade) HeaderText="@L["TituloTipo"]" Width="130"></GridColumn>
+                                                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="100">
+                                                        <GridCommandColumns>
+                                                            <GridCommandColumn Type=CommandButtonType.Edit
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                            <GridCommandColumn Type=CommandButtonType.Delete
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                        </GridCommandColumns>
+                                                    </GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
+                                        }
+                                    </ContentTemplate>
+                                </TabItem>
+                            </TabItems>
+                        </SfTab>
+                    </DetailTemplate>
+                </GridTemplates>
+                <GridColumns>
+                    <GridColumn HeaderText="@L["TituloFoto"]" TextAlign="Syncfusion.Blazor.Grids.TextAlign.Center" Width="120">
+                        <Template>
+                            @{
+                                var propertyRow = (context as ImovelVM);
+                                <div class="image">
+                                    @if (!string.IsNullOrEmpty(propertyRow!.Foto))
+                                    {
+                                        <img src="@($"/uploads/properties/{propertyRow!.Foto}")" height="64" width="64" alt="Foto" />
+                                    }
+                                    else
+                                    {
+                                        <img src="/images/properties/home.jpg" height="64" width="64" alt="Foto" />
+                                    }
+
+                                </div>
+                            }
+                        </Template>
+                    </GridColumn>
+                    @*                    <GridColumn Field=@nameof(ImovelVM.Descricao) HeaderText="Descrição" Width="230"></GridColumn>*@
+                    <GridColumn Field=@nameof(ImovelVM.Morada ) HeaderText="@L["TituloMorada"]" HideAtMedia="(min-width: 900px)" Width="250"></GridColumn>
+                    <GridColumn Field=@nameof(ImovelVM. Numero) HeaderText="@L["TituloPorta"]" HideAtMedia="(min-width: 900px)" Width="70" TextAlign="TextAlign.Center"></GridColumn>
+                    <GridColumn Field=@nameof(ImovelVM.FreguesiaImovel) HeaderText="@L["TituloFreguesia"]" HideAtMedia="(min-width: 900px)" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(ImovelVM.ConcelhoImovel) HeaderText="@L["TituloConcelho"]" HideAtMedia="(min-width: 900px)" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(ImovelVM.AnoConstrucao) HeaderText="@L["TituloAnoConstrucao"]" HideAtMedia="(min-width: 900px)" Width="150" TextAlign="TextAlign.Center"></GridColumn>
+                    <GridColumn Field=@nameof(ImovelVM.EstadoConservacao) HeaderText="@L["TituloConservacao"]" HideAtMedia="(min-width: 900px)" Width="210"></GridColumn>
+                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="100">
+                        <GridCommandColumns>
+                            <GridCommandColumn Type=CommandButtonType.Edit
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                            </GridCommandColumn>
+                            <GridCommandColumn Type=CommandButtonType.Delete
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                            </GridCommandColumn>
+                        </GridCommandColumns>
+                    </GridColumn>
+
+                </GridColumns>
+
+            </SfGrid>
+        </div>
+    </div>
+
+    <SfDialog CssClass="responsive-dialog-50"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditPropertyVisibility">
+        <DialogTemplates>
+            <Content>
+                <AddEditImovel Property="@SelectedProperty"
+                           EditMode="@RecordMode"
+                           HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SavePropertytData" Content="@L["btnSalvar"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+    </SfDialog>
+
+    <SfDialog CssClass="responsive-dialog-40"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditUnitVisibility">
+        <DialogTemplates>
+            <Content>
+                <AddEditFracao PropertyUnit="SelectedUnit"
+                           EditMode="RecordMode"
+                           OnImagesAdded="HandleImagesAdded"
+                           HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveUnitData" Content="@L["btnSalvar"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+    </SfDialog>
+
+
+    @*User exited edition with data changed.*@
+    <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["TituloDadosAlterados"]"
+                   Message="@(modulo == Modules.Imoveis ? SelectedProperty?.Descricao : SelectedUnit?.Descricao)"
+                   Visible="@IsDirty"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="IgnoreChangesAlert"
+                   OnConfirmationNo="ContinueEdit" />
+
+    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@DeleteCaption"
+                        Message="@DeletePropertyCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeletePropertyVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="ConfirmDeleteNo"></ConfirmDeleteComponent>
+    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Message="@DeleteUnitCaption"
+                        Visible="@DeleteUnitVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="ConfirmDeleteNo"></ConfirmDeleteComponent>
+
+    <ValidateErrorComponent Visible="@ErrorVisibility"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="CloseValidationErrorBox" />
+
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+         Title="@ToastTitle" Icon="@ToastIcon"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="2000"
+         ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+
+}
+
+
+
+<style>
+    .source-options {
+        display: flex;
+        justify-content: flex-start;
+        gap: 10px;
+        align-items: center;
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+
+    .e-round-corner {
+        border-radius: 10px;
+    }
+
+    .e-collapse::before{
+        content: '\e80f';
+    }
+</style>

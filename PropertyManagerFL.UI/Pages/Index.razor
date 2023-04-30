@@ -1,0 +1,52 @@
+﻿@page "/"
+
+@using GoogleMapsComponents
+@using GoogleMapsComponents.Maps
+
+@inject IJSRuntime JSRuntime
+
+<PageTitle>Properties Manager FL</PageTitle>
+<div>
+    <img class="house-image" src="images/main-image.jpg" />
+</div>
+@code {
+    private GoogleMap? map1;
+    private MapOptions? mapOptions;
+    private string Height = "80%";
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            mapOptions = new MapOptions()
+                {
+                    Zoom = 13,
+                    Center = new LatLngLiteral()
+                    {
+                        Lat = 13.505892,
+                        Lng = 100.8162
+                    },
+                    MapTypeId = MapTypeId.Roadmap
+                };
+
+        }
+    }
+}
+
+<style>
+    .house-image {
+        position: fixed;
+        width:100%;
+        height: auto;
+        bottom: 0;
+    }
+
+    .responsive {
+        background-position: center;
+        background-repeat: no-repeat;
+        background-size: cover;
+        width: 100%;
+        height: auto;
+        overflow-y: hidden;
+    }
+</style>

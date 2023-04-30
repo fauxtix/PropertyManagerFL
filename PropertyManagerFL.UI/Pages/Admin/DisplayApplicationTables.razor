@@ -1,0 +1,134 @@
+﻿@*@attribute [Authorize(Roles = "Admin")]*@
+@using PropertyManagerFL.UI.Components.Cards
+
+<div class="cards">
+    <div class="table-card">
+        <LookupTableCard cardContent="@L["MSG_EstadoCivil"]"
+                         cardImage="Doctors.svg" cardTitle="@EstadoCivilTitle" tableParam="EstadoCivil"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="@EstadoConservacaoTitle"
+                         cardImage="Doctors.svg" cardTitle="@EstadoConservacaoTitle" tableParam="EstadoConservacao"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="Tabela de Formas de Pagamento"
+                         cardImage="Doctors.svg" cardTitle="@FormaPagamentoTitle" tableParam="FormaPagamento"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="Situação da Fração"
+                         cardImage="Doctors.svg" cardTitle="@SituacaoFracaoTitle" tableParam="SituacaoFracao"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="@TipoContactoTitle"
+                         cardImage="Doctors.svg" cardTitle="@TipoContactoTitle" tableParam="TipoContacto"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="@CategoriaDespesaTitle"
+                         cardImage="Doctors.svg" cardTitle="@CategoriaDespesaTitle" tableParam="CategoriaDespesa"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="@TipologiaFracaoTitle"
+                         cardImage="Doctors.svg" cardTitle="@TipologiaFracaoTitle" tableParam="TipologiaFracao"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="Tipo de Propriedade"
+                         cardImage="Doctors.svg" cardTitle="@TipoPropriedadeTitle" tableParam="TipoPropriedade"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="Tipo de Recebimento"
+                         cardImage="Doctors.svg" cardTitle="@TipoRecebimentoTitle" tableParam="TipoRecebimento"></LookupTableCard>
+    </div>
+    <div class="table-card">
+        <LookupTableCard cardContent="Certificados Energéticos"
+                         cardImage="Doctors.svg" cardTitle="@TipoCertificadoEnergeticoTitle" tableParam="TipoCertificadoEnergetico"></LookupTableCard>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public IStringLocalizer<App> L { get; set; }
+
+    private string? EstadoCivilTitle;
+    private string? EstadoConservacaoTitle;
+    private string? FormaPagamentoTitle;
+    private string? SituacaoFracaoTitle;
+    private string? TipoContactoTitle;
+    private string? CategoriaDespesaTitle;
+    private string? TipologiaFracaoTitle;
+    private string? TipoPropriedadeTitle;
+    private string? TipoRecebimentoTitle;
+    private string? TipoCertificadoEnergeticoTitle;
+
+    protected override void OnInitialized()
+    {
+        EstadoCivilTitle = L["MSG_EstadoCivil"];
+        EstadoConservacaoTitle = L["TituloEstadoConservacao"];
+        FormaPagamentoTitle = L["TituloTipoPagamento"];
+        SituacaoFracaoTitle = L["TituloSituacaoFracao"];
+        TipoContactoTitle = L["TituloTipoContacto"];
+        CategoriaDespesaTitle = L["TituloCategoriaDespesa"];
+        TipologiaFracaoTitle = L["TituloTipologia"];
+        TipoPropriedadeTitle = L["TituloTipoPropriedade"];
+        TipoRecebimentoTitle = L["TituloTipoRecebimento"];
+        TipoCertificadoEnergeticoTitle = L["TituloCertificacaoEnergetica"];
+    }
+}
+<style>
+
+    .table-cards {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        gap: 1rem;
+    }
+
+    ..table-card {
+         background: radial-gradient(#c000, #c0c0);
+        margin: 20px;
+        padding: 20px;
+        width: 500px;
+        min-height: 200px;
+        display: grid;
+        grid-template-rows: 20px 50px 1fr 50px;
+        border-radius: 10px;
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+        transition: all 0.8s;
+    }
+
+    .table-card:hover {
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+        transform: scale(1.05);
+    }
+
+    .table-card-2 {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 2px solid rgba(0, 0, 0, 0.8);
+        padding: 10px;
+        font-size: 50px;
+        text-align: center;
+    }
+
+    .grid-container {
+        display: grid;
+        /*        grid-template-columns: auto;*/
+        background-color: #2196F3;
+        padding: 5px;
+    }
+
+    /*    .card {
+            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            font-size: 30px;
+            text-align: center;
+        }
+    */
+    .app-tables {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+</style>

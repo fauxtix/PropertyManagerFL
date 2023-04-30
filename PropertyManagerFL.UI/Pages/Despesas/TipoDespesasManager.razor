@@ -1,0 +1,558 @@
+﻿@page "/despesas/tipodespesas"
+
+@using System.Linq
+@using Microsoft.Extensions.Configuration
+@using System.Net.Http.Json
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.Validation
+@using PropertyManagerFL.Application.ViewModels.TipoDespesa
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@*@attribute [Authorize]
+*@
+@implements IDisposable
+
+@inject Microsoft.Extensions.Localization.IStringLocalizer<App> L
+@inject ITipoDespesaService expensesSubCategoriesService
+@inject IConfiguration config
+@inject HttpClient _httpClient
+@inject IValidationService validatorService
+
+@{
+    var Filtering = new
+    {@@operator = "Contains"
+    };
+    var Tool = (new List<object>() { "Search",
+    new ItemModel() {
+        PrefixIcon = "e-searchclose",
+        TooltipText = "Clear",
+        Align = ItemAlign.Right,
+        Id = "Clear" },
+    "PdfExport" ,
+    "ExcelExport"
+});
+    var Initial = (new string[] { "CategoriaDespesa" });
+}
+
+<header>
+    <div class="module-title">
+        <div class="title">@(L["TituloDespesas"]) - @L["TituloSubCategorias"]</div>
+        <div class="underline"></div>
+    </div>
+</header>
+
+<div id="spinnerContainer"></div>
+<SfSpinner @ref="SpinnerObj"
+           Label="@L["MSG_PreparandoDados"]"
+           Type="SpinnerType.Bootstrap4"
+           CssClass="e-spin-overlay">
+</SfSpinner>
+@if (subCategoriesList is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container">
+        <div class="patient-operations">
+            <div class="container-fluid mt-2 text-left">
+                <SfButton CssClass="e-success e-round-corner mx-3" IconCss="fas fa-plus" Content="@L["NewMsg"]"
+                      @onclick="@onAddTipoDespesa" IsPrimary="true">
+                </SfButton>
+            </div>
+        </div>
+        <hr />
+
+        <div class="col-lg-12 control-section">
+            <div class="table table-striped" style="height: auto; width: 80%">
+                <SfGrid ID="SC_Grid" @ref="gridObj" Toolbar=@Tool
+                    DataSource="@subCategoriesList"
+                    AllowPaging="true"
+                    AllowSelection="true"
+                    AllowSorting="true"
+                    AllowFiltering="false"
+                    AllowGrouping="true"
+                    AllowPdfExport="true"
+                    AllowExcelExport="true"
+                    RowHeight="24"
+                    AllowTextWrap="true">
+
+                    <GridGroupSettings AllowReordering="true"
+                                   ShowDropArea="true"
+                                   ShowUngroupButton="true" DisablePageWiseAggregates="true"
+                                   Columns="@Initial">
+                    </GridGroupSettings>
+
+                    <GridPageSettings PageSize="10" PageCount="10" PageSizes="true"></GridPageSettings>
+                    <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+                    <GridEvents CommandClicked="OnCommandClicked"
+                            OnToolbarClick="ToolbarClickHandler"
+                            TValue="TipoDespesaVM"></GridEvents>
+                    <GridFilterSettings Mode="FilterBarMode.Immediate" Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
+                    <GridColumns>
+                        <GridColumn Field=@nameof(TipoDespesaVM.Id)
+                                HeaderText="#"
+                                TextAlign="TextAlign.Center" Visible=false
+                                Width="70">
+                        </GridColumn>
+                        <GridColumn Field=@nameof(TipoDespesaVM.CategoriaDespesa)
+                                HeaderText="@L["TituloCategoria"]"
+                                Width="150">
+                        </GridColumn>
+                        <GridColumn Field=@nameof(TipoDespesaVM.Descricao) Type="Syncfusion.Blazor.Grids.ColumnType.String"
+                                HeaderText="@L["TituloSubCategoria"]"
+                                AllowGrouping="false"
+                                Width="150">
+                        </GridColumn>
+                        <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="130">
+                            <GridCommandColumns>
+                                <GridCommandColumn Type=CommandButtonType.Edit
+                                               ButtonOption="@(new CommandButtonOptions()
+                                                               {
+                                                                   Content = "",
+                                                                   CssClass = "e-outline e-primary e-round-corner",
+                                                                   IconCss = "fa fa-edit",
+                                                                   IconPosition = @IconPosition.Left
+                                                               })">
+                                </GridCommandColumn>
+                                <GridCommandColumn Type=CommandButtonType.Delete Title="@L["DeleteMsg"]"
+                                               ButtonOption="@(new CommandButtonOptions()
+                                                               {
+                                                                   Content = "",
+                                                                   CssClass = "e-outline e-danger e-round-corner",
+                                                                   IconCss = "fa fa-trash",
+                                                                   IconPosition = @IconPosition.Left
+                                                               })">
+                                </GridCommandColumn>
+                            </GridCommandColumns>
+                        </GridColumn>
+
+                    </GridColumns>
+                </SfGrid>
+            </div>
+        </div>
+
+        <div class="container">
+            <SfDialog Width="25%"
+                  Height="auto"
+                  IsModal="true"
+                  ShowCloseIcon="false"
+                  AllowDragging="true"
+                  @bind-Visible="EditTipoDespesaDialogVisibility">
+                <DialogEvents Opened="Opened" />
+                <DialogTemplates>
+                    <Header>
+                        @if (!editRecord)
+                        {
+                            var title = L["TituloSubCategoria"] + " - " + L["NewMsg"] + " " + L["Record"];
+                            <HeaderDialogComponent HeaderCaption="@title"
+                                           ImageName="expense.png" />
+                        }
+                        else
+                        {
+                            var title = L["TituloSubCategoria"] + " - " + L["EditMsg"] + " " + L["Record"];
+                            <HeaderDialogComponent HeaderCaption="@title"
+                                           ImageName="expense.png" />
+                        }
+                    </Header>
+                    <Content>
+                        <AddEditTipoDespesas EditMode=@editRecord SelectedTipoDespesa="SelectedTipoDespesa"></AddEditTipoDespesas>
+                    </Content>
+                    <FooterTemplate>
+                        <div>
+                            <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save "
+                                  @onclick="AddOrSaveTipoDespesa" Content="@L["btnSalvar"]">
+                            </SfButton>
+                            <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]"
+                                  @onclick="@(()=>EditTipoDespesaDialogVisibility = false)">
+                            </SfButton>
+                        </div>
+                    </FooterTemplate>
+                </DialogTemplates>
+                <DialogAnimationSettings Effect="DialogEffect.SlideTop" Duration=500></DialogAnimationSettings>
+            </SfDialog>
+        </div>
+    </div>
+
+    <AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+    <ValidateErrorComponent Visible="@ErrorVisibility"
+                        ValidationMessages="@sErrorMsgs"
+                        OnCloseDialog="@(()=>ErrorVisibility = false)" />
+
+    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="Apagar Tipo de Despesa"
+                        Message="@DeleteCaption"
+                        ConfirmationText="Confirma operação?"
+                        DialogHeight="auto"
+                        DialogWidth="20%"
+                        Visible="@DeleteConfirmVisibility"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="@(()=>DeleteConfirmVisibility=false)" />
+
+    <SfToast @ref="ToastObj"
+         Title="@ToastTitle"
+         Content="@ToastContent"
+         CssClass="@ToastCssClass"
+         Timeout=2000
+         ShowCloseButton="true">
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+
+    <div id="spinnerContainer" />
+}
+
+
+
+@code {
+
+    protected SfSpinner SpinnerObj;
+    protected SfGrid<TipoDespesaVM> gridObj;
+    protected SfToast? ToastObj;
+    protected Modules modulo { get; set; }
+    protected string apiSubCategoriesEndpoint;
+    protected bool editRecord = true;
+    protected bool EditTipoDespesaDialogVisibility { get; set; } = false;
+    protected string DeleteCaption = "";
+    public bool DeleteConfirmVisibility { get; set; } = false;
+
+    protected List<string> sErrorMsgs = new();
+
+    protected string ToastTitle = "";
+    protected string ToastContent = "";
+    protected string ToastCssClass = "";
+
+    protected string pdfTitle = "";
+
+
+    public bool ErrorVisibility { get; set; } = false;
+
+    protected TipoDespesaVM SelectedTipoDespesa = new();
+    protected IEnumerable<TipoDespesaVM>? subCategoriesList { get; set; }
+
+    protected TipoDespesaVM tipoDespesa { get; set; }
+    protected int tipoDespesaId;
+
+    protected bool AlertVisibility { get; set; } = false;
+    protected string? alertTitle = "";
+    protected string? WarningMessage { get; set; }
+
+
+    protected string tituloPdf;
+
+    protected async override Task OnInitializedAsync()
+    {
+        AlertVisibility = false;
+        alertTitle = "";
+        WarningMessage = "";
+
+        pdfTitle = L["TituloSubCategorias"] + "_" + L["TituloDespesas"];
+        await GetSubCategories();
+    }
+
+    private async Task GetSubCategories()
+    {
+        subCategoriesList = (await expensesSubCategoriesService.GetAll()).ToList();
+    }
+
+    protected void OnCommandClicked(CommandClickEventArgs<TipoDespesaVM> args)
+    {
+        var data = args.RowData;
+        tipoDespesaId = data.Id;
+        DeleteCaption = data.Descricao;
+
+        editRecord = false;
+
+        SelectedTipoDespesa = subCategoriesList.Where(p => p.Id == tipoDespesaId).FirstOrDefault();
+
+        if (args.CommandColumn.Type == CommandButtonType.Edit)
+        {
+            editRecord = true;
+            EditTipoDespesaDialogVisibility = true;
+        }
+
+        if (args.CommandColumn.Type == CommandButtonType.Delete)
+        {
+            DeleteConfirmVisibility = true;
+        }
+    }
+
+    protected async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "SC_Grid_pdfexport")  //Id is combination of Grid's ID and itemname
+        {
+            await PdfExport();
+        }
+        if (args.Item.Id == "SC_Grid_excelexport")
+        {
+            await gridObj.ExportToExcelAsync();
+        }
+    }
+
+    public void onAddTipoDespesa(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
+    {
+
+        editRecord = false;
+        SelectedTipoDespesa = new()
+            {
+                Id = 0,
+                Descricao = "",
+                Id_CategoriaDespesa = 0
+            };
+
+        EditTipoDespesaDialogVisibility = true;
+
+    }
+
+    public async Task AddOrSaveTipoDespesa()
+    {
+
+
+        sErrorMsgs = validatorService.ValidateExpenseTypeEntries(SelectedTipoDespesa);
+
+        if (sErrorMsgs == null)
+        {
+            await SpinnerObj.ShowAsync();
+
+            if (editRecord)
+            {
+                var updateOk = await expensesSubCategoriesService.Update(tipoDespesaId, SelectedTipoDespesa);
+                if (updateOk)
+                {
+                    var editTitle = L["editionMsg"] + " " + L["TituloSubCategoria"];
+                    ToastTitle = editTitle;
+                    ToastCssClass = "e-toast-success";
+                    ToastContent = L["SuccessUpdate"];
+                }
+                else
+                {
+                    var editTitle = L["editionMsg"] + " " + L["TituloSubCategoria"];
+                    ToastTitle = editTitle;
+                    ToastCssClass = "e-toast-success";
+                    ToastContent = L["FalhaGravacaoRegisto"];
+                }
+
+            }
+            else
+            {
+                var insertedId = await expensesSubCategoriesService.Insert(SelectedTipoDespesa);
+
+                var editTitle = L["newMsg"] + " " + L["TituloSubCategoria"];
+                ToastTitle = editTitle;
+
+                if (insertedId > 0)
+                {
+                    ToastCssClass = "e-toast-success";
+                    ToastContent = L["SuccessInsert"];
+                }
+                else
+                {
+                    ToastCssClass = "e-toast-danger";
+                    ToastContent = L["FalhaCriacaoRegisto"];
+                }
+            }
+
+            EditTipoDespesaDialogVisibility = false;
+
+            //tipoDespesa = new();
+            await GetSubCategories();
+            StateHasChanged();
+
+            await Task.Delay(200);
+            await ToastObj.ShowAsync();
+            await SpinnerObj.HideAsync();
+
+        }
+        else
+        {
+            await SpinnerObj.HideAsync();
+            ErrorVisibility = true;
+        }
+    }
+
+    void Opened(Syncfusion.Blazor.Popups.OpenEventArgs args)
+    {
+        if (editRecord)
+        {
+            args.PreventFocus = true;
+        }
+    }
+
+    public async Task ConfirmDeleteYes()
+    {
+        var tipoDespesaDeleted = false;
+
+        ToastTitle = L["DeleteMsg"] + " " + L["TituloSubCategoria"];
+
+        try
+        {
+            var deleteOk = await expensesSubCategoriesService.Delete(tipoDespesaId);
+            tipoDespesaDeleted = deleteOk;
+
+            if (deleteOk)
+            {
+                tipoDespesaDeleted = true;
+                ToastCssClass = "e-toast-success";
+                ToastContent = L["SuccessDelete"];
+            }
+            else
+            {
+                AlertVisibility = true;
+                DeleteConfirmVisibility = false;
+                alertTitle = "Imputação de despesas";
+                WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. Existem despesas com esse Tipo. Confirme, p.f.";
+                return;
+            }
+
+        }
+        catch
+        {
+            ToastCssClass = "e-toast-danger";
+            ToastContent = L["msgUploadCreationError"];
+        }
+
+        DeleteConfirmVisibility = false;
+
+        if (tipoDespesaDeleted)
+            await GetSubCategories();
+
+        StateHasChanged();
+
+
+        await Task.Delay(200);
+        await ToastObj.ShowAsync();
+    }
+
+
+    protected List<PdfHeaderFooterContent> HeaderContent = new List<PdfHeaderFooterContent>
+{
+        new PdfHeaderFooterContent() {
+            Type = ContentType.Text,
+            Value = "Sub-Categorias de despesas",
+            Position = new PdfPosition() { X = 0, Y = 50 },
+            Style = new PdfContentStyle() {
+                TextBrushColor = "#000000",
+                FontSize = 16,
+                HAlign = PdfHorizontalAlign.Center
+            }
+        },
+         new PdfHeaderFooterContent() {
+             Type = ContentType.Line,
+             Points = new PdfPoints() { X1 = 0, Y1 = 4, X2 = 685, Y2 = 4 },
+             Style = new PdfContentStyle()
+             {
+                 PenColor = "#000080",
+                 DashStyle = PdfDashStyle.Solid
+             }
+         }
+    };
+
+    protected List<PdfHeaderFooterContent> FooterContent = new List<PdfHeaderFooterContent>
+{
+        new PdfHeaderFooterContent() {
+            Type = ContentType.PageNumber,
+            PageNumberType = PdfPageNumberType.Numeric,
+            Position = new PdfPosition() { X = 0, Y = 25 },
+            Style = new PdfContentStyle() {
+                TextBrushColor = "#0000ff",
+                FontSize = 12,
+                HAlign = PdfHorizontalAlign.Right
+            }
+        }
+    };
+
+    public async Task PdfExport()
+    {
+        PdfExportProperties ExportProperties = new PdfExportProperties();
+        ExportProperties.IsRepeatHeader = true;
+
+        PdfHeader Header = new PdfHeader()
+            {
+                FromTop = 0,
+                Height = 130,
+                Contents = HeaderContent
+            };
+
+        PdfFooter Footer = new PdfFooter()
+            {
+                FromBottom = 5,
+                Height = 130,
+                Contents = FooterContent
+            };
+
+        PdfContentStyle PdfContent = new PdfContentStyle()
+            {
+                FontSize = 10,
+                VAlign = PdfVerticalAlign.Middle,
+            };
+
+        PdfTheme Theme = new PdfTheme();
+
+        PdfBorder HeaderBorder = new PdfBorder();
+        HeaderBorder.Color = "Black";
+
+        PdfThemeStyle HeaderThemeStyle = new PdfThemeStyle()
+            {
+                FontColor = "Black",
+                FontName = "Calibri",
+                FontSize = 13,
+                Bold = true,
+                Border = HeaderBorder
+            };
+        Theme.Header = HeaderThemeStyle;
+
+        PdfThemeStyle RecordThemeStyle = new PdfThemeStyle()
+            {
+                FontColor = "Black",
+                FontName = "Calibri",
+                FontSize = 12
+
+            };
+        Theme.Record = RecordThemeStyle;
+
+        PdfThemeStyle CaptionThemeStyle = new PdfThemeStyle()
+            {
+                FontColor = "Silver",
+                FontName = "Verdana",
+                FontSize = 18,
+                Bold = true
+
+            };
+        Theme.Caption = CaptionThemeStyle;
+
+        ExportProperties.IncludeTemplateColumn = true;
+        ExportProperties.Theme = Theme;
+        ExportProperties.FileName = "SubCategorias" + DateTime.UtcNow.Date.ToShortDateString() + ".pdf";
+        ExportProperties.Header = Header;
+        ExportProperties.Footer = Footer;
+
+        try
+        {
+            await gridObj.ExportToPdfAsync(ExportProperties);
+        }
+        catch (Exception ex)
+        {
+            throw new ApplicationException(ex.Message);
+        }
+    }
+
+
+    void IDisposable.Dispose()
+    {
+        gridObj?.Dispose();
+        ToastObj?.Dispose();
+        SpinnerObj?.Dispose();
+    }
+
+}
+<style>
+    .e-grid .e-headercell .e-headercelldiv {
+        height: 30px !important;
+        padding-bottom: 10px;
+    }
+</style>

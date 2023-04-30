@@ -1,0 +1,92 @@
+﻿@page "/fracoes/imagesmanager"
+
+@using PropertyManagerFL.Core.Entities
+@using Syncfusion.Blazor.Navigations
+
+<div class="control-container">
+    <SfCarousel AnimationEffect="CarouselAnimationEffect.Fade">
+        @foreach (CarouselData data in CarouselDatas)
+        {
+            <CarouselItem>
+                <div style="display:flex;height:100%">
+                    @foreach (CarouselItemModel item in data.Items)
+                    {
+                        <figure class="img-container">
+                            <img src="Images/units/@item.ImageName" style="height:100%;width:100%;" />
+                            <figcaption class="img-caption">@item.Text</figcaption>
+                        </figure>
+                    }
+                </div>
+            </CarouselItem>
+        }
+    </SfCarousel>
+</div>
+
+@code {
+    public class CarouselData
+    {
+        public List<CarouselItemModel>? Items { get; set; }
+    }
+    public class CarouselItemModel
+    {
+        public string? Text { get; set; }
+        public string? ImageName { get; set; }
+    }
+    List<CarouselData> CarouselDatas = new List<CarouselData>
+    {
+       new CarouselData
+       { Items = new List<CarouselItemModel>
+          {
+             new CarouselItemModel(){Text = "Image 1" , ImageName="bee-eater.png" },
+             new CarouselItemModel(){Text = "Image 2" , ImageName="cardinal.png" },
+             new CarouselItemModel(){Text = "Image 3" , ImageName="costa-rica.png" }
+           }
+    },
+    new CarouselData
+       { Items = new List<CarouselItemModel>
+          {
+             new CarouselItemModel(){Text = "Image 4" , ImageName="hunei.png" },
+             new CarouselItemModel(){Text = "Image 5" , ImageName="kaohsiung.png" },
+             new CarouselItemModel(){Text = "Image 6" , ImageName="bee-eater.png" }
+           }
+    },
+    new CarouselData
+       { Items = new List<CarouselItemModel>
+          {
+             new CarouselItemModel(){Text = "Image 7" , ImageName="cardinal.png" },
+             new CarouselItemModel(){Text = "Image 8" , ImageName="costa-rica.png" },
+             new CarouselItemModel(){Text = "Image 9" , ImageName="hunei.png" }
+           }
+        }
+    };
+    protected List<ImagemFracao>? ImagensFracao { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+}
+<style>
+    .control-container {
+        background-color: #e5e5e5;
+        height: 200px;
+        margin: 0 auto;
+        width: 500px;
+    }
+
+    .e-carousel .e-carousel-items .e-carousel-item .img-container {
+        height: 100%;
+        width: 33.33%;
+    }
+
+    .e-carousel .e-carousel-items .e-carousel-item .img-caption {
+        bottom: 4em;
+        color: #fff;
+        font-size: 12pt;
+        height: 2em;
+        position: relative;
+        padding: 0.3em 1em;
+        text-align: center;
+        width: 100%;
+    }
+</style>

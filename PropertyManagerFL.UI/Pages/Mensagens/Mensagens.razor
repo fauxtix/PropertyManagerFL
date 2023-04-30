@@ -1,0 +1,396 @@
+﻿@page "/messages"
+
+@using Microsoft.AspNetCore.Identity
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.Application.ViewModels.Messages;
+
+
+
+<h1>Communication</h1>
+@if (_messages is null && InquilinosLookup is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                    Send a message...
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-md-6 offset-2">
+                            <EditForm Model=@_message>
+                                @*<input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" />*@
+                                <div class="group-box g-5">
+                                    <div class="mb-3">
+                                        <SfCheckBox Label="Enviada pelo inquilino" Disabled="false" TChecked="bool" @bind-Checked=@receivedFromTenant
+                                                ValueChange="OnReceivedFromTenant"
+                                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    </div>
+                                    <div class="w-50" hidden="@(ShowTenantsCombo == false)">
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true"
+                                                    Value="@TenantId" ShowClearButton="true" Enabled="@ShowTenantsCombo"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloInquilino"]" DataSource="@InquilinosLookup" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTenant"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                </div>
+                                <div class="my-2 w-50">
+                                    <SfMessage Severity="@messageSeverity" Variant=MessageVariant.Text Visible="@ShowTenantEmailMessage">@TenantEmail</SfMessage>
+                                </div>
+                                <div class="my-3">
+                                    <label asp-for="DestinationEmail" class="form-label">Email address</label>
+                                    <SfTextBox Type="InputType.Email"
+                                           @bind-Value="@_message!.DestinationEmail"
+                                           ID="recipientEmail" CssClass="form-control" Placeholder="name@provider.com" />
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="SubjectTitle">Subject Title</label>
+                                    <SfTextBox Type="InputType.Text"
+                                           @bind-Value="@_message!.SubjectTitle"
+                                           CssClass="form-control" Placeholder="Subject Title" />
+                                </div>
+                                <div class="mb-3">
+                                    <label asp-for="MessageContent">Message</label>
+                                    <SfTextBox Multiline="true" Type="InputType.Text" ID="message"
+                                           @bind-Value="@_message!.MessageContent"
+                                           CssClass="form-control" Placeholder="Message" />
+                                </div>
+                                <div class="form-group">
+                                    <SfButton CssClass="e-btn e-outline e-success float-right" IconCss="fas fa-paper-plane"
+                                          Content="Send Message" OnClick="SendMessage" />
+                                    <SfButton CssClass="e-btn e-outline e-secondary" IconCss="fas fa-times"
+                                          Content="Cancel" OnClick="GotoIndex" />
+                                </div>
+                            </EditForm>
+                        </div>
+                        <div class="my-2 w-50">
+                            <SfMessage Visible="@ShowResultMessage" Variant="MessageVariant.Filled" Severity="@messageSeverity">@ResultMessage</SfMessage>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                    Messages received...
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                <div class="accordion-body">
+                    <div class="album py-5 bg-light">
+                        <div class="container">
+                            <h2 class="display-4 fw-normal"></h2>
+                            <hr />
+                            <div class="d-flex table table-striped">
+                                <SfGrid DataSource="@_receivedMessages"
+                                    TValue="ComposeMessageVM"
+                                    EnableStickyHeader="true"
+                                    EnableAltRow="true"
+                                    EnableHover="true"
+                                    AllowFiltering="false"
+                                    AllowSelection="true"
+                                    AllowGrouping="false"
+                                    AllowPaging="true"
+                                    AllowSorting="true"
+                                    AllowPdfExport="true"
+                                    RowHeight="32"
+                                    Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })"
+                                    AllowTextWrap="true">
+                                    <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal"
+                                                  ShowDeleteConfirmDialog="true"></GridEditSettings>
+                                    <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
+                                    <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageReceivedOn) EditType="EditType.DatePickerEdit"
+                                                HeaderText="Receção" Format="d" Width="90"></GridColumn>
+                                        <GridColumn AllowEditing="false" HeaderText="Inquilino" Width="80" TextAlign="TextAlign.Center">
+                                            <Template Context="msgCtx">
+                                                @{
+                                                    var msg = (msgCtx as ComposeMessageVM);
+                                                    <span>@(msg?.TenantId > 0 ? "X" : "")</span>
+                                                }
+                                            </Template>
+                                        </GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="Remetente" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                    Messages sent...
+                </button>
+            </h2>
+            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
+                <div class="accordion-body">
+                    <div class="album py-5 bg-light">
+                        <div class="container">
+                            <h2 class="display-4 fw-normal"></h2>
+                            <hr />
+                            <div class="container-fluid">
+                                <div class="d-flex">
+                                    <SfGrid DataSource="@_sentMessages"
+                                        TValue="ComposeMessageVM"
+                                        EnableStickyHeader="true"
+                                        EnableAltRow="true"
+                                        EnableHover="true"
+                                        AllowFiltering="false"
+                                        AllowSelection="true"
+                                        AllowGrouping="false"
+                                        AllowPaging="true"
+                                        AllowSorting="true"
+                                        AllowPdfExport="true"
+                                        Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })"
+                                        RowHeight="32"
+                                        AllowTextWrap="true">
+                                        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal"
+                                                      ShowDeleteConfirmDialog="true"></GridEditSettings>
+                                        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                                        <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
+                                        <GridColumns>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageSentOn) EditType="EditType.DatePickerEdit"
+                                                    HeaderText="Envio" Width="90" Format="d"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.DestinationEmail) AllowEditing="false"
+                                                    HeaderText="Destinatário" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
+                                        </GridColumns>
+                                    </SfGrid>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+@code {
+
+    [Inject] IMessagesService? MessagesService { get; set; }
+    [Inject] UserManager<IdentityUser>? UserManager { get; set; }
+    [Inject] NavigationManager? NavigationManager { get; set; }
+    [Inject] public IInquilinoService? inquilinosService { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
+    [CascadingParameter]
+    protected Task<AuthenticationState>? authenticationStateTask { get; set; }
+
+    protected List<ComposeMessageVM>? _messages { get; set; }
+    protected List<ComposeMessageVM>? _receivedMessages { get; set; }
+    protected List<ComposeMessageVM>? _sentMessages { get; set; }
+    protected ComposeMessageVM? _message { get; set; } = new ComposeMessageVM();
+    protected System.Security.Claims.ClaimsPrincipal? CurrentUser;
+
+    protected IEnumerable<LookupTableVM>? InquilinosLookup { get; set; }
+
+    protected string email = "";
+    protected int TenantId;
+
+    protected string ResultMessage = "";
+    protected string TenantEmail = "";
+    protected bool ShowResultMessage;
+    protected bool ShowTenantEmailMessage;
+    protected bool ShowTenantsCombo;
+    protected bool receivedFromTenant = false;
+    protected IdentityUser? user;
+    protected MessageSeverity messageSeverity { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShowTenantsCombo = false;
+        ShowTenantEmailMessage = false;
+        ShowResultMessage = false;
+        ResultMessage = "";
+        TenantId = 0;
+
+        await GetTenants();
+        CurrentUser = (await authenticationStateTask!).User;
+        user = await UserManager.FindByNameAsync(CurrentUser?.Identity?.Name);
+        email = user.Email;
+        await GetMessages();
+    }
+
+    protected async Task SendMessage()
+    {
+        if (_message is not null)
+        {
+            if (MessagesService is not null)
+            {
+                if (TenantId == 0) // a msg a enviar não tem inquilino como origem
+                {
+                    _message.MessageSentOn = DateTime.UtcNow;
+                    _message.SenderEmail = email; // user email logged in
+                    _message.MessageType = 2; // Sent by user logged in
+                }
+                var success = await MessagesService.Add(_message);
+                if (success)
+                {
+                    ResultMessage = "Mensagem enviada com sucesso";
+                    messageSeverity = MessageSeverity.Success;
+                    ShowResultMessage = true;
+                }
+                else
+                {
+                    ResultMessage = "Erro ao criar mensagem. Verifique log, p.f..";
+                    messageSeverity = MessageSeverity.Error;
+                    ShowResultMessage = true;
+                }
+            }
+            else
+            {
+                ResultMessage = "Erro no processo. Contacte Admin.";
+                messageSeverity = MessageSeverity.Error;
+                ShowResultMessage = true;
+            }
+        }
+        _message = new();
+
+        await GetMessages();
+
+        StateHasChanged();
+    }
+
+    protected async Task onChangeTenant(ChangeEventArgs<int, LookupTableVM> args)
+    {
+        TenantId = args.Value;
+        _message.TenantId = TenantId;
+
+        TenantEmail = (await inquilinosService!.GetInquilino_ById(TenantId)).eMail;
+        if (!string.IsNullOrEmpty(TenantEmail))
+        {
+            _message!.SenderEmail = TenantEmail;
+            _message.DestinationEmail = email;
+
+            messageSeverity = MessageSeverity.Success;
+        }
+        else
+        {
+            TenantEmail = "E-mail não consta dos dados do inquilino...";
+            messageSeverity = MessageSeverity.Warning;
+            _message!.SenderEmail = "NoEmailInformed@propertyManager.pt";
+            _message.DestinationEmail = email;
+        }
+
+        ShowTenantEmailMessage = true;
+        StateHasChanged();
+    }
+
+    protected void OnReceivedFromTenant(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool> args)
+    {
+        var isChecked = args.Checked;
+        if (isChecked)
+        {
+            _message!.DestinationEmail = email;
+            _message.MessageReceivedOn = DateTime.UtcNow;
+            _message.MessageType = 1;
+            _message.MessageSentOn = null;
+            ShowTenantsCombo = true;
+            ShowResultMessage = false;
+        }
+        else
+        {
+            _message.TenantId = 0;
+            _message!.DestinationEmail = "";
+            _message.MessageSentOn = DateTime.UtcNow;
+            _message.MessageReceivedOn = null;
+            _message.MessageType = 2;
+            ShowTenantsCombo = false;
+            ShowTenantEmailMessage = false;
+            ShowResultMessage = false;
+        }
+
+        StateHasChanged();
+    }
+
+    protected void GotoIndex()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected async Task GetMessages()
+    {
+        _messages = (await MessagesService.GetAllMessages()).ToList();
+        _receivedMessages = _messages.Where(p => p.MessageType == 1).ToList();
+        _sentMessages = _messages.Where(p => p.MessageType == 2).ToList();
+
+        StateHasChanged();
+    }
+
+    protected async Task GetTenants()
+    {
+        InquilinosLookup = (await inquilinosService!.GetInquilinosDisponiveis()).ToList();
+    }
+
+    public async Task CRUD_Handler(Syncfusion.Blazor.Grids.ActionEventArgs<ComposeMessageVM> args)
+    {
+        if (args.RequestType == Syncfusion.Blazor.Grids.Action.Save)
+        {
+            var data = args.Data;
+            var messageId = data.MessageId;
+            var updateOk = await MessagesService!.Save(messageId, data);
+            if (updateOk)
+            {
+                ResultMessage = "Mensagem atualizada com sucesso";
+                messageSeverity = MessageSeverity.Success;
+                ShowResultMessage = true;
+            }
+            else
+            {
+                ResultMessage = "Erro na atualização da mensagem";
+                messageSeverity = MessageSeverity.Error;
+                ShowResultMessage = true;
+                await GetMessages();
+            }
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Cancel)
+        {
+            // Triggers once cancel operation completes
+        }
+        else if (args.RequestType == Syncfusion.Blazor.Grids.Action.Delete)
+        {
+            var data = args.Data;
+            var messageId = data.MessageId;
+            var deleteOk = await MessagesService!.Delete(messageId);
+            if (deleteOk)
+            {
+                ResultMessage = "Mensagem apagada com sucesso";
+                messageSeverity = MessageSeverity.Success;
+                ShowResultMessage = true;
+                await GetMessages();
+            }
+            else
+            {
+                ResultMessage = "Erro ao apagar mensagem";
+                messageSeverity = MessageSeverity.Error;
+                ShowResultMessage = true;
+            }
+
+        }
+
+    }
+}

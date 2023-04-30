@@ -1,0 +1,314 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.Despesas;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.Application.ViewModels.Recebimentos;
+@using PropertyManagerFL.Application.ViewModels.TipoDespesa;
+@using PropertyManagerFL.Application.ViewModels.TipoRecebimento;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@L["TituloPagamentos"]" ImageName="payment" />
+    <hr style="color:black">
+</div>
+<div class="container-fluid">
+    <EditForm Model="@SelectedRecord">
+        <div class="group-box">
+            <div class="form-group">
+                <SfDatePicker Enabled="@(!EditMode)" Placeholder="@L["TituloMovimento"]" Width="160px"
+                              CssClass="e-align-middle e-corner" Max="DateTime.Now"
+                              FloatLabelType="FloatLabelType.Always"
+                              @bind-Value="@SelectedRecord.DataMovimento">
+                    <DatePickerEvents TValue="DateTime" ValueChange="OnDateChange"></DatePickerEvents>
+                </SfDatePicker>
+            </div>
+            <div class="form-group w-100">
+                <SfDropDownList TValue="int" Enabled="@(!EditMode)" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                @bind-Value="@idxTipoRecebimento" ShowClearButton="true" Width="300px"
+                                FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                Placeholder="@L["TituloTipo"]" DataSource="@TiposRecebimento" FloatLabelType="FloatLabelType.Always">
+                    <DropDownListTemplates TItem="LookupTableVM">
+                    </DropDownListTemplates>
+                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoRecebimento"></DropDownListEvents>
+                    <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </div>
+        </div>
+        <div class="group-box mt-2">
+            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            @bind-Value="@idxFracao" ShowClearButton="true" Enabled="@(!EditMode)"
+                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="@L["TituloFracao"]" DataSource="@Fracoes" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="LookupTableVM">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeFracao"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <div hidden="@HideTenantName" class="form-group mt-2">
+            <SfTextBox Readonly="true"
+                       Placeholder="@L["TituloInquilino"]"
+                       CssClass="e-field  e-corner"
+                       FloatLabelType="@FloatLabelType.Always"
+                       Value="@nomeInquilino">
+            </SfTextBox>
+        </div>
+        <div class="form-group mt-2">
+            @if (EditMode == false) // insert
+            {
+                <SfNumericTextBox Placeholder="@L["TituloValorRecebido"]" @bind-Value="@SelectedRecord.ValorRecebido"
+                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                              TValue="decimal"
+                              Width="150px"
+                              Enabled="@(EnableValue && EditMode ==false)"
+                              Min="1"
+                              Max="50000" Decimals="2" Step="10"
+                              ShowSpinButton=true
+                              Currency="EUR">
+                    <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
+                </SfNumericTextBox>
+            }
+            else // edit
+            {
+                <div class="d-flex justify-content-around">
+                    <SfTextBox Readonly="true"
+                           Placeholder="@L["TituloValorPago"]"
+                           CssClass="e-field  e-corner right-align"
+                           Width="100px"
+                           FloatLabelType="@FloatLabelType.Always"
+                           Value="@ValueReceived.ToString("C2")">
+                    </SfTextBox>
+                    <SfTextBox Readonly="true"
+                           Placeholder="@L["TituloValorPrevisto"]"
+                           CssClass="e-field  e-corner right-align"
+                           Width="100px"
+                           FloatLabelType="@FloatLabelType.Always"
+                           Value="@SelectedRecord.ValorPrevisto.ToString("C2")">
+                    </SfTextBox>
+                    <SfTextBox Readonly="true"
+                           Placeholder="@L["TituloValorAPagar"]"
+                           CssClass="e-field  e-corner right-align"
+                           Width="100px"
+                           FloatLabelType="@FloatLabelType.Always"
+                           Value="@SelectedRecord.ValorEmFalta.ToString("C2")">
+                    </SfTextBox>
+                </div>
+            }
+        </div>
+        <div class="form-group mt-3">
+            <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
+                       HtmlAttributes="NotesAttribute"
+                       CssClass="e-field e-corner"
+                       FloatLabelType="FloatLabelType.Always"
+                       @bind-Value="@SelectedRecord.Notas">
+            </SfTextBox>
+        </div>
+    </EditForm>
+</div>
+
+<ValidateErrorComponent Visible="@ErrorVisibility" DialogTitle="@L["TituloRecebimentos"]"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="@(()=>ErrorVisibility = false)" />
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+@code {
+
+    [Inject] public IArrendamentoService? ArrendamentosService { get; set; }
+    [Inject] public IFracaoService? FracoesService { get; set; }
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] IRecebimentoService? RecebimentosService { get; set; }
+    [Inject] IStringLocalizer<App>? L{ get; set; }
+
+    public IEnumerable<LookupTableVM>? TiposRecebimento { get; set; }
+    public IEnumerable<LookupTableVM>? Fracoes { get; set; }
+
+    [Parameter] public RecebimentoVM? SelectedRecord { get; set; }
+    [Parameter] public bool EditMode { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+
+    protected int idxTipoRecebimento;
+    protected int idxFracao;
+
+    protected decimal ValorRenda { get; set; }
+    protected decimal ValorEmFalta { get; set; }
+    protected bool PagamentoRenda { get; set; }
+
+    protected int idTipoRecebimento;
+    protected int idFracao;
+    protected int idInquilino;
+    protected string nomeInquilino = "";
+    protected DateTime ultimoPagamentoRenda = DateTime.MinValue;
+    protected bool EnableValue;
+    protected bool HideTenantName;
+    protected bool HideComboTipoRecebimento = true;
+
+    protected decimal MaxValueAllowed { get; set; }
+    protected decimal ValueReceived { get; set; }
+
+    protected DateTime transactionDate { get; set; } = DateTime.Now;
+
+    // TODO mostrar valor em dívida, após selecionar fração
+    protected decimal UnitDueValue { get; set; } = 0;
+    protected bool DueRentsSelected = false;
+
+    protected bool ErrorVisibility { get; set; } = false;
+    protected List<string> ValidationsMessages = new();
+
+    protected bool AlertVisibility { get; set; } = false;
+    protected string? alertTitle = "";
+
+    protected bool WarningVisibility { get; set; }
+    protected string? WarningMessage { get; set; }
+
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "3" }
+    };
+
+    protected override void OnInitialized()
+    {
+        idFracao = SelectedRecord.ID_Propriedade;
+        EnableValue = false;
+        HideTenantName = true;
+        PagamentoRenda = true;
+        ValorRenda = 0;
+        ValorEmFalta = 0;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        PagamentoRenda = SelectedRecord.Renda;
+
+        if (EditMode)
+        {
+            ValorRenda = SelectedRecord!.ValorRecebido;
+            ValorEmFalta = SelectedRecord.ValorEmFalta;
+            ultimoPagamentoRenda = await ArrendamentosService!.GetLastPaymentDate(SelectedRecord.ID_Propriedade);
+            ValueReceived = SelectedRecord!.ValorRecebido;
+        }
+
+        if (PagamentoRenda)
+        {
+            HideComboTipoRecebimento = true;
+            idxTipoRecebimento = 99;
+        }
+        else
+        {
+            idxTipoRecebimento = SelectedRecord!.ID_TipoRecebimento;
+            HideComboTipoRecebimento = false;
+        }
+
+        idxFracao = SelectedRecord!.ID_Propriedade;
+        TiposRecebimento = (await LookupTablesService!.GetLookupTableData("TipoRecebimento")).ToList();
+
+        Fracoes = (await FracoesService.GetFracoes_Disponiveis()).ToList();
+    }
+
+    protected async Task onChangeTipoRecebimento(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxTipoRecebimento = args.Value;
+        if (idxTipoRecebimento == 1) // pagamento parcial
+        {
+            DueRentsSelected = true;
+            Fracoes = (await FracoesService!.GetFracoes_WithDuePayments()).ToList(); // 11/04/2023
+        }
+        else
+        {
+            Fracoes = (await FracoesService.GetFracoes_Disponiveis()).ToList();
+        }
+
+        SelectedRecord.ID_TipoRecebimento = idxTipoRecebimento;
+        StateHasChanged();
+    }
+
+    protected async Task onChangeFracao(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxFracao = args.Value;
+        SelectedRecord.ID_Propriedade = idxFracao;
+
+        if (PagamentoRenda)
+        {
+            var unit = await FracoesService.GetFracao_ById(idxFracao);
+            ValorRenda = unit.ValorRenda;
+            ultimoPagamentoRenda = await ArrendamentosService.GetLastPaymentDate(idxFracao);           
+        }
+        else
+        {
+            ValorRenda = 0;
+        }
+
+        SelectedRecord.ValorRecebido = ValorRenda;
+
+        idInquilino = await ArrendamentosService.GetIdInquilino_ByUnitId(idxFracao);
+
+        MaxValueAllowed = await RecebimentosService.GetMaxValueAllowed_ManualInput(idInquilino);
+        if (MaxValueAllowed == -1) // no debts, max value can be set for no higher than 3x the value of the fee (rent value)-- could be more... ==> configured in appsetting?
+        {
+            // máximo = 3x renda (mais que isso, inquilino deverá ter contrato revogado (?))
+            MaxValueAllowed = ValorRenda * 3;
+        }
+
+        nomeInquilino = await ArrendamentosService.GetNomeInquilino(idInquilino);
+        SelectedRecord.ID_Inquilino = idInquilino;
+
+        EnableValue = true;
+        HideTenantName = false;
+        StateHasChanged();
+    }
+
+    protected void OnDateChange(ChangedEventArgs<DateTime> args)
+    {
+        SelectedRecord.DataMovimento = args.Value;
+        StateHasChanged();
+    }
+
+    protected void onAmountChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<decimal> args)
+    {
+        var inputAmount = args.Value;
+        if (inputAmount > MaxValueAllowed && PagamentoRenda) // TODO não faz sentido  esta validação; este form não permitirá criação de pagamento de rendas
+        {
+            AlertVisibility = true;
+            WarningMessage = $"{L["TituloValorMaximoPermitido"]} {MaxValueAllowed} {L["TituloUltrapassado"]}. {L["TituloVerificar"]}";
+
+            alertTitle = L["TituloPagamentosOutrosPagamentos"];
+            StateHasChanged();
+            return;
+        }
+
+        if (PagamentoRenda)
+        {
+            var inDebt = ValorRenda - inputAmount;
+            SelectedRecord!.ValorEmFalta = inDebt;
+        }
+        else
+        {
+            SelectedRecord!.ValorEmFalta = 0;
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnChangeRent(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool> args)
+    {
+        PagamentoRenda = args.Checked == true;
+        HideComboTipoRecebimento = PagamentoRenda;
+        SelectedRecord!.Renda = PagamentoRenda;
+    }
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+
+    .right-align.e-control-wrapper .e-textbox {
+        text-align: right;
+    }
+</style>

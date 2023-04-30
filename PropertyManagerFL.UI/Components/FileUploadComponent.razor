@@ -1,0 +1,120 @@
+﻿@using PropertyManagerFL.UI.ApiWrappers;
+<div class="form-row">
+    <div class="form-group control-section">
+        <label class="col-form-label">Carrega imagem:</label>
+        <SfUploader ID="UploadFiles" AllowMultiple=false
+                    AllowedExtensions=".png,.jpeg,.jpg">
+            <UploaderEvents ValueChange="onChange" OnRemove="onRemove"></UploaderEvents>
+            <UploaderTemplates>
+                <Template Context="HttpContext">
+                    <table>
+                        <tr>
+                            <td>
+                                <img class="upload-image" alt="Preview Image @(HttpContext.Name)"
+                                     src="@(files.Count >0 ? files.Where(item=>item.Name == HttpContext.Name)?.FirstOrDefault()?.Path : string.Empty)">
+                            </td>
+                            <td>
+                                <div style="padding: 7px;">
+                                    <h5 title="@(HttpContext.Name)">@(HttpContext.Name)</h5>
+                                    <i>@(HttpContext.Size) Bytes</i>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <span class="e-icons e-file-remove-btn remove" id="removeIcon" title="Remover"></span>
+                    <span class="e-upload-icon e-icons e-file-remove-btn" title="Upload" id="iconUpload"
+                          @onclick="@uploadFile"></span>
+                </Template>
+            </UploaderTemplates>
+        </SfUploader>
+    </div>
+</div>
+
+@code {
+    [Inject] public HttpClient? Http { get; set; }
+    public MultipartFormDataContent? content;
+    public string? responseStr;
+    public HttpResponseMessage? filepath { get; set; }
+    List<fileInfo> files = new List<fileInfo>();
+
+    public class fileInfo
+    {
+        public string? Path { get; set; }
+        public string? Name { get; set; }
+        public double Size { get; set; }
+    }
+
+    public void onChange(UploadChangeEventArgs args)
+    {
+        files = new List<fileInfo>();
+        foreach (var file in args.Files)
+        {
+            var pathToSave = Path.Combine(Directory.GetCurrentDirectory(), "images");
+            var fullPath = Path.Combine(pathToSave, file.FileInfo.Name);
+            byte[] bytes = file.Stream.ToArray();
+            string base64 = Convert.ToBase64String(bytes);
+            files.Add(new fileInfo() { Path = @"data:image/" + file.FileInfo.Type + ";base64," + base64, Name = file.FileInfo.Name, Size = file.FileInfo.Size });
+            content = new MultipartFormDataContent {
+                    { new ByteArrayContent(file.Stream.GetBuffer()), "\"uploads\"", file.FileInfo.Name }
+                };
+        }
+    }
+
+    public async Task uploadFile(MouseEventArgs args)
+    {
+        //filepath = await ApiImagesWrapper.UploadImage(content):;
+        filepath = await Http.PostAsync("https://localhost:4000/api/Images/Save", content);
+        var filepath2 = await Http.PostAsync("https://localhost:4000/api/Images/Upload", content);
+        this.responseStr = await filepath.Content.ReadAsStringAsync();
+    }
+
+    public void onRemove(RemovingEventArgs args)
+    {
+        foreach (var removeFile in args.FilesData)
+        {
+            if (File.Exists(Path.Combine(@"\Images", removeFile.Name)))
+            {
+                File.Delete(Path.Combine(@"\Images\", removeFile.Name));
+            }
+        }
+    }
+}
+
+<style>
+    .control_wrapper {
+        width: 450px;
+        margin: auto;
+    }
+
+    @@font-face {
+        font-family: 'Uploader_Icon';
+        src: url(data:application/x-font-ttf;charset=utf-8;base64,AAEAAAAKAIAAAwAgT1MvMj1tSfIAAAEoAAAAVmNtYXDnEOdVAAABiAAAADZnbHlmoZcPvgAAAcgAAABAaGVhZBLQTSUAAADQAAAANmhoZWEINQQDAAAArAAAACRobXR4CAAAAAAAAYAAAAAIbG9jYQAgAAAAAAHAAAAABm1heHABDgAdAAABCAAAACBuYW1lQySinQAAAggAAAIxcG9zdLfl0usAAAQ8AAAAMgABAAAEAAAAAFwEAAAAAAAD2AABAAAAAAAAAAAAAAAAAAAAAgABAAAAAQAA2vKJUF8PPPUACwQAAAAAANftBBgAAAAA1+0EGAAAAAAD2AP4AAAACAACAAAAAAAAAAEAAAACABEAAgAAAAAAAgAAAAoACgAAAP8AAAAAAAAAAQQAAZAABQAAAokCzAAAAI8CiQLMAAAB6wAyAQgAAAIABQMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAUGZFZABA5wDnAAQAAAAAXAQAAAAAAAABAAAAAAAABAAAAAQAAAAAAAACAAAAAwAAABQAAwABAAAAFAAEACIAAAAEAAQAAQAA5wD//wAA5wD//wAAAAEABAAAAAEAAAAAAAAAIAAAAAIAAAAAA9gD+AAHABAAADchESMVITUjEzM3ETMRFzMBKAOwPvzMPp1mtUC1Zv7FCAF6vb0BO7X+EAHwtQE7AAAAABIA3gABAAAAAAAAAAEAAAABAAAAAAABAAgAAQABAAAAAAACAAcACQABAAAAAAADAAgAEAABAAAAAAAEAAgAGAABAAAAAAAFAAsAIAABAAAAAAAGAAgAKwABAAAAAAAKACwAMwABAAAAAAALABIAXwADAAEECQAAAAIAcQADAAEECQABABAAcwADAAEECQACAA4AgwADAAEECQADABAAkQADAAEECQAEABAAoQADAAEECQAFABYAsQADAAEECQAGABAAxwADAAEECQAKAFgA1wADAAEECQALACQBLyBVcGxvYWRlclJlZ3VsYXJVcGxvYWRlclVwbG9hZGVyVmVyc2lvbiAxLjBVcGxvYWRlckZvbnQgZ2VuZXJhdGVkIHVzaW5nIFN5bmNmdXNpb24gTWV0cm8gU3R1ZGlvd3d3LnN5bmNmdXNpb24uY29tACAAVQBwAGwAbwBhAGQAZQByAFIAZQBnAHUAbABhAHIAVQBwAGwAbwBhAGQAZQByAFUAcABsAG8AYQBkAGUAcgBWAGUAcgBzAGkAbwBuACAAMQAuADAAVQBwAGwAbwBhAGQAZQByAEYAbwBuAHQAIABnAGUAbgBlAHIAYQB0AGUAZAAgAHUAcwBpAG4AZwAgAFMAeQBuAGMAZgB1AHMAaQBvAG4AIABNAGUAdAByAG8AIABTAHQAdQBkAGkAbwB3AHcAdwAuAHMAeQBuAGMAZgB1AHMAaQBvAG4ALgBjAG8AbQAAAAACAAAAAAAAAAoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIBAgEDAAhVcGxvYWRlcgAAAAA=) format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+
+    .e-upload .e-upload-files .e-icons.e-upload-icon {
+        font-family: 'Uploader_Icon';
+        speak: none;
+        font-size: 16px;
+        right: 35px;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+        .e-upload .e-upload-files .e-icons.e-upload-icon::before {
+            content: '\e700';
+        }
+
+    .upload-image {
+        width: 150px;
+        height: 150px;
+        display: inline-flex;
+        background-size: contain;
+        margin: 7px;
+        text-align: center;
+        line-height: 10;
+        border-radius: 5px;
+    }
+</style>

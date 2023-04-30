@@ -1,0 +1,139 @@
+﻿@using Syncfusion.Blazor.DocumentEditor
+@using System.IO
+@using System.Net
+@using Newtonsoft.Json
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+<div hidden="@(()=>ViewCard = false)">
+    <SfCard ID="HugeImage" Orientation="CardOrientation.Vertical" >
+        <CardImage Image="images/bg-1" />
+        <CardHeader Title="@Title" SubTitle="@SubTitle" />
+        <CardContent Content="Hi, I'm creative graphic design for print, new media based in Edenbridge" />
+        <CardFooter>
+            <CardFooterContent>
+                <SfButton CssClass="e-btn e-outline e-primary" OnClick="@(()=>ViewPdf = true)">Read Pdf</SfButton>
+                <SfButton CssClass="e-btn e-outline e-success" OnClick="@(()=>ViewWord = true)">Read Word</SfButton>
+                <SfButton CssClass="e-btn e-outline e-outline" OnClick="Close">Read Word</SfButton>
+            </CardFooterContent>
+        </CardFooter>
+    </SfCard>
+</div>
+
+
+<SfDialog CssClass="responsive-pdf-word-viewer"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="true"
+          @bind-Visible="ViewWord">
+    <DialogTemplates>
+        <Header>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @Title
+                </h5>
+            </div>
+        </Header>
+        <Content>
+            @if (!string.IsNullOrEmpty(DocumentPath))
+            {
+                <DocumentEditor DocumentPath="@DocumentPath" />
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fas fa-times"
+                          @onclick="(()=>ViewWord = false)" Content="@L["MSG_GoBack"]">
+                    Voltar
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog CssClass="responsive-pdf-word-viewer"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="true"
+          @bind-Visible="ViewPdf">
+    <DialogTemplates>
+        <Header>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @Title
+                </h5>
+            </div>
+        </Header>
+        <Content>
+            @if (!string.IsNullOrEmpty(DocumentPath))
+            {
+                <PdfViewer PdfPath="@DocumentPath" />
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fas fa-times"
+                          @onclick="(()=>ViewPdf = false)" Content="@L["MSG_GoBack"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+@if (FileNotFound)
+{
+    <div class="form-group my-2">
+        <SfMessage Severity="MessageSeverity.Error" ShowIcon="true" Variant="MessageVariant.Text">@ErrorMessage</SfMessage>
+    </div>
+}
+
+
+@code {
+
+    [Parameter] public string? DocumentPath { get; set; }
+    [Parameter] public string? Title { get; set; } = "";
+    [Parameter] public string? SubTitle { get; set; }
+    [Parameter] public TipoDocumento TipoDocumento { get; set; }
+    [Parameter] public bool ViewCard { get; set; } = false;
+
+    protected bool ViewPdf { get; set; } = false;
+    protected bool ViewWord { get; set; } = false;
+    protected bool FileNotFound { get; set; } = false;
+    protected string? ErrorMessage = "";
+
+
+    [Inject] public NavigationManager? NavigationManager { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ViewPdf = false;
+        ViewWord = false;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (ViewCard)
+        {
+            FileNotFound = !File.Exists(DocumentPath);
+            if (FileNotFound == false)
+            {
+                if (TipoDocumento == TipoDocumento.Word) ViewWord = true;
+                if (TipoDocumento == TipoDocumento.Pdf) ViewPdf = true;
+            }
+            else
+            {
+                ErrorMessage = $"{DocumentPath} nor found";
+            }
+        }
+        StateHasChanged();
+    }
+
+    private void Close()
+    {
+        NavigationManager?.NavigateTo("/");
+    }
+}

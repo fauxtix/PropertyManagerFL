@@ -1,0 +1,140 @@
+﻿@page "/BackupDatabase"
+
+@using Microsoft.Extensions.Localization
+@using PropertyManagerFL.Application.Interfaces.Services.Common
+@using PropertyManagerFL.Application.Shared.Enums
+@using PropertyManagerFL.UI.ApiWrappers
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@inject IBackupDatabaseService backupService
+@inject NavigationManager navigationManager
+@inject IStringLocalizer<App> L
+@inject ILogger<App> logger
+@implements IDisposable
+
+<PageTitle>Backup DB</PageTitle>
+<PageTitleComponent PageTitle="@L["mnuBackup"]"></PageTitleComponent>
+
+
+<div>
+    <div>
+        <SfSpinner Label="@L["MSG_PreparandoDados"]" Size="50"
+                   @bind-Visible="@spinnerVisibility"
+                   Type="@SpinnerType.Bootstrap5"
+                   CssClass="e-spin-overlay">
+        </SfSpinner>
+    </div>
+    <div class="row">
+        <div class="col-9">
+            <ConfirmAppWarning AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                               Message="Full Backup"
+                               IconType="AppDefinitions.OpcoesRegisto.Backup"
+                               AlertMessageType="AlertMessageType.Info"
+                               DialogTitle="@L["mnuBackup"]"
+                               Visible="dialogVisibility" OnConfirmationNo="btnExit"
+                               OnConfirmationYes="btnBackup_Click" />
+        </div>
+    </div>
+</div>
+<SfToast ID="toast_default" @ref="ToastObj"
+         Title="Backup da base de dados"
+         Content="@ToastContent"
+         Icon="@ToastIcon"
+         CssClass="@ToastCssClass"
+         Timeout="5000" ShowCloseButton="false">
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"].Value"
+                     OnClick="@HideToast">
+        </ToastButton>
+    </ToastButtons>
+</SfToast>
+
+@code {
+    protected SfToast? ToastObj;
+    protected string spinnerTarget { get; set; } = "#spinnerContainer";
+    protected bool spinnerVisibility;
+    protected bool dialogVisibility;
+    protected string ToastIcon = "e-icon-ThumbsUp";
+
+    public string? ToastContent { get; set; }
+    public string? ToastCssClass { get; set; }
+
+    protected override void OnInitialized()
+    {
+        spinnerVisibility = false;
+        dialogVisibility = true;
+    }
+
+    private async Task btnBackup_Click()
+    {
+        await Task.Delay(200);
+        spinnerVisibility = true;
+        StateHasChanged();
+        logger.LogInformation(L["mnuBackup"]);
+        bool BackupOk = await backupService.BackupDatabase();
+
+        await Task.Delay(200);
+        spinnerVisibility = false;
+        StateHasChanged();
+
+        if (BackupOk)
+        {
+            ToastContent = L["TituloSucesso"];
+            ToastCssClass = "e-toast-success";
+            ToastIcon = "e-icon-ThumbsUp";
+        }
+        else
+        {
+            ToastContent = L["MSG_ApiError"];
+            ToastCssClass = "e-toast-danger";
+            ToastIcon = "e-icon-ThumbsDown";
+            logger.LogError(L["MSG_ApiError"]);
+
+        }
+        StateHasChanged();
+        await Task.Delay(200);
+        await ToastObj.ShowAsync();
+        await Task.Delay(2000);
+        dialogVisibility = false;
+        navigationManager.NavigateTo("/");
+
+    }
+
+    void btnExit()
+    {
+        dialogVisibility = false;
+        navigationManager.NavigateTo("/");
+    }
+
+    private async Task HideToast()
+    {
+        await ToastObj.Hide();
+    }
+    public void Dispose()
+    {
+        ToastObj?.Dispose();
+    }
+
+}
+
+<style>
+    #toast_default .e-meeting::before {
+        content: "\e705";
+        font-size: 17px;
+    }
+
+    .e-icon-ThumbsUp:before {
+        content: '\e682';
+    }
+
+    .e-icon-ThumbsDown:before {
+        content: '\e683';
+    }
+
+    .in-middle {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+</style>

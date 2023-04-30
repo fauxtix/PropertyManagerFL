@@ -1,0 +1,139 @@
+﻿@page "/admin/logininfo"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.ViewModels.Logins;
+@inject IStringLocalizer<App> L
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+
+@{
+    var Tool = (new List<object>() { "Search" });
+}
+
+@if (LogRecords is null)
+{
+    <LoadingData />
+}
+else
+{
+    <HeaderDialogComponent HeaderCaption="Log viewer" ImageName="clock.png"></HeaderDialogComponent>
+    <hr />
+    <div id="target" class="patients-detail-wrapper mx-10 w-100 ">
+        <hr />
+        <div class="table table-striped table-responsive-sm" style="height: auto; width: 90%">
+            <SfGrid DataSource="@LogRecords"
+                    AllowPaging="true"
+                    AllowSelection="true"
+                    AllowSorting="true"
+                    AllowGrouping="true"
+                    ShowColumnChooser="true"
+                    RowHeight="32"
+                    Toolbar="@Tool"
+                    TValue="LoginLogVM"
+                    AllowTextWrap="true">
+                <GridPageSettings PageCount="15" PageSize="15" PageSizes="false"></GridPageSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridColumns>
+                    <GridColumn Field=@nameof(LoginLogVM.UserName) Width="200"
+                                HeaderText="Name" AllowSorting="true">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.UserRole) Width="110"
+                                HeaderText="Role" AllowSorting="true">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.UserEmail) Width="300"
+                                HeaderText="E-Mail" AllowSorting="true">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.LoginDate) Width="130" Format="d"
+                                TextAlign="TextAlign.Center"
+                                HeaderText="Login date" AllowSorting="true">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.LoginDate) Width="130" Format="t"
+                                AllowFiltering="false" AllowGrouping="false"
+                                TextAlign="TextAlign.Center"
+                                HeaderText="Login time" AllowSorting="true">
+                        <Template>
+                            @{
+                                var loginRecord = (context as LoginLogVM);
+                                <span style="padding:5px;">
+                                    @(loginRecord.LoginDate.ToShortTimeString())
+                                </span>
+                            }
+
+                        </Template>
+                    </GridColumn>
+
+                    <GridColumn Field=@nameof(LoginLogVM.LogoutDate) Width="130" Format="d"
+                                AllowFiltering="false" AllowGrouping="false"
+                                TextAlign="TextAlign.Center"
+                                HeaderText="Logout date" AllowSorting="true">
+                        <Template>
+                            @{
+                                var loginRecord = (context as LoginLogVM);
+                                if (loginRecord.LogoutDate != DateTime.MinValue)
+                                {
+                                    <span>
+                                        @(loginRecord.LogoutDate.Value.ToShortDateString())
+                                    </span>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.LogoutDate) Width="130" Format="t"
+                                AllowFiltering="false" AllowGrouping="false"
+                                TextAlign="TextAlign.Center"
+                                HeaderText="Logout time" AllowSorting="true">
+                        <Template>
+                            @{
+                                var loginRecord = (context as LoginLogVM);
+                                if (loginRecord.LogoutDate != DateTime.MinValue)
+                                {
+                                    <span>
+                                        @(loginRecord.LogoutDate.Value.ToShortTimeString())
+                                    </span>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(LoginLogVM.LogoutDate) HeaderText="Tempo (h:m:s)"
+                                AllowFiltering="false" AllowGrouping="false"
+                                Width="120" TextAlign="TextAlign.Center">
+                        <Template>
+                            @{
+                                var loginRecord = (context as LoginLogVM);
+                                if (loginRecord.LogoutDate == DateTime.MinValue)
+                                {
+                                    <span>N/A</span>
+                                }
+                                else
+                                {
+                                    TimeSpan tempo = loginRecord.LogoutDate.Value - loginRecord.LoginDate;
+                                    var horas = tempo.Hours;
+                                    var minutos = tempo.Minutes;
+                                    var segundos = tempo.Seconds;
+                                    string timeCaption = $"{horas.ToString("00")}:{minutos.ToString("00")}:{segundos.ToString("00")}";
+
+                                    <span>
+                                        @timeCaption
+                                    </span>
+                                }
+                            }
+                        </Template>
+
+                    </GridColumn>
+
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+}
+
+@code {
+
+    [Inject] ILogService _logService { get; set; }
+    List<LoginLogVM> LogRecords { get; set; }
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        LogRecords = (await _logService.GetAppLogs())).ToList();
+    }
+}

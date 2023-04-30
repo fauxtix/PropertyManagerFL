@@ -1,0 +1,371 @@
+﻿@page
+@model LoginModel
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.Extensions.Localization
+@using PropertyManagerFL.UI.Shared
+@inject IStringLocalizer<PropertyManagerFL.UI.App> localizerApp
+@{
+    ViewData["Title"] = localizerApp["BtnIngresar"].Value;
+}
+
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+</head>
+<div class="box">
+    <div class="contents center-div-middle">
+        <div class="container">
+            <div class="col-md-12">
+                <div class="form-block mx-auto">
+                    <div class="text-center mb-3">
+                        <h3 class="text-uppercase"><strong>Property Manager FL</strong></h3>
+                    </div>
+                    <form id="account" method="post">
+                        <div class="d-flex justify-content-center">
+                            <div asp-validation-summary="All" class="text-danger"></div>
+                        </div>
+                        <br />
+
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                            </div>
+
+                            <input asp-for="Input.Email" value="admin@propertymanager.pt" class="form-control" style="font-size:18px"
+                                   placeholder="@localizerApp["lblEmail"].Value" required autofocus />
+                            <span asp-validation-for="Input.Email" class="text-danger"></span>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-append">
+                                <span class="input-group-text"><i class="fa fa-key"></i></span>
+                            </div>
+                            <input asp-for="Input.Password" class="form-control" placeholder="Password" 
+                            Value ="Admin123£" style="font-size:18px" required />
+                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        </div>
+                        <div class="d-sm-flex mb-3 align-items-center">
+                            <label class="control control--checkbox mb-3 mb-sm-0">
+                                <span class="caption">Lembra-te de mim</span>
+                                <input type="checkbox" checked="checked" />
+                                <div class="control__indicator"></div>
+                            </label>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <button type="submit" style="font-size:medium" class="btn btn-block py-2 rounded btn-success">@localizerApp["BtnIngresar"].Value</button>
+                        </div>
+                        <div class="form-group">
+                            <p>
+                                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl">Registo</a>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<style type="text/css">
+    .limit {
+        width: 100%;
+        height: auto;
+        max-height: 500px;
+        overflow: hidden;
+    }
+
+        .limit img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+    .content {
+        padding: 7rem 0;
+    }
+
+    h2 {
+        font-size: 20px;
+    }
+
+    .half, .half .container > .row {
+        min-height: 700px;
+    }
+
+        .half .contents {
+            background: #f6f7fc;
+        }
+
+        .half .bg {
+            width: 5%;
+        }
+
+        .half .contents {
+            width: 95%;
+        }
+
+            .half .contents .form-control, .half .bg .form-control {
+                border: none;
+                border-radius: 4px;
+                height: 54px;
+                background: #efefef;
+            }
+
+                .half .contents .form-control:active, .half .contents .form-control:focus, .half .bg .form-control:active, .half .bg .form-control:focus {
+                    outline: none;
+                    -webkit-box-shadow: none;
+                    box-shadow: none;
+                }
+
+        .half .bg {
+            background-size: cover;
+            background-position: center;
+        }
+
+        .half a {
+            color: #888;
+            text-decoration: underline;
+        }
+
+        .half .btn {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        .half .forgot-pass {
+            position: relative;
+            top: 2px;
+            font-size: 14px;
+        }
+
+    .form-block {
+        background: #fff;
+        padding: 20px;
+        max-width: 400px;
+        -webkit-box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
+        box-shadow: 0 15px 30px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .control {
+        display: block;
+        position: relative;
+        padding-left: 30px;
+        margin-bottom: 15px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+        .control .caption {
+            position: relative;
+            top: .2rem;
+            color: #888;
+        }
+
+        .control input {
+            position: absolute;
+            z-index: -1;
+            opacity: 0;
+        }
+
+    .control__indicator {
+        position: absolute;
+        top: 2px;
+        left: 0;
+        height: 20px;
+        width: 20px;
+        background: #e6e6e6;
+        border-radius: 4px;
+    }
+
+    .control--radio .control__indicator {
+        border-radius: 50%;
+    }
+
+    .control:hover input ~ .control__indicator,
+    .control input:focus ~ .control__indicator {
+        background: #ccc;
+    }
+
+    .control input:checked ~ .control__indicator {
+        background: #fb771a;
+    }
+
+    .control:hover input:not([disabled]):checked ~ .control__indicator,
+    .control input:checked:focus ~ .control__indicator {
+        background: #fb8633;
+    }
+
+    .control input:disabled ~ .control__indicator {
+        background: #e6e6e6;
+        opacity: 0.9;
+        pointer-events: none;
+    }
+
+    .control__indicator:after {
+        font-family: 'icomoon';
+        content: '\e5ca';
+        position: absolute;
+        display: none;
+        font-size: 16px;
+        -webkit-transition: .3s all ease;
+        -o-transition: .3s all ease;
+        transition: .3s all ease;
+    }
+
+    .control input:checked ~ .control__indicator:after {
+        display: block;
+        color: #fff;
+    }
+
+    .control--checkbox .control__indicator:after {
+        top: 50%;
+        left: 50%;
+        margin-top: -1px;
+        -webkit-transform: translate(-50%, -50%);
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+
+    .control--checkbox input:disabled ~ .control__indicator:after {
+        border-color: #7b7b7b;
+    }
+
+    .control--checkbox input:disabled:checked ~ .control__indicator {
+        background-color: #7e0cf5;
+        opacity: .2;
+    }
+
+    .btn {
+        text-decoration: none !important;
+    }
+
+        .btn.btn-facebook {
+            display: block;
+            background: #3b5998;
+            color: #fff;
+        }
+
+        .btn.btn-google {
+            background: #ea4335;
+            color: #fff;
+        }
+
+    #thumbs {
+        width: 540px;
+        margin-top: 2px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: justify;
+        -ms-text-justify: distribute-all-lines;
+        text-justify: distribute-all-lines;
+    }
+
+        #thumbs a {
+            vertical-align: top;
+            display: inline-block;
+            *display: inline;
+            zoom: 1;
+        }
+
+    .stretch {
+        width: 100%;
+        display: inline-block;
+        font-size: 0;
+        line-height: 0
+    }
+
+
+    .user_card {
+        height: 400px;
+        width: 350px;
+        margin-top: auto;
+        margin-bottom: auto;
+        background: #f39c12;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        padding: 10px;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        border-radius: 5px;
+    }
+
+    .brand_logo_container {
+        position: absolute;
+        height: 170px;
+        width: 170px;
+        top: -75px;
+        border-radius: 50%;
+        background: #60a3bc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .brand_logo {
+        height: 150px;
+        width: 150px;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+
+    .form_container {
+        margin-top: 100px;
+    }
+
+    .login_btn {
+        width: 100%;
+        background: #c0392b !important;
+        color: white !important;
+    }
+
+        .login_btn:focus {
+            box-shadow: none !important;
+            outline: 0px !important;
+        }
+
+    .login_container {
+        padding: 0 2rem;
+    }
+
+    .input-group-text {
+        /*            background: #c0392b !important;
+    */ background: #28a745 !important;
+        color: white !important;
+        border: 0 !important;
+        border-radius: 0.25rem 0 0 0.25rem !important;
+    }
+
+    .input_user,
+    .input_pass:focus {
+        box-shadow: none !important;
+        outline: 0px !important;
+    }
+
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: #c0392b !important;
+    }
+
+    .center-div-middle {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10%;
+    }
+
+</style>

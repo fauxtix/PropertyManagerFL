@@ -1,0 +1,89 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">PropertyManagerFL.UI</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="ProprietarioPage">
+                <span class="fa fa-house-user px-2" aria-hidden="true"></span> Proprietário
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Imoveis">
+                <span class="fa fa-house-user px-2" aria-hidden="true"></span> Imóveis
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Inquilinos">
+                <span class="fa fa-users px-2" aria-hidden="true"></span> Inquilinos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Arrendamentos">
+                <span class="fa fa-file-contract px-2" aria-hidden="true"></span> Arrendamentos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/despesas/manutencao">
+                <span class="fas fa-credit-card px-2" aria-hidden="true"></span> Despesas
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/despesas/tipodespesas">
+                <span class="fas fa-table px-2" aria-hidden="true"></span> Tipo Despesas
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/recebimentos/manutencao">
+                <span class="fas fa-credit-card px-2" aria-hidden="true"></span> Recebimentos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Contactos">
+                <span class="fa fa-users px-2" aria-hidden="true"></span> Contactos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="Documentos">
+                <span class="fa fa-users px-2" aria-hidden="true"></span> Documentos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/admin/configapptables">
+                <span class="fas fa-user-cog px-2" aria-hidden="true"></span> Configuração
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/backupdatabase">
+                <span class="fas fa-user-cog px-2" aria-hidden="true"></span> Backup BD
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="/backupuploads/1">
+                <span class="fas fa-user-cog px-2" aria-hidden="true"></span> Backup other files
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}

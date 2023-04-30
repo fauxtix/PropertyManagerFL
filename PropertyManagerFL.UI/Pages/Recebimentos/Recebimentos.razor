@@ -1,0 +1,518 @@
+﻿@page "/recebimentos/manutencao"
+
+@using PropertyManagerFL.Application.ViewModels.Recebimentos
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+
+@using System.Globalization
+@using Syncfusion.Blazor.SplitButtons
+@using static PropertyManagerFL.UI.Components.ConfirmMonthlyRentProcessing;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@*@attribute [Authorize]*@
+
+@inherits RecebimentosBase
+
+
+@{
+    var Tool = new List<object>() {
+    "Search",
+    "ExcelExport",
+        new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel() { Type = ItemType.Separator } , 
+    new ItemModel() { Type = ItemType.Button, Template = UserFilters} 
+    };
+}
+
+<div id="spinnerContainer"></div>
+<SfSpinner @ref="SpinnerObj"
+           Label="@spinnerLabel"
+           Type="SpinnerType.Bootstrap4"
+           CssClass="e-spin-overlay">
+</SfSpinner>
+
+<PageTitle>@L["TituloPagamentos"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloPagamentos"]" WithBadge="true" PageSubTitle="@pageBadgeCaption"></PageTitleComponent>
+
+@if (Transactions is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div id="expensescontainer" class="mt-0 container-fluid w-100">
+        <div class="group-box-left">
+            <SfButton CssClass="e-success e-round-corner" IconCss="fas fa-plus" Content="@L["NewMsg"]"
+                  @onclick="@onAddTransaction" IsPrimary="true">
+            </SfButton>
+        </div>
+        <div class="container-fluid">
+            <div class="table table-striped">
+                <SfGrid ID="Payments_Grid" @ref="gridObj"
+                    Toolbar="@Tool"
+                    DataSource="@Transactions"
+                    AllowPaging="true"
+                    Width="100%"
+                    AllowSelection="true"
+                    EnableHover="true"
+                    AllowSorting="true"
+                    AllowFiltering="true"
+                    AllowGrouping="true"
+                    AllowPdfExport="true"
+                    AllowExcelExport="true"
+                    RowHeight="24"
+                    AllowTextWrap="true">
+                    <GridPageSettings PageSize="@LeasesCount" PageSizes="true"/>
+                    <GridSelectionSettings CheckboxMode="CheckboxSelectionType.ResetOnRowClick"
+                                       Type="Syncfusion.Blazor.Grids.SelectionType.Single"/>
+                    <GridFilterSettings Mode="FilterBarMode.Immediate" Type="Syncfusion.Blazor.Grids.FilterType.Menu"/>
+                    <GridGroupSettings ShowUngroupButton="true"/>
+                    <GridEvents OnRecordDoubleClick="PaymentDoubleClickHandler"
+                            RowDataBound="RowBound"
+                            OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTransactionCommandClicked" TValue="RecebimentoVM" />
+                    <GridColumns>
+                        <GridColumn Field=@nameof(RecebimentoVM.Id)
+                                HeaderText=" # "
+                                AllowFiltering="false"
+                                TextAlign="TextAlign.Center"
+                                Visible="false"
+                                Width="70">
+                        </GridColumn>
+                        <GridColumn Field=@nameof(RecebimentoVM.Imovel) HeaderText="@L["TituloFracao"]"
+                                Width="250">
+                        </GridColumn>
+                        <GridColumn Field=@nameof(RecebimentoVM.TipoRecebimento) HeaderText="@L["TituloTipo"]"
+                                Width="200">
+                            <Template Context="IsRent">
+                                @{
+                                    var currentTransactionRecord = (IsRent as RecebimentoVM);
+                                    <span>@(currentTransactionRecord!.Renda ? L["TituloRenda"] : currentTransactionRecord.TipoRecebimento)</span>
+                                }
+                            </Template>
+                        </GridColumn>
+                         <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                TextAlign="TextAlign.Left"
+                                Format="d"
+                                Width="110">
+                        </GridColumn>
+
+@*                        <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                TextAlign="TextAlign.Left"
+                                Width="110">
+                            <Template Context="current">
+                                @{
+                                    var currentTransaction = (current as RecebimentoVM);
+                                    if (currentTransaction!.Renda)
+                                    {
+                                        <span>@(currentTransaction!.DataMovimento.ToString("MMM-yyyy"))</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@(currentTransaction!.DataMovimento.ToShortDateString())</span>
+                                    }
+                                }
+                            </Template>
+
+                        </GridColumn>
+*@
+                        @*                        <GridColumn Field=@nameof(RecebimentoVM.Renda) HeaderText="@L["TituloRenda"]"
+                    FilterSettings="new FilterSettings(){ Type = Syncfusion.Blazor.Grids.FilterType.CheckBox, Operator=Operator.Equal}"
+                    DisplayAsCheckBox="true" TextAlign="TextAlign.Center"
+                    Width="120">
+                    </GridColumn>
+                    *@     
+                    <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) AllowFiltering="false" AllowSorting="true"
+                                                          HideAtMedia="(min-width: 900px)"
+                                                          HeaderText="@L["TituloValorPrevisto"]" TextAlign="TextAlign.Right" Format="C2"
+                                                          Width="140">
+                            <Template Context="Registo">
+                                @{
+                                    var currentTransaction = (Registo as RecebimentoVM);
+                                    <span>@currentTransaction!.ValorPrevisto.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) AllowFiltering="false" AllowSorting="true"
+                                HeaderText="@L["TituloValorPago"]" TextAlign="TextAlign.Right" Format="C2"
+                                Width="140">
+                            <Template Context="Registo">
+                                @{
+                                    var currentTransaction = (Registo as RecebimentoVM);
+                                    if (currentTransaction is not null)
+                                    {
+                                        if (currentTransaction.ValorPrevisto > 0)
+                                        {
+                                            <span>@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color:darkorange">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                        }
+                                    }
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) AllowFiltering="false" AllowSorting="true"
+                                HeaderText="@L["TituloEmFalta"]" TextAlign="TextAlign.Right" Format="C2"
+                                Width="140">
+                            <Template Context="Registo">
+                                @{
+                                    var currentTransaction = (Registo as RecebimentoVM);
+                                    int paidStatus = currentTransaction.Estado;
+                                    var color = paidStatus == 1 ? "black" : paidStatus == 2 ? "orange": "red";
+                                    var ChipCss = paidStatus == 2 ? "e-primary" : paidStatus == 3 ? "e-danger" : "e-outline";
+                                    //<SfChip>
+                                    //    <ChipItems>
+                                    //        <ChipItem  Text="@currentTransaction!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))" CssClass="@ChipCss"></ChipItem>
+                                    //    </ChipItems>
+                                    //</SfChip>
+
+                                    <span style="color:@color">@currentTransaction!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                }
+                            </Template>
+                        </GridColumn>
+                        <GridColumn Field=@nameof(RecebimentoVM.Estado) AllowFiltering="false" AllowSorting="true"
+                                HideAtMedia="(min-width: 900px)"
+                                HeaderText="@L["TituloSituacao"]"
+                                Width="140">
+                            <Template Context="Registo">
+                                @{
+                                    var currentTransaction = (Registo as RecebimentoVM);
+                                    string? currentState;
+                                    string ChipCss = "";
+                                    int paidStatus = currentTransaction.Estado;
+
+                                    var status = currentTransaction!.ValorPrevisto == currentTransaction.ValorRecebido &&
+                                    currentTransaction.ValorRecebido > 0 ? "Ok" :
+                                    paidStatus == 2 ? L["TituloValorPagoParcialmente"] :
+                                    paidStatus == 3 ? L["TituloValorEmFalta"] : currentTransaction.ID_TipoRecebimento == 4 ? "Regularização de pagamento" : "";
+
+                                    if (paidStatus == 1)
+                                    {
+                                        currentState = "";
+                                    }
+                                    else
+                                    {
+                                        currentState = status;
+                                    }
+
+                                    <span>@currentState</span>
+                                }
+                            </Template>
+                        </GridColumn>
+
+@*                        <GridColumn Field=@nameof(RecebimentoVM.Notas) HeaderText="@L["TituloNotas"]"
+                                Width="250">
+                        </GridColumn>
+*@
+                        <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="200">
+                            <GridCommandColumns>
+                                <GridCommandColumn Type=CommandButtonType.Edit Title="@L["EditMsg"]"
+                                               ButtonOption="@(new CommandButtonOptions()
+                                                                   {
+                                                                       Content = "", /* L["EditMsg"],*/
+                                                                       CssClass = "e-outline e-primary e-round-corner",
+                                                                       IconCss = "fa fa-edit",
+                                                                        IsToggle = true,
+                                                                       IconPosition = @IconPosition.Left
+                                                                   })">
+                                </GridCommandColumn>
+                                <GridCommandColumn Type=CommandButtonType.Delete Title="@L["DeleteMsg"]"
+                                               ButtonOption="@(new CommandButtonOptions()
+                                                                   {
+                                                                       Content = "", /*L["DeleteMsg"]*/
+                                                                       CssClass = "e-outline e-danger e-round-corner",
+                                                                       IconCss = "fa fa-trash",
+                                                                       IconPosition = @IconPosition.Left
+                                                                   })">
+                                </GridCommandColumn>
+                                <GridCommandColumn Type=CommandButtonType.None Title="Acertar" 
+                                               ButtonOption="@(new CommandButtonOptions()
+                                                                   {
+                                                                       Content = L["TituloPagamentosAcertar"],
+                                                                       CssClass = "e-outline e-success",
+                                                                       IconCss = "fa fa-check",
+                                                                       IconPosition = @IconPosition.Left
+                                                                   })">
+                                </GridCommandColumn>
+                            </GridCommandColumns>
+                        </GridColumn>
+                    </GridColumns>
+                    <GridAggregates>
+                        <GridAggregate>
+                            <GridAggregateColumns>
+                                <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorPrevisto) Type="AggregateType.Sum" Format="C2">
+                                    <GroupFooterTemplate>
+                                        @{
+                                            var groupTotal = (context as AggregateTemplateContext);
+                                            <p class="my-1">@groupTotal!.Sum</p>
+                                        }
+                                    </GroupFooterTemplate>
+                                    <FooterTemplate>
+                                        @{
+                                            var overallTotal = (context as AggregateTemplateContext);
+                                            <div>
+                                                <p class="my-1">Total @overallTotal!.Sum</p>
+                                            </div>
+                                        }
+                                    </FooterTemplate>
+                                </GridAggregateColumn>
+                                <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorRecebido) Type="AggregateType.Sum" Format="C2">
+                                    <GroupFooterTemplate>
+                                        @{
+                                            var groupTotal = (context as AggregateTemplateContext);
+                                            <p class="my-1">@groupTotal!.Sum</p>
+                                        }
+                                    </GroupFooterTemplate>
+                                    <FooterTemplate>
+                                        @{
+                                            var overallTotal = (context as AggregateTemplateContext);
+                                            <div>
+                                                <p class="my-1">Total @overallTotal!.Sum</p>
+                                            </div>
+                                        }
+                                    </FooterTemplate>
+                                </GridAggregateColumn>
+                                <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorEmFalta) Type="AggregateType.Sum" Format="C2">
+                                    <GroupFooterTemplate>
+                                        @{
+                                            var groupTotal = (context as AggregateTemplateContext);
+                                            <p class="my-1">@groupTotal!.Sum.ToString()</p>
+                                        }
+                                    </GroupFooterTemplate>
+                                    <FooterTemplate>
+                                        @{
+                                            var overallTotal = (context as AggregateTemplateContext);
+                                            <div>
+                                                <p class="my-1">Total @overallTotal!.Sum</p>
+                                            </div>
+                                        }
+                                    </FooterTemplate>
+
+                                </GridAggregateColumn>
+                            </GridAggregateColumns>
+                        </GridAggregate>
+                    </GridAggregates>
+                </SfGrid>
+            </div>
+        </div>
+
+        <div class="container">
+            <SfDialog Width="30%"
+                  Height="auto"
+                  IsModal="true"
+                  ShowCloseIcon="false"
+                  AllowDragging="true"
+                  @bind-Visible="EditTransationDialogVisibility">
+                <DialogTemplates>
+                    <Content>
+                        @if(SelectedTransation.Renda)
+                        {
+                        <EditRent HeaderCaption="Editar pagamento de renda" SelectedRecord="SelectedTransation" />
+                        }
+                        else
+                        {
+                        <AddEditRecebimento EditMode="@editRecord" HeaderCaption="Outro recebimento" SelectedRecord="SelectedTransation" />
+                        }
+                    </Content>
+                    <FooterTemplate>
+                        <div>
+                            <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save" 
+                                  @onclick = "AddOrSaveTransaction" Content="@L["btnSalvar"]">
+                            </SfButton>
+                            <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]" 
+                                  @onclick="@(() => EditTransationDialogVisibility = false)">
+                            </SfButton>
+                        </div>
+                    </FooterTemplate>
+                </DialogTemplates>
+                <DialogAnimationSettings Effect="DialogEffect.SlideTop" Duration=500></DialogAnimationSettings>
+            </SfDialog>
+        </div>
+    </div>
+
+    <div class="container">
+        <SfDialog Width="60%"
+              Height="auto"
+              IsModal="true"
+              ShowCloseIcon="false"
+              AllowDragging="true"
+              @bind-Visible="AddEditMonthlyTransactionsVisibility">
+            <DialogTemplates>
+                <Content>
+                    <ConfirmRentsPaidBatchProcessing Transactions="BatchTransactions" />
+                </Content>
+                <FooterTemplate>
+                    <div>
+                        <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save "
+                              @onclick="HandleBatchTransaction" Content="@L["TituloConfirmar"]">
+                        </SfButton>
+                        <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["btnCancelar"]"
+                              @onclick="@HandleCancelBatchTransaction">
+                        </SfButton>
+                    </div>
+                </FooterTemplate>
+            </DialogTemplates>
+            <DialogAnimationSettings Effect="DialogEffect.SlideTop" Duration=500></DialogAnimationSettings>
+        </SfDialog>
+    </div>
+
+
+    <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["TituloAcertarPagamento"]"
+                   Message="@WarningMessage"
+                   Visible="@SettlePaymentConfirmVisibility"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="SettlePayment"
+                   OnConfirmationNo="@(()=>SettlePaymentConfirmVisibility = false)" />
+
+    <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["TituloDadosAlterados"]"
+                   Message="@SelectedTransation?.DataMovimento.ToLongDateString()"
+                   Visible="@IsDirty"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="IgnoreChangesAlert"
+                   OnConfirmationNo="ContinueEdit" />
+
+    <ValidateErrorComponent Visible="@ErrorVisibility" DialogTitle="@L["TituloRecebimentos"]"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="@(()=>ErrorVisibility = false)" />
+
+    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error" DialogWidth="20%"
+                        DialogTitle="@WarningTitle" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Module=Modules.Recebimentos 
+                        Message="@SelectedTransation?.DataMovimento.ToLongDateString()"
+                        Visible="@DeleteConfirmVisibility"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="@(()=>DeleteConfirmVisibility=false)"></ConfirmDeleteComponent>
+
+    <AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"  DialogWidth ="28%"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+         Title="@ToastTitle" Icon="@ToastIcon"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="3000"
+         ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="Fechar" OnClick="HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+
+    <div id="spinnerContainer" />
+
+}
+
+@code {
+    private RenderFragment UserFilters => 
+      @<div> 
+      <SfButtonGroup Mode="Syncfusion.Blazor.SplitButtons.SelectionMode.Single"> 
+        <SfDropDownButton IconCss="fas fa-filter" Content="@L["TituloFiltrar"]"> 
+            <DropDownButtonEvents  ItemSelected="CustomToolbarItemSelected"></DropDownButtonEvents> 
+            <DropDownMenuItems> 
+                <DropDownMenuItem Id="ThisYear" Text="@L["TituloDespesasEsteAno"]" IconCss="fas fa-calendar"></DropDownMenuItem> 
+                <DropDownMenuItem Id="LastYear" Text="@L["TituloDespesasAnoAnterior"]" IconCss="fas fa-calendar"></DropDownMenuItem> 
+                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                <DropDownMenuItem Id="RentsOnly" Text="@(L["TituloRenda"] + "s")" IconCss="fas fa-cog"></DropDownMenuItem> 
+                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                <DropDownMenuItem Id="OtherPayments" Text="@L["TituloPagamentosOutrosPagamentos"]" IconCss="fas fa-money-bill"></DropDownMenuItem> 
+                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                <DropDownMenuItem Id="PartlyPaidRents" Text="@L["TituloPagamentosEmDivida"]" IconCss="fas fa-cog"></DropDownMenuItem> 
+                <DropDownMenuItem Id="DueRentsPayments" Text="@L["TituloValorDivida"]" IconCss="fas fa-cog"></DropDownMenuItem> 
+                <DropDownMenuItem Separator=true></DropDownMenuItem>
+                <DropDownMenuItem Id="AllRents" Text="@L["TituloPagamentosTodosPagamentos"]" IconCss="fas fa-history"></DropDownMenuItem> 
+            </DropDownMenuItems> 
+        </SfDropDownButton> 
+      </SfButtonGroup>
+
+        </div>
+    ;
+    private void RowBound(RowDataBoundEventArgs<RecebimentoVM> Args)
+    {
+        int paymentStatus = Args.Data.Estado;
+        if (paymentStatus == 1) // remove button if state = 1 (rent fully paid)
+        {
+            Args.Row.AddClass(new string[] { "e-removeCustomcommand" });
+        }
+    }
+
+    private async Task SearchValueChange(ChangedEventArgs args)
+    {
+        await gridObj!.SearchAsync(args.Value);
+    }
+
+    private async Task ExportToExcel()
+    {
+        await gridObj!.ExportToExcelAsync();
+    }
+
+}
+
+<style>
+
+@*    .e-icons {
+        color: #00ffff;
+        font-size: 18px;
+    }
+*@
+    .e-export-excel::before {
+        content: '\e7c1';
+    }
+
+    .e-attr {
+        font-size: 18px;
+    }
+
+        .e-attr .e-categoria {
+            font-weight: bolder;
+            color: green;
+        }
+
+        .e-attr .e-valor {
+            font-weight: bolder;
+            color: red;
+        }
+
+    .e-grid td.e-active {
+        background-color: azure;
+    }
+
+    /*to remove the 'custom button alone*/
+    .e-removeCustomcommand .e-unboundcell .e-unboundcelldiv button.e-Nonebutton {
+        display: none;
+    }
+    /*to remove the edit button alone*/
+    .e-removeEditcommand .e-unboundcell .e-unboundcelldiv button.e-Editbutton {
+        display: none;
+    }
+
+    /*to remove the delete button alone*/
+    .e-removeDeletecommand .e-unboundcell .e-unboundcelldiv button.e-Deletebutton {
+        display: none;
+    }
+
+       .e-chip {
+        /* Align the chip element */
+        width: 120px !important;
+    }
+    .e-chip-text {
+        width:100px;
+        text-align:right;
+    }
+   .e-collapse::before {
+        content: '\e80f';
+    }
+
+</style>

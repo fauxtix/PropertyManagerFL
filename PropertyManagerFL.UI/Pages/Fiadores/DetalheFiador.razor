@@ -1,0 +1,135 @@
+﻿@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.Application.ViewModels.Fiadores;
+
+@*<EditForm Model="SelectedFiador" style="margin:auto;padding:10px;">
+    <div class="row">
+        <div class="col-md-6 col-sm-12">
+            <div class="form-group mt-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="Nome"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="@FloatLabelType.Always"
+                           Value="@SelectedFiador!.Nome">
+                </SfTextBox>
+            </div>
+            <div class="form-group mt-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="Morada"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           Value="@SelectedFiador!.Morada">
+                </SfTextBox>
+            </div>
+            <SfTextBox Value="@SelectedFiador.EstadoCivil"></SfTextBox>
+        </div>
+        <div class="group-box">
+            <SfTextBox Placeholder="Identificação"
+                       CssClass="e-field  e-corner custom-class"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador!.Identificacao">
+            </SfTextBox>
+            <SfDatePicker Enabled="true" Placeholder="Validade"
+                          CssClass="e-corner"
+                          FloatLabelType="FloatLabelType.Always"
+                          Value="@SelectedFiador.ValidadeCC">
+                <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+            </SfDatePicker>
+            <SfTextBox Placeholder="NIF"
+                       CssClass="e-field  e-corner custom-class"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador!.NIF">
+            </SfTextBox>
+
+        </div>
+        <div class="group-box-left">
+            <SfTextBox Placeholder="Contacto #1"
+                       Width="130px"
+                       CssClass="e-field  e-corner custom-class"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador!.Contacto1">
+            </SfTextBox>
+            <SfTextBox Placeholder="Contacto #2"
+                       Width="130px"
+                       CssClass="e-field  e-corner custom-class"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador!.Contacto2">
+            </SfTextBox>
+        </div>
+        <div class="form-group mt-2">
+            <SfTextBox Enabled="true"
+                       Placeholder="e-mail"
+                       CssClass="e-field e-corner"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador!.eMail">
+            </SfTextBox>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-sm-12">
+        <div class="group-box-left">
+            <SfNumericTextBox Placeholder="Valor  ultº Irs" Value="@SelectedFiador.IRSAnual"
+                              Format="C2" FloatLabelType="FloatLabelType.Always" Width="150px"
+                              ShowSpinButton=false EnableRtl=true
+                              Currency="EUR" />
+            <SfNumericTextBox Placeholder="Valor ultº Vencimento" Value="@SelectedFiador.Vencimento"
+                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                              ShowSpinButton=false Width="150px" EnableRtl=true
+                              Currency="EUR" />
+        </div>
+        <div class="form-group mt-2">
+            <SfTextBox Multiline=true Placeholder="Observações"
+                       CssClass="e-field e-corner"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedFiador.Notas">
+            </SfTextBox>
+        </div>
+    </div>
+</EditForm>
+*@
+@*<div class="card front">
+    <div class="blue"></div>
+    <div class="yellow"></div>
+    <div class="pink"></div>
+    <div class="dots"></div>
+    <div class="personal-intro">
+        <p>Krista Stone</p>
+        <p>Photographer Maker Doer</p>
+    </div>
+</div>*@
+
+<div class="card back">
+    <div class="yellow"></div>
+    <div class="top dots"></div>
+    <div class="personal-info">
+        <p>@SelectedFiador!.Nome</p>
+        <p>@SelectedFiador!.Morada.</p>
+        <p>@SelectedFiador!.Contacto1</p>
+        <p>@SelectedFiador!.eMail</p>
+        <p>@SelectedFiador.Notas</p>
+    </div>
+    <div class="bottom dots"></div>
+    <div class="pink"></div>
+    <div>
+        <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-edit"
+                  @onclick="EditFiadorClick" Content="Editar">
+        </SfButton>
+    </div>
+</div>
+
+
+@code {
+    [Parameter] public FiadorVM SelectedFiador { get; set; }
+
+    [Parameter] public EventCallback<int> OnFiadorEdit { get; set; }
+    [Parameter] public EventCallback OnFiadorExit { get; set; }
+
+    protected override Task OnParametersSetAsync()
+    {
+        return base.OnParametersSetAsync();
+    }
+
+    protected void EditFiadorClick()
+    {
+        OnFiadorEdit.InvokeAsync(SelectedFiador.Id);
+    }
+}

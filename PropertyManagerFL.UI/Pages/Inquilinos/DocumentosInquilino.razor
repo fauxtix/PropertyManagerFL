@@ -1,0 +1,90 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Inquilinos
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@inherits InquilinosBase
+
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@HeaderCaption"
+                           ImageName="home-owner" />
+    <hr />
+</div>
+
+<div>
+
+    <EditForm Model="@Document" style="margin:auto;padding:10px;">
+        <div class="row">
+            @if (EditMode == OpcoesRegisto.Inserir)
+            {
+                <div class="input-group mt-3">
+                    <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
+                            DropArea=".control-fluid"
+                            AllowMultiple=false AllowedExtensions=" .docx, .pdf"
+                            MaxFileSize="@MaxFileSize">
+                        <UploaderAsyncSettings SaveUrl="api/uploadtenantdocuments/Save"
+                                           RemoveUrl="api/uploadtenantdocuments/remove" />
+                        <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
+                    </SfUploader>
+                </div>
+            }
+            <div class="input-group mt-2">
+                <SfTextBox Enabled="false"
+                           Placeholder="@L["TituloDocumento"]"
+                           CssClass="form-control  e-corner"
+                           FloatLabelType="@FloatLabelType.Auto"
+                           Value="@Document!.DocumentPath">
+                </SfTextBox>
+            </div>
+            <div class="input-group mt-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="@L["rbtDescricao"]"
+                           CssClass="form-control  e-corner"
+                           FloatLabelType="@FloatLabelType.Auto"
+                           @bind-Value="@Document!.Descricao">
+                </SfTextBox>
+            </div>
+
+        </div>
+    </EditForm>
+
+</div>
+
+@code {
+    [Inject] public IInquilinoService? inquilinoService { get; set; }
+
+    [Parameter] public DocumentoInquilinoVM? Document { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+
+
+    protected string? PathDocumento;
+
+    protected SfUploader? sfUploader;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var x = HeaderCaption;
+    }
+
+    private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        if (args.FileData.Count() == 0) return;
+
+        try
+        {
+            foreach (var file in args.FileData)
+            {
+                Document!.DocumentPath = file.Name;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        StateHasChanged();
+    }
+
+}

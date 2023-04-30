@@ -1,0 +1,70 @@
+﻿@using PropertyManagerFL.Application.ViewModels.Fracoes
+
+<SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
+            DropArea=".control-fluid" 
+            AllowMultiple=true AllowedExtensions=" .jpg, .jpeg, .png, .gif"
+            MaxFileSize="@MaxFileSize">
+    <UploaderAsyncSettings SaveUrl="api/uploadunits/Save"
+                           RemoveUrl="api/uploadunits/remove" />
+    <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
+</SfUploader>
+
+@code {
+
+    [Parameter] public EventCallback<List<NovaImagemFracao>> OnImagesAdded { get; set; }
+
+    [Inject] public IWebHostEnvironment? HostingEnvironment { get; set; }
+    protected List<NovaImagemFracao>? unitImages { get; set; }
+
+    protected SfUploader? sfUploader;
+    int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+    protected string uploadedFile { get; set; } = "";
+
+    private async Task OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        if (args.FileData.Count() == 0) return;
+
+        foreach (var file in args.FileData)
+        {
+            uploadedFile = Path.Combine(HostingEnvironment!.WebRootPath, "uploads", "units", file.Name);
+            unitImages!.Add(
+                new NovaImagemFracao()
+                    {
+                        Foto = Path.GetFileName(uploadedFile),
+                        Id_Fracao = 0,
+                        Descricao = $"Img_{Path.GetFileName(uploadedFile)}" // redundant, but, just in case of future needs...
+                    });
+        }
+
+        StateHasChanged();
+        //await OnImagesAdded.InvokeAsync(unitImages);
+    }
+
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+
+    .default-carousel-section .carousel-sample {
+        margin: 0 auto 2em;
+        max-width: 500px;
+        height: 300px;
+    }
+
+    .default-carousel .e-carousel-items .e-carousel-item .img-container {
+        height: 100%;
+    }
+
+    .default-carousel .e-carousel-items .e-carousel-item .img-caption {
+        bottom: 5em;
+        color: #fff;
+        font-size: 12pt;
+        height: 2em;
+        position: relative;
+        padding: 0.3em 1em;
+        text-align: center;
+        width: 100%;
+    }
+</style>

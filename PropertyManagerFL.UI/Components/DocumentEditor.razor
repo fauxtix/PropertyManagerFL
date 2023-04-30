@@ -1,0 +1,106 @@
+﻿@using Syncfusion.Blazor.DocumentEditor
+@using System.IO
+@using System.Text.Json
+@using Microsoft.Extensions.Logging
+
+@inject ILogger<App> _logger
+@inject IStringLocalizer<App> L
+
+<div class="document-options">
+@*    <SfButton CssClass="e-btn e-primary e-round-corner"
+              IconCss="fas fa-save"
+              OnClick="OnSave"
+              Content="@L["btnSalvar"]" />
+*@    <SfButton CssClass="e-btn e-outline bg-info e-round-corner"
+              IconCss="fas fa-print"
+              OnClick="OnPrint"
+              Content="@L["TituloImprimir"]" />
+</div>
+<hr />
+<div class="d-flex">
+    <SfDocumentEditorContainer @ref="container" EnableToolbar=false DocumentEditorSettings="settings" Height="590px">
+        <DocumentEditorContainerEvents Created="OnLoad"></DocumentEditorContainerEvents>
+    </SfDocumentEditorContainer>
+</div>
+<SfSpinner @bind-Visible="@VisibleProperty"/>
+@code {
+
+    [Parameter] public string? DocumentPath { get; set; } = "";
+
+    protected SfDocumentEditorContainer? container;
+    private bool VisibleProperty { get; set; } = false;
+
+
+    DocumentEditorSettingsModel settings = new DocumentEditorSettingsModel() { PrintDevicePixelRatio = 2 };
+
+    protected override void OnInitialized()
+    {
+    }
+
+    protected override void OnParametersSet()
+    {
+    }
+
+    public void OnLoad(object args)
+    {
+        try
+        {
+            using (FileStream fileStream = new FileStream(DocumentPath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            {
+                WordDocument document = WordDocument.Load(fileStream, ImportFormatType.Docx);
+                string json = JsonSerializer.Serialize(document);
+                document.Dispose();
+                //To observe the memory go down, null out the reference of document variable.
+                document = null;
+
+                this.VisibleProperty = true;
+
+                SfDocumentEditor editor = container.DocumentEditor;
+                editor.OpenAsync(json);
+
+                this.VisibleProperty = false;
+
+                //To observe the memory go down, null out the reference of json variable.
+                json = null;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return;
+        }
+    }
+
+    protected async Task OnPrint(object args)
+    {
+        await container.DocumentEditor.PrintAsync();
+    }
+
+    public async void OnSave()
+    {
+        SfDocumentEditor editor = container.DocumentEditor;
+        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+        byte[] data = Convert.FromBase64String(base64Data);
+        base64Data = null;
+        Stream stream = new MemoryStream(data);
+        data = null;
+        using (var fileStream = new FileStream(DocumentPath, FileMode.Create, FileAccess.Write))
+        {
+            stream.CopyTo(fileStream);
+            fileStream.Close();
+        }
+        stream.Close();
+        stream = null;
+    }
+}
+
+<style>
+    .document-options{
+        display:flex;
+        justify-content:flex-end;
+        gap: 5px;
+        align-items: flex-end;
+        margin-right: 10px;
+    }
+</style>

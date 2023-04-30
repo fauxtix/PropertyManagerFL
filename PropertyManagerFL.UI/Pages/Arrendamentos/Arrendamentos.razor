@@ -1,0 +1,428 @@
+﻿@page "/arrendamentos"
+
+@using PropertyManagerFL.Application.Shared.Enums
+@using PropertyManagerFL.Application.ViewModels.Arrendamentos
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using System.Globalization;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@inherits ArrendamentosBase
+
+<PageTitle>@L["TituloMenuArrendamentos"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuArrendamentos"]"></PageTitleComponent>
+
+
+@{
+    var Tool = (new List<object>() {
+        "Search",
+        "PdfExport",
+    new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-round-corner",
+        Text = "Visualizar contrato",
+        Id = "ViewLeaseContract",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbarViewContract
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-success e-round-corner",
+        Text = "Carta de atraso no pagamento de renda",
+        Id = "DueRentLetter",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbarDueRentLetter
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-warning e-round-corner",
+        Text = L["TituloCartaRevogacao"],
+        Id = "ContractOpposition",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbaContractRevocationLetter,
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-round-corner",
+        Text = L["TituloEstenderPrazoContrato"],
+        Id = "ContractLeaseTerm",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbaContractLeaseTerm,
+    },
+    });
+}
+
+@if (leases is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div id="expensescontainer" class="mt-0 container-fluid w-100">
+        <div class="group-box">
+            <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
+                  @onclick="@onAddLease" IsPrimary="true">
+            </SfButton>
+            <SfButton CssClass="e-primary mx-3 e-round-corner" IconCss="fa fa-check" Content="@L["TituloContratoExistente"]"
+                  @onclick="@onAddExistentLease" IsPrimary="false">
+            </SfButton>
+        </div>
+
+        <hr class="divider" />
+        <div class="table table-stripped table-hover">
+            <SfGrid ID="Leases_Grid"
+                Height="100%" @ref="leasesGridObj"
+                Toolbar="@Tool"
+                EnableStickyHeader="true"
+                EnableAltRow="true"
+                EnableHover="true"
+                DataSource="@leases"
+                AllowFiltering="false"
+                AllowSelection="true"
+                AllowGrouping="false"
+                AllowPaging="true"
+                AllowSorting="true"
+                AllowPdfExport="true"
+                RowHeight="32"
+                AllowTextWrap="true">
+                <GridSelectionSettings Mode = "Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                <GridEvents OnRecordDoubleClick="OnLeaseDoubleClickHandler"
+                        RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
+                        OnToolbarClick="ToolbarClickHandler" CommandClicked="OnLeaseCommandClicked" TValue="ArrendamentoVM" />
+                <GridColumns>
+                    <GridColumn Field=@nameof(ArrendamentoVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="325"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Ativo) HeaderText="@L["chkActive"]"
+                            TextAlign="TextAlign.Center" DisplayAsCheckBox="true" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Data_Inicio) HeaderText="@L["TituloInicio"]" Width="110" Format="d"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Data_Fim) HeaderText="@L["TituloFim"]" Width="110" Format="d">
+                        <Template>
+                            @{
+                                var leaseEnd = (context as ArrendamentoVM).Data_Fim;
+                                var chipCss = leaseEnd.Date < DateTime.Now.Date ? "e-warning" : "e-outline";
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@leaseEnd.ToShortDateString()" CssClass="@chipCss"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Data_Pagamento) TextAlign="TextAlign.Center"
+                            HeaderText="@L["TituloUltimoPagamento"]" Width="120" Format="d">
+                        <Template>
+                            @{
+                                var lastPayment = (context as ArrendamentoVM).Data_Pagamento;
+                                var paidMonth = lastPayment.Month;
+                                var paidYear = lastPayment.Year;
+                                var currentMonth = DateTime.Now.Month;
+                                var currentYear = DateTime.Now.Year;
+                                var ChipCss = (paidMonth < currentMonth && paidYear == currentYear) || (paidMonth > currentMonth && paidYear < currentYear) ? "e-warning" : "e-outline";
+                                var textToDisplay = lastPayment.ToShortDateString();
+                                if (lastPayment == DateTime.MinValue)
+                                {
+                                    textToDisplay = "N/A";
+                                }
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@textToDisplay" CssClass="@ChipCss"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+
+                                //<span>@textToDisplay</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn TextAlign="TextAlign.Center"
+                            HeaderText="@L["TituloDataAtualizacao"]" Width="150" Format="d">
+                        <Template>
+                            @{
+                                var leaseDate = (context as ArrendamentoVM).Data_Inicio;
+                                var leaseDateMonth = leaseDate.Month;
+                                var currentMonth = DateTime.Now.Month;
+
+                                var leaseDateYear = leaseDate.Year;
+                                var currentYear = DateTime.Now.Year;
+
+                                var leaseUpdateDate = new DateTime(DateTime.Now.Year, leaseDateMonth, 1);
+
+                                var ChipCss = leaseDateMonth == currentMonth ?
+                                "e-danger" : leaseDateMonth == currentMonth + 1 ?
+                                "e-warning" :
+                                "e-outline";
+                                var textToDisplay = leaseUpdateDate.ToShortDateString();
+                                if (leaseDate == DateTime.MinValue)
+                                {
+                                    textToDisplay = "N/A";
+                                }
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@textToDisplay" CssClass="@ChipCss"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+
+                                //<span>@textToDisplay</span>
+                            }
+                        </Template>
+                    </GridColumn>
+
+                    <GridColumn Field=@nameof(ArrendamentoVM.Prazo_Meses) TextAlign="TextAlign.Center" HeaderText="@L["TituloPrazoEmMeses"]" Width="100"></GridColumn>
+                    <GridColumn HeaderText="@L["TituloMesesDecorridos"]" Width="110">
+                        <Template>
+                            @{
+                                var currentLease = (context as ArrendamentoVM);
+                                string textToDisplay = "";
+                                var monthsUntilNow = GetMonthDifference(currentLease.Data_Inicio, DateTime.Now);
+                                if (monthsUntilNow == 0) // contrato ainda não iniciou...
+                                    textToDisplay = "N/A";
+                                else
+                                    textToDisplay = monthsUntilNow.ToString("00");
+
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@textToDisplay" CssClass="e-outline"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn HeaderText="Faltam (meses)" Width="100">
+                        <Template>
+                            @{
+                                var currentLease = (context as ArrendamentoVM);
+                                var monthsUntilNow = GetMonthDifference(currentLease.Data_Inicio, DateTime.Now);
+                                var monthsToEnd = GetMonthDifference(DateTime.Now, currentLease.Data_Fim);
+
+                                var textToDisplay = monthsToEnd > 0 ?
+                                monthsToEnd.ToString("00") :
+                                L["TituloContratoTerminado"];
+                                var chipCss = monthsToEnd == 4 ? "e-warning" : monthsToEnd >= 0 && monthsToEnd <= 3 ? "e-danger" : monthsToEnd <= 0 ? "e-outline e-danger" : "e-outline";
+
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@textToDisplay" CssClass="@chipCss"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Valor_Renda) HeaderText="@L["TituloRenda"]" Width="100" Format="C2">
+                        <Template>
+                            @{
+                                var currentLease = (context as ArrendamentoVM);
+                                <span>@currentLease!.Valor_Renda.ToString("C", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                            }
+                        </Template>
+
+                    </GridColumn>
+
+                    <GridColumn Field=@nameof(ArrendamentoVM.ContratoEmitido) DisplayAsCheckBox=true
+                            HeaderText="@L["TituloContratoEmitido"]" Width="100" TextAlign="TextAlign.Center"></GridColumn>
+
+                    @*<GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
+                            HeaderText="Carta Atualiz. enviada" Width="120" TextAlign="TextAlign.Center"/>*@
+
+                    <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="230">
+                        <GridCommandColumns>
+                            <GridCommandColumn Type=CommandButtonType.Edit
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                            </GridCommandColumn>
+                            <GridCommandColumn Type=CommandButtonType.Delete
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                            </GridCommandColumn>
+                        </GridCommandColumns>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+        <div>
+            @if (LeaseAlerts.Any())
+            {
+                foreach (var item in LeaseAlerts)
+                {
+                    if (item.Value == 1)
+                    {
+                        <SfMessage Severity="MessageSeverity.Success" Variant="MessageVariant.Text">@item.Key</SfMessage>
+                    }
+                    else if (item.Value == 2)
+                    {
+                        <SfMessage Severity="MessageSeverity.Warning" Variant="MessageVariant.Text">@item.Key</SfMessage>
+                    }
+                    else if (item.Value == 3)
+                    {
+                        <SfMessage Severity="MessageSeverity.Error" Variant="MessageVariant.Text">@item.Key</SfMessage>
+                    }
+
+
+                }
+            }
+        </div>
+    </div>
+
+    <SfSpinner @ref="SpinnerObj"
+           @bind-Visible="@SpinnerVisibility"
+           Label="@L["MSG_PreparandoDados"]" Size="50"
+           Type="SpinnerType.Bootstrap4"
+           CssClass="e-spin-overlay" />
+}
+
+<SfDialog Width="40%"
+          Height="auto"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditLeaseVisibility">
+    <DialogTemplates>
+        <Content>
+            <AddEditArrendamento SelectedLease="@SelectedLease"
+                                 EditMode="@RecordMode"
+                                 OnTenantBalanceChange="@HandleTenantBalanceChange"
+                                 HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveLeaseData" Content="@L["btnSalvar"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="(()=>AddEditLeaseVisibility = false)" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog Target="#target"
+          Width="50%"
+          Height="85%"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="true"
+          @bind-Visible="ShowPdfVisibility">
+    <DialogTemplates>
+        <Content>
+            @if (!string.IsNullOrEmpty(PdfFilePath))
+            {
+                <PdfViewer PdfPath="@PdfFilePath" />
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fas fa-times"
+                          @onclick="(()=>ShowPdfVisibility = false)">
+                    Voltar
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+
+@*User exited insert/edit action with data changed.*@
+<ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["TituloDadosAlterados"]"
+                   Message="@SelectedLease?.Id.ToString()"
+                   Visible="@IsDirty"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="IgnoreChangesAlert"
+                   OnConfirmationNo="ContinueEdit" />
+
+<ConfirmAppWarning AlertMessageType="@alertMessageType"
+                   DialogTitle="@L["TituloEstenderPrazoContrato"]"
+                   Message="@SelectedLease?.NomeInquilino"
+                   Visible="@LeaseTermVisibility"
+                    AlertMessageNote ="@LeaseTermCaptionNote"
+                   AlertMessage="@LeaseTermCaption"
+                   OnConfirmationYes="@(async ()=>await ExtendLeaseTerm(SelectedLease.Id))"
+                   OnConfirmationNo="@(()=>LeaseTermVisibility = false)" />
+
+<ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["SuccessInsert"]"
+                   Message="@SelectedLease?.Fracao"
+                   Visible="@IssueRentalContractVisibility"
+                   AlertMessage="Emite Contrato?."
+                   OnConfirmationYes="@(async ()=>await Emite_Contrato())"
+                   OnConfirmationNo="@(()=>IssueRentalContractVisibility = false)" />
+
+<ConfirmSendingLetter AlertMessageType="AlertMessageType.Warning"
+                      DialogTitle="@L["TituloEnvioCartaInquilino"]"
+                      Lease="@SelectedLease"
+                      TenantName="@SelectedLease?.NomeInquilino"
+                      LetterType="@SendingLetterType"
+                      Visible="@SendLetterDialogVisibility"
+                      OnConfirmationYes="HandleIssuedLetterConfirmation"
+                      OnConfirmationNo="HandleIssuedLetterCancelation" />
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@(L["DeleteMsg"] + " " + L["TituloArrendamento"])"
+                        Message="@DeleteLeaseCaption" 
+                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteLeaseVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="ConfirmDeleteNo" />
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+
+<ValidateErrorComponent Visible="@ErrorVisibility"
+                        ValidationMessages="@ValidationMessages"
+                        OnCloseDialog="CloseValidationErrorBox" />
+
+<SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar="true"
+         Title="@ToastTitle" Icon="fas fa-user"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="5000"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+    </ToastButtons>
+
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+
+
+
+<style>
+    .source-options {
+        display: flex;
+        justify-content: flex-start;
+        gap: 5px;
+        align-items: center;
+        margin-left: 5px;
+        margin-right: 2px;
+        border-radius: 10px;
+    }
+
+    .e-round-corner {
+        border-radius: 10px;
+    }
+</style>

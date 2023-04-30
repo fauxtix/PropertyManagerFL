@@ -1,0 +1,158 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.Contactos;
+@using PropertyManagerFL.Application.ViewModels.EstadoCivil;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.Application.ViewModels.Proprietarios;
+@using PropertyManagerFL.UI.ApiWrappers;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+@inject IStringLocalizer<App> L
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="landlord-64"></HeaderDialogComponent>
+    <hr />
+</div>
+<div hidden="@EditMode == false">
+    <SfMessage Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=true Variant="MessageVariant.Text">Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento</SfMessage>
+</div>
+<div>
+    <EditForm Model="Owner" style="margin:auto;padding:10px;">
+        <div class="row">
+            <div class="form-group mb-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="@L["TituloNome"]"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="@FloatLabelType.Always"
+                           @bind-Value="@Owner!.Nome">
+                </SfTextBox>
+            </div>
+            <div class="form-group my-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="@L["TituloMorada"]"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.Morada">
+                </SfTextBox>
+            </div>
+            <div class="form-group my-2">
+                <SfTextBox Enabled="true"
+                           Placeholder="@L["TituloNaturalidade"]"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.Naturalidade">
+                </SfTextBox>
+            </div>
+            <div class="group-box my-2">
+                <SfDatePicker Enabled="true" Placeholder="@L["TituloDtNascimento"]" Width="160px"
+                              CssClass="e-align-middle e-corner"
+                              FloatLabelType="FloatLabelType.Always"
+                              @bind-Value="@Owner.DataNascimento">
+                </SfDatePicker>
+
+                <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                Width="150px" Value="@idxEstadoCivil" ShowClearButton="true"
+                                FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
+                    <DropDownListTemplates TItem="LookupTableVM">
+                    </DropDownListTemplates>
+                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeEstadoCivil"></DropDownListEvents>
+                    <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                </SfDropDownList>
+            </div>
+            <div class="group-box mt-2">
+                <SfTextBox Placeholder="@L["TituloDocumentacao"]"
+                           CssClass="e-field  e-corner custom-class" Width="150px"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.Identificacao">
+                </SfTextBox>
+                <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]" Width="150px"
+                              CssClass="e-align-middle e-corner"
+                              FloatLabelType="FloatLabelType.Always"
+                              @bind-Value="@Owner.ValidadeCC">
+                    <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+                </SfDatePicker>
+                <SfTextBox Placeholder="NIF"
+                           CssClass="e-field  e-corner custom-class" Width="150px"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.NIF">
+                </SfTextBox>
+            </div>
+            <div class="group-box my-2">
+                <SfTextBox Placeholder="@L["Site_Menu_Contactos"]" Width="150px"
+                           CssClass="e-field  e-corner custom-class"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.Contacto">
+                </SfTextBox>
+                <SfTextBox Enabled="true"
+                           Placeholder="e-mail"
+                           CssClass="e-field e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner!.eMail">
+                </SfTextBox>
+            </div>
+            <div class="form-group mt-2">
+                <SfTextBox Multiline=true Placeholder="@L["TituloObservacoes"]"
+                           HtmlAttributes="NotesAttribute"
+                           CssClass="e-field e-corner"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@Owner.Notas">
+                </SfTextBox>
+            </div>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] public IProprietarioService? proprietarioService { get; set; }
+
+    [Parameter] public ProprietarioVM? Owner { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+
+    protected int idxEstadoCivil;
+
+
+    public IEnumerable<LookupTableVM>? MaritalStatus { get; set; }
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+{
+            {"rows", "3" }
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
+        idxEstadoCivil = Owner!.ID_EstadoCivil;
+    }
+
+    protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxEstadoCivil = args.Value;
+        Owner!.ID_EstadoCivil = idxEstadoCivil;
+    }
+}
+
+<style>
+
+    .columns {
+        display: flex;
+        flex-direction: row;
+        /*        flex-wrap: wrap;*/
+        align-items: stretch;
+        gap: 3px;
+        width: 100%;
+    }
+
+    .column {
+        flex: 33.33%;
+    }
+
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+</style>

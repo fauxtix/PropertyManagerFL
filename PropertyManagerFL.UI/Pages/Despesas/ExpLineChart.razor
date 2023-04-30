@@ -1,0 +1,72 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.Stats;
+@using PropertyManagerFL.Core.Entities;
+@using Syncfusion.Blazor.Charts
+
+@inject IStringLocalizer<App> localizerApp
+@inject IStatsService statsService
+@inject IStringLocalizer<App> L
+
+@attribute [Authorize]
+
+@if (categoriesPreviousYearSummary is null && categoriesSummaryByYear is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="row">
+        <div class="col-lg-6 control-section sb-property-border">
+            <div class="control-section">
+                <SfChart Title="@L["TituloTotalDespesas"]">
+                    <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                    </ChartPrimaryXAxis>
+                    <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]"></ChartPrimaryYAxis>
+                    <ChartSeriesCollection>
+                        <ChartSeries Name="@(year.ToString())" DataSource="@categoriesSummaryByYear" XName="Descricao" YName="TotalDespesas" Type="ChartSeriesType.Column">
+                            <ChartMarker>
+                                <ChartDataLabel Visible="true"></ChartDataLabel>
+                            </ChartMarker>
+                        </ChartSeries>
+                    </ChartSeriesCollection>
+                </SfChart>
+            </div>
+        </div>
+        @if (previousYearWithData)
+        {
+            <div class="col-lg-6 control-section sb-property-border">
+                <div class="control-section">
+                    <SfChart Title="@L["TituloTotalDespesas"]">
+                        <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+                        </ChartPrimaryXAxis>
+                        <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]"></ChartPrimaryYAxis>
+                        <ChartSeriesCollection>
+                            <ChartSeries Name="@(previousYear.ToString())" DataSource="@categoriesPreviousYearSummary" XName="Descricao" YName="TotalDespesas" Type="ChartSeriesType.Column">
+                                <ChartMarker>
+                                    <ChartDataLabel Visible="true"></ChartDataLabel>
+                                </ChartMarker>
+                            </ChartSeries>
+                        </ChartSeriesCollection>
+                    </SfChart>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+
+    [Parameter] public int year { get; set; }
+    protected IEnumerable<ExpensesSummaryData> categoriesSummaryByYear { get; set; }
+    protected IEnumerable<ExpensesSummaryData> categoriesPreviousYearSummary { get; set; } = null;
+    protected bool previousYearWithData = true;
+    protected int previousYear;
+
+    protected override async Task OnInitializedAsync()
+    {
+        previousYear = year - 1;
+        categoriesSummaryByYear = await statsService.GetTotalExpenses_ByYear(year);
+        categoriesPreviousYearSummary = await statsService.GetTotalExpenses_ByYear(previousYear);
+        previousYearWithData = categoriesPreviousYearSummary.Count() > 0;
+    }
+
+}

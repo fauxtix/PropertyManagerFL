@@ -1,0 +1,158 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.Despesas;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.Application.ViewModels.TipoDespesa;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+
+<div class="container">
+    <div>
+        <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="payment" />
+        <hr style="color:black" />
+    </div>
+    <EditForm Model="SelectedExpense">
+        <div class="group-box justify-content-around p-3">
+            <SfDatePicker Enabled="true" Placeholder="@L["TituloData"]" Width="160px"
+                          CssClass="e-align-middle e-corner"
+                          FloatLabelType="FloatLabelType.Always"
+                          @bind-Value="@SelectedExpense!.DataMovimento">
+                <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+            </SfDatePicker>
+            <SfNumericTextBox Placeholder="@L["TituloValorPago"]" @bind-Value="@SelectedExpense.Valor_Pago"
+                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                              Width="150px" Min=1
+                              Max="50000" Step="10" Decimals="2"
+                              ShowSpinButton=true
+                              Currency="EUR" />
+        </div>
+        <div class="group-box mt-3">
+            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            Value="@idxCategoriaDespesa" ShowClearButton="true"
+                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="@L["TituloCategoria"]" DataSource="@CategoriasDespesa" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="LookupTableVM">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeCategoriaDespesa"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+            </SfDropDownList>
+
+            <SfDropDownList TValue="int" TItem="TipoDespesaVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            Value="@idxTipoDespesa" ShowClearButton="true"
+                            Enabled="@ShowTipoDespesa"
+                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="@L["TituloSubCategoria"]" DataSource="@TipoDespesas" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="TipoDespesaVM">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="TipoDespesaVM" ValueChange="onChangeTipoDespesa"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <div class="group-box mt-3">
+            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            Value="@idxModoPagamento" ShowClearButton="true"
+                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="@L["TituloModoPagamento"]" DataSource="@ModosPagamento" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="LookupTableVM">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeModoPagamento"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+            </SfDropDownList>
+            <SfTextBox Enabled="true"
+                       Placeholder="@L["TituloNumeroDocumento"]"
+                       CssClass="e-field  e-corner"
+                       FloatLabelType="@FloatLabelType.Always"
+                       @bind-Value="@SelectedExpense!.NumeroDocumento">
+            </SfTextBox>
+
+
+        </div>
+        <div class="mt-3">
+            <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
+                       HtmlAttributes="NotesAttribute"
+                       CssClass="e-field e-corner"
+                       FloatLabelType="FloatLabelType.Always"
+                       @bind-Value="@SelectedExpense.Notas">
+            </SfTextBox>
+        </div>
+    </EditForm>
+</div>
+
+@code {
+
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] IDespesaService? DespesasService { get; set; }
+    [Inject] IStringLocalizer<App>? L { get; set; }
+
+    public IEnumerable<LookupTableVM>? CategoriasDespesa { get; set; }
+    public IEnumerable<LookupTableVM>? ModosPagamento { get; set; }
+    public IEnumerable<TipoDespesaVM>? TipoDespesas { get; set; }
+
+    [Parameter] public DespesaVM? SelectedExpense { get; set; }
+    [Parameter] public bool EditMode { get; set; } = true;
+    [Parameter] public string? HeaderCaption { get; set; }
+
+    protected int idxCategoriaDespesa;
+    protected int idxTipoDespesa;
+    protected int idxModoPagamento;
+
+    protected int IdCategoriaDespesa;
+    protected int IdTipoDespesa;
+    protected int IdModoPagamento;
+    protected bool ShowTipoDespesa = false;
+
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "3" }
+    };
+
+    protected override void OnInitialized()
+    {
+        IdCategoriaDespesa = SelectedExpense!.ID_CategoriaDespesa;
+        IdModoPagamento = SelectedExpense.ID_ModoPagamento;
+
+        ShowTipoDespesa = EditMode ? true : false;
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+
+        idxCategoriaDespesa = SelectedExpense!.ID_CategoriaDespesa;
+        idxTipoDespesa = SelectedExpense!.ID_TipoDespesa;
+        idxModoPagamento = SelectedExpense!.ID_ModoPagamento;
+
+        CategoriasDespesa = (await LookupTablesService!.GetLookupTableData("CategoriaDespesa")).ToList();
+        ModosPagamento = (await LookupTablesService!.GetLookupTableData("FormaPagamento")).ToList();
+        TipoDespesas = await DespesasService!.GetTipoDespesa_ByCategoriaDespesa(idxCategoriaDespesa);
+
+        StateHasChanged();
+    }
+
+    protected async Task onChangeCategoriaDespesa(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxCategoriaDespesa = args.Value;
+        TipoDespesas = await DespesasService!.GetTipoDespesa_ByCategoriaDespesa(idxCategoriaDespesa);
+        ShowTipoDespesa = true;
+        SelectedExpense!.ID_CategoriaDespesa = idxCategoriaDespesa;
+    }
+
+    protected void onChangeModoPagamento(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxModoPagamento = args.Value;
+        SelectedExpense!.ID_ModoPagamento = idxModoPagamento;
+    }
+
+    protected void onChangeTipoDespesa(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TipoDespesaVM> args)
+    {
+        idxTipoDespesa = args.Value;
+        SelectedExpense!.ID_TipoDespesa = idxTipoDespesa;
+    }
+
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+</style>

@@ -1,0 +1,230 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>aspnet-PropertyManagerFL.UI-2861831a-0603-4e08-9ae8-2b0d1838799b</UserSecretsId>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <DocumentationFile>PropertyManagerFL.Api</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Remove="Pages\Admin\ViewLogins.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="appsettings.Production.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="blazored.menu" Version="2.2.0" />
+    <PackageReference Include="BlazorGoogleMaps" Version="2.4.4" />
+    <PackageReference Include="Blazorized.AdminLte" Version="0.1.8" />
+    <PackageReference Include="Blazorized.AdminLte.Content" Version="3.0.7" />
+    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.11" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.13" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.13">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
+    <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.2.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" />
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Cards" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.CircularGauge" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager.PhysicalFileProvider" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Lists" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.PdfViewerServer.Windows" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Popups" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.3.0.56" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="20.3.0.56" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PropertyManagerFL.Application\PropertyManagerFL.Application.csproj" />
+    <ProjectReference Include="..\PropertyManagerFL.Core\PropertyManagerFL.Core.csproj" />
+    <ProjectReference Include="..\PropertyManagerFL.Infrastructure\PropertyManagerFL.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\EstateAgency\images\" />
+    <Folder Include="wwwroot\EstateAgency\js\" />
+    <Folder Include="wwwroot\images\Properties\" />
+    <Folder Include="wwwroot\uploads\properties\" />
+    <Folder Include="wwwroot\uploads\Tenants\" />
+    <Folder Include="wwwroot\uploads\unit_images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Areas\Identity\Pages\Account\LogOut.cshtml" />
+    <None Include="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
+    <None Include="Pages\Shared\_Layout.cshtml" />
+    <None Include="Pages\Shared\_LoginPartial.cshtml" />
+    <None Include="Pages\Shared\_ValidationScriptsPartial.cshtml" />
+    <None Include="wwwroot\EstateAgency\lib\bootstrap\css\bootstrap.min.css.map" />
+    <None Include="wwwroot\EstateAgency\lib\bootstrap\js\bootstrap.js" />
+    <None Include="wwwroot\EstateAgency\lib\bootstrap\js\bootstrap.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\bootstrap\js\bootstrap.min.js.map" />
+    <None Include="wwwroot\EstateAgency\lib\easing\easing.js" />
+    <None Include="wwwroot\EstateAgency\lib\easing\easing.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\font-awesome\fonts\fontawesome-webfont.svg" />
+    <None Include="wwwroot\EstateAgency\lib\font-awesome\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\EstateAgency\lib\ionicons\fonts\ionicons.svg" />
+    <None Include="wwwroot\EstateAgency\lib\ionicons\fonts\ionicons.woff2" />
+    <None Include="wwwroot\EstateAgency\lib\jquery\jquery-migrate.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\jquery\jquery.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\owlcarousel\LICENSE" />
+    <None Include="wwwroot\EstateAgency\lib\owlcarousel\owl.carousel.js" />
+    <None Include="wwwroot\EstateAgency\lib\owlcarousel\owl.carousel.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\popper\popper.min.js" />
+    <None Include="wwwroot\EstateAgency\lib\scrollreveal\scrollreveal.js" />
+    <None Include="wwwroot\EstateAgency\lib\scrollreveal\scrollreveal.min.js" />
+    <None Include="wwwroot\scss\.DS_Store" />
+    <None Include="wwwroot\scss\bootstrap\.DS_Store" />
+    <None Include="wwwroot\scss\bootstrap\bootstrap-grid.scss" />
+    <None Include="wwwroot\scss\bootstrap\bootstrap-reboot.scss" />
+    <None Include="wwwroot\scss\bootstrap\bootstrap.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_alert.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_background-variant.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_badge.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_border-radius.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_box-shadow.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_breakpoints.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_buttons.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_caret.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_clearfix.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_deprecate.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_float.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_forms.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_gradients.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_grid-framework.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_grid.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_hover.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_image.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_list-group.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_lists.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_nav-divider.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_pagination.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_reset-text.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_resize.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_screen-reader.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_size.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_table-row.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_text-emphasis.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_text-hide.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_text-truncate.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_transition.scss" />
+    <None Include="wwwroot\scss\bootstrap\mixins\_visibility.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_align.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_background.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_borders.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_clearfix.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_display.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_embed.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_flex.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_float.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_overflow.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_position.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_screenreaders.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_shadows.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_sizing.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_spacing.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_stretched-link.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_text.scss" />
+    <None Include="wwwroot\scss\bootstrap\utilities\_visibility.scss" />
+    <None Include="wwwroot\scss\bootstrap\vendor\_rfs.scss" />
+    <None Include="wwwroot\scss\bootstrap\_alert.scss" />
+    <None Include="wwwroot\scss\bootstrap\_badge.scss" />
+    <None Include="wwwroot\scss\bootstrap\_breadcrumb.scss" />
+    <None Include="wwwroot\scss\bootstrap\_button-group.scss" />
+    <None Include="wwwroot\scss\bootstrap\_buttons.scss" />
+    <None Include="wwwroot\scss\bootstrap\_card.scss" />
+    <None Include="wwwroot\scss\bootstrap\_carousel.scss" />
+    <None Include="wwwroot\scss\bootstrap\_close.scss" />
+    <None Include="wwwroot\scss\bootstrap\_code.scss" />
+    <None Include="wwwroot\scss\bootstrap\_custom-forms.scss" />
+    <None Include="wwwroot\scss\bootstrap\_dropdown.scss" />
+    <None Include="wwwroot\scss\bootstrap\_forms.scss" />
+    <None Include="wwwroot\scss\bootstrap\_functions.scss" />
+    <None Include="wwwroot\scss\bootstrap\_grid.scss" />
+    <None Include="wwwroot\scss\bootstrap\_images.scss" />
+    <None Include="wwwroot\scss\bootstrap\_input-group.scss" />
+    <None Include="wwwroot\scss\bootstrap\_jumbotron.scss" />
+    <None Include="wwwroot\scss\bootstrap\_list-group.scss" />
+    <None Include="wwwroot\scss\bootstrap\_media.scss" />
+    <None Include="wwwroot\scss\bootstrap\_mixins.scss" />
+    <None Include="wwwroot\scss\bootstrap\_modal.scss" />
+    <None Include="wwwroot\scss\bootstrap\_nav.scss" />
+    <None Include="wwwroot\scss\bootstrap\_navbar.scss" />
+    <None Include="wwwroot\scss\bootstrap\_pagination.scss" />
+    <None Include="wwwroot\scss\bootstrap\_popover.scss" />
+    <None Include="wwwroot\scss\bootstrap\_print.scss" />
+    <None Include="wwwroot\scss\bootstrap\_progress.scss" />
+    <None Include="wwwroot\scss\bootstrap\_reboot.scss" />
+    <None Include="wwwroot\scss\bootstrap\_root.scss" />
+    <None Include="wwwroot\scss\bootstrap\_spinners.scss" />
+    <None Include="wwwroot\scss\bootstrap\_tables.scss" />
+    <None Include="wwwroot\scss\bootstrap\_toasts.scss" />
+    <None Include="wwwroot\scss\bootstrap\_tooltip.scss" />
+    <None Include="wwwroot\scss\bootstrap\_transitions.scss" />
+    <None Include="wwwroot\scss\bootstrap\_type.scss" />
+    <None Include="wwwroot\scss\bootstrap\_utilities.scss" />
+    <None Include="wwwroot\scss\bootstrap\_variables.scss" />
+    <None Include="wwwroot\scss\style.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\App.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>App.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Resources\SfResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SfResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\js\main.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\App.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>App.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\SfResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
+
+</Project>

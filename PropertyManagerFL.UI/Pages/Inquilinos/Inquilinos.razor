@@ -1,0 +1,543 @@
+﻿@page "/inquilinos"
+@using PropertyManagerFL.Application.Shared.Enums
+@using PropertyManagerFL.Application.ViewModels.Fiadores
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using PropertyManagerFL.Application.ViewModels.Inquilinos
+@using System.Globalization
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+@using PropertyManagerFL.UI.Pages.Fiadores
+
+@*@inject IStringLocalizer<App> L*@
+
+@inherits InquilinosBase
+
+<PageTitle>@L["TituloMenuInquilinos"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]"></PageTitleComponent>
+
+@{
+    var Tool = (new List<object>() {
+        "Search",
+        "PdfExport",
+     new ItemModel()
+     {
+         Text = "Expand all",
+         TooltipText = "Expand all",
+         PrefixIcon = "e-expand"
+     },
+     new ItemModel()
+     {
+         Text = "Collapse all",
+         TooltipText = "Collapse all",
+         PrefixIcon = "e-collapse"
+     }
+    });
+}
+
+@if (Tenants is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container-fluid">
+        <div class="source-options">
+            <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
+                  @onclick="@onAddTenant" IsPrimary="true">
+            </SfButton>
+        </div>
+        <hr class="divider" />
+        <div class="table table-stripped table-hover">
+            <SfGrid ID="Tenants_Grid" Height="100%" @ref="tenantsGridObj"
+                EnableStickyHeader="true"
+                EnableAltRow="true"
+                EnableHover="true"
+                DataSource="@Tenants"
+                AllowFiltering="false"
+                AllowGrouping="false"
+                AllowPdfExport="true"
+                Toolbar="@Tool"
+                AllowPaging="true"
+                AllowSorting="true"
+                RowHeight="32"
+                AllowTextWrap="true">
+                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                <GridEvents OnRecordDoubleClick="OnTenantDoubleClickHandler"
+                        OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTenantCommandClicked" TValue="InquilinoVM" />
+                <GridTemplates>
+                    <DetailTemplate>
+                        <SfTab CssClass="e-outline e-info e-round-corner py-3" HeaderPlacement="HeaderPosition.Top">
+                            <TabItems>
+                                @*Conta corrente*@
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="@L["TituloContaCorrente"]"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @{
+                                            TenantId = (context as InquilinoVM)!.Id;
+                                            var tenantPaymentHistory = GetTenantPaymentHistory(TenantId);
+                                        }
+                                        <SfGrid TValue="CC_InquilinoVM"
+                                            DataSource="tenantPaymentHistory"
+                                            AllowFiltering="false"
+                                            AllowGrouping="false"
+                                            Width="80%" EnableAltRow="true"
+                                            AllowPaging="true"
+                                            AllowSorting="true"
+                                            RowHeight="32"
+                                            AllowTextWrap="true">
+                                            <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                                            <GridColumns>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.DataMovimento) HeaderText="@L["TituloMovimento"]" Width="130" Format="d"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.ValorPago) HeaderText="@L["TituloPagamento"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.Renda)
+                                                        TextAlign="TextAlign.Center" HeaderText="@L["TituloRenda"]" DisplayAsCheckBox="true" Width="80" Visible="false"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.Notas)
+                                                        HeaderText="@L["MSG_Appt_Validation_Remarks"]">
+                                                    <Template Context="remarks">
+                                                        @{
+                                                            var ctx = (remarks as CC_InquilinoVM);
+                                                            var isARent = ctx?.Notas?.ToLower().Contains("pagamento");
+                                                            var backColor = isARent is not null && isARent == false ? "yellow" : "white";
+                                                        }
+                                                            <span style="background-color:@backColor">@ctx?.Notas</span>
+                                                    </Template>
+                                                </GridColumn>
+                                            </GridColumns>
+                                        </SfGrid>
+                                    </ContentTemplate>
+                                </TabItem>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="@L["TituloFiador"]"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @{
+                                            TenantId = (context as InquilinoVM)!.Id;
+                                            var fiadores = GetTenantGuarantors(TenantId);
+                                            if (fiadores.Count() == 0)
+                                            {
+                                                <div class="source-options mt-2">
+                                                    <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@(L["btnNovo"] + " " + L["TituloFiador"])"
+                                                      @onclick="@onAddGuarantor" IsPrimary="true">
+                                                    </SfButton>
+                                                </div>
+                                            }
+
+                                            <SfGrid TValue="FiadorVM"
+                                            DataSource="@fiadores"
+                                            AllowFiltering="false"
+                                            AllowGrouping="false"
+                                            Width="70%"
+                                            AllowPaging="false"
+                                            AllowSorting="false"
+                                            RowHeight="32"
+                                            AllowTextWrap="true">
+                                                <GridEvents CommandClicked="OnGuarantorCommandClicked" TValue="FiadorVM" />
+                                                <GridColumns>
+                                                    <GridColumn Field=@nameof(FiadorVM.Nome) HeaderText="@L["lblNomeAutor"]" Width="250"></GridColumn>
+                                                    <GridColumn Field=@nameof(FiadorVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
+                                                        Width="130" HideAtMedia="(min-width: 900px)"
+                                                        TextAlign="TextAlign.Center"></GridColumn>
+                                                    <GridColumn Field=@nameof(FiadorVM.IRSAnual) HeaderText="@L["TituloIrsAnual"]"
+                                                        Format="C2"
+                                                        Width="130" HideAtMedia="(min-width: 900px)"
+                                                        TextAlign="TextAlign.Right"></GridColumn>
+                                                    <GridColumn Field=@nameof(FiadorVM.Vencimento) HeaderText="@L["TituloVencimento"]"
+                                                        Format="C2"
+                                                        Width="130" HideAtMedia="(min-width: 900px)"
+                                                        TextAlign="TextAlign.Right"></GridColumn>
+                                                    <GridColumn Field=@nameof(FiadorVM.eMail) HeaderText="@L["lblEmail"]" HideAtMedia="(min-width: 900px)" Width="250"></GridColumn>
+                                                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
+                                                        <GridCommandColumns>
+                                                            <GridCommandColumn Type=CommandButtonType.Edit
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                            <GridCommandColumn Type=CommandButtonType.Delete
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                        </GridCommandColumns>
+                                                    </GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
+                                        }
+                                    </ContentTemplate>
+                                </TabItem>
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="@L["TituloDocumentacao"]"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @{
+                                            TenantId = (context as InquilinoVM)!.Id;
+                                            var docs = GetTenantDocuments(TenantId);
+                                            <div class="row my-2">
+                                                <div class="col d-flex justify-content-start">
+                                                    <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
+                                                          @onclick="@onAddTenantDocument" IsPrimary="true">
+                                                    </SfButton>
+                                                </div>
+                                            </div>
+                                            <SfGrid TValue="DocumentoInquilinoVM"
+                                            DataSource="docs"
+                                            AllowFiltering="false"
+                                            AllowGrouping="false"
+                                            Width="80%"
+                                            AllowPaging="true"
+                                            AllowSorting="true"
+                                            RowHeight="32"
+                                            AllowTextWrap="true">
+                                                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                                                <GridEvents CommandClicked="OnTenantDocumentCommandClicked" TValue="DocumentoInquilinoVM" />
+                                                <GridColumns>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.UploadDate) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.DocumentPath) HeaderText="@L["TituloDocumento"]" Width="250"></GridColumn>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.StorageType) TextAlign="TextAlign.Center" HeaderText="@L["TituloTipo"]" Width="80"></GridColumn>
+                                                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
+                                                        <GridCommandColumns>
+                                                            <GridCommandColumn Type=CommandButtonType.Edit
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                            <GridCommandColumn Type=CommandButtonType.Delete
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                                                            </GridCommandColumn>
+                                                            <GridCommandColumn Type=CommandButtonType.None
+                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-success e-round",
+                                                                           IconCss = "fa fa-file"
+                                                                       })">
+                                                            </GridCommandColumn>
+
+                                                        </GridCommandColumns>
+                                                    </GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
+                                        }
+                                    </ContentTemplate>
+                                </TabItem>
+                            </TabItems>
+                        </SfTab>
+                    </DetailTemplate>
+                </GridTemplates>
+
+                <GridColumns>
+                    <GridColumn Field=@nameof(InquilinoVM.Id) HeaderText="#" IsIdentity=true IsPrimaryKey=true
+                            Width="80"></GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.Nome) HeaderText="@L["TituloNome"]" Width="250"></GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.Ativo) HeaderText="@L["chkActive"]" HideAtMedia="(min-width: 900px)"
+                            Width="100" DisplayAsCheckBox=true TextAlign="TextAlign.Center"></GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
+                            Width="130" HideAtMedia="(min-width: 900px)"
+                            TextAlign="TextAlign.Center"></GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.eMail) HeaderText="eMail" HideAtMedia="(min-width: 900px)" Width="250"></GridColumn>
+                    <GridColumn HeaderText="@L["TituloSaldoPrevisto"]"
+                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                        <Template>
+                            @{
+                                var inquilino = (context as InquilinoVM);
+                                var SaldoPrevisto = inquilino.SaldoPrevisto;
+                                <span>@inquilino!.SaldoPrevisto.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.SaldoCorrente) HeaderText="@L["TituloSaldoCorrente"]"
+                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                        <Template>
+                            @{
+                                var inquilino = (context as InquilinoVM);
+                                var saldoCorrente = inquilino.SaldoCorrente;
+                                var color = saldoCorrente < 0 ? "color:red" : "color:black";
+                                <span style="@color">@inquilino.SaldoCorrente.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn HeaderText="@L["TituloDiferenca"]"
+                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                        <Template>
+                            @{
+                                var inquilino = (context as InquilinoVM);
+                                var saldoCorrente = inquilino.SaldoCorrente;
+                                var diferenca = inquilino!.SaldoPrevisto > 0 ? inquilino!.SaldoPrevisto - inquilino.SaldoCorrente : 0;
+                                var color = diferenca > 0 ? "color:red" : "color:black";
+                                <span style="@color">@diferenca.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="100">
+                        <GridCommandColumns>
+                            <GridCommandColumn Type=CommandButtonType.Edit
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-primary e-round",
+                                                                           IconCss = "fa fa-edit"
+                                                                       })">
+                            </GridCommandColumn>
+                            <GridCommandColumn Type=CommandButtonType.Delete
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                            </GridCommandColumn>
+                        </GridCommandColumns>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+}
+
+<SfDialog CssClass="responsive-dialog-40"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditTenantVisibility">
+    <DialogTemplates>
+        <Content>
+            <AddEditInquilino Tenant="@SelectedTenant"
+                              EditMode="@RecordMode"
+                              HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveTenantData" Content="@L["btnSalvar"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog CssClass="responsive-dialog-30"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditFiadorVisibility">
+    <DialogTemplates>
+        <Content>
+            <AddEditFiador Fiador="@SelectedGuarantor"
+                           EditMode="@RecordMode"
+                           HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveFiadorData" Content="@L["btnSalvar"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+
+<SfDialog CssClass="responsive-dialog-30"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="AddEditDocumentVisibility">
+    <DialogTemplates>
+        <Content>
+            <DocumentosInquilino Document="@TenantDocument" EditMode="@RecordMode"
+                                 HeaderCaption="@(RecordMode == OpcoesRegisto.Gravar? EditCaption: NewCaption  )" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="SaveTenantDocument" Content="@L["btnSalvar"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner" Ic
+                          onCss="fas fa-times"
+                          @onclick="(()=>AddEditDocumentVisibility = false)" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog CssClass="responsive-pdf-word-viewer"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="true"
+          @bind-Visible="ShowFileVisibility">
+    <DialogTemplates>
+        <Header>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @TenantDocument!.Descricao
+                </h5>
+            </div>
+        </Header>
+        <Content>
+            @if (!string.IsNullOrEmpty(documentFilePath))
+            {
+                <PdfViewer PdfPath="@documentFilePath" />
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fas fa-times"
+                          @onclick="(()=>ShowFileVisibility = false)" Content="@L["MSG_GoBack"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog CssClass="responsive-pdf-word-viewer"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="true"
+          @bind-Visible="ShowWordDocumentVisibility">
+    <DialogTemplates>
+        <Header>
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    @TenantDocument!.Descricao
+                </h5>
+            </div>
+        </Header>
+        <Content>
+            @if (!string.IsNullOrEmpty(documentFilePath))
+            {
+                <DocumentEditor DocumentPath="@documentFilePath" />
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fas fa-times"
+                          @onclick="(()=>ShowWordDocumentVisibility = false)" Content="@L["MSG_GoBack"]">
+                    Voltar
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+
+@*User exited edition with data changed.*@
+<ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="@L["TituloDadosAlterados"]"
+                   Message="@(modulo == Modules.Inquilinos? SelectedTenant?.Nome : SelectedGuarantor.Nome)"
+                   Visible="@IsDirty"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="(modulo == Modules.Inquilinos? IgnoreTenantChangesAlert: IgnoreGuarantorChangesAlert)"
+                   OnConfirmationNo="(modulo == Modules.Inquilinos? ContinueEditTenant : ContinueEditGuarantor)" />
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@(L["DeleteMsg"] + " " + L["TituloInquilino"])"
+                        Message="@DeleteCaption"
+                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteTenantVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="ConfirmDeleteNo" />
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@(L["DeleteMsg"] + " " + L["TituloFiador"])"
+                        Message="@DeleteCaption"
+                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteGuarantorVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="ConfirmDeleteNo" />
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
+                        DialogTitle="@(TenantDocument is not null? TenantDocument.Descricao:"")"
+                        Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteDocumentVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteDocumentYes"
+                        OnConfirmationNo="ConfirmDeleteDocumentNo" />
+
+<ValidateErrorComponent Visible="@ErrorVisibility"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="CloseValidationErrorBox" />
+
+<SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
+           Visible=@WarningVisibility>@WarningMessage</SfMessage>
+
+<SfSpinner @ref="SpinnerObj"
+           Label="@L["MSG_PreparandoDados"]" Size="50"
+           Type="SpinnerType.Bootstrap5"
+           CssClass="e-spin-overlay">
+</SfSpinner>
+
+<SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+         Title="@ToastTitle" Icon="@ToastIcon"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="2000"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+    </ToastButtons>
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+@code {
+    protected void RowBound(RowDataBoundEventArgs<CC_InquilinoVM> Args)
+    {
+        bool dueValue = Args.Data.ValorEmDivida > 0;
+        if (dueValue)
+        {
+            Args.Row.AddClass(new string[] { "set-warning-color" });
+        }
+    }
+
+}
+<style>
+    .e-toolbar-right {
+        left: 0;
+    }
+
+    .set-warning-color {
+        background-color: orange;
+    }
+
+    .e-toolbar .e-toolbar-items.e-tbar-pos .e-toolbar-left {
+        left: 230px;
+    }
+
+    .e-collapse::before {
+        content: '\e80f';
+    }
+
+</style>

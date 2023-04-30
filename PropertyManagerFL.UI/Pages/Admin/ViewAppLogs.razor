@@ -1,0 +1,180 @@
+﻿@page "/admin/viewapplogs"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Logins
+@using PropertyManagerFL.Application.ViewModels.Logs
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+@inject IStringLocalizer<App> L
+@*@attribute [Authorize(Roles = "Admin")]*@
+
+@inherits ViewAppLogsBase
+@{
+    var Tool = (new List<object>() { "Search" });
+}
+
+<PageTitle>Log Viewer</PageTitle>
+<PageTitleComponent PageTitle="Log Viewer" WithBadge="false"></PageTitleComponent>
+
+@if (Logs is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="source-options">
+        <SfButton CssClass="e-danger e-round-corner mx-3 pull-left" IconCss="fa fa-trash" Content="@L["DeleteMsg"]"
+              @onclick="@onDeleteLogs">
+        </SfButton>
+        <SfButton CssClass="e-success e-round-corner mx-3 pull-left" IconCss="fa fa-eye" Content="Ver Logins"
+              @onclick="onViewLogins">
+        </SfButton>
+        <SfButton CssClass="e-primary e-round-corner mx-3 pull-left" IconCss="fa fa-table" Content="Todos os registos"
+              @onclick="onGetAll">
+        </SfButton>
+    </div>
+    <hr class="divider" />
+
+    <div id="target" class="contaimer-fluid">
+        <hr />
+        <div class="table table-striped table-responsive-sm">
+            <SfGrid DataSource="@Logs"
+                @ref="LogGrid"
+                AllowPaging="true"
+                AllowSelection="true"
+                AllowSorting="true"
+                AllowFiltering="true"
+                RowHeight="32"
+                Toolbar="@Tool"
+                Width="70%"
+                TValue="AppLogDto"
+                AllowTextWrap="true">
+                <GridPageSettings PageSize="15" PageSizes="@(new int[] { 15, 20, 50, 100, 200 })"></GridPageSettings>
+                <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
+                <GridEvents OnActionBegin="OnActionBegin" OnRecordDoubleClick="OnAppLogDoubleClickHandler"
+                        CommandClicked="OnAppLogCommandClicked"
+                        TValue="AppLogDto" />
+                <GridColumns>
+                    <GridColumn Field=@nameof(AppLogDto.Id) Width="80" TextAlign=TextAlign.Center
+                            HeaderText="ID#" AllowSorting="true">
+                    </GridColumn>
+                    <GridColumn Field=@nameof(AppLogDto.Message) Width="350"
+                            HeaderText="@L["TituloMensagem"]" AllowSorting="true">
+                    </GridColumn>
+
+                    <GridColumn Field=@nameof(AppLogDto.Level) Width="100"
+                            HeaderText="Level" AllowSorting="true">
+                        <Template>
+                            @{
+                                var currentEntry = (context as AppLogDto);
+                                var level = currentEntry.Level.ToLower();
+                                var chipStyle = level == "information" ? "e-primary" : level == "warning" ? "e-warning" : "e-danger";
+                                <SfChip>
+                                    <ChipItems>
+                                        <ChipItem CssClass="@chipStyle" Text="@currentEntry.Level" />
+                                    </ChipItems>
+                                </SfChip>
+                            }
+                        </Template>
+                    </GridColumn>
+                    <GridColumn Field=@nameof(AppLogDto.TimeStamp) Width="130"
+                            TextAlign="TextAlign.Center"
+                            HeaderText="@L["TituloData"]" AllowSorting="true">
+
+                        <FilterTemplate>
+                            @{
+                                <SfDateRangePicker Placeholder="@L["TituloSelecao"]" Width="500" @bind-StartDate="StartDate" @bind-EndDate="EndDate"
+                                           TValue="DateTime">
+                                    <DateRangePickerEvents TValue="DateTime" ValueChange="LogDateChangeHandler"></DateRangePickerEvents>
+                                </SfDateRangePicker>
+                            }
+                        </FilterTemplate>
+
+                    </GridColumn>
+                    <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
+                        <GridCommandColumns>
+                            <GridCommandColumn Type=CommandButtonType.Edit
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-success e-round",
+                                                                           IconCss = "fa fa-eye"
+                                                                       })">
+                            </GridCommandColumn>
+                            <GridCommandColumn Type=CommandButtonType.Delete
+                                           ButtonOption="@(new CommandButtonOptions()
+                                                                       {
+                                                                           CssClass = "e-btn e-danger e-round",
+                                                                           IconCss = "fa fa-trash"
+                                                                       })">
+                            </GridCommandColumn>
+                        </GridCommandColumns>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+}
+
+<SfDialog CssClass="responsive-dialog-30"
+          Height="auto"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="ViewLogVisibility">
+    <DialogEvents Opened="@onOpenLogDialog"></DialogEvents>
+    <DialogTemplates>
+        <Content>
+            <ViewAppLog SelectedLogEntry="SelectedAppLog" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="@(()=>ViewLogVisibility = false)" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error"
+                        DialogTitle="Apagar todos os registos do log!"
+                        Message="@DeleteLogEntryCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteLogsDialogVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="ConfirmDeleteYes"
+                        OnConfirmationNo="@(()=>DeleteLogsDialogVisibility = false)" />
+
+<ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error"
+                        DialogTitle="Apagar registo?"
+                        Message="@DeleteLogEntryCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                        Visible="@DeleteLogDialogVisibility"
+                        DialogWidth="20%"
+                        DialogHeight="auto"
+                        OnConfirmationYes="DeleteLogRecord"
+                        OnConfirmationNo="@(()=>DeleteLogDialogVisibility = false)" />
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Info"
+                    Title="@alertTitle" DialogWidth="28%"
+                    OperationType="OpcoesRegisto.Info"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+<SfSpinner @ref="SpinnerObj"
+           @bind-Visible="@SpinnerVisibility"
+           Label="@L["TituloProcessandoPedido"]" Size="50"
+           Type="SpinnerType.Bootstrap4"
+           CssClass="e-spin-overlay" />
+
+
+
+<style>
+    .e-grid .e-gridheader {
+        position: -webkit-sticky;
+        position: sticky;
+        top: 56px;
+        z-index: 1;
+    }
+</style>

@@ -1,0 +1,444 @@
+﻿@page "/backupuploads/{BackupOption:int}"
+
+@using System.Diagnostics
+@using ICSharpCode.SharpZipLib.Zip
+@using PropertyManagerFL.Application.Shared.Enums
+@using Syncfusion.Blazor.ProgressBar
+@using Microsoft.Extensions.Localization
+
+
+@using Microsoft.AspNetCore.Hosting
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Logging
+
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+<div class="title">
+    Backup App resources
+</div>
+<div class="underline py-2"></div>
+<hr />
+
+<SfDialog @bind-Visible="@ConfirmBackupVisibility"
+          Width="450px" Height="auto"
+          ShowCloseIcon="false">
+    <DialogTemplates>
+        <Header>
+            <div class="text-wrap">
+                Backup (Zip)
+            </div>
+        </Header>
+        <Content>
+            <div class="row">
+                <div class="col-9">
+                    <AlertMessage Message="@localizerApp["MSG_ConfirmarOperacao"]" MessageType="AlertMessageType.Success"></AlertMessage>
+                </div>
+                <RightSideImageComponent Operation="@(AppDefinitions.OpcoesRegisto.Zip)" />
+            </div>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-btn e-primary e-round-corner"
+                          IconCss="fas fa-check"
+                          @onclick="ConfirmBackupYes">
+                    &nbsp;@(localizerApp["Sim"].Value)
+                </SfButton>
+                <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fas fa-times "
+                          @onclick="ConfirmBackupNo">
+                    &nbsp;@(localizerApp["Nao"])
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog @bind-Visible="@BackupZipVisibility"
+          Width="550px" Height="auto"
+          ShowCloseIcon="true">
+    <DialogTemplates>
+        <Header>
+            <div class="text-wrap">
+                Backup @OptionMessage static files
+                @if (iFileCount > 0)
+                {
+                    <span>&nbsp;(@iFileCount)</span>
+                }
+            </div>
+        </Header>
+        <Content>
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="py-2">
+                        <SfProgressBar @ref="PBObject" Type="ProgressType.Circular" ID="CircularSegment"
+                                       Height="200px" Width="200px" TrackThickness="15" ProgressThickness="15"
+                                       Value="@PercentCompleted" Minimum="0" Maximum="100" StartAngle="220"
+                                       EndAngle="140" SegmentCount="50" GapWidth="5"
+                                       CornerRadius="CornerType.Square"
+                                       Theme="@CurrentTheme"
+                                       ShowProgressValue="true"
+                                       TrackColor="@ColorTrack">
+                            <ProgressBarAnimation Enable="true" Duration="200" Delay="0" />
+                        </SfProgressBar>
+                    </div>
+                </div>
+                <div class="row">
+                    @if (iValue > 0)
+                    {
+                        <div class="col-1 e-small">@iValue</div>
+                    }
+                    <div class="col-11 small">@FileProcessed</div>
+                </div>
+            </div>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton @ref="ProcessBtn" CssClass="e-btn e-primary e-round-corner"
+                          IconCss="fas fa-check"
+                          Disabled="@IsTaskRunning"
+                          @onclick="BackupStaticFiles" Content="@localizerApp["TituloConfirmar"]">
+                </SfButton>
+                <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="GetBack">
+                    &nbsp;@(localizerApp["btnCancelar"])
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog @bind-Visible="@GoHomeVisibility" Width="550px" Height="auto">
+    <DialogTemplates>
+        <Content>
+            <AlertMessage Message="@ResultMessage" MessageType="@AlertType" />
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fas fa-times"
+                          @onclick="NavigateRoot">
+                    &nbsp;@(localizerApp["BtnSalir"])
+                </SfButton>
+            </div>
+        </FooterTemplate>
+
+    </DialogTemplates>
+
+</SfDialog>
+
+@code {
+    [Inject]
+    public IWebHostEnvironment? _hostingEnvironment { get; set; }
+    [Inject]
+    public IConfiguration? config { get; set; }
+    [Inject]
+    public ILogger<BackupUploads>? logger { get; set; }
+    [Inject]
+    public IStringLocalizer<App>? localizerApp { get; set; }
+    [Inject]
+    public NavigationManager? Navigation { get; set; }
+
+    [Parameter]
+    public int BackupOption { get; set; }
+
+    public int iValue { get; set; } = 0;
+    public int iMinimum { get; set; }
+    public int iFileCount { get; set; }
+    public IEnumerable<string>? filenames { get; set; }
+    public string? FileProcessed { get; set; }
+    public int PercentCompleted { get; set; }
+
+    protected string? UploadFolder_Properties;
+    protected string? UploadFolder_Tenants;
+    protected string? UploadFolder_Units;
+    protected string? ImagesFolder;
+    protected string? BackupPath;
+    protected AlertMessage Alerta;
+    protected string? ResultMessage;
+    protected AlertMessageType AlertType;
+
+    protected Theme CurrentTheme = Theme.Bootstrap4;
+    string ColorTrack = "#969696";
+    protected SfProgressBar PBObject;
+
+    public SfButton? ProcessBtn { get; set; }
+    protected string Content = "Progress";
+
+    public bool ConfirmBackupVisibility { get; set; } = true;
+    public bool BackupZipVisibility { get; set; } = false;
+    public bool GoHomeVisibility { get; set; } = false;
+
+    bool IsTaskRunning = false;
+
+    string[]? uploadFolders;
+    string? ZipFileName;
+    string? UploadFolder;
+    string? OptionMessage;
+
+    protected class UploadFilesModel
+    {
+        public string FolderName { get; set; }
+        public string FileName { get; set; }
+        public string OptionCaption { get; set; }
+    }
+
+    protected List<UploadFilesModel> uploadsModel;
+    protected override void OnInitialized()
+    {
+        ZipFileName = "";
+        UploadFolder = "";
+        OptionMessage = "";
+        UploadFolder_Properties = Path.Combine(_hostingEnvironment!.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsPropriedades"));
+        UploadFolder_Tenants = Path.Combine(_hostingEnvironment.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsInquilinos"));
+        UploadFolder_Units = Path.Combine(_hostingEnvironment.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsUnits"));
+
+        uploadFolders = new string[] { UploadFolder_Properties, UploadFolder_Tenants, UploadFolder_Units };
+        BackupPath = config.GetValue<string>("AppSettings:PastaBackupUploads");
+    }
+
+    protected override void OnParametersSet()
+    {
+        uploadsModel = new()
+        {
+            new UploadFilesModel()
+            {
+                 FolderName = UploadFolder_Properties!,
+                  FileName = "Properties",
+                   OptionCaption = localizerApp["TituloMenuImoveis"]
+            },
+            new UploadFilesModel()
+            {
+                 FolderName = UploadFolder_Tenants!,
+                  FileName = "Tenants",
+                   OptionCaption = localizerApp["TituloMenuInquilinos"]
+            },
+            new UploadFilesModel()
+            {
+                 FolderName = UploadFolder_Units!,
+                  FileName = "Units",
+                   OptionCaption = localizerApp["TituloMenuFracoes"]
+            }
+        };
+    }
+
+    private void NavigateRoot()
+    {
+        Navigation?.NavigateTo("/");
+    }
+    public void ValueHandler(ProgressValueEventArgs args)
+    {
+        args.Value = PercentCompleted;
+    }
+
+    private void ConfirmBackupYes()
+    {
+        BackupZipVisibility = true;
+    }
+
+    private void ConfirmBackupNo()
+    {
+        ConfirmBackupVisibility = false;
+        BackupZipVisibility = false;
+        Navigation!.NavigateTo("/");
+    }
+
+    private void GetBack()
+    {
+        BackupZipVisibility = false;
+    }
+    private async Task BackupStaticFiles()
+    {
+        try
+        {
+            logger?.LogInformation("Início de backup de imagens estáticas");
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            foreach (var item in uploadsModel)
+            {
+                await CreateZip(item.FileName, item.FolderName);
+            }
+
+            stopWatch.Stop();
+            TimeSpan ts = stopWatch.Elapsed;
+
+            string elapsedTime = String.Format("{0:00}:{1:00}",
+                ts.Minutes, ts.Seconds);
+
+            ConfirmBackupVisibility = false;
+            BackupZipVisibility = false;
+
+            ResultMessage = $"{localizerApp["TituloSucesso"]}. ({elapsedTime}).";
+            AlertType = AlertMessageType.Success;
+            GoHomeVisibility = true;
+        }
+        catch (Exception ex)
+        {
+            ResultMessage = $"{localizerApp["ErroGeral"]}.\n{localizerApp["TituloMensagem"]}: {ex.Message}";
+            AlertType = AlertMessageType.Error;
+        }
+    }
+
+    public async Task<bool> CreateZip(string zipFileName, string folderToZip)
+    {
+        string ZipFile = $"{BackupPath}\\{zipFileName}.zip";
+        logger?.LogInformation($"Compactando {ZipFile}");
+        try
+        {
+            filenames = Directory.EnumerateFiles($@"{folderToZip}", "*", SearchOption.AllDirectories);
+            iFileCount = filenames.Count();
+            if (filenames.Count() == 0)
+            {
+                return false;
+            }
+
+            IsTaskRunning = true;
+
+            if (File.Exists(ZipFile))
+            {
+                File.Delete(ZipFile);
+            }
+
+            if (!Directory.Exists(BackupPath))
+            {
+                Directory.CreateDirectory(BackupPath!);
+            }
+
+            using (ZipOutputStream s = new ZipOutputStream(File.Create(ZipFile)))
+            {
+                s.SetLevel(9); // 0 - store only to 9 - means best compression
+                               //s.Password = "Kieunv00#";
+
+                byte[] buffer = new byte[4096];
+                foreach (string file in filenames)
+                {
+                    iValue++;
+
+                    PercentCompleted = (iValue * 100) / iFileCount;
+                    FileProcessed = Path.GetFileNameWithoutExtension(file);
+                    StateHasChanged();
+
+                    await Task.Delay(1);
+
+                    //var entry = new ZipEntry(Path.GetFileName(file));
+                    var entry = new ZipEntry(file);
+
+                    entry.DateTime = DateTime.Now;
+                    s.PutNextEntry(entry);
+
+                    using (FileStream fs = File.OpenRead(file))
+                    {
+                        int sourceBytes;
+                        do
+                        {
+                            sourceBytes = fs.Read(buffer, 0, buffer.Length);
+                            s.Write(buffer, 0, sourceBytes);
+                        } while (sourceBytes > 0);
+                    }
+                }
+
+                s.Finish();
+
+                s.Close();
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            logger?.LogError($"Error creating Zip File.\n{ex.Message}");
+            return false;
+        }
+    }
+}
+<style>
+    .e-save-report::before {
+        content: '\e701';
+    }
+
+    @@keyframes custom-rolling {
+        0% {
+            -webkit-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+        100% {
+            -webkit-transform: rotate(360deg);
+            transform: rotate(360deg);
+        }
+    }
+
+    .template {
+        border: 2px solid green;
+        border-style: dotted;
+        border-radius: 50%;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        height: 16px;
+        width: 16px;
+    }
+
+    .template {
+        -webkit-animation: custom-rolling 1.3s linear infinite;
+        animation: custom-rolling 1.3s linear infinite;
+    }
+
+    #control-container {
+        padding: 0px !important;
+    }
+
+    .progress-text-align {
+        font-family: Roboto-Regular;
+        font-size: 14px;
+        color: #3D3E3C;
+    }
+
+    #reLoad {
+        border-radius: 4px;
+        text-transform: capitalize;
+        margin-top: 3%;
+    }
+
+    .e-card .e-card-header .e-card-header-caption .e-card-header-title {
+        font-size: 1vw;
+        font-family: 'Segoe UI', Helvetica,;
+        font-weight: bold;
+    }
+
+    .card-title {
+        font-size: 1.5vw;
+        word-break: keep-all !important;
+    }
+
+    .e-card .e-card-header .e-card-header-caption .e-card-sub-title {
+        padding-top: 5px;
+        font-size: 0.8vw;
+        font-family: Helvetica, 'Segoe UI';
+        font-style: italic
+    }
+
+    .e-card .e-card-content {
+        line-height: initial;
+        font-weight: normal;
+        padding-top: 2px;
+        font-size: 0.7vw;
+        font-family: 'Segoe UI', Helvetica;
+        height: auto;
+        width: auto;
+    }
+
+    .e-card .e-card-footer-content {
+        padding-top: 2px;
+        font-size: 0.8vw;
+        font-family: 'Segoe UI', Helvetica;
+        height: auto;
+        width: auto;
+    }
+
+    .e-cancel-icon:before {
+        content: '\e711'
+    }
+
+    .e-tick-icon:before {
+        content: '\e718'
+    }
+</style>

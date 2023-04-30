@@ -1,0 +1,180 @@
+﻿@page "/components/lookuptables/{WorkTableName}"
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using System.Text;
+
+@inject ILookupTableService tablesService
+@inject IStringLocalizer<App> L
+
+@implements IDisposable
+
+@{
+    var Filtering = new
+    {@@operator = "Contains"
+};
+var ToolbarOptions = (new List<object>() {
+    "Search",
+        new ItemModel()
+            { PrefixIcon = "e-searchclose", TooltipText = "Clear", Align = ItemAlign.Right, Id = "ClearSearch" }
+});
+}
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@(L["menu-admin-lookup-tables"] + " - " + PageTitle)"
+                           ImageName="database-table-icon.png" />
+</div>
+
+@*<header id="header">
+            <div class="table-title">@L["menu-admin-lookup-tables"]</div>
+            <div class="table-option">@PageTitle</div>
+    </header>*@
+
+<div class="planner-patient-wrapper">
+    <hr>
+    <div class="patients-detail-wrapper">
+        <div class="patient-display">
+            <div id="target" class="table table-striped">
+                <SfGrid Width="100%" Height="auto"
+                        @ref="@gridObj"
+                        DataSource="@ItemsList"
+                        AllowFiltering="false"
+                        AllowGrouping="false"
+                        AllowPaging="true"
+                        AllowSorting="true"
+                        AllowPdfExport="true"
+                        RowHeight="32"
+                        Toolbar="@ToolbarOptions"
+                        AllowSelection="true"
+                        GridLines="GridLine.Horizontal"
+                        AllowTextWrap="true">
+                    <GridPageSettings PageSize="10" PageCount="10" />
+                    <GridFilterSettings></GridFilterSettings>
+                    <GridEvents OnToolbarClick="OnToolbarClick"
+                                TValue="LookupTableVM" />
+                    <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"
+                                           Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
+                                           CheckboxOnly="true" PersistSelection="true" />
+                    <GridColumns>
+                        <GridColumn Type="Syncfusion.Blazor.Grids.ColumnType.CheckBox" Width="50"></GridColumn>
+                        <GridColumn Field=@nameof(LookupTableVM.Descricao) HeaderText=@L["lblDescricaoCategoria"] Width="450"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+            <div class="mt-2" style="float:right">
+                <SfButton Content="@L["msgSelect"]" CssClass="e-success e-round-corner mt-2" IconCss="fa fa-check"
+                          @onclick="ProcessSelection"></SfButton>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code {
+
+    [Parameter]
+    public string? WorkTableName { get; set; }
+    [Parameter]
+    public EventCallback<string> OnSelect { get; set; }
+    [Parameter]
+    public string? PageTitle { get; set; }
+    [Parameter]
+    public bool ShowAlertColumn { get; set; } = true;
+
+    protected SfGrid<LookupTableVM> gridObj;
+
+    protected bool DialogVisibility = true;
+
+    public IEnumerable<LookupTableVM>? ItemsList { get; set; }
+    protected List<LookupTableVM>? SelectedRecords;
+
+    protected override void OnInitialized()
+    {
+        //GetData();
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(WorkTableName))
+            await GetData();
+
+    }
+
+    protected void SelectRow(LookupTableVM recordSelected)
+    {
+        string? FullDescription = recordSelected.Descricao;
+        OnSelect.InvokeAsync(FullDescription);
+    }
+
+    protected async Task GetData()
+    {
+        if (!string.IsNullOrEmpty(WorkTableName))
+        {
+            var lookupData = (await  tablesService.GetLookupTableData(WorkTableName)).ToList();
+            ItemsList = lookupData.OrderBy(p => p.Descricao).ToList();
+        }
+    }
+
+    protected async void ProcessSelection()
+    {
+        StringBuilder sbDescriptions = new();
+        SelectedRecords = await gridObj.GetSelectedRecordsAsync();
+
+        if (SelectedRecords is not null)
+        {
+            sbDescriptions.Clear();
+            foreach (var row in SelectedRecords)
+            {
+                sbDescriptions.AppendLine(row.Descricao + ". ");
+            }
+
+            string output = sbDescriptions.ToString();
+            //output.TrimEnd('\r', '\n');
+
+            await OnSelect.InvokeAsync(output);
+        }
+    }
+
+    public async Task OnToolbarClick(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "ClearSearch")
+        {
+            await gridObj.SearchAsync("");
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        gridObj?.Dispose();
+    }
+}
+<style>
+    #header {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        border-style: ridge;
+        width: 100%;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+        #header .table-title {
+            background-color: steelblue;
+            color: white;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bolder;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        #header .table-option {
+            background-color: #fbfbfb;
+            color: black;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding-top: 8px;
+            padding-bottom: 8px;
+        }
+</style>

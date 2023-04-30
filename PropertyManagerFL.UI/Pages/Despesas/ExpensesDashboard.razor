@@ -1,0 +1,233 @@
+﻿@page "/expenses/dashboard"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.Stats
+@using PropertyManagerFL.Application.Shared.Enums
+@using PropertyManagerFL.Application.ViewModels.Despesas
+@using PropertyManagerFL.Core.Entities
+@using PropertyManagerFL.UI.Components.Cards
+
+
+<header>
+    <div class="module-title">
+        <div class="title">@L["TituloPainelDespesas"]</div>
+        <div class="underline"></div>
+    </div>
+</header>
+@if (expensesList is null || last5Transactions is null || categoriesWithMoreSpending is null || categoriesWithMoreSpendings_ByYear_Current is null || categoriesWithMoreSpendings_ByYear_Prior is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div id="dashboard" class="planner-dashboard">
+        <div class="content view-detail-display" style="margin: 0px;">
+            <div class="col-12 mb-3">
+                <div class="container col-lg-12 col-md-12 col-sm-12">
+                    <div class="row card-box">
+                        <DashboardStatCard ResultadoAnual="@ExpensesThisYear.ToString("N2")"
+                                       TituloAnual="@L["TituloDespesasEsteAno"]"
+                                       ResultadoMensal="@ExpensesThisMonth.ToString("N2")"
+                                       TituloMensal="@L["TituloDespesasEsteMes"]"
+                                       ResultadoSemanal="@ExpensesThisWeek.ToString("N2")"
+                                       TituloSemanal="@L["TituloDespesasEstaSemana"]"
+                                       ResultadoDiario="@ExpensesToday.ToString("N2")"
+                                       TituloDiario="@L["TituloDespesasHoje"]">
+                        </DashboardStatCard>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex">
+                <div class="col-md-6 control-section sb-property-border">
+                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
+                    @if (expensesList.Any())
+                    {
+                        <ExpPieChart @ref="PieChartRef"
+                             TipoFiltro="C"
+                             Titulo="@L["TituloDespesasPorCategoria"]"
+                             Ano="@(DateTime.Today.Year)" />
+                    }
+                    else
+                    {
+                        <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+                    }
+                </div>
+                <div class="col-md-6 control-section sb-property-border">
+                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
+                    @if (expensesList.Any())
+                    {
+
+                    <ExpPieChart @ref="PieChartRef"
+                             TipoFiltro="C"
+                             Titulo="@L["TituloDespesasPorCategoria"]"
+                             Ano="@(DateTime.Today.Year - 1)" />
+                    }
+                    else
+                    {
+                        <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-around align-items-center">
+            <ExpLineChart year="@(DateTime.Today.Year)" />
+        </div>
+
+        <div class="table table-striped w-50">
+            <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
+            <SfGrid DataSource="@last5Transactions"
+                RowHeight="28"
+                GridLines="GridLine.Horizontal">
+                <GridColumns>
+                    <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
+                            TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
+                            Width="200"></GridColumn>
+                    <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="N2"
+                            TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                </GridColumns>
+
+            </SfGrid>
+        </div>
+        <div class="row card-box">
+            <div class="col-md-6">
+                <div class="table table-striped">
+                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@TituloCategoriaEsteAno</SfMessage>
+                    <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Current"
+                        RowHeight="28"
+                        GridLines="GridLine.Horizontal">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
+                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
+                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="N2" Width="80" />
+                        </GridColumns>
+                        <GridAggregates>
+                            <GridAggregate>
+                                <GridAggregateColumns>
+                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="N2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                </GridAggregateColumns>
+                            </GridAggregate>
+                        </GridAggregates>
+                    </SfGrid>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table table-striped">
+                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Info">@TituloCategoriaAnoAnterior</SfMessage>
+                    <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Prior"
+                        RowHeight="28"
+                        GridLines="GridLine.Horizontal">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
+                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
+                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="N2" Width="80" />
+                        </GridColumns>
+                        <GridAggregates>
+                            <GridAggregate>
+                                <GridAggregateColumns>
+                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="N2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                </GridAggregateColumns>
+                            </GridAggregate>
+                        </GridAggregates>
+                    </SfGrid>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Inject] public IDespesaService? expensesService { get; set; }
+    [Inject] public IStatsService? statsService { get; set; }
+    [Inject] public IStringLocalizer<App> L { get; set; }
+    protected ExpPieChart? PieChartRef { get; set; } = null;
+    protected IEnumerable<DespesaVM>? expensesList { get; set; }
+    protected IEnumerable<DespesaVM>? last5Transactions { get; set; }
+    protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpending { get; set; }
+    protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpendings_ByYear_Current { get; set; }
+    protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpendings_ByYear_Prior { get; set; }
+    protected decimal ExpensesTotal;
+    protected decimal ExpensesThisYear;
+    protected decimal ExpensesThisMonth;
+    protected decimal ExpensesThisWeek;
+    protected decimal ExpensesToday;
+    protected string CategoryWithMoreSpendings = "";
+    protected string SecondCategoryWithMoreSpendings = "";
+    protected string TituloCategoriaComMaisGastos = "";
+    protected string TituloSegundaCategoriaComMaisGastos = "";
+    protected string? TituloCategoriaEsteAno;
+    protected string? TituloCategoriaAnoAnterior;
+
+    protected override async Task OnInitializedAsync()
+    {
+        TituloCategoriaComMaisGastos = $"{L["TituloDespesasCategoriaComMaisGastos"]} {DateTime.Today.Year}";
+        TituloSegundaCategoriaComMaisGastos = $"{L["TituloDespesasSegundaCategoriaComMaisGastos"]} {DateTime.Today.Year}";
+
+        TituloCategoriaEsteAno = $"{L["TituloDespesasPorCategoria_Ano"]} {DateTime.Now.Year}";
+        TituloCategoriaAnoAnterior = $"{L["TituloDespesasPorCategoria_Ano"]} {DateTime.Now.AddYears(-1).Year}";
+        DateTime startOfWeek = DateTime.Today;
+        int delta = DayOfWeek.Monday - startOfWeek.DayOfWeek;
+        startOfWeek = startOfWeek.AddDays(delta);
+
+        DateTime endOfWeek = startOfWeek.AddDays(7);
+
+        try
+        {
+            expensesList = await expensesService.GetAll();
+            last5Transactions = expensesList.OrderByDescending(l => l.DataMovimento).ToList().Take(5);
+            ExpensesTotal = expensesList.Sum(e => e.Valor_Pago);
+            ExpensesThisYear = expensesList.Where(e => e.DataMovimento.Year == DateTime.Today.Year).Sum(f => f.Valor_Pago);
+            ExpensesThisMonth = expensesList.Where(e => e.DataMovimento.Year == DateTime.Today.Year && e.DataMovimento.Month == DateTime.Today.Month).Sum(f => f.Valor_Pago);
+            ExpensesToday = expensesList.Where(e => e.DataMovimento.Date == DateTime.Today.Date).Sum(f => f.Valor_Pago);
+
+            ExpensesThisWeek = expensesList.Where(x => (
+                (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek) ||
+                (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek) ||
+                (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek)
+                )).Sum(t => t.Valor_Pago);
+
+            categoriesWithMoreSpending = await statsService.GetExpensesCategoriesWithMoreSpending();
+            // Current year's expenses (result may be 0)
+            if (categoriesWithMoreSpending.Any())
+            {
+                CategoryWithMoreSpendings = $"{categoriesWithMoreSpending.ElementAt(0).Descricao} - ({categoriesWithMoreSpending.ElementAt(0).TotalDespesas.ToString("#,###.00")})";
+                if (categoriesWithMoreSpending.Count() > 1)
+                    SecondCategoryWithMoreSpendings = $"{categoriesWithMoreSpending.ElementAt(1).Descricao} - ({categoriesWithMoreSpending.ElementAt(1).TotalDespesas.ToString("#,###.00")})";
+            }
+
+            categoriesWithMoreSpendings_ByYear_Current = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(DateTime.Today.Year);
+            categoriesWithMoreSpendings_ByYear_Prior = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(DateTime.Today.Year - 1);
+
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}
+
+
+<style>
+    #main-page {
+        overflow-x: hidden;
+        background: linear-gradient(-141deg, #EEF5F7 14%, #EEF2FB 100%);
+    }
+
+    .sidebar-Rightpane {
+        padding-bottom: 18px;
+        margin-right: -2px;
+    }
+</style>

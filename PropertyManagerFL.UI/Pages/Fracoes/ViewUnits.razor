@@ -1,0 +1,130 @@
+﻿@page "/fracoes/viewunits"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.ViewModels.Fracoes;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+@using Syncfusion.Blazor.Popups
+
+<!--/ Property Grid Star /-->
+@if (Units is null)
+{
+    <LoadingData />
+}
+else
+{
+    <section class="property-grid grid">
+        <div class="container">
+            <div class="row">
+                @foreach (var Unit in Units)
+                {
+                    <div class="col-md-4">
+                        <div class="card-box-a card-shadow">
+                            <div class="img-box-a">
+                                @{
+                                    var img = $"/images/estateagency/property-{Unit.Id}.jpg";
+                                }
+                                <img src=@img alt="" class="img-a img-fluid">
+                            </div>
+                            <div class="card-overlay">
+                                <div class="card-overlay-a-content">
+                                    <div class="card-header-a">
+                                        <h2 class="card-title-a">
+                                            <a href="#">
+                                                @Unit.DescricaoImovel
+                                                <br /> @Unit.Descricao
+                                            </a>
+                                        </h2>
+                                    </div>
+                                    <div class="card-body-a">
+                                        <div class="price-box d-flex">
+                                            <span class="price-a">renda | @Unit.ValorRenda</span>
+                                        </div>
+                                        <a href="#" class="link-a">
+                                            Click here to view
+                                            <span class="ion-ios-arrow-forward"></span>
+                                        </a>
+                                    </div>
+                                    <div class="card-footer-a">
+                                        <ul class="card-info d-flex justify-content-around">
+                                            <li>
+                                                <h4 class="card-info-title">Área Privativa</h4>
+                                                <span>
+                                                    @Unit.AreaBrutaPrivativa
+                                                    <sup>2</sup>
+                                                </span>
+                                            </li>
+                                            <li>
+                                                <h4 class="card-info-title">Quartos</h4>
+                                                <span>@GetRooms(Unit.TipologiaFracao)</span>
+                                            </li>
+                                            <li>
+                                                <h4 class="card-info-title">Casas banho</h4>
+                                                <span>@Unit.CasasBanho</span>
+                                            </li>
+                                            <li>
+                                                <h4 class="card-info-title">Garagem</h4>
+                                                <span>@(Unit.Garagem ? "1" : "0")</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+<a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+
+@code {
+    [Inject] protected IFracaoService? UnitsService { get; set; }
+    [Inject] protected NavigationManager NavigationManager { get; set; }
+    protected IEnumerable<FracaoVM>? Units { get; set; }
+    protected FracaoVM? SelectedUnit { get; set; }
+    public bool HideUnitDiv { get; set; } = true;
+    protected override async Task OnInitializedAsync()
+    {
+
+        HideUnitDiv = true;
+        Units = await UnitsService!.GetAll();
+    }
+
+    private async Task ShowUnit(int Id)
+    {
+        SelectedUnit = await GetUnit(Id);
+        HideUnitDiv = false;
+    }
+
+    protected async Task<FracaoVM> GetUnit(int Id)
+    {
+        var _fracao = await UnitsService.GetUnit_ById(Id);
+        return _fracao;
+    }
+
+    private string GetRooms(string tipologia)
+    {
+        string result = "";
+        switch (tipologia)
+        {
+            case "T1":
+                result = "1";
+                break;
+            case "T2":
+                result = "2";
+                break;
+            case "T3":
+                result = "3";
+                break;
+            case "T4":
+                result = "4";
+                break;
+            case "T5":
+                result = "5";
+                break;
+        }
+
+        return result;
+    }
+}

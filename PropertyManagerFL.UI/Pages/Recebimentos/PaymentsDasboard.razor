@@ -1,0 +1,143 @@
+﻿@page "/payments/dashboard"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Stats;
+@using PropertyManagerFL.Application.Shared.Enums;
+@using PropertyManagerFL.Application.ViewModels.Recebimentos;
+
+@using PropertyManagerFL.UI.Components.Cards
+
+<header>
+    <div class="module-title">
+        <div class="title">@L["TituloPainelPagamentos"]</div>
+        <div class="underline"></div>
+    </div>
+</header>
+
+<div id="dashboard" class="planner-dashboard">
+    <div class="content view-detail-display" style="margin: 0px;">
+        <div class="col-12 mb-3">
+            <div class="container col-lg-12 col-md-12 col-sm-12">
+                <div class="row">
+                    <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
+                                                                        ResultadoRecebido="@totalPaymentsThisYear.ToString("C2")"
+                                                                        TituloPrevisto="@TituloPrevisto"
+                                                                        ResultadoPrevisto="@totalExpectedPaymentsThisYear.ToString("C2")"
+                                                                        TituloEmFalta="@TituloEmFalta"
+                                                                        ResultadoEmFalta="@totalDuePaymentsThisYear.ToString("C2")" />
+
+                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
+                </div>
+                <div class="row card-box">
+                    <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
+                                                                        ResultadoRecebido="@totalPaymentsPreviousYear.ToString("C2")"
+                                                                        TituloPrevisto="@TituloPrevisto"
+                                                                        ResultadoPrevisto="@totalExpectedPaymentsPreviousYear.ToString("C2")"
+                                                                        TituloEmFalta="@TituloEmFalta"
+                                                                        ResultadoEmFalta="@totalDuePaymentsPreviousYear.ToString("C2")" />
+                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
+                </div>
+                <div class="row card-box mt-3">
+                    <div class="col-md-7">
+                        <div class="table table-striped w-100">
+                            <AlertMessage Message="@L["TituloValoresEmDivida"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+                            <SfGrid DataSource="@partiallyPaidPayments"
+                                    RowHeight="28"
+                                    GridLines="GridLine.Horizontal">
+                                <GridColumns>
+                                    <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                                TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
+                                                Width="250"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="@L["TituloValorRecebido"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                </GridColumns>
+
+                            </SfGrid>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="table table-striped w-100">
+                            <AlertMessage Message="@L["TituloValorDivida"]" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                            <SfGrid DataSource="@duePayments"
+                                    RowHeight="28"
+                                    GridLines="GridLine.Horizontal">
+                                <GridColumns>
+                                    <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                                TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
+                                                Width="300"></GridColumn>
+
+@*                                    <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="Previsto" Format="N2"
+                                                TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                                    <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="Recebido" Format="N2"
+                                                TextAlign="TextAlign.Right" Width="100"></GridColumn>
+*@
+                                    <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                </GridColumns>
+                            </SfGrid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@code {
+
+    [Inject] public IRecebimentoService? paymentsService { get; set; }
+    [Inject] public IStatsService? statsService { get; set; }
+    [Inject] public IStringLocalizer<App> L { get; set; }
+
+    protected IEnumerable<RecebimentoVM>? paymentsList { get; set; }
+    protected IEnumerable<RecebimentoVM>? paymentsThisYear { get; set; }
+    protected IEnumerable<RecebimentoVM>? paymentsPreviousYear { get; set; }
+    protected IEnumerable<RecebimentoVM>? partiallyPaidPayments { get; set; }
+    protected IEnumerable<RecebimentoVM>? duePayments { get; set; }
+
+    protected decimal totalPaymentsThisYear { get; set; }
+    protected decimal totalExpectedPaymentsThisYear { get; set; }
+    protected decimal totalDuePaymentsThisYear { get; set; }
+
+    protected decimal totalPaymentsPreviousYear { get; set; }
+    protected decimal totalExpectedPaymentsPreviousYear { get; set; }
+    protected decimal totalDuePaymentsPreviousYear { get; set; }
+
+    protected string? TituloRecebido = "";
+    protected string? TituloPrevisto = "";
+    protected string? TituloEmFalta = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        paymentsList = (await paymentsService.GetAll())
+        .ToList();
+
+        paymentsThisYear = paymentsList
+                .Where(e => e.DataMovimento.Year == DateTime.Now.Year);
+
+        totalPaymentsThisYear = paymentsThisYear.Sum(e => e.ValorRecebido);
+        totalExpectedPaymentsThisYear = paymentsThisYear.Sum(e => e.ValorPrevisto);
+        totalDuePaymentsThisYear = paymentsThisYear.Sum(e => e.ValorEmFalta);
+
+        paymentsPreviousYear = (await paymentsService
+            .GetAll())
+            .ToList()
+            .Where(e => e.DataMovimento.Year == DateTime.Now.AddYears(-1).Year);
+
+        totalPaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorRecebido);
+        totalExpectedPaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorPrevisto);
+        totalDuePaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorEmFalta);
+
+        TituloRecebido = L["TituloValorRecebido"];
+        TituloPrevisto = L["TituloValorPrevisto"];
+        TituloEmFalta = L["TituloValorAPagar"];
+
+        partiallyPaidPayments = paymentsList.Where(p => p.ValorEmFalta > 0 && p.ValorRecebido > 0);
+        duePayments = paymentsList.Where(p => p.ValorRecebido == 0);
+    }
+}

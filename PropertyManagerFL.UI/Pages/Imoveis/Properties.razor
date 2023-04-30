@@ -1,0 +1,41 @@
+﻿@page "/properties"
+<h3>Properties</h3>
+
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+
+@inject IStringLocalizer<App> L
+
+@inherits ImoveisBase
+
+<PageTitle>@L["TituloMenuImoveis"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuImoveis"]"></PageTitleComponent>
+
+
+@if (properties is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="row mt-3">
+        @foreach (var item in properties)
+        {
+            <div class="col-md-3 mb-2">
+                <a href="/ProductDetails/@item.Id">
+                    <div class="card">
+                        <img class="img-thumbnail" src="@($"/uploads/properties/{item!.Foto}")" height="128" width="128">
+                        <div class="card-body">
+                            <h5 class="fw-16 mb-3">
+                                @item.Descricao
+                            </h5>
+                            <p class="card-text">
+                                <b>@item.Numero</b>
+                            </p>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        }
+    </div>
+}

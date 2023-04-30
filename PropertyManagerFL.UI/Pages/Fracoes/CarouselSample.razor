@@ -1,0 +1,116 @@
+﻿@page "/units/carouselsample"
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.CircularGauge
+
+
+<div id="supSlides" class="carousel carousel-dark slide" data-bs-ride="false" data-bs-interval="false"  style="border:1px solid purple;">
+  <br/><br/>
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#supSlides" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#supSlides" data-bs-slide-to="1" aria-label="Slide 2" @onclick="GaugeRefreshSlideTwo"></button>
+    <button type="button" data-bs-target="#supSlides" data-bs-slide-to="2" aria-label="Slide 3" @onclick="GaugeRefreshSlideThree"></button>
+  </div>
+  <div class="carousel-inner" style="border:0px solid green;">
+    <div class="carousel-item active">
+        <div style="width: 100%; height: 100%">
+        <SfCircularGauge @ref="gauge1" id="circle1" Title="One - Centered">
+            <CircularGaugeAxes>
+                <CircularGaugeAxis Radius="80%" StartAngle="230" EndAngle="130">
+                    <CircularGaugeAxisLabelStyle Offset="-1">
+                        <CircularGaugeAxisLabelFont FontFamily="Segoe UI" />
+                    </CircularGaugeAxisLabelStyle>
+                    <CircularGaugeAxisLineStyle Width="8" Color="#E0E0E0" />
+                    <CircularGaugeAxisMajorTicks Offset="5" />
+                    <CircularGaugeAxisMinorTicks Offset="5" />
+                    <CircularGaugePointers>
+                        <CircularGaugePointer Value=60 Radius="60%" PointerWidth="7" Color="red">
+                            <CircularGaugeCap Radius="8" Color="red">
+                                <CircularGaugeCapBorder Width="0" />
+                            </CircularGaugeCap>
+                            <CircularGaugeNeedleTail Length="0%" />
+                        </CircularGaugePointer>
+                    </CircularGaugePointers>
+                </CircularGaugeAxis>
+            </CircularGaugeAxes>
+        </SfCircularGauge>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <div style="width: 100%; height: 100%">
+        <SfCircularGauge @ref="gauge2" id="circle2" Title="Two - How to make centered?">
+            <CircularGaugeAxes>
+                <CircularGaugeAxis Radius="90%" StartAngle="230" EndAngle="130">
+                    <CircularGaugeAxisLabelStyle Offset="-1">
+                        <CircularGaugeAxisLabelFont FontFamily="Segoe UI" />
+                    </CircularGaugeAxisLabelStyle>
+                    <CircularGaugeAxisLineStyle Width="8" Color="#E0E0E0" />
+                    <CircularGaugeAxisMajorTicks Offset="5" />
+                    <CircularGaugeAxisMinorTicks Offset="5" />
+                    <CircularGaugePointers>
+                        <CircularGaugePointer Value=60 Radius="60%" PointerWidth="7" Color="#green">
+                            <CircularGaugeCap Radius="8" Color="green">
+                                <CircularGaugeCapBorder Width="0" />
+                            </CircularGaugeCap>
+                            <CircularGaugeNeedleTail Length="0%" />
+                        </CircularGaugePointer>
+                    </CircularGaugePointers>
+                </CircularGaugeAxis>
+            </CircularGaugeAxes>
+        </SfCircularGauge>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <div style="width: 100%; height: 100%">
+        <SfCircularGauge @ref="gauge3" id="circle3" Title="Three - How to make centered?">
+            <CircularGaugeAxes>
+                <CircularGaugeAxis Radius="70%" StartAngle="20" EndAngle="230">
+                    <CircularGaugeAxisLabelStyle Offset="-1">
+                        <CircularGaugeAxisLabelFont FontFamily="Segoe UI" />
+                    </CircularGaugeAxisLabelStyle>
+                    <CircularGaugeAxisLineStyle Width="8" Color="#E0E0E0" />
+                    <CircularGaugeAxisMajorTicks Offset="5" />
+                    <CircularGaugeAxisMinorTicks Offset="5" />
+                    <CircularGaugePointers>
+                        <CircularGaugePointer Value=60 Radius="60%" PointerWidth="7" Color="blue">
+                            <CircularGaugeCap Radius="8" Color="blue">
+                                <CircularGaugeCapBorder Width="0" />
+                            </CircularGaugeCap>
+                            <CircularGaugeNeedleTail Length="0%" />
+                        </CircularGaugePointer>
+                    </CircularGaugePointers>
+                </CircularGaugeAxis>
+            </CircularGaugeAxes>
+        </SfCircularGauge>
+        </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#supSlides" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true" @onclick="GaugeRefresh"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#supSlides" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true" @onclick="GaugeRefresh"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+<style>
+    #circle1,#circle2,#circle3 {
+        height: 100%;
+        width: 100%;
+    }
+</style>
+@code{
+    SfCircularGauge gauge1, gauge2, gauge3;
+    public void GaugeRefresh(){
+       this.gauge2.RefreshAsync();
+       this.gauge3.RefreshAsync();
+     }
+
+     public void GaugeRefreshSlideTwo(){
+       this.gauge2.RefreshAsync();
+    }
+
+    public void GaugeRefreshSlideThree(){
+       this.gauge3.RefreshAsync();
+    }
+}

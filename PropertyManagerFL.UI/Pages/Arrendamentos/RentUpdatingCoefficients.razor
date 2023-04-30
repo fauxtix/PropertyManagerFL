@@ -1,0 +1,115 @@
+﻿@page "/updatecoefficients"
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.UI.Pages.ComponentsBase;
+@inherits ArrendamentosBase
+
+<PageTitle>@L["TituloArrendamentos"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuCoeficientesRendas"]"></PageTitleComponent>
+
+@inject NavigationManager nav
+
+@{
+    var Tool = (new List<object>() {
+        "Search",
+        "PdfExport",
+     new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+     "Add",
+     "Edit",
+     "Delete",
+    new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+     "Update",
+    "Cancel"
+    });
+}
+
+@if (rentCoefficients is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container-fluid">
+        <hr class="divider" />
+        <div class="table table-stripped table-hover">
+            <SfGrid ID="Coefs_Grid"
+                @ref="coefsGridObj"
+                Height="100%"
+                Width="85%"
+                Toolbar="@Tool"
+                EnableStickyHeader="true"
+                EnableAltRow="true"
+                EnableHover="true"
+                DataSource="@rentCoefficients"
+                AllowFiltering="false"
+                AllowGrouping="false"
+                AllowPaging="true"
+                AllowSorting="true"
+                AllowPdfExport="true"
+                RowHeight="32"
+                AllowTextWrap="true">
+                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                <GridEditSettings AllowAdding="true" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal"></GridEditSettings>
+                <GridEvents OnRecordDoubleClick="OnCoefficientDoubleClickHandler" OnActionBegin="RentCoefficientActionBeginHandler"
+                        OnToolbarClick="ToolbarClickHandler_Coef" CommandClicked="OnCoefficientCommandClicked" TValue="CoeficienteAtualizacaoRendas" />
+                <GridColumns>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Id)
+                            HeaderText="Id" Width="60"
+                            Visible="false"
+                            IsPrimaryKey="true" IsIdentity="true"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Ano) HeaderText="@L["TituloAno"]"
+                            TextAlign="TextAlign.Center" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Coeficiente) HeaderText="@L["TituloCoeficiente"]"
+                            EditorSettings="@CoefficientEditParams"
+                            EditType="EditType.NumericEdit"
+                            TextAlign=TextAlign.Right Width="110"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DiplomaLegal) HeaderText="@L["TituloDiplomaLegal"]" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Lei) HeaderText="@L["TituloLei"]" Width="100" />
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DataPublicacao) HeaderText="@L["TituloPublicadoEm"]" Width="100" />
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.UrlDiploma) HeaderText="" Width="180">
+                        <Template>
+                            @{
+                                var rowData = (context as CoeficienteAtualizacaoRendas);
+                                if (!string.IsNullOrEmpty(rowData?.UrlDiploma))
+                                {
+                                    <div>
+                                        <a href="@rowData.UrlDiploma" target="_blank" rel="noopener">@L["TituloConsultar"]</a>
+                                    </div>
+                                }
+                            }
+                        </Template>
+                    </GridColumn>
+                </GridColumns>
+            </SfGrid>
+
+        </div>
+    </div>
+}
+
+<SfToast ID="toast_custom" @ref="ToastObj"
+         Title="@ToastTitle" Icon="fas fa-user"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="3000"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+    </ToastButtons>
+
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+@code {
+    private IEditorSettings CoefficientEditParams = new NumericEditCellParams
+        {
+            Params = new NumericTextBoxModel<object>() { Min = 0, ShowSpinButton = false, Decimals = 5, Format = "n5", ValidateDecimalOnType = true }
+        };
+}

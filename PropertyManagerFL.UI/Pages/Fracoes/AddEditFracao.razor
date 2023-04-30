@@ -1,0 +1,529 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.Common;
+@using PropertyManagerFL.Application.Validator
+@using PropertyManagerFL.Core.Entities;
+@using PropertyManagerFL.Application.ViewModels.EstadoCivil;
+@using PropertyManagerFL.Application.ViewModels.Fracoes;
+@using PropertyManagerFL.Application.ViewModels.Imoveis;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
+@using PropertyManagerFL.Application.ViewModels.LookupTables;
+@using PropertyManagerFL.UI.ApiWrappers;
+@using PropertyManagerFL.UI.Pages.ComponentsBase;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+@using Microsoft.AspNetCore.Components;
+
+@implements IDisposable
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="portaentrada"></HeaderDialogComponent>
+    <hr />
+</div>
+@if (PropertyUnit is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="d-flex justify-content-center align-items-center container">
+        <SfTab>
+            <TabItems>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloIdentificacao"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <EditForm Model="@PropertyUnit">
+                            <div class="row my-2 fs-6">
+                                <div>
+                                    <SfCheckBox Label="@L["TituloAtiva"]" TChecked="bool" @bind-Checked=@PropertyUnit.Ativa
+                                            LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                </div>
+                                <div class="col-md-7">
+                                    <div class="row">
+                                        <div class="col-md-3 my-2 fs-6"><label>@L["TituloPropriedade"]</label></div>
+                                        <div class="col-md-9 fw-bold fs-4">
+                                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">@DescricaoImovel</SfMessage>
+                                        </div>
+                                    </div>
+                                    <div class="input-group mt-2">
+                                        <SfTextBox Enabled="true" @ref="txtDescription"
+                                               Placeholder="@L["TituloIdentificacao"]"
+                                               CssClass="e-field  e-corner"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.Descricao">
+                                        </SfTextBox>
+                                    </div>
+                                    <div class="group-box">
+                                        <SfTextBox Enabled="true" Width="20%"
+                                               Placeholder="@L["TituloAndar"]"
+                                               CssClass="e-field  e-corner custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.Andar">
+                                        </SfTextBox>
+                                        <SfTextBox Enabled="true" Width="15%"
+                                               Placeholder="@L["TituloLado"]"
+                                               CssClass="e-field  e-corner float-right custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.Lado">
+                                        </SfTextBox>
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Width="35%" Value="@idxTypologyState" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloTipologia"]" DataSource="@TypologiesStates" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTypologyState"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                        <SfTextBox Width="30%"
+                                               Placeholder="@L["TituloArtigoMatricial"]"
+                                               CssClass="e-field  e-corner float-right custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.Matriz">
+                                        </SfTextBox>
+                                    </div>
+                                    <div class="mt-2">
+                                        <SfMessage Variant="MessageVariant.Text" ShowIcon=false Severity="MessageSeverity.Info">@L["TituloLicencaHabitacao"]</SfMessage>
+                                    </div>
+                                    <div class="group-box">
+                                        <SfTextBox Enabled="true" @ref="txtLicHabitacao"
+                                               Width="130px"
+                                               Placeholder="@L["TituloNumero"]"
+                                               CssClass="e-field custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.LicencaHabitacao">
+                                        </SfTextBox>
+                                        <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
+                                                  CssClass="e-align-middle "
+                                                  FloatLabelType="FloatLabelType.Always"
+                                                  @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
+                                        </SfDatePicker>
+                                    </div>
+                                    <hr class="divider" />
+                                    <div class="group-box">
+                                        <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="30%"
+                                                      Placeholder="@L["TituloAreaPrivativa"]" style="text-align-last:end; margin-right:10px;"
+                                                      CssClass="e-field  e-corner"
+                                                      FloatLabelType="@FloatLabelType.Always"
+                                                      @bind-Value="@PropertyUnit!.AreaBrutaPrivativa">
+                                        </SfNumericTextBox>
+                                        <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="37%"
+                                                      Placeholder="@L["TituloAreaDependente"]" style="text-align-last:end; margin-right:10px;"
+                                                      CssClass="e-field  e-corner"
+                                                      FloatLabelType="@FloatLabelType.Always"
+                                                      @bind-Value="@PropertyUnit!.AreaBrutaDependente">
+                                        </SfNumericTextBox>
+                                        <SfNumericTextBox Enabled="true" ShowSpinButton="true" Width="33%"
+                                                      Placeholder="@L["TituloCasasBanho"]" Step="1" Min=1 Max=3
+                                                      CssClass="e-field  e-corner"
+                                                      FloatLabelType="@FloatLabelType.Always"
+                                                      @bind-Value="@PropertyUnit!.CasasBanho">
+                                        </SfNumericTextBox>
+                                    </div>
+                                    <div class="group-box">
+                                        <SfTextBox Enabled="true"
+                                               Placeholder="@L["TituloUltimaAvaliacao"]"
+                                               CssClass="e-field  e-corner custom-class"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.AnoUltAvaliacao">
+                                        </SfTextBox>
+                                        <SfNumericTextBox Enabled="true" ShowSpinButton="false" Currency="EUR"
+                                                      Placeholder="@L["TituloValorAvaliacao"]" style="text-align-last:end; margin-right:10px;"
+                                                      CssClass="e-field  e-corner custom-class"
+                                                      FloatLabelType="@FloatLabelType.Always"
+                                                      @bind-Value="@PropertyUnit!.ValorUltAvaliacao">
+                                        </SfNumericTextBox>
+
+                                        @*Quando arrendamento termina, ou aquando da sua criação, fração está 'livre'; só nessa situação, deverá ser possível 'mexer' no valor da renda*@
+                                        <SfNumericTextBox Enabled="@(EditMode == OpcoesRegisto.Inserir || OkToLease)"
+                                                      ShowSpinButton="false"
+                                                      Currency="EUR"
+                                                      Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
+                                                      CssClass="e-field  e-corner custom-class"
+                                                      FloatLabelType="@FloatLabelType.Always"
+                                                      @bind-Value="@PropertyUnit!.ValorRenda">
+                                        </SfNumericTextBox>
+                                    </div>
+                                    <div class="my-2">
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Width="100%" Value="@idxUnitType" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloTipoFracao"]" DataSource="@UnitTypes" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnitType"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-5">
+                                    <div class="group-ckeckbox">
+                                        <SfCheckBox Label="@L["TituloCozinhaEquipada"]" TChecked="bool" @bind-Checked=@PropertyUnit.CozinhaEquipada LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloGasCanalizado"]" TChecked="bool" @bind-Checked=@PropertyUnit.GasCanalizado LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloTerraco"]" TChecked="bool" @bind-Checked=@PropertyUnit.Terraco LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloArrecadacao"]" TChecked="bool" @bind-Checked=@PropertyUnit.Arrecadacao LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloVaranda"]" TChecked="bool" @bind-Checked=@PropertyUnit!.Varanda LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloGaragem"]" TChecked="bool" @bind-Checked=@PropertyUnit!.Garagem LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        <SfCheckBox Label="@L["TituloEstacionamento"]" TChecked="bool" @bind-Checked=@PropertyUnit!.LugarEstacionamento LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    </div>
+                                    <div class="mt-2">
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Value="@idxCertificate" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloCertificacaoEnergetica"]" DataSource="@Certifications" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeCertificationState"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+                                    <div class="mt-2">
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Width="100%" Value="@idxConservationState" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloEstadoConservacao"]" DataSource="@ConservationStates" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeConservationState"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        @if (OkToLease && PropertyUnit.Ativa)
+                                        {
+                                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                    Width="100%" Value="@idxSituationState" ShowClearButton="false" PopupWidth="auto"
+                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                    Placeholder="@L["TituloSituacao"]" DataSource="@SituationStates" FloatLabelType="FloatLabelType.Always">
+                                                <DropDownListTemplates TItem="LookupTableVM">
+                                                </DropDownListTemplates>
+                                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnitStatus"></DropDownListEvents>
+                                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                            </SfDropDownList>
+                                        }
+                                        else
+                                        {
+                                            <SfTextBox Placeholder="@L["TituloSituacao"]"
+                                               Readonly=true
+                                               CssClass="e-field  e-corner"
+                                               FloatLabelType="@FloatLabelType.Always"
+                                               Value="@UnitStatus">
+                                            </SfTextBox>
+
+                                        }
+                                    </div>
+                                    <div class="mt-2">
+                                        <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
+                                               HtmlAttributes="NotesAttribute"
+                                               CssClass="e-field e-corner"
+                                               FloatLabelType="FloatLabelType.Always"
+                                               @bind-Value="@PropertyUnit!.Notas">
+                                        </SfTextBox>
+                                    </div>
+                                </div>
+                            </div>
+                        </EditForm>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloImagens"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <ViewUnitImages EditMode=@EditMode
+                                    SelectedUnit="PropertyUnit"
+                                    ImagensFracao="unitImages" />
+                    </ContentTemplate>
+                </TabItem>
+            </TabItems>
+        </SfTab>
+    </div>
+}
+
+@code {
+
+    [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] public IFracaoService? UnitsService { get; set; }
+    [Inject] public IImovelService? PropertiesService { get; set; }
+    [Inject] public IWebHostEnvironment? HostingEnvironment { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
+    [Parameter] public FracaoVM? PropertyUnit { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+    [Parameter] public string? HeaderCaption { get; set; }
+    [Parameter] public EventCallback<List<NovaImagemFracao>> OnImagesAdded { get; set; }
+
+
+    protected int idxProperty;
+    protected int idxTypologyState;
+    protected int idxUnitType;
+    protected int idxSituationState;
+    protected int idxConservationState;
+    protected int idxCertificate;
+
+    protected string? DescricaoImovel;
+
+    protected bool OkToLease;
+    protected string? UnitStatus;
+
+    protected SfTextBox? txtLicHabitacao { get; set; }
+    protected SfTextBox? txtDescription { get; set; }
+    protected SfUploader? sfUploader;
+
+    protected string? lastEvaluationYear = "";
+    protected int lastEvaluationTypology;
+    protected int lastEvaluationEnergyCertificate;
+    protected DateTime lastEvaluationHabitationPermit;
+    protected double lastEvaluationPrivateArea;
+    protected double lastEvaluationDependentArea;
+    protected int lastEvaluationBathRooms;
+
+    protected int propertyConstructionYear;
+
+    private string stringChecked;
+
+
+    public List<LookupTableVM>? Properties { get; set; } = new();
+    public List<LookupTableVM>? TypologiesStates { get; set; } = new();
+    public List<LookupTableVM>? UnitTypes { get; set; } = new();
+    public List<LookupTableVM>? SituationStates { get; set; } = new();
+    public List<LookupTableVM>? ConservationStates { get; set; } = new();
+    public IEnumerable<LookupTableVM>? Certifications { get; set; }
+
+
+    int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+    protected string? uploadedFile { get; set; } = "";
+
+    protected List<NovaImagemFracao>? unitImages { get; set; } = new();
+
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "2" }
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+
+            var unitProperty = await PropertiesService!.GetImovel_ById(PropertyUnit.Id_Imovel);
+            DescricaoImovel = unitProperty.Descricao;
+
+            if (PropertyUnit!.Imagens is not null)
+            {
+                unitImages = PropertyUnit!.Imagens!;
+            }
+
+            idxTypologyState = PropertyUnit!.Tipologia;
+            idxUnitType = PropertyUnit!.Id_TipoPropriedade;
+
+            if (PropertyUnit.Ativa)
+                idxSituationState = PropertyUnit!.Situacao;
+            else
+                idxSituationState = await UnitsService!.GetIDSituacao_ByDescription("Reservada");
+
+            idxConservationState = PropertyUnit!.Conservacao;
+            idxProperty = PropertyUnit!.Id_Imovel;
+
+            if (EditMode == OpcoesRegisto.Gravar)
+                OkToLease = await UnitsService!.FracaoEstaLivre(PropertyUnit.Id);
+            else
+            {
+                OkToLease = true;
+
+                propertyConstructionYear = int.Parse(unitProperty.AnoConstrucao!);
+                PropertyUnit!.DataEmissaoLicencaHabitacao = new DateTime(propertyConstructionYear, 1, 1);
+
+                // 21/02/2023
+                await FindLastValuesEntered(); // returns last values entered by the user, as defaults
+                if (!string.IsNullOrEmpty(lastEvaluationYear))
+                {
+                    PropertyUnit.AnoUltAvaliacao = lastEvaluationYear;
+                    PropertyUnit.Tipologia = lastEvaluationTypology;
+                    PropertyUnit.ID_CertificadoEnergetico = lastEvaluationEnergyCertificate;
+                    PropertyUnit.AreaBrutaDependente = lastEvaluationDependentArea;
+                    PropertyUnit.AreaBrutaPrivativa = lastEvaluationPrivateArea;
+                    PropertyUnit.DataEmissaoLicencaHabitacao = lastEvaluationHabitationPermit;
+                    PropertyUnit.CasasBanho = lastEvaluationBathRooms;
+                }
+            }
+
+            UnitStatus = await LookupTablesService!.GetDescription(PropertyUnit.Situacao, "SituacaoFracao");
+
+            Properties = (await PropertiesService!.GetPropertiesAsLookupTables()).ToList();
+
+            UnitTypes = (await LookupTablesService!.GetLookupTableData("TipoPropriedade")).ToList();
+            TypologiesStates = (await LookupTablesService!.GetLookupTableData("TipologiaFracao")).ToList();
+            SituationStates = (await LookupTablesService!.GetLookupTableData("SituacaoFracao")).ToList();
+            ConservationStates = (await LookupTablesService!.GetLookupTableData("EstadoConservacao")).ToList();
+            Certifications = (await LookupTablesService!.GetLookupTableData("TipoCertificadoEnergetico")).ToList();
+            idxCertificate = PropertyUnit!.ID_CertificadoEnergetico;
+
+            await Task.Delay(100);
+            StateHasChanged();
+        }
+        catch
+        {
+            throw;
+        }
+    }
+
+    protected void onChangeCertificationState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxCertificate = args.Value;
+        PropertyUnit!.ID_CertificadoEnergetico = idxCertificate;
+    }
+
+    protected void onChangeProperty(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxProperty = args.Value;
+        PropertyUnit!.Id_Imovel = idxProperty;
+    }
+    protected void onChangeConservationState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxConservationState = args.Value;
+        PropertyUnit!.Conservacao = idxConservationState;
+    }
+    protected void onChangeTypologyState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxTypologyState = args.Value;
+        PropertyUnit!.Tipologia = idxTypologyState;
+    }
+    protected void onChangeUnitType(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxUnitType = args.Value;
+        PropertyUnit!.Id_TipoPropriedade = idxUnitType;
+    }
+
+    protected void onChangeUnitStatus(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxSituationState = args.Value;
+        PropertyUnit!.Situacao = idxSituationState;
+    }
+
+    private async Task FindLastValuesEntered()
+    {
+        var data = (await UnitsService.GetAll());
+        if (data is not null)
+        {
+            var data2 = data.Where(f => f.Id_Imovel == PropertyUnit.Id_Imovel);
+            var output = data2.ToList().OrderByDescending(f => f.Id).FirstOrDefault();
+            if (output is not null)
+            {
+                lastEvaluationYear = output.AnoUltAvaliacao;
+                lastEvaluationPrivateArea = output.AreaBrutaPrivativa;
+                lastEvaluationDependentArea = output.AreaBrutaDependente;
+                lastEvaluationTypology = output.Tipologia;
+                idxTypologyState = lastEvaluationTypology;
+                lastEvaluationEnergyCertificate = output.ID_CertificadoEnergetico;
+                idxCertificate = lastEvaluationEnergyCertificate;
+                lastEvaluationHabitationPermit = output.DataEmissaoLicencaHabitacao;
+                lastEvaluationBathRooms = output.CasasBanho;
+            }
+        }
+    }
+    // not used
+    protected void OnChangeUpload(Syncfusion.Blazor.Inputs.UploadChangeEventArgs args)
+    {
+        if (args.Files is null) return;
+
+        foreach (var file in args.Files)
+        {
+            uploadedFile = Path.Combine(HostingEnvironment!.WebRootPath, "uploads", "units", file.FileInfo.Name);
+            if (File.Exists(uploadedFile))
+            {
+                unitImages!.Add(
+                    new NovaImagemFracao()
+                        {
+                            Foto = uploadedFile,
+                            Id_Fracao = PropertyUnit!.Id,
+                            Descricao = "Imagem"
+                        });
+            }
+            else
+            {
+                FileStream filestream = new FileStream(uploadedFile, FileMode.Create, FileAccess.Write);
+                file.Stream.WriteTo(filestream);
+                filestream.Close();
+                file.Stream.Close();
+
+                unitImages!.Add(
+                    new NovaImagemFracao()
+                        {
+                            Foto = uploadedFile,
+                            Id_Fracao = PropertyUnit!.Id,
+                            Descricao = "Imagem"
+                        });
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        if (args.FileData.Count() == 0) return;
+
+        foreach (var file in args.FileData)
+        {
+            unitImages!.Add(
+                new NovaImagemFracao()
+                    {
+                        Foto = Path.GetFileName(file.Name),
+                        Id_Fracao = PropertyUnit!.Id, // FK to identify the unit the image belongs to
+                        Descricao = $"Imagem_{file.Name}" // redundant for now, later may useful to identify 'room', 'kitchen', ...
+                    });
+        }
+
+        PropertyUnit!.Imagens = unitImages;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        txtLicHabitacao?.Dispose();
+        txtDescription?.Dispose();
+        sfUploader?.Dispose();
+    }
+}
+
+<style>
+    .custom-class.e-control-wrapper .e-textbox {
+        text-align: center;
+    }
+
+    .text-align-right.e-control-wrapper .e-textbox {
+        text-align: right;
+    }
+
+    .default-carousel-section .carousel-sample {
+        margin: 0 auto 2em;
+        max-width: 200px;
+        height: 150px;
+    }
+
+    .default-carousel .e-carousel-items .e-carousel-item .img-container {
+        height: 100%;
+    }
+
+    .default-carousel .e-carousel-items .e-carousel-item .img-caption {
+        bottom: 5em;
+        color: #fff;
+        font-size: 12pt;
+        height: 2em;
+        position: relative;
+        padding: 0.3em 1em;
+        text-align: center;
+        width: 100%;
+    }
+
+    .e-carousel .e-carousel-navigators .e-next .e-btn:not(:disabled) .e-btn-icon,
+    .e-carousel .e-carousel-navigators .e-previous .e-btn:not(:disabled) .e-btn-icon {
+        color: greenyellow;
+        font-size: 25px;
+    }
+
+    //.e-carousel .e-carousel-indicators {
+        // bottom: auto;
+        //
+    }
+</style>

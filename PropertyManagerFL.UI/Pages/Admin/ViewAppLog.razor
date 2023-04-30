@@ -1,0 +1,32 @@
+﻿@using PropertyManagerFL.Application.ViewModels.Logs;
+
+<HeaderDialogComponent HeaderCaption="Log Viewer"
+                       ImageName="database-icon" />
+
+<div class="container-fluid mb-2">
+    <div class="form-group-sm m-2">
+        <SfTextBox Multiline = "true" Readonly="true" Value="@SelectedLogEntry.Message" FloatLabelType="FloatLabelType.Auto" Placeholder="Message"></SfTextBox>
+    </div>
+    <div class="form-group-sm m-2">
+        <SfTextBox Readonly="true" Value="@SelectedLogEntry.Level" FloatLabelType="FloatLabelType.Auto" Placeholder="Level"></SfTextBox>
+    </div>
+    <div class="form-group-sm m-2">
+        <SfTextBox Readonly="true" Value="@SelectedLogEntry.TimeStamp.ToString()" FloatLabelType="FloatLabelType.Auto" Placeholder="Time stamp"></SfTextBox>
+    </div>
+    <div hidden="@string.IsNullOrEmpty(SelectedLogEntry.Exception)" class="form-group-sm m-2">
+        <SfTextBox Readonly="true" Multiline="true" 
+            Value="@SelectedLogEntry.Exception" 
+            HtmlAttributes="ExceptionAttribute"
+            FloatLabelType="FloatLabelType.Auto" Placeholder="Exception"></SfTextBox>
+    </div>
+</div>
+@code {
+
+    [Parameter] public AppLogDto SelectedLogEntry { get; set; }
+
+    protected Dictionary<string, object> ExceptionAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "10" }
+    };
+
+}

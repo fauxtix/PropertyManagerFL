@@ -1,0 +1,380 @@
+﻿@page "/monthlyrentprocessing"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.Common
+@using PropertyManagerFL.Application.Interfaces.Services.Validation
+@using PropertyManagerFL.Application.ViewModels.Arrendamentos
+@using PropertyManagerFL.Application.ViewModels.Recebimentos
+@using System.Globalization
+@using PropertyManagerFL.UI.Pages.Recebimentos
+@using static PropertyManagerFL.UI.Components.ConfirmMonthlyRentProcessing;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@implements IDisposable
+
+
+<PageTitle>@L["TituloProcessamentoRendas"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloProcessamentoRendas"]" WithBadge="false"></PageTitleComponent>
+
+<div class="container-fluid d-flex">
+    <ConfirmMonthlyRentProcessing AlertMessageType="AlertMessageType.Warning"
+                                  DialogTitle="@L["TituloProcessamentoRendas"]"
+                                  Message="@monthToProcess"
+                                  Visible="@ConfirmVisibility"
+                                  MessageSeverityType=MessageSeverity.Warning
+                                  OnConfirmationYes="@(ProcessMonthlyRents)"
+                                  OnConfirmationNo="CloseDialog" />
+</div>
+
+
+@if (ProcessedRents is null)
+{
+    <LoadingData />
+}
+else
+{
+    @if (NoProcessedMonth)
+    {
+        <div>
+            <SfMessage>@L["TituloNaoHaMesesProcessados"]</SfMessage>
+        </div>
+    }
+    else
+    {
+        <div class="container-fluid">
+            <div class="group-box-left">
+                <SfButton CssClass="e-success e-round-corner" IconCss="fas fa-plus" Content="@L["NewMsg"]"
+                  @onclick="@(()=>ConfirmVisibility = true)" IsPrimary="true">
+                </SfButton>
+            </div>
+            <div class="w-25 mt-2">
+                <SfMessage>@L["TituloMesesProcessados"]</SfMessage>
+                <hr class="bg-black my-1">
+                <SfGrid DataSource="ProcessedRents">
+                    <GridColumns>
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.Mes) HeaderText="@L["TituloMes"]" Width="50" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.Ano) HeaderText="@L["TituloAno"]" Width="50" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.DataProcessamento) Format="d" HeaderText="@L["TituloMovimento"]" Width="120" />
+                    </GridColumns>
+                </SfGrid>
+            </div>
+
+        </div>
+    }
+}
+
+
+<AlertUserComponent AlertMessageType="@alertMessageType"
+                    Title="@AlertTitle"
+                    OperationType="@warningType"
+                    Visibility="@WarningVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="ReturnToIndex"></AlertUserComponent>
+
+<div class="container">
+    <SfDialog Width="60%"
+              Height="auto"
+              IsModal="true"
+              ShowCloseIcon="false"
+              CloseOnEscape="false"
+              AllowDragging="true"
+              @bind-Visible="AddEditMonthlyTransactionsVisibility">
+        <DialogTemplates>
+            <Content>
+                <ConfirmRentsPaidBatchProcessing Transactions="BatchTransactions" />
+            </Content>
+            <FooterTemplate>
+                <div>
+                    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-check"
+                              @onclick="@HandleBatchTransaction" Content="@L["TituloConfirmar"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["btnCancelar"]"
+                              @onclick="@HandleCancelBatchTransaction">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogAnimationSettings Effect="DialogEffect.SlideTop" Duration=500></DialogAnimationSettings>
+    </SfDialog>
+</div>
+
+
+<SfToast ID="toast_custom" @ref="ToastObj"
+         Title="@ToastTitle" Icon="fas fa-user"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="2000"
+         ShowProgressBar="true"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="CloseDialog"></ToastButton>
+    </ToastButtons>
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+
+@code {
+    [Inject] protected IStringLocalizer<App>? L { get; set; }
+    [Inject] protected IRecebimentoService? transactionsService { get; set; }
+    [Inject] protected IFracaoService? unitsService { get; set; }
+    [Inject] protected IArrendamentoService? leasesService { get; set; }
+    [Inject] protected NavigationManager? navigationManager { get; set; }
+    [Inject] protected ILogger<App>? _logger { get; set; }
+
+
+    protected IEnumerable<RecebimentoVM>? Transactions { get; set; }
+    protected IEnumerable<RecebimentoVM>? BatchTransactions { get; set; }
+
+    protected SfToast? ToastObj { get; set; }
+    protected SfSpinner? SpinnerObj { get; set; }
+
+
+    protected string ToastTitle = "";
+    protected string ToastContent = "";
+    protected string ToastCssClass = "";
+
+    protected string? ToastMessage;
+    protected string? ToastCss;
+    protected string? ToastIcon;
+
+
+    protected string spinnerLabel = "";
+
+    protected bool WarningVisibility { get; set; }
+    protected string? WarningMessage { get; set; }
+
+    protected int transactionId;
+    protected bool ConfirmVisibility { get; set; } = false;
+    protected string? AlertTitle = "";
+
+    protected string WarningCaption = "";
+    protected string WarningTitle = "";
+
+    protected bool EditTransationDialogVisibility { get; set; } = false;
+    protected bool SettlePaymentConfirmVisibility { get; set; } = false;
+    protected List<string> Error_Warnings_Msgs = new();
+    protected bool ErrorVisibility { get; set; } = false;
+    protected bool AddEditMonthlyTransactionsVisibility { get; set; } = false;
+
+    protected string monthToProcess = string.Empty;
+    protected string currentCulture = CultureInfo.CurrentCulture.Name;
+
+
+    OpcoesRegisto warningType = OpcoesRegisto.Warning;
+    AlertMessageType alertMessageType = AlertMessageType.Warning;
+
+    protected bool NoProcessedMonth { get; set; } = false;
+    protected IEnumerable<ProcessamentoRendasDTO> ProcessedRents { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckIfConditionsMet();
+
+        AlertTitle = L["TituloProcessamentoRendas"];
+
+        ProcessedRents = (await transactionsService.GetMonthlyRentsProcessed(DateTime.Now.Year));
+        if (ProcessedRents is null)
+        {
+            NoProcessedMonth = true;
+        }
+
+        if (currentCulture == "pt")
+            currentCulture = "pt-PT";
+
+        TextInfo myTI = new CultureInfo(currentCulture, false).TextInfo;
+        monthToProcess = $"{DateTime.Now.AddMonths(1).ToString("MMMM", CultureInfo.CreateSpecificCulture(currentCulture))}  {DateTime.Now.Year}";
+        monthToProcess = myTI.ToTitleCase(monthToProcess);
+
+        ConfirmVisibility = false;
+        ToastTitle = "";
+        ToastMessage = "";
+        ToastCss = "e-toast-success";
+
+        WarningVisibility = false;
+        WarningMessage = "";
+
+    }
+
+    private async Task CheckIfConditionsMet()
+    {
+        // Antes de criar transação, verificar se há registo de frações/arrendamento disponíveis...
+
+        var leases = await leasesService.GetAll();
+        var canContinue = leases is not null || leases.Count() > 0;
+        if (leases.Any() == false)
+        {
+            WarningVisibility = true;
+            WarningMessage = L["TituloAlertaSemArrendamentos"];
+            return;
+        }
+
+        canContinue = await unitsService!.GetFracoes_Disponiveis() is not null;
+        if (canContinue == false)
+        {
+            WarningVisibility = true;
+            WarningMessage = L["TituloAlertaSemFracoes"];
+            return;
+        }
+    }
+
+    /// <summary>
+    /// Get all leases
+    /// </summary>
+    /// <returns></returns>
+    protected async Task<IEnumerable<ArrendamentoVM>> GetAll()
+    {
+        try
+        {
+            return await leasesService!.GetAll();
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+    }
+
+    protected async Task ProcessMonthlyRents(EventCallbackArgs args)
+    {
+        var month = args.ProcessingMonth;
+        var year = args.ProcessingYear;
+        var alreadyPerformed = await transactionsService!.RentalProcessingPerformed(month, year);
+        if (alreadyPerformed == false)
+        {
+            ConfirmVisibility = false; // dialog to confirm monthly rent processing
+
+            // TODO - 17-04-2023
+            // No processamento de cartas de atualização, rendas deixaram de ser atualizadas
+            // Na geração de pagamento de rendas (abaixo), deverá ser tomado em
+            // linha de conta que necessitam de alteração.
+            // Ano serem os mostrados os movimentos (antes da confirmação), indicar
+            // quais as frações cujo valor da renda foi alterado.
+
+            BatchTransactions = (await transactionsService!.GeneratePagamentoRendas(month + 1, year)).ToList();
+            if (BatchTransactions.Any())
+            {
+                ToastTitle = L["TituloGerarPagamentos"];
+                ToastMessage = L["TituloSucesso"];
+                ToastCss = "e-toast-success";
+                StateHasChanged();
+                await Task.Delay(100);
+                await ToastObj!.ShowAsync();
+
+                AddEditMonthlyTransactionsVisibility = true;
+            }
+            else
+            {
+                WarningVisibility = true;
+                AlertTitle = L["TituloProcessamentoRendas"];
+                WarningMessage = L["TituloNaoHaPagamentosAProcessar"];
+                return;
+            }
+        }
+        else
+        {
+            WarningVisibility = true;
+            AlertTitle = L["TituloProcessamentoRendas"];
+            WarningMessage = L["TituloPagamentoRendasJaEfetuado"];
+            return;
+        }
+    }
+
+    public async Task HandleBatchTransaction()
+    {
+        ToastTitle = L["TituloProcessamentoRendas"];
+        try
+        {
+            var transactionResult = await transactionsService!.ProcessMonthlyRentPayments();
+            if (transactionResult == 1)
+            {
+                warningType = OpcoesRegisto.Info;
+                WarningMessage = L["TituloOperacaoOk"];
+                alertMessageType = AlertMessageType.Success;
+                _logger?.LogInformation(L["TituloOperacaoOk"]);
+            }
+            else
+            {
+                warningType = OpcoesRegisto.Info;
+                WarningMessage = L["TituloErroCriacaoPagamentos"];
+                alertMessageType = AlertMessageType.Success;
+                _logger?.LogError(WarningMessage);
+            }
+        }
+        catch (Exception ex)
+        {
+            warningType = OpcoesRegisto.Error;
+            WarningMessage = L["TituloErroCriacaoPagamentos"];
+            alertMessageType = AlertMessageType.Error;
+            _logger?.LogError(WarningMessage);
+
+        }
+        finally
+        {
+            StateHasChanged();
+            WarningVisibility = true;
+        }
+    }
+
+    public async Task HandleCancelBatchTransaction()
+    {
+        AlertTitle = L["TituloCancelamentoProcessamentoRendas"];
+        try
+        {
+            // Lê pagamentos (temp) criados
+            var pagamentosGerados = await transactionsService!.GetAllTemp();
+            if (pagamentosGerados != null)
+            {
+                await transactionsService.DeleteRecebimentosTemp();
+                warningType = OpcoesRegisto.Info;
+                WarningMessage = L["TituloProcessamentoRendasCancelado"];
+                alertMessageType = AlertMessageType.Error;
+                _logger?.LogWarning($"{L["TituloProcessamentoRendasCancelado"]}.");
+                WarningVisibility = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, ex.Message);
+            warningType = OpcoesRegisto.Error;
+            WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]} ({ex.Message}). {L["TituloVerificar"]}";
+            alertMessageType = AlertMessageType.Success;
+            WarningVisibility = true;
+        }
+    }
+
+
+
+    private async Task CloseDialog()
+    {
+        ToastTitle = L["TituloProcessamentoRendas"];
+        ToastMessage = L["TituloProcessoTerminado"];
+        ToastCss = "e-toast-success";
+        StateHasChanged();
+        await Task.Delay(100);
+        await ToastObj!.ShowAsync();
+        await Task.Delay(1000);
+
+        ReturnToIndex();
+    }
+
+    private void ReturnToIndex()
+    {
+        WarningVisibility = false;
+        ConfirmVisibility = false;
+        AddEditMonthlyTransactionsVisibility = false;
+        navigationManager!.NavigateTo("/recebimentos/manutencao");
+    }
+
+    protected async Task HideToast()
+    {
+        await ToastObj!.HideAsync();
+    }
+
+    public void Dispose()
+    {
+        SpinnerObj?.Dispose();
+        ToastObj?.Dispose();
+    }
+}

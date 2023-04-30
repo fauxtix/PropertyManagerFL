@@ -1,0 +1,342 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Recebimentos
+@using System.Globalization
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@{
+    var Tool = new List<object>() {
+        "Search",
+        "ExcelExport",
+        "Cancel",
+        "Update"
+    };
+}
+
+<div class="container-fluid">
+    <div>
+        <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
+        <hr style="color:black" />
+    </div>
+    <div class="w-100">
+        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" ContentAlignment="HorizontalAlign.Center">@L["TituloOperacaoBatch"]</SfMessage>
+    </div>
+    <div class="table table-striped mt-2">
+        <SfGrid ID="Payments_Grid"
+                @ref="gridObj"
+                DataSource="@Transactions"
+                Toolbar="@Tool"
+                AllowPaging="false"
+                Width="100%"
+                AllowSelection="true"
+                EnableHover="true"
+                AllowSorting="true"
+                AllowExcelExport="true"
+                RowHeight="24">
+            <GridPageSettings PageSize="20" PageSizes="false"></GridPageSettings>
+            <GridEditSettings AllowAdding="false" AllowEditing="true" ShowConfirmDialog="true" Mode="EditMode.Batch"></GridEditSettings>
+            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell"></GridSelectionSettings>
+            <GridEditSettings AllowEditing="true" Mode="EditMode.Batch" ShowConfirmDialog="false"></GridEditSettings>
+            <GridEvents CellSaved="CellSavedHandler" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
+                        OnToolbarClick="ToolbarClickHandler" TValue="RecebimentoVM" />
+            <GridColumns>
+                <GridColumn Field=@nameof(RecebimentoVM.Id) HeaderText="#"
+                            TextAlign="TextAlign.Center" IsPrimaryKey="true"
+                            Visible="false"
+                            Width="110">
+                </GridColumn>
+
+                @*Transaction status*@
+                <GridColumn Field=@nameof(RecebimentoVM.Estado) HeaderText="Status"
+                            AllowEditing="false" HideAtMedia="(min-width: 900px)"
+                            Width="150">
+                    <Template Context="Registo">
+                        @{
+                            var current = (Registo as RecebimentoVM);
+                            var status = current!.Estado == 1 ? L["TituloValorPago"] : current.Estado == 2 ? L["TituloValorPagoParcialmente"] : current.Estado == 3 ? L["TituloValorNaoPago"] : L["TituloValorPorConfirmar"];
+                            <span>@status</span>
+                        }
+                    </Template>
+                </GridColumn>
+                <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
+                            AllowEditing="false" HideAtMedia="(min-width: 900px)"
+                            Width="210">
+                </GridColumn>
+                @*Transaction date*@
+                <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                            TextAlign="TextAlign.Center"
+                            HideAtMedia="(min-width: 900px)"
+                            AllowEditing="false"
+                            Format="d"
+                            Width="110">
+                </GridColumn>
+                @*Amount expected (rent)*@
+                <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) AllowFiltering="false" AllowSorting="true"
+                            AllowEditing="false"
+                            HeaderText="@L["TituloValorPrevisto"]" TextAlign="TextAlign.Right" Format="C2"
+                            Width="120">
+                    <Template Context="Registo">
+                        @{
+                            var currentTransactionRecord = (Registo as RecebimentoVM);
+                            <span>@currentTransactionRecord!.ValorPrevisto.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                        }
+                    </Template>
+                </GridColumn>
+                @*Amount paid (rent)*@
+                <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) AllowFiltering="false" AllowSorting="true"
+                            HeaderText="@L["TituloValorPago"]" TextAlign="TextAlign.Right" Format="C2"
+                            EditType="EditType.NumericEdit"
+                            EditorSettings="@AmountPaidEditParams"
+                            Width="120">
+                    <Template Context="Registo">
+                        @{
+                            var currentTransactionRecord = (Registo as RecebimentoVM);
+                            <span>@currentTransactionRecord!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                        }
+                    </Template>
+                </GridColumn>
+                @*Due Amount*@
+                <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) AllowFiltering="false" AllowSorting="true"
+                            AllowEditing="false"
+                            HeaderText="@L["TituloValorEmFalta"]" TextAlign="TextAlign.Right" Format="C2"
+                            Width="120">
+                    <Template Context="Registo">
+                        @{
+                            var currentTransactionRecord = (Registo as RecebimentoVM);
+                            <span>@currentTransactionRecord!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                        }
+                    </Template>
+                </GridColumn>
+            </GridColumns>
+            <GridAggregates>
+                <GridAggregate>
+                    <GridAggregateColumns>
+                        <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorPrevisto) Type="AggregateType.Sum" Format="C2">
+                            <GroupFooterTemplate>
+                                @{
+                                    var groupTotal = (context as AggregateTemplateContext);
+                                    <p class="my-1">@groupTotal!.Sum</p>
+                                }
+                            </GroupFooterTemplate>
+                            <FooterTemplate>
+                                @{
+                                    var overallTotal = (context as AggregateTemplateContext);
+                                    <div>
+                                        <p class="my-1">Total @overallTotal!.Sum</p>
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorRecebido) Type="AggregateType.Sum" Format="C2">
+                            <GroupFooterTemplate>
+                                @{
+                                    var groupTotal = (context as AggregateTemplateContext);
+                                    <p class="my-1">@groupTotal!.Sum</p>
+                                }
+                            </GroupFooterTemplate>
+                            <FooterTemplate>
+                                @{
+                                    var overallTotal = (context as AggregateTemplateContext);
+                                    <div>
+                                        <p class="my-1">Total @overallTotal!.Sum</p>
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                        <GridAggregateColumn Field=@nameof(RecebimentoVM.ValorEmFalta) Type="AggregateType.Sum" Format="C2">
+                            <GroupFooterTemplate>
+                                @{
+                                    var groupTotal = (context as AggregateTemplateContext);
+                                    <p class="my-1">@groupTotal!.Sum.ToString()</p>
+                                }
+                            </GroupFooterTemplate>
+                            <FooterTemplate>
+                                @{
+                                    var overallTotal = (context as AggregateTemplateContext);
+                                    <div>
+                                        <p class="my-1">Total @overallTotal!.Sum</p>
+                                    </div>
+                                }
+                            </FooterTemplate>
+                        </GridAggregateColumn>
+                    </GridAggregateColumns>
+                </GridAggregate>
+            </GridAggregates>
+        </SfGrid>
+    </div>
+</div>
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@AlertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+
+
+@code {
+    [Parameter] public IEnumerable<RecebimentoVM>? Transactions { get; set; }
+    [Parameter] public EventCallback OnUpdate { get; set; }
+
+    [Inject] protected ILogger<App>? _logger { get; set; }
+    [Inject] protected IStringLocalizer<App>? L { get; set; }
+    [Inject] protected IRecebimentoService paymentsService { get; set; }
+
+    protected SfGrid<RecebimentoVM>? gridObj { get; set; }
+
+    protected string currentCulture = CultureInfo.CurrentCulture.Name;
+    protected decimal rentValue { get; set; } = 0;
+    protected bool AlertVisibility { get; set; } = false;
+    protected string AlertTitle { get; set; } = string.Empty;
+    protected string WarningMessage { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        WarningMessage = "";
+        AlertTitle = "";
+    }
+
+    public IEditorSettings AmountPaidEditParams = new NumericEditCellParams()
+        {
+            Params = new NumericTextBoxModel<object>()
+            {
+                Currency = "EUR",
+                Decimals = 2,
+                Min = 0,
+                Format = "C2",
+                ShowSpinButton = true,
+                ValidateDecimalOnType = true
+            }
+        };
+
+    public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+    {
+        if (args.Item.Id == "Payments_Grid_excelexport")
+        {
+            ExcelExportProperties excelExportProperties = new ExcelExportProperties();
+            excelExportProperties.IncludeTemplateColumn = true;
+            excelExportProperties.IncludeHeaderRow = true;
+            excelExportProperties.FileName = $"Payments_{DateTime.Now.ToShortTimeString()}.xlsx";
+            await gridObj!.ExportToExcelAsync(excelExportProperties);
+        }
+    }
+
+    public async Task CellSelectHandler(CellSelectEventArgs<RecebimentoVM> args)
+    {
+        //get selected cell index
+        var CellIndexes = await gridObj!.GetSelectedRowCellIndexesAsync();
+
+        //get the row and cell index
+        var CurrentEditRowIndex = CellIndexes[0].Item1;
+        var CurrentEditCellIndex = (int)CellIndexes[0].Item2;
+
+        //get the available fields
+        var fields = await gridObj.GetColumnFieldNamesAsync();
+        // edit the selected cell using the cell index and column name
+        await gridObj.EditCellAsync(CurrentEditRowIndex, fields[CurrentEditCellIndex]);
+    }
+
+    public async Task CellSavedHandler(CellSaveArgs<RecebimentoVM> args)
+    {
+
+        // Estado/Payment status => 1 = full paid, 2 = partially paid, 3 = not paid (0), else = no change (pending)
+
+        var unitId = args.RowData.ID_Propriedade;
+        rentValue = (decimal)args.PreviousValue;
+
+        var index = await gridObj!.GetRowIndexByPrimaryKeyAsync(args.RowData.Id);
+        if (args.ColumnName == "ValorRecebido") // rent amount  paid
+        {
+            var inputAmount = args.Data.ValorRecebido;
+            if (inputAmount > rentValue)
+            {
+                args.Data.ValorRecebido = rentValue;
+                args.Cancel = true;
+                AlertTitle = L["TituloProcessamentoRendas"];
+                WarningMessage = L["TituloErroValorRecebidoSuperiorARenda"];
+                AlertVisibility = true;
+                await gridObj.CloseEditAsync();
+                return;
+            }
+
+            if (inputAmount == 0)
+            {
+                args.Data.ValorRecebido = rentValue;
+                args.Cancel = true;
+                AlertTitle = L["TituloProcessamentoRendas"];
+                WarningMessage = L["TituloErroValorRecebidoNaoPositivoRenda"];
+                AlertVisibility = true;
+                await gridObj.CloseEditAsync();
+                return;
+            }
+
+            if (inputAmount == rentValue)
+            {
+                await gridObj.UpdateCellAsync(index, "Estado", 1); // full payment, no need to update amounts
+            }
+            else if (inputAmount < rentValue && inputAmount > 0)
+            {
+                await gridObj.UpdateCellAsync(index, "Estado", 2); // partial payment
+                await gridObj.UpdateCellAsync(index, "ValorRecebido", inputAmount); // changed value
+                await gridObj.UpdateCellAsync(index, "ValorEmFalta", rentValue - inputAmount); // amount due
+            }
+            else if (inputAmount == 0)
+            {
+                await gridObj.UpdateCellAsync(index, "Estado", 3); // not paid
+                await gridObj.UpdateCellAsync(index, "ValorRecebido", 0); // amount paid (should be 0)
+                await gridObj.UpdateCellAsync(index, "ValorEmFalta", rentValue); // amount due (shoul be the full amount)
+            }
+        }
+    }
+
+    public async Task BatchSaveHandler(BeforeBatchSaveArgs<RecebimentoVM> args)
+    {
+        try
+        {
+            var changedRecords = args.BatchChanges.ChangedRecords;
+
+            if (changedRecords.Any())
+            {
+                var invalidTransactions = changedRecords.Where(p => (p.ValorRecebido > p.ValorPrevisto) || (p.ValorRecebido == 0));
+                if (invalidTransactions.Any())
+                {
+                    AlertTitle = L["TituloProcessamentoRendas"];
+                    WarningMessage = L["TituloErroValorRecebidoInvalido"];
+                    AlertVisibility = true;
+                    return;
+                }
+
+                foreach (var changedRecord in changedRecords)
+                {
+                    // 03/2023
+                    int paymentStatus = 0;
+
+                    if (changedRecord.ValorPrevisto == changedRecord.ValorRecebido && changedRecord.ValorRecebido > 0)
+                        paymentStatus = 1; // Pago
+                    else if (changedRecord.ValorRecebido < changedRecord.ValorPrevisto && changedRecord.ValorRecebido > 0)
+                        paymentStatus = 2; // Pago parcialmente
+                    else if (changedRecord.ValorRecebido == 0)
+                        paymentStatus = 3; // Não pagou
+
+                    changedRecord.Estado = paymentStatus;
+
+                    var updateOk = await paymentsService.UpdateRecebimentoTemp(changedRecord.Id, changedRecord);
+                    if (!updateOk)
+                    {
+                        AlertTitle = L["TituloProcessamentoRendas"];
+                        WarningMessage = L["TituloErroProcessarAlteracoes"];
+                        AlertVisibility = true;
+                    }
+                }
+
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger!.LogError(ex, ex.Message);
+        }
+
+    }
+
+}

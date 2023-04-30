@@ -1,0 +1,89 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Fracoes
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+<div class="control-container">
+    <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
+                DropArea=".control-fluid"
+                AllowMultiple=true AllowedExtensions=" .jpg, .jpeg, .png, .gif"
+                MaxFileSize="@MaxFileSize">
+        <UploaderAsyncSettings SaveUrl="api/uploadunits/Save"
+                               RemoveUrl="api/uploadunits/remove" />
+        <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
+    </SfUploader>
+    @if (ImagensFracao!.Count() > 0)
+    {
+        <div class="control-container">
+            <SfCarousel AnimationEffect="CarouselAnimationEffect.Fade">
+                @foreach (var item in ImagensFracao!)
+                {
+                    <CarouselItem>
+                        <figure class="img-container">
+                            <img src="/uploads//unit_images/@item.Foto" style="height:100%;width:100%;" />
+                            <figcaption class="img-caption">@item.Descricao</figcaption>
+                        </figure>
+                    </CarouselItem>
+                }
+            </SfCarousel>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public List<NovaImagemFracao>? ImagensFracao { get; set; }
+    [Parameter] public OpcoesRegisto EditMode { get; set; }
+    [Parameter] public FracaoVM? SelectedUnit { get; set; }
+
+
+    protected SfUploader? sfUploader;
+    int MaxFileSize = 10 * 1024 * 1024; // 10 MB
+                                        //protected List<NovaImagemFracao>? unitImages { get; set; } = new();
+
+    protected override void OnInitialized()
+    {
+        var x = 0;
+    }
+
+    private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        if (args.FileData.Count() == 0) return;
+
+        foreach (var file in args.FileData)
+        {
+            ImagensFracao!.Add(
+                new NovaImagemFracao()
+                    {
+                        Foto = Path.GetFileName(file.Name),
+                        Id_Fracao = SelectedUnit!.Id, // FK to identify the unit the image belongs to
+                        Descricao = $"Imagem_{file.Name}" // redundant for now, later may useful to identify 'room', 'kitchen', ...
+                    });
+        }
+
+        SelectedUnit!.Imagens = ImagensFracao;
+        StateHasChanged();
+    }
+}
+
+<style>
+    .control-container {
+        background-color: #e5e5e5;
+        height: auto;
+        margin: 0 auto;
+        width: 500px;
+    }
+
+    .e-carousel .e-carousel-items .e-carousel-item .img-container {
+        height: 100%;
+    }
+
+    .e-carousel .e-carousel-items .e-carousel-item .img-caption {
+        bottom: 4em;
+        color: #fff;
+        font-size: 12pt;
+        height: 2em;
+        position: relative;
+        padding: 0.3em 1em;
+        text-align: center;
+        width: 100%;
+    }
+</style>

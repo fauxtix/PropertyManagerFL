@@ -1,0 +1,158 @@
+﻿@page "/saldocorrenteinquilino"
+<h3>Saldo Corrente Inquilino</h3>
+@using System.Globalization;
+@using PropertyManagerFLApplication.Utilities;
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div>
+                <SfDatePicker Enabled="true" Placeholder="Dt, Início" Width="160px"
+                              CssClass="e-align-middle e-corner"
+                              FloatLabelType="FloatLabelType.Always"
+                              @bind-Value="@dInicioContrato">
+                </SfDatePicker>
+            </div>
+            <div class="group-box">
+                <SfComboBox TValue="int" TItem="Mes"
+                            ShowClearButton="false" FloatLabelType="FloatLabelType.Always"
+                            Placeholder="Último mês pago" Value="comboValue" DataSource="@DataSource">
+                    <ComboBoxFieldSettings Text="Descricao" Value="Id"></ComboBoxFieldSettings>
+                    <ComboBoxEvents TValue="int" TItem="Mes" Created="onCreated"></ComboBoxEvents>
+                </SfComboBox>
+                <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="33%"
+                                  Placeholder="Ano"
+                                  Max="@DateTime.Now.Year"
+                                  Step="1"
+                                  CssClass="e-field  e-corner"
+                                  FloatLabelType="@FloatLabelType.Always"
+                                  @bind-Value="@UltimoAnoPago">
+                </SfNumericTextBox>
+                <SfTextBox Placeholder="Meses/início"
+                           CssClass="e-field e-corner custom-class" Width="150px"
+                           FloatLabelType="FloatLabelType.Always"
+                           @bind-Value="@MesesDesdeInicio">
+                </SfTextBox>
+
+            </div>
+        </div>
+    </div>
+    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+              @onclick="CalculaTotais" Content="Gravar">
+    </SfButton>
+
+</div>
+
+@code {
+
+    protected decimal SaldoInquilino { get; private set; }
+    protected DateTime dInicioContrato { get; set; } = DateTime.Now;
+    protected int IdInquilino { get; set; }
+    protected decimal Valor_Renda { get; set; }
+    protected DateTime dProximoPagamento { get; private set; }
+    protected int MesEscolhido;
+    protected string? MesesDesdeInicio;
+    protected string? TotalPrevistoUltPag;
+    protected string? SaldoPrevistoCorrente;
+    protected string? DiferencaSaldos;
+    protected string? SaldoCorrente;
+    protected int UltimoAnoPago;
+    protected int comboValue { get; set; }
+
+    protected SfComboBox<int, string?>? cboMeses { get; set; }
+
+    List<Mes> DataSource = new List<Mes>();
+    protected override void OnInitialized()
+    {
+        UltimoAnoPago = DateTime.Now.Year;
+    }
+
+    public static List<string> GetMonths(DateTime StartDate)
+    {
+        List<string> MonthList = new List<string>();
+        DateTime ThisMonth = DateTime.Now.Date;
+
+        while (ThisMonth.Date > StartDate.Date)
+        {
+            MonthList.Add(ThisMonth.ToString("MMMM") + " " + ThisMonth.Year.ToString());
+            ThisMonth = ThisMonth.AddMonths(-1);
+        }
+
+        return MonthList;
+    }
+
+    public void onCreated()
+    {
+        DataSource = Meses;
+        var curMonth = DateTime.Now.Month;
+        if (curMonth == 12)
+        {
+            curMonth = 10;
+        }
+        else if (curMonth == 1)
+        {
+            curMonth = 11;
+            UltimoAnoPago--;
+        }
+
+        comboValue = Meses[curMonth].Id;
+    }
+
+    protected class Mes
+    {
+        public string? Descricao { get; set; }
+
+        public int Id { get; set; }
+    }
+
+    List<Mes> Meses = new() {
+        new Mes{ Id =1, Descricao= "Janeiro"},
+        new Mes{ Id =2, Descricao= "Fevereiro"},
+        new Mes{ Id =3, Descricao= "Março"},
+        new Mes{ Id =4, Descricao= "Abril"},
+        new Mes{ Id =5, Descricao= "Maio"},
+        new Mes{ Id =6, Descricao= "Junho"},
+        new Mes{ Id =7, Descricao= "Julho"},
+        new Mes{ Id =8, Descricao= "Agosto"},
+        new Mes{ Id =9, Descricao= "Setembro"},
+        new Mes{ Id =10, Descricao= "Outubro"},
+        new Mes{ Id =11, Descricao= "Novembro"},
+        new Mes{ Id =12, Descricao= "Dezembro"}
+    };
+
+    private void CalculaTotais()
+    {
+        MesEscolhido = comboValue;
+        if (MesEscolhido == 0 || UltimoAnoPago == 0)
+            return;
+
+        DateTime dCalcular = new DateTime(UltimoAnoPago, MesEscolhido, 1);
+
+        int iMesesUltPag = Utilitarios.GetMonthsBetweenDates(dInicioContrato, dCalcular);
+        MesesDesdeInicio = iMesesUltPag.ToString();
+        decimal decTotRendasUltPag = Valor_Renda * iMesesUltPag;
+        TotalPrevistoUltPag = decTotRendasUltPag.ToString("C");
+
+        dCalcular = new DateTime(DateTime.Now.Year, DateTime.Today.Month, 1);
+        int iMesesCorrente = Utilitarios.GetMonthsBetweenDates(dInicioContrato, dCalcular);
+        decimal decTotRendasAPagar = Valor_Renda * iMesesCorrente;
+
+        SaldoPrevistoCorrente = decTotRendasAPagar.ToString("C");
+        decimal decDummy = -decTotRendasAPagar;
+
+        if (decTotRendasAPagar == decTotRendasUltPag)
+        {
+            DiferencaSaldos = "Pagamentos em dia";
+            SaldoCorrente = "0";
+        }
+        else
+        {
+            DiferencaSaldos = (decTotRendasAPagar - decTotRendasUltPag).ToString("C");
+            DiferencaSaldos += $" ({iMesesCorrente - iMesesUltPag} meses * ";
+            DiferencaSaldos += Valor_Renda.ToString("C") + ")";
+
+            SaldoCorrente = decDummy.ToString("C");
+        }
+    }
+
+}
