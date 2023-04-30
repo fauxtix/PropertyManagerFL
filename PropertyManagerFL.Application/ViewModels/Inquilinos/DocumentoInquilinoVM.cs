@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int TenantId { get; set; }
+        public int DocumentType { get; set; }
         public string? DocumentPath { get; set; }
         public string? Descricao { get; set; }
         public DateTime UploadDate { get; set; }

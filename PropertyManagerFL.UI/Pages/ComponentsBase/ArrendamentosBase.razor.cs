@@ -119,14 +119,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         private async Task CheckForAlerts()
         {
             LeaseAlerts.Clear();
-            var leasesWhoNeedToSendUpdateLetter = leases.Where(l => l.Data_Inicio.Month == DateTime.Now.Month - 2);
-            if (leasesWhoNeedToSendUpdateLetter.Any())
+            var tenantDocuments = await inquilinosService!.GetDocumentos();
+            var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.UploadDate.Year < DateTime.Now.Year);
+            if(updateLetterSentCurrentYear.Any())
             {
-                foreach (var item in leasesWhoNeedToSendUpdateLetter)
+                foreach (var document in tenantDocuments)
                 {
-                    LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {item.NomeInquilino} ({item.Fracao})", 1);
+                    LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}", 1);
+
                 }
             }
+
             var leasesWhoNeedToUpdateRent =
                 leases.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
             if (leasesWhoNeedToUpdateRent.Any())
@@ -134,7 +137,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 foreach (var item in leasesWhoNeedToUpdateRent)
                 {
                     var alertMsg = $"Necessário atualizar renda do inquilino {item.NomeInquilino} ({item.Fracao})";
-                    if (item.EnvioCartaAtrasoRenda == false)
+                    if (item.EnvioCartaAtualizacaoRenda == false)
                         alertMsg += " - não foi enviada carta de atualização!";
 
                     LeaseAlerts.Add(alertMsg, 1);
@@ -526,6 +529,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ToastMessage = L["RegistoGravadoSucesso"];
                 ToastCss = "e-toast-success";
                 await InvokeAsync(StateHasChanged);
+                await leasesGridObj.Refresh();
                 leases = await GetAllLeases();
             }
             else {

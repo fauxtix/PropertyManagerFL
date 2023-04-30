@@ -12,7 +12,6 @@ namespace PropertyManagerFL.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    
     public class ArrendamentosController : ControllerBase
     {
         private readonly IArrendamentoRepository _repoArrendamentos;
