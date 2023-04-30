@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using PropertyManagerFL.Api.Middlewares;
 using PropertyManagerFL.Application.Interfaces.Services.JWT;
 using PropertyManagerFL.Infrastructure.Services.JWT;
 using System.Text;
@@ -21,10 +20,10 @@ public static class JwtConfig
         var chave = Encoding.ASCII.GetBytes(configuration.GetSection("JWT:Secret").Value);
 
         services.AddAuthentication(p =>
-       {
-           p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-           p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-       })
+        {
+            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
         .AddJwtBearer(p =>
         {
             p.RequireHttpsMetadata = false;
@@ -33,7 +32,7 @@ public static class JwtConfig
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(chave),
-                ValidateIssuer = true, 
+                ValidateIssuer = true,
                 ValidIssuer = configuration.GetSection("JWT:Issuer").Value,
                 ValidateAudience = true,
                 ValidAudience = configuration.GetSection("JWT:Audience").Value,
@@ -50,6 +49,5 @@ public static class JwtConfig
     {
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<ApiKeyMiddleware>();
     }
 }
