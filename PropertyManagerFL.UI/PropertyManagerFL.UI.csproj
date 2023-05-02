@@ -62,12 +62,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmailService\EmailService.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Application\PropertyManagerFL.Application.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Core\PropertyManagerFL.Core.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Infrastructure\PropertyManagerFL.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Services\" />
     <Folder Include="wwwroot\EstateAgency\images\" />
     <Folder Include="wwwroot\EstateAgency\js\" />
     <Folder Include="wwwroot\images\Properties\" />

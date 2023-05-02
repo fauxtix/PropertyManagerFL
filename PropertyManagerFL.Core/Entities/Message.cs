@@ -11,5 +11,7 @@
         public DateTime? MessageSentOn { get; set; }
         public DateTime? MessageReceivedOn { get; set; }
         public int TenantId{ get; set; }
+        public string ReferenceId { get; set; } = "";
+
     }
 }

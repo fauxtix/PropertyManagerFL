@@ -100,7 +100,8 @@ namespace PropertyManagerFL.Api.Controllers
                     MessageType = messageVM.MessageType,
                     MessageReceivedOn = messageVM.MessageReceivedOn,
                     MessageSentOn = messageVM.MessageSentOn,
-                    TenantId = messageVM.TenantId
+                    TenantId = messageVM.TenantId,
+                    ReferenceId = messageVM.ReferenceId,
                 };
 
                 var insertedId = await _messageRepository.Add(message);
@@ -141,6 +142,7 @@ namespace PropertyManagerFL.Api.Controllers
                     MessageReceivedOn = messageVM.MessageReceivedOn,
                     MessageSentOn = messageVM.MessageSentOn,
                     TenantId = messageVM.TenantId,
+                    ReferenceId = messageVM.ReferenceId,
                 };
 
                 await _messageRepository.Save(messageToUpdate);

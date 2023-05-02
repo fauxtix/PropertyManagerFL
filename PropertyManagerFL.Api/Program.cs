@@ -1,6 +1,6 @@
+using EmailService;
 using log4net.Config;
 using PropertyManagerFL.Api.Configuration;
-using PropertyManagerFL.Api.Middlewares;
 using PropertyManagerFL.Infrastructure.Context;
 using Serilog;
 using Serilog.Events;
@@ -14,6 +14,12 @@ XmlConfigurator.Configure(new FileInfo("log4net.config"));
 
 var connectionString = builder.Configuration.GetConnectionString("PMConnection");
 string? ambiente = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+var emailConfig = configuration
+    .GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+
+builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<DapperContext>();

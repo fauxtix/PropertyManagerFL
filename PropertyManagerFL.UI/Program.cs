@@ -1,3 +1,4 @@
+using EmailService;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -11,6 +12,7 @@ using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Syncfusion.Blazor;
+using System.Configuration;
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +84,11 @@ var localizationOptions = new RequestLocalizationOptions()
 
 #endregion
 
+var emailConfig = builder.Configuration
+    .GetSection("EmailConfiguration")
+    .Get<EmailConfiguration>();
+
+builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<TokenProvider>();

@@ -29,6 +29,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             parameters.Add("@MessageSentOn", message.MessageSentOn);
             parameters.Add("@MessageReceivedOn", message.MessageReceivedOn);
             parameters.Add("@TenantId", message.TenantId);
+            parameters.Add("@ReferenceId", message.ReferenceId);
 
             try
             {
@@ -127,6 +128,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             parameters.Add("@MessageSentOn", message.MessageSentOn);
             parameters.Add("@MessageReceivedOn", message.MessageReceivedOn);
             parameters.Add("@TenantId", message.TenantId);
+            parameters.Add("@ReferenceId", message.ReferenceId);
 
             try
             {

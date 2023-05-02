@@ -12,6 +12,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         int GetFirstIdInquilino();
         Task AtualizaSaldo(int Id, decimal SaldoCorrente);
         Task<IEnumerable<LookupTableVM>> GetInquilinosDisponiveis();
+        Task<IEnumerable<LookupTableVM>> GetInquilinosAsLookup();
         Task<int> GetInquilinoFracao(int ID_Fracao);
         string GetNomeFracao(int IdInquilino, bool bTitular);
         Task<string?> GetUltimoMesPago_Inquilino(int ID_Inquilino);

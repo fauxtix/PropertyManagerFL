@@ -1,28 +1,25 @@
-﻿using PropertyManagerFL.Core.Entities;
-using PropertyManagerFL.Infrastructure.Services.EmailServices;
+﻿using PropertyManagerFL.Application.Interfaces.Repositories.Email;
+using PropertyManagerFL.Application.ViewModels.Email;
+using PropertyManagerFL.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
 
-namespace PropertyManagerFL.UI.Services.EmailServices
+namespace PropertyManagerFL.Infrastructure.Repositories
 {
-    public class EmailService : IEmailService
+    public class EmailRepository : IEmailRepository
     {
         private readonly EmailSettings _mailConfig;
         private static string _mailResponse;
 
-        public EmailService(EmailSettings mailConfig)
+        public EmailRepository(EmailSettings mailConfig)
         {
             _mailConfig = mailConfig;
         }
 
-        public async Task<string> SendEmailAsync(string ToEmailName, string Subject, EventModel Data)
-        {
-            return await SendEmailAsync(new List<string>() { ToEmailName }, Subject, Data);
-        }
 
-        public async Task<string> SendEmailAsync(List<string> ToEmailName, string Subject, EventModel Data)
+        public async Task<string> SendEmailAsync(EmailMessage mensagem)
         {
             _mailResponse = string.Empty;
 
@@ -40,18 +37,15 @@ namespace PropertyManagerFL.UI.Services.EmailServices
                 MailMessage message = new MailMessage
                 {
                     From = new MailAddress(_mailConfig.Username, _mailConfig.DisplayName),
-                    Subject = Subject,
+                    Subject = mensagem.Body,
                     SubjectEncoding = Encoding.UTF8,
                     BodyEncoding = Encoding.UTF8,
                     HeadersEncoding = Encoding.UTF8,
                     IsBodyHtml = true,
-                    Body = GetEmailContent(Subject, Data),
+                    Body = mensagem.Body,
                     Priority = MailPriority.High
                 };
-                foreach (string EmailName in ToEmailName)
-                {
-                    message.To.Add(new MailAddress(EmailName));
-                }
+                message.To.Add(new MailAddress(mensagem.Recipient));
 
                 await smtpClient.SendMailAsync(message);
             }

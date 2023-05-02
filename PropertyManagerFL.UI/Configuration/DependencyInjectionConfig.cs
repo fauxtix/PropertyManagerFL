@@ -1,13 +1,12 @@
-﻿using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+﻿using EmailService;
+using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
+using PropertyManagerFL.Application.Interfaces.Services.Email;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
-using PropertyManagerFL.Infrastructure.Services.EmailServices;
 using PropertyManagerFL.UI.ApiWrappers;
-using PropertyManagerFL.UI.Services.EmailServices;
-using System.Configuration;
 
 namespace PropertyManagerFL.UI;
 
@@ -53,6 +52,9 @@ public static class DependencyInjectionConfig
         services.AddTransient<IBackupDatabaseService, WrapperBackupDatabase>();
         services.AddTransient<IStatsService, WrapperStats>();
         services.AddTransient<IMessagesService, WrapperMessages>();
-        
+        services.AddTransient<IClientEmailService, WrapperEMail>();
+
+        services.AddScoped<IEmailSender, EmailSender>();
+
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
-using PropertyManagerFL.Core.Entities;
-using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Infrastructure.Context;
 

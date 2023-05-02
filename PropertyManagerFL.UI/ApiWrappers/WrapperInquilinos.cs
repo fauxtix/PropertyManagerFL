@@ -214,6 +214,21 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
+        public async Task<IEnumerable<LookupTableVM>> GetInquilinosAsLookup()
+        {
+            try
+            {
+                var output = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetInquilinosAsLookup");
+                return output!;
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API");
+                return null;
+            }
+        }
+
+
         public async Task<IEnumerable<LookupTableVM>> GetInquilinos()
         {
             try

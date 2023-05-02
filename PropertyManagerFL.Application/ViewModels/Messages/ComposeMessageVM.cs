@@ -13,6 +13,7 @@ namespace PropertyManagerFL.Application.ViewModels.Messages
         public DateTime? MessageSentOn { get; set; }
         public DateTime? MessageReceivedOn { get; set; }
         public int TenantId { get; set; }
+        public string ReferenceId { get; set; } = "";
         public List<Message> Messages { get; set; } = new List<Message>();
 
     }

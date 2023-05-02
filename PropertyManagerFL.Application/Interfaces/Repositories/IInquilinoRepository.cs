@@ -31,5 +31,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<FiadorVM>> GeFiadortInquilino_ById(int idInquilino);
         Task<bool> TableHasData();
         Task<IEnumerable<CC_Inquilino>> GetTenantPaymentsHistory(int id);
+        Task<IEnumerable<LookupTableVM>> GetInquilinosAsLookup();
     }
 }

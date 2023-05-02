@@ -187,6 +187,29 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
+        /// Get Inquilinos (to fill lookup combo)
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetInquilinosAsLookup")]
+        public async Task<IActionResult> GetInquilinosAsLookup()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var inquilinos = await _repoInquilinos.GetInquilinosAsLookup();
+                if (inquilinos.Any())
+                    return Ok(inquilinos);
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
+        /// <summary>
         /// Get id do inquilino da fracao arrendada
         /// </summary>
         /// <param name="id">Id da fracão</param>

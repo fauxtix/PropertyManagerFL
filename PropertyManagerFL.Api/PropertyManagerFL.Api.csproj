@@ -59,6 +59,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmailService\EmailService.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Application\PropertyManagerFL.Application.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Core\PropertyManagerFL.Core.csproj" />
     <ProjectReference Include="..\PropertyManagerFL.Infrastructure\PropertyManagerFL.Infrastructure.csproj" />

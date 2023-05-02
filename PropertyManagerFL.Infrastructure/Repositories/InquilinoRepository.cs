@@ -311,6 +311,27 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<LookupTableVM>> GetInquilinosAsLookup()
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var inquilinosDisponiveis = await connection.QueryAsync<LookupTableVM>("usp_Inquilinos_GetInquilinos_AsLookup",
+                         commandType: CommandType.StoredProcedure);
+
+                    return inquilinosDisponiveis;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
+
+
         public async Task<string> GetNomeInquilino(int id)
         {
             using (var connection = _context.CreateConnection())
