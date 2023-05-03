@@ -259,6 +259,8 @@ else
     protected string comboPlaceHolder = "";
     protected DateTime MessageDate { get; set; }
 
+    protected string? TenantName { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         senderReceiverLabel = "";
@@ -346,7 +348,7 @@ else
                                 var emailMessage = new EmailService.Message(new string[]
                                     {_message.SenderEmail },
                                     _message.SubjectTitle,
-                                    _message.MessageContent, null);
+                                    _message.MessageContent, TenantName!, null);
 
                                 await EmailService.SendEmailAsync(emailMessage);
                             }
@@ -387,8 +389,10 @@ else
         ResultMessage = "";
         ShowResultMessage = false;
         ShowTenantEmailMessage = false;
+        var tenant = await inquilinosService!.GetInquilino_ById(TenantId);
+        TenantEmail = tenant.eMail ?? "";
+        TenantName = tenant.Nome;
 
-        TenantEmail = (await inquilinosService!.GetInquilino_ById(TenantId)).eMail;
         if (!string.IsNullOrEmpty(TenantEmail))
         {
             if (selectedOption == 1) // enviada ao inquilino

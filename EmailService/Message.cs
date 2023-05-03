@@ -8,10 +8,11 @@ namespace EmailService
         public List<MailboxAddress> To { get; set; }
         public string Subject { get; set; }
         public string Content { get; set; }
+        public string ReceiverName { get; set; }
 
         public IFormFileCollection Attachments { get; set; }
 
-        public Message(IEnumerable<string> to, string subject, string content, IFormFileCollection attachments)
+        public Message(IEnumerable<string> to, string subject, string content, string receiverName, IFormFileCollection attachments)
         {
             To = new List<MailboxAddress>();
 
@@ -19,6 +20,7 @@ namespace EmailService
             Subject = subject;
             Content = content;
             Attachments = attachments;
+            ReceiverName = receiverName;
         }
     }
 }

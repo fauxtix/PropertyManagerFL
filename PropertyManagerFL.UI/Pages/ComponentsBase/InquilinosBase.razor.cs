@@ -288,7 +288,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 AddEditDocumentVisibility = true;
-                EditCaption = $"{L["EditMsg"]} {L["TituloDocumento]"]}";
+                EditCaption = $"{L["EditMsg"]} {L["TituloDocumento"]}";
                 RecordMode = OpcoesRegisto.Gravar;
                 StateHasChanged();
             }
@@ -296,7 +296,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Delete)
             {
                 DeleteDocumentVisibility = true;
-                DeleteCaption = $"{L["DeleteMsg"]} {L["TituloDocumento]"]}";
+                DeleteCaption = $"{L["DeleteMsg"]} {L["TituloDocumento"]}";
                 StateHasChanged();
             }
             else if (args.CommandColumn.Type == CommandButtonType.None)

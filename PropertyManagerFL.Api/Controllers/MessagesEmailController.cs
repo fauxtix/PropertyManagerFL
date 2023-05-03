@@ -18,7 +18,7 @@ namespace PropertyManagerFL.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmail([FromBody] EmailMessage message)
         {
-            var mailMessage = new Message(new string[] { message.Sender }, message.Subject, message.Body, null);
+            var mailMessage = new Message(new string[] { message.Sender }, message.Subject, message.Body, message.Recipient, null);
             await _emailSender.SendEmailAsync(mailMessage);
             return Ok(mailMessage);
         }

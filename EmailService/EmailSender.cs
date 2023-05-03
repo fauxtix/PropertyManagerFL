@@ -37,12 +37,12 @@ namespace EmailService
             var emailMessage = new MimeMessage();
             emailMessage.From.Add(new MailboxAddress(_emailConfig.UserName, _emailConfig.From));
             emailMessage.To.AddRange(message.To);
-            emailMessage.Subject = message.Subject;
+            emailMessage.Subject = message.Subject;           
 
-            var htmlContent = GetEmailContent(message);
+            var htmlContent = $@"{GetEmailContent(message)}";
 
 //            var bodyBuilder = new BodyBuilder { HtmlBody = string.Format("<h2 style='color:red;'>{0}</h2>", message.Content) };
-            var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent};
+            var bodyBuilder = new BodyBuilder { HtmlBody = htmlContent ?? ""};
 
             if (message.Attachments != null && message.Attachments.Any())
             {
@@ -126,10 +126,11 @@ namespace EmailService
                 }
             }
 
+            var content = message.Content.ReplaceLineEndings("<br>");
             HTMLBody = HTMLBody.Replace("###EMAILTITLE###", message.Subject);
-            HTMLBody = HTMLBody.Replace("###EMAILSENDERNAME###", "Fausto Luís");
+            HTMLBody = HTMLBody.Replace("###EMAILRECIPIENTNAME###", message.ReceiverName);
             HTMLBody = HTMLBody.Replace("###SUBJECT###", message.Subject ?? "(No Content)");
-            HTMLBody = HTMLBody.Replace("###CONTENT###", message.Content ?? "NA");
+            HTMLBody = HTMLBody.Replace("###CONTENT###", content ?? "NA");
             HTMLBody = HTMLBody.Replace("###CURRENTYEAR###", DateTime.Now.Year.ToString());
 
             return HTMLBody;
