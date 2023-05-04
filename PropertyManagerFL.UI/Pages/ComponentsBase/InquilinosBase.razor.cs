@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using Syncfusion.Blazor.Grids;
@@ -23,6 +24,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// </summary>
         [Inject] public IInquilinoService? inquilinoService { get; set; }
         [Inject] public IFiadorService? FiadorService { get; set; }
+        [Inject] public IArrendamentoService? arrendamentosService { get; set; }
+
         [Inject] public IRecebimentoService? recebimentosService { get; set; }
         [Inject] public IArrendamentoService? arrendamentoService { get; set; }
         [Inject] public IWebHostEnvironment _env { get; set; }
@@ -98,6 +101,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected string? tenantName { get; set; }
         protected int MaxFileSize = 5 * 1024 * 1024; // 5 MB
+
+        protected bool ShowToolbarDueRentLetter { get; set; }
+        protected bool ShowToolbarContractRevocationLetter { get; set; }
+        protected DocumentoEmitido SendingLetterType { get; set; }
+        protected bool SendLetterDialogVisibility { get; set; } = false;
+        protected ArrendamentoVM? Lease { get; set; }
+
 
         /// <summary>
         /// Startup Inquilinos
@@ -264,15 +274,110 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 await tenantsGridObj!.ExportToPdfAsync();
                 return;
             }
+
             if (args.Item.Text == "Expand all")
             {
                 await tenantsGridObj.ExpandAllDetailRowAsync();
             }
-            if (args.Item.Text == "Collapse all")
+            else if (args.Item.Text == "Collapse all")
             {
                 await tenantsGridObj.CollapseAllDetailRowAsync();
             }
 
+            switch (args.Item.Id)
+            {
+                case "DueRentLetter": // carta de renda em atraso
+
+                    var hasActiveLease = await TenantHasLease();
+                    if (hasActiveLease == false)
+                    {
+                        alertTitle = "Envio de carta de atraso no pagamento";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    var unpaidRents = await TenantHasUnpaidRents();
+                    if (unpaidRents == false)
+                    {
+                        alertTitle = "Envio de carta de atraso no pagamento";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem rendas em atraso! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    SendingLetterType = DocumentoEmitido.RendasEmAtraso;
+                    SendLetterDialogVisibility = true;
+                    break;
+
+                case "ContractOpposition": // carta de oposição à renovação do contrato
+                    hasActiveLease = await TenantHasLease();
+                    if (hasActiveLease == false)
+                    {
+                        alertTitle = "Envio de carta de revogação";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
+                    SendLetterDialogVisibility = true;
+                    break;
+
+            }
+
+
+        }
+
+        public async Task OnContextMenuClick(ContextMenuClickEventArgs<InquilinoVM> args)
+        {
+            switch (args.Item.Id)
+            {
+                case "DueRentLetter": // carta de renda em atraso
+
+                    var hasActiveLease = await TenantHasLease();
+                    if (hasActiveLease == false)
+                    {
+                        alertTitle = "Envio de carta de atraso no pagamento";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    var unpaidRents = await TenantHasUnpaidRents();
+                    if (unpaidRents == false)
+                    {
+                        alertTitle = "Envio de carta de atraso no pagamento";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem rendas em atraso! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    SendingLetterType = DocumentoEmitido.RendasEmAtraso;
+                    SendLetterDialogVisibility = true;
+                    break;
+
+                case "ContractOpposition": // carta de oposição à renovação do contrato
+                    hasActiveLease = await TenantHasLease();
+                    if (hasActiveLease == false)
+                    {
+                        alertTitle = "Envio de carta de revogação";
+                        AlertVisibility = true;
+                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        await ToggleRow();
+                        return;
+                    }
+
+                    SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
+                    SendLetterDialogVisibility = true;
+                    break;
+
+            }
         }
 
         public async Task OnTenantDocumentCommandClicked(CommandClickEventArgs<DocumentoInquilinoVM> args)
@@ -733,7 +838,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             catch (Exception exc)
             {
                 AlertVisibility = true;
-                alertTitle = modulo == Modules.Inquilinos ? L["DeleteMsg"] + L["TituloInquilino"]:  L["DeleteMsg"] + L["TituloFiador"];
+                alertTitle = modulo == Modules.Inquilinos ? L["DeleteMsg"] + L["TituloInquilino"] : L["DeleteMsg"] + L["TituloFiador"];
                 WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. {exc.Message}";
             }
 
@@ -861,6 +966,271 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             await ToastObj!.HideAsync();
         }
+
+        protected async Task<bool> TenantHasUnpaidRents()
+        {
+            // Verificar se inquilino tem rendas em atraso
+            var _payments = await recebimentosService.GetAll();
+            var _tenantId = SelectedTenant.Id;
+            var tenantHaveOwedPayments = _payments.Where(p => p.Estado == 3 && p.ID_Inquilino == _tenantId).ToList();
+            return tenantHaveOwedPayments.Any();
+        }
+
+        protected async Task<bool> TenantHasLease()
+        {
+            // Verificar se inquilino tem arrendamento ativo
+            var tenantsWithNoleases = (await inquilinoService.GetInquilinos_SemContrato()).ToList();
+            if(tenantsWithNoleases.Any()) 
+            {
+                var output = tenantsWithNoleases.Where(t => t.Id == SelectedTenant?.Id).SingleOrDefault();
+                if(output is null)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            return true;
+        }
+
+
+        protected async Task HandleIssuedLetterConfirmation(DocumentoEmitido letterType)
+        {
+            switch (letterType)
+            {
+                case DocumentoEmitido.AtualizacaoRendas:
+                    break;
+                case DocumentoEmitido.OposicaoRenovacaoContrato:
+                    await IssueContractOppositionLetter();
+                    break;
+                case DocumentoEmitido.RendasEmAtraso:
+                    await IssueLateRentLetter();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        protected async Task IssueContractOppositionLetter()
+        {
+
+            // TODO - implementar procedimento para 'resposta do inquilino'
+            ToastTitle = L["TituloCartaRevogacao"];
+
+            // Verificar se carta já foi enviada
+            Lease = (await arrendamentosService
+                .GetAll())
+                .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
+            if(Lease?.Id ==  0)
+            {
+                SendLetterDialogVisibility = false;
+                alertTitle = ToastTitle; ;
+                WarningMessage = "Erro no processo (Id não existe)... Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            var alreadySent = await arrendamentosService.VerificaSeExisteCartaRevogacao(Lease.Id);
+
+            if (alreadySent)
+            {
+                SendLetterDialogVisibility = false;
+                alertTitle = ToastTitle; ;
+                WarningMessage = "Carta já foi enviada... Verifique, p.f.";
+
+                var dateSent = Lease.DataEnvioCartaRevogacao;
+                var answerDateExpected = dateSent.AddDays(10); // estão a ser assumidos 10 dias para prazo de resposta. Configurar?
+
+                // Verificar se carta enviada já foi respondida pelo inquilino
+                var letterAnswered = await arrendamentosService.VerificaSeExisteRespostaCartaRevogacao(Lease.Id);
+                if (letterAnswered)
+                {
+                    // Verifica se a data-limite da resposta foi ultrapassada
+                    if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
+                    {
+                        WarningMessage = "Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... ";
+                    }
+                    else // prazo ultrapassado
+                    {
+                        WarningMessage = $"Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {answerDateExpected.ToShortDateString()})... Verifique Log , p.f.";
+                    }
+                }
+                else // Carta enviada ==> sem registo de resposta
+                {
+                    // Verifica se data-limite da resposta foi ultrapassada
+                    if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
+                    {
+                        WarningMessage = "Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino";
+                    }
+                    else // Inquilino não respondeu no prazo definido como limite
+                    {
+                        WarningMessage = $"Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {answerDateExpected.ToShortDateString()})... Verifique, p.f.";
+                    }
+                }
+
+                AlertVisibility = true;
+
+                StateHasChanged();
+                return;
+            }
+
+            // Recolhe dados para envio da carta
+            var oppositionLetterData = await arrendamentosService!.GetDadosCartaOposicaoRenovacaoContrato(Lease!);
+            if (oppositionLetterData is null)
+            {
+                ToastMessage = $"Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f.";
+                ToastCss = "e-toast-danger";
+
+                await ShowToastMessage();
+                return;
+            }
+            else
+            {
+                // gera documentos (pdf + docx)
+                var docGerado = await arrendamentosService.EmiteCartaOposicaoRenovacaoContrato(oppositionLetterData);
+                if (string.IsNullOrEmpty(docGerado))
+                {
+                    // erro ao gerar carta (pdf), alerta e sai 
+
+                    ToastMessage = $"Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f.";
+                    ToastCss = "e-toast-danger";
+
+                    await ShowToastMessage();
+                    return;
+                }
+                else // carta gerada, regista ocorrência na BD
+                {
+                    ToastTitle = "Carta de oposição à renovação do contrato";
+
+                    var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+
+                    var registerOk = await arrendamentosService.RegistaCartaOposicao(Lease.Id, documentoARegistar);
+                    // verifica se processo de registo (final, onde tabelas são alteradas) terminou com sucesso
+                    if (registerOk)
+                    {
+                        ToastMessage = "Operação terminada com sucesso";
+                        ToastCss = "e-toast-success";
+                    }
+                    else
+                    {
+                        // TODO - erro no processo atualização da BD; como os documentos já foram gerados (pdf + docx), haverá necessidade de os remover
+                        ToastMessage = "Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f.";
+                        ToastCss = "e-toast-danger";
+                    }
+
+                    SendLetterDialogVisibility = false;
+
+                    await ShowToastMessage();
+                }
+            }
+        }
+
+        protected async Task IssueLateRentLetter()
+        {
+
+            ToastTitle = "Carta de aviso - rendas em atraso";
+
+            // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
+            // alertar user em conformidade
+
+
+            Lease = (await arrendamentosService
+                .GetAll())
+                .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
+            var leaseId = Lease.Id;
+
+            // Verificar se carta já foi enviada
+            var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(leaseId);
+            if (letterAlreadySent)
+            {
+                alertTitle = "Envio de carta ao inquilino";
+                WarningMessage = "Carta já foi enviada!. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(Lease!);
+            if (latePaymentLetterData is not null)
+            {
+                var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
+                if (string.IsNullOrEmpty(docGerado))
+                {
+                    ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                    ToastCss = "e-toast-danger";
+                }
+                else
+                {
+                    var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+                    try
+                    {
+                        await arrendamentosService.RegistaCartaAtrasoRendas(leaseId, documentoARegistar);
+                        ToastMessage = L["TituloOperacaoOk"];
+                        ToastCss = "e-toast-success";
+                    }
+                    catch (Exception ex)
+                    {
+                        ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                        ToastCss = "e-toast-danger";
+                    }
+                }
+            }
+            else
+            {
+                ToastMessage = "Erro ao obter dados para emissão de carta";
+                ToastCss = "e-toast-danger";
+            }
+
+            SendLetterDialogVisibility = false;
+
+            await ShowToastMessage();
+        }
+
+        protected async Task HandleIssuedLetterCancelation()
+        {
+            SendLetterDialogVisibility = false;
+            await tenantsGridObj!.ClearSelectionAsync();
+        }
+
+
+        protected async Task RowSelectHandler(RowSelectEventArgs<InquilinoVM> args)
+        {
+            TenantId = args.Data.Id;
+            SelectedTenant = await inquilinoService!.GetInquilino_ById(TenantId);
+
+            ShowToolbar_LetterOptions();
+        }
+
+        protected void RowDeselectHandler(RowDeselectEventArgs<InquilinoVM> args)
+        {
+            HideToolbar_LetterOptions();
+        }
+
+        private void HideToolbar_LetterOptions()
+        {
+            ShowToolbarDueRentLetter = false;
+            ShowToolbarContractRevocationLetter = false;
+        }
+        private void ShowToolbar_LetterOptions()
+        {
+            ShowToolbarDueRentLetter = true;
+            ShowToolbarContractRevocationLetter = true;
+        }
+
+        public async Task ToggleRow()
+        {
+            var selRows = tenantsGridObj.GetSelectedRowIndexesAsync();
+            await tenantsGridObj!.SelectRowAsync(1, true);
+        }
+
+        private async Task ShowToastMessage()
+        {
+            StateHasChanged();
+            await Task.Delay(100);
+            await ToastObj!.ShowAsync();
+        }
+
 
         public void Dispose()
         {

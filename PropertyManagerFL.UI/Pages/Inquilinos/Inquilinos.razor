@@ -18,6 +18,10 @@
     var Tool = (new List<object>() {
         "Search",
         "PdfExport",
+            new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
      new ItemModel()
      {
          Text = "Expand all",
@@ -29,8 +33,38 @@
          Text = "Collapse all",
          TooltipText = "Collapse all",
          PrefixIcon = "e-collapse"
-     }
+     },
+         new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+        new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-success e-round-corner",
+        Text = "Carta de atraso no pagamento de renda",
+        Id = "DueRentLetter",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbarDueRentLetter
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-warning e-round-corner",
+        Text = L["TituloCartaRevogacao"],
+        Id = "ContractOpposition",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = ShowToolbarContractRevocationLetter,
+    },
+
     });
+    var ContextMenuItems = (new List<Object> 
+        { 
+            new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Separator = true},
+            new ContextMenuItemModel { Text = "Aumento do valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fas fa-money" },
+        });
 }
 
 @if (Tenants is null)
@@ -46,7 +80,7 @@ else
             </SfButton>
         </div>
         <hr class="divider" />
-        <div class="table table-stripped table-hover">
+        <div id="target" class="table table-stripped table-hover">
             <SfGrid ID="Tenants_Grid" Height="100%" @ref="tenantsGridObj"
                 EnableStickyHeader="true"
                 EnableAltRow="true"
@@ -56,12 +90,15 @@ else
                 AllowGrouping="false"
                 AllowPdfExport="true"
                 Toolbar="@Tool"
+                ContextMenuItems="@ContextMenuItems"
                 AllowPaging="true"
                 AllowSorting="true"
                 RowHeight="32"
                 AllowTextWrap="true">
                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                 <GridEvents OnRecordDoubleClick="OnTenantDoubleClickHandler"
+                        RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
+                        ContextMenuItemClicked="OnContextMenuClick"
                         OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTenantCommandClicked" TValue="InquilinoVM" />
                 <GridTemplates>
                     <DetailTemplate>
@@ -98,10 +135,9 @@ else
                                                     <Template Context="remarks">
                                                         @{
                                                             var ctx = (remarks as CC_InquilinoVM);
-                                                            var isARent = ctx?.Notas?.ToLower().Contains("pagamento");
-                                                            var backColor = isARent is not null && isARent == false ? "yellow" : "white";
+                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0  ? "yellow" : "white";
                                                         }
-                                                            <span style="background-color:@backColor">@ctx?.Notas</span>
+                                                        <span style="background-color:@backColor">@ctx?.Notas</span>
                                                     </Template>
                                                 </GridColumn>
                                             </GridColumns>
@@ -197,7 +233,8 @@ else
                                             RowHeight="32"
                                             AllowTextWrap="true">
                                                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
-                                                <GridEvents CommandClicked="OnTenantDocumentCommandClicked" TValue="DocumentoInquilinoVM" />
+                                                <GridEvents CommandClicked="OnTenantDocumentCommandClicked"
+                                                    TValue="DocumentoInquilinoVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.UploadDate) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>
@@ -484,6 +521,23 @@ else
                         OnConfirmationYes="ConfirmDeleteDocumentYes"
                         OnConfirmationNo="ConfirmDeleteDocumentNo" />
 
+<ConfirmSendingLetter AlertMessageType="AlertMessageType.Warning"
+                      DialogTitle="@L["TituloEnvioCartaInquilino"]"
+                      Lease="@Lease"
+                      TenantName="@SelectedTenant?.Nome"
+                      LetterType="@SendingLetterType"
+                      Visible="@SendLetterDialogVisibility"
+                      OnConfirmationYes="HandleIssuedLetterConfirmation"
+                      OnConfirmationNo="HandleIssuedLetterCancelation" />
+
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@alertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
 <ValidateErrorComponent Visible="@ErrorVisibility"
                         ValidationMessages="@ValidationsMessages"
                         OnCloseDialog="CloseValidationErrorBox" />
@@ -538,6 +592,16 @@ else
 
     .e-collapse::before {
         content: '\e80f';
+    }
+
+    #target {
+        border: 1px dashed;
+        height: 150px;
+        padding: 10px;
+        position: relative;
+        text-align: justify;
+        color: gray;
+        user-select: none;
     }
 
 </style>

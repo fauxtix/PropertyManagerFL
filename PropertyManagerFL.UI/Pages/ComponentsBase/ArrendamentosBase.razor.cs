@@ -781,7 +781,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected async Task IssueContractOppositionLetter()
         {
 
-            // TODO - implemento procedimento para 'resposta do inquilino'
+            // TODO - implementar procedimento para 'resposta do inquilino'
             ToastTitle = L["TituloCartaRevogacao"];
 
             // Verificar se carta já foi enviada

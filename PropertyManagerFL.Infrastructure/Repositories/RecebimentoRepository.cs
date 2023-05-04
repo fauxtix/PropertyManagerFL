@@ -311,8 +311,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var idInquilino = recebimento.ID_Inquilino;
             var inquilino = await _repoInquilinos.GetInquilino_ById(idInquilino);
             var saldoCorrente = inquilino.SaldoCorrente;
-            decimal valorEmfalta = saldoCorrente - valorAcerto;
+            decimal valorEmFalta = saldoCorrente - valorAcerto;
             decimal valorRecebido = recebimento.ValorRecebido;
+            int currentStateAfterPayment = paymentState;
             string? Notas = "";
 
             try
@@ -321,25 +322,36 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                 if(paymentState == 2) // parcial
                 {
-                    saldoCorrente -= valorAcerto;
-                    valorRecebido += valorAcerto;
-                    Notas = "Acerto de renda";
+                    if (saldoCorrente == valorAcerto)
+                    {
+                        saldoCorrente = 0;
+                        valorEmFalta = 0;
+                        currentStateAfterPayment = 1;
+                    }
+                    else
+                    {
+                        saldoCorrente -= valorAcerto;
+                        valorRecebido = valorAcerto;
+                    }
+
+                    Notas = "Acerto de pagamento parcial";
                 }
                 else // total - pagamento em atraso (3)
                 {
                     saldoCorrente = 0;
                     valorRecebido = recebimento.ValorPrevisto;
-                    valorEmfalta = 0;
+                    valorEmFalta = 0;
+                    currentStateAfterPayment = 3;
                     Notas = "Pagamento de renda em atraso";
                 }
 
                 var parameters = new DynamicParameters();
 
                 parameters.Add("@Id", idRecebimento);
-                parameters.Add("@PaymentState", paymentState);
+                parameters.Add("@PaymentState", currentStateAfterPayment);
                 parameters.Add("@Notas", Notas);
                 parameters.Add("@ValorAcerto", valorAcerto);
-                parameters.Add("@ValorEmDivida", valorEmfalta);
+                parameters.Add("@ValorEmDivida", valorEmFalta);
                 parameters.Add("@SaldoCorrente", saldoCorrente);
                 parameters.Add("@ValorRecebido", valorRecebido);
                 parameters.Add("@TenantId", idInquilino );

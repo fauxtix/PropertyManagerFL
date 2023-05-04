@@ -469,36 +469,68 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<IEnumerable<CC_InquilinoVM>> GetTenantPaymentsHistory(int idInquilino)
         {
+            try
             {
-                try
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/TenantPaymentsHistory/{idInquilino}"))
                 {
-
-                    using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/TenantPaymentsHistory/{idInquilino}"))
+                    if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
-                        if(response.StatusCode == System.Net.HttpStatusCode.NoContent)
-                        {
-                            return new List<CC_InquilinoVM>();
-                        }
-
-                        if (response.IsSuccessStatusCode)
-                        {
-                            var jsonData = await response.Content.ReadAsStringAsync();
-                            var tenantPaymentsHistory = JsonConvert.DeserializeObject<IEnumerable<CC_InquilinoVM>>(jsonData);
-                            return tenantPaymentsHistory.ToList();
-                        }
-                        else
-                        {
-                            _logger.LogError("Erro ao ler dados (TenantPaymentsHistory)");
-                            return new List<CC_InquilinoVM>();
-                        }
+                        return new List<CC_InquilinoVM>();
                     }
 
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantPaymentsHistory = JsonConvert.DeserializeObject<IEnumerable<CC_InquilinoVM>>(jsonData);
+                        return tenantPaymentsHistory.ToList();
+                    }
+                    else
+                    {
+                        _logger.LogError("Erro ao ler dados (TenantPaymentsHistory)");
+                        return new List<CC_InquilinoVM>();
+                    }
                 }
-                catch (Exception exc)
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API");
+                return new List<CC_InquilinoVM>();
+            }
+
+        }
+
+        public async Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato()
+        {
+            try
+            {
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetInquilinosSemContrato"))
                 {
-                    _logger.LogError(exc, "Erro ao pesquisar API");
-                    return new List<CC_InquilinoVM>();
+                    if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        return new List<LookupTableVM>();
+                    }
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantsWithNoLease = JsonConvert.DeserializeObject<IEnumerable<LookupTableVM>>(jsonData);
+                        return tenantsWithNoLease.ToList();
+                    }
+                    else
+                    {
+                        _logger.LogError("Erro ao ler dados (TenantPaymentsHistory)");
+                        return new List<LookupTableVM>();
+                    }
                 }
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API");
+                return new List<LookupTableVM>();
             }
         }
     }

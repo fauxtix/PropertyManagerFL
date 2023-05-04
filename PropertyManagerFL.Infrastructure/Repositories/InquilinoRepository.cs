@@ -10,6 +10,7 @@ using PropertyManagerFL.Infrastructure.Context;
 using System.Data;
 using System.Globalization;
 using System.Text;
+using System.Collections;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
 {
@@ -528,6 +529,26 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 _logger.LogError(ex.Message, ex);
             }
         }
+
+        public async   Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato()
+        {
+
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    return await connection.QueryAsync<LookupTableVM>("usp_Inquilinos_GetInquilinos_SemContrato",
+                        commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex);
+                return null;
+            }
+        }
+
 
         public async Task<bool> TableHasData()
         {

@@ -187,6 +187,29 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
+        /// Get Inquilinos sem contrato
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("GetInquilinosSemContrato")]
+        public async Task<IActionResult> GetInquilinosSemContrato()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var inquilinosSemContrato = await _repoInquilinos.GetInquilinos_SemContrato();
+                if (inquilinosSemContrato.Any())
+                    return Ok(inquilinosSemContrato);
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
+        /// <summary>
         /// Get Inquilinos (to fill lookup combo)
         /// </summary>
         /// <returns></returns>

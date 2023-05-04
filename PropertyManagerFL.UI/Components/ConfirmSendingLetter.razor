@@ -27,7 +27,7 @@
             @if (!string.IsNullOrEmpty(TenantName))
             {
                 <div class="m-2"> [ <span style="color:black; font-style:italic; font-weight:bold">@TenantName</span> ]</div>
-                <hr style="color:black"/>
+                <hr style="color:black" />
             }
             <div class="row mx-2 mb-2">
                 <div class="col-9">
@@ -83,7 +83,7 @@
         {"rows", 2}
     };
 
-    protected override async Task  OnInitializedAsync()
+    protected override async Task OnInitializedAsync()
     {
         cssClass = "notify-info";
         TitleColor = "cornflowerblue";
@@ -126,6 +126,9 @@
                 alertMsg = "contrato de arrendamento?";
                 break;
             case DocumentoEmitido.OposicaoRenovacaoContrato:
+
+                if (Lease is null) return;
+
                 alertMsg = "carta de oposição de renovação do contrato?";
 
                 var monthsToEnd = GetMonthDifference(DateTime.Now, Lease!.Data_Fim);
@@ -135,7 +138,7 @@
                 var tenantPayments = payments.Where(p => p.ID_Inquilino == tenantId && p.Estado == 3);
                 var hasDeletedPayments = tenantPayments.Count() > 0;
 
-                if(monthsToEnd < 4 && hasDeletedPayments == false)
+                if (monthsToEnd < 4 && hasDeletedPayments == false)
                 {
                     alertMsg += $" (ainda faltam {monthsToEnd} meses para terminar o contrato)";
                 }

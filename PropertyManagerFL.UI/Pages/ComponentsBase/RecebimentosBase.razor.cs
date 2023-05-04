@@ -566,7 +566,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 ToastTitle = L["TituloPagamentoRendaEmAtraso"];
             }
-            else //  pacialmente
+            else //  parcialmente
             {
                 ToastTitle = L["TituloPagamentosEmDivida"];
             }
