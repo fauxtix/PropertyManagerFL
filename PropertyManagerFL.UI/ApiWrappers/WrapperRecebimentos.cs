@@ -5,6 +5,7 @@ using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using System.Globalization;
+using Syncfusion.Blazor.Schedule.Internal;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -484,7 +485,29 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API Arrendamentos / GetMonthlyRentsProcessed");
+                _logger.LogError(exc, "Erro ao pesquisar API Recebimentos / GetMonthlyRentsProcessed");
+                return null;
+            }
+        }
+
+        public async Task<ProcessamentoRendasDTO> GetLastPeriodProcessed()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_uri}/GetLastPeriodProcessed");
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var output = JsonConvert.DeserializeObject<ProcessamentoRendasDTO>(data);
+                    return output;
+                }
+
+                return null;
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API Recebimentos / GetMonthlyRentsProcessed");
                 return null;
             }
         }

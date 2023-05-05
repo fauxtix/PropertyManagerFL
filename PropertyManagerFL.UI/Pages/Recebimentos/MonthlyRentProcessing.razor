@@ -174,6 +174,8 @@ else
         await CheckIfConditionsMet();
 
         AlertTitle = L["TituloProcessamentoRendas"];
+        ToastTitle = AlertTitle;
+
 
         ProcessedRents = (await transactionsService.GetMonthlyRentsProcessed(DateTime.Now.Year));
         if (ProcessedRents is null)
@@ -236,54 +238,72 @@ else
         }
     }
 
+    /// <summary>
+    /// Processamento mensal de rendas
+    /// </summary>
+    /// <param name="args">Selected month and year</param>
+    /// <returns></returns>
     protected async Task ProcessMonthlyRents(EventCallbackArgs args)
     {
-        var month = args.ProcessingMonth;
-        var year = args.ProcessingYear;
-        var alreadyPerformed = await transactionsService!.RentalProcessingPerformed(month, year);
-        if (alreadyPerformed == false)
+        try
         {
-            ConfirmVisibility = false; // dialog to confirm monthly rent processing
+            var selectedMonth = args.ProcessingMonth;
+            var selectedYear = args.ProcessingYear;
+            var errorMessage = await IsSelectedPeriodValid(selectedMonth, selectedYear);
 
-            // TODO - 17-04-2023
-            // No processamento de cartas de atualização, rendas deixaram de ser atualizadas
-            // Na geração de pagamento de rendas (abaixo), deverá ser tomado em
-            // linha de conta que necessitam de alteração.
-            // Ano serem os mostrados os movimentos (antes da confirmação), indicar
-            // quais as frações cujo valor da renda foi alterado.
-
-            BatchTransactions = (await transactionsService!.GeneratePagamentoRendas(month + 1, year)).ToList();
-            if (BatchTransactions.Any())
+            if (!string.IsNullOrEmpty(errorMessage))
             {
-                ToastTitle = L["TituloGerarPagamentos"];
-                ToastMessage = L["TituloSucesso"];
-                ToastCss = "e-toast-success";
-                StateHasChanged();
-                await Task.Delay(100);
-                await ToastObj!.ShowAsync();
+                WarningVisibility = true;
+                WarningMessage = errorMessage;
+                return;
+            }
 
-                AddEditMonthlyTransactionsVisibility = true;
+            var alreadyPerformed = await RentalProcessingAlreadyMade(selectedMonth, selectedYear);
+            if (alreadyPerformed == false)
+            {
+                ConfirmVisibility = false; // dialog to confirm monthly rent processing
+
+                // No processamento de cartas de atualização, rendas deixaram de ser atualizadas
+                // Na geração de pagamento de rendas (abaixo), deverá ser tomado em
+                // linha de conta que necessitam de alteração.
+                // Ao serem os mostrados os movimentos (antes da confirmação), indicar
+                // quais as frações cujo valor da renda foi alterado.
+
+                BatchTransactions = await GenerateRents(selectedMonth, selectedYear);
+                if (BatchTransactions.Any())
+                {
+                    ToastTitle = L["TituloGerarPagamentos"];
+                    ToastMessage = L["TituloSucesso"];
+                    ToastCss = "e-toast-success";
+                    StateHasChanged();
+                    await Task.Delay(100);
+                    await ToastObj!.ShowAsync();
+
+                    AddEditMonthlyTransactionsVisibility = true;
+                }
+                else
+                {
+                    WarningVisibility = true;
+                    WarningMessage = L["TituloNaoHaPagamentosAProcessar"];
+                    return;
+                }
             }
             else
             {
                 WarningVisibility = true;
-                AlertTitle = L["TituloProcessamentoRendas"];
-                WarningMessage = L["TituloNaoHaPagamentosAProcessar"];
+                WarningMessage = L["TituloPagamentoRendasJaEfetuado"];
                 return;
             }
+
         }
-        else
+        catch (Exception ex)
         {
-            WarningVisibility = true;
-            AlertTitle = L["TituloProcessamentoRendas"];
-            WarningMessage = L["TituloPagamentoRendasJaEfetuado"];
-            return;
+            _logger?.LogError(ex.ToString(), ex);
         }
     }
 
     public async Task HandleBatchTransaction()
     {
-        ToastTitle = L["TituloProcessamentoRendas"];
         try
         {
             var transactionResult = await transactionsService!.ProcessMonthlyRentPayments();
@@ -317,38 +337,127 @@ else
         }
     }
 
+    /// <summary>
+    /// Cancela processamento de rendas. Lê e apaga registos (temp) gerados.
+    /// </summary>
+    /// <returns></returns>
     public async Task HandleCancelBatchTransaction()
     {
-        AlertTitle = L["TituloCancelamentoProcessamentoRendas"];
         try
         {
-            // Lê pagamentos (temp) criados
-            var pagamentosGerados = await transactionsService!.GetAllTemp();
-            if (pagamentosGerados != null)
+            var temporaryPayments = GetTemporaryPayments();
+
+            if (temporaryPayments != null)
             {
-                await transactionsService.DeleteRecebimentosTemp();
+                await DeleteTemporaryPayments();
+
                 warningType = OpcoesRegisto.Info;
-                WarningMessage = L["TituloProcessamentoRendasCancelado"];
+                alertMessageType = AlertMessageType.Success;
+                WarningMessage = L["TituloOperacaoOk"];
+            }
+            else
+            {
                 alertMessageType = AlertMessageType.Error;
                 _logger?.LogWarning($"{L["TituloProcessamentoRendasCancelado"]}.");
                 WarningVisibility = true;
+
             }
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, ex.Message);
+            _logger?.LogError(ex.ToString(), ex);
             warningType = OpcoesRegisto.Error;
-            WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]} ({ex.Message}). {L["TituloVerificar"]}";
-            alertMessageType = AlertMessageType.Success;
+            WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]} ({ex.ToString()}). {L["TituloVerificar"]}";
+            alertMessageType = AlertMessageType.Error;
             WarningVisibility = true;
         }
     }
 
+    private async Task<string> IsSelectedPeriodValid(int selectedMonth, int selectedYear)
+    {
+        string errorMessage = "";
+        try
+        {
+            var lastPeriodProcessed = await transactionsService!.GetLastPeriodProcessed();
+            if (lastPeriodProcessed is not null)
+            {
+                var lastMonthProcessed = lastPeriodProcessed.Mes;
+                var lastYearProcessed = lastPeriodProcessed.Ano;
+                var lastMonthProcessedCaption = $"último mês processado: {lastMonthProcessed.ToString("MMMM")}";
+                if (selectedYear < lastPeriodProcessed.Ano)
+                {
+                    errorMessage = $"Período inválido ({selectedMonth} / {selectedYear}). Último processamento: {lastMonthProcessed} / {lastYearProcessed}";
+                }
+                else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth < lastPeriodProcessed.Mes)
+                {
+                    errorMessage = $"Mês inválido ({lastMonthProcessedCaption})";
+                }
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.ToString(), ex);
+            errorMessage = ex.ToString();
+        }
+
+        return errorMessage;
+    }
+
+    private async Task<bool> RentalProcessingAlreadyMade(int selectedMonth, int selectedYear)
+    {
+        try
+        {
+            return await transactionsService!.RentalProcessingPerformed(selectedMonth, selectedYear);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.ToString(), ex);
+            return true;
+        }
+    }
+
+    private async Task<IEnumerable<RecebimentoVM>> GenerateRents(int selectedMonth, int selectedYear)
+    {
+        try
+        {
+            return (await transactionsService!.GeneratePagamentoRendas(selectedMonth + 1, selectedYear)).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.ToString(), ex);
+            return null;
+        }
+    }
+
+    private async Task<IEnumerable<RecebimentoVM>> GetTemporaryPayments()
+    {
+        try
+        {
+            return await transactionsService!.GetAllTemp();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.ToString(), ex);
+            return null;
+        }
+    }
+
+    private async Task DeleteTemporaryPayments()
+    {
+        try
+        {
+            await transactionsService.DeleteRecebimentosTemp();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.ToString(), ex);
+        }
+    }
 
 
     private async Task CloseDialog()
     {
-        ToastTitle = L["TituloProcessamentoRendas"];
         ToastMessage = L["TituloProcessoTerminado"];
         ToastCss = "e-toast-success";
         StateHasChanged();
@@ -364,7 +473,7 @@ else
         WarningVisibility = false;
         ConfirmVisibility = false;
         AddEditMonthlyTransactionsVisibility = false;
-        navigationManager!.NavigateTo("/recebimentos/manutencao");
+        navigationManager!.NavigateTo("/monthlyrentprocessing");
     }
 
     protected async Task HideToast()

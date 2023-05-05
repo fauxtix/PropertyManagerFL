@@ -9,7 +9,7 @@
             Wrapper do Api de Arrendamento s
             </summary>
         </member>
-        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperArrendamentos.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperArrendamentos},System.Net.Http.HttpClient,AutoMapper.IMapper,PropertyManagerFL.Application.Interfaces.Services.AppManager.IProprietarioService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IInquilinoService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IImovelService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IFracaoService,PropertyManagerFL.Application.Interfaces.Services.Common.IMailMergeService)">
+        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperArrendamentos.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperArrendamentos},System.Net.Http.HttpClient,AutoMapper.IMapper,PropertyManagerFL.Application.Interfaces.Services.AppManager.IProprietarioService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IInquilinoService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IImovelService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IFracaoService,PropertyManagerFL.Application.Interfaces.Services.Common.IMailMergeService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IRecebimentoService)">
             <summary>
             Wrapper para Api de arrendamentos
             </summary>

@@ -29,5 +29,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<bool> AcertaPagamentoRenda(int idRecebimento, int paymentState, decimal valorAcerto);
         Task<int> ProcessMonthlyRentPayments();
         Task<IEnumerable<ProcessamentoRendasDTO>> GetMonthlyRentsProcessed(int year);
+        Task<ProcessamentoRendasDTO> GetLastPeriodProcessed();
     }
 }

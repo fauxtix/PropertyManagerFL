@@ -413,6 +413,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 if (response.IsSuccessStatusCode)
                 {
                     var result = await response.Content.ReadAsStringAsync();
+                    result = result.Substring(1, result.Length - 1).Replace("\\\\", "\\");
+                    result = result.Substring(0, result.Length - 1);
                     return result;
                 }
 

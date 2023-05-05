@@ -505,6 +505,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             var tenant = await _repoInquilinos.GetInquilino_ById(tenantId);
                             var newTenantBalance = tenant.SaldoCorrente - transactionAmount;
                             var isPagamentoRenda = transaction.Renda;
+                            var lastPayDate = transaction.DataMovimento;
 
                             // Atualiza saldo corrente do Inquilino
                             await connection.ExecuteAsync("usp_Inquilinos_UpdateSaldoCorrente",
@@ -533,6 +534,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             {
                                 // Atualiza data do último pagamento (contrato) para o mês anterior
                                 // TODO - confirmar validade deste procedimento
+
+                                // TODO verificar se data de processamento é inferior à existe (no caso de se ter processado um mês anterior)
+
                                 await connection.ExecuteAsync("usp_Arrendamentos_Update_LastPaymentDate",
                                      new { Id = unitId, date = transaction.DataMovimento.AddMonths(-1), estadopagamento = "Pendente de regularização" },
                                      commandType: CommandType.StoredProcedure,
@@ -928,7 +932,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             {
                 try
                 {
-                    var result = await connection.QueryAsync<ProcessamentoRendasDTO>("usp_Recebimentos_MonthlyRents:Processed",
+                    var result = await connection.QueryAsync<ProcessamentoRendasDTO>("usp_Recebimentos_MonthlyRentsProcessed",
                         new { year},
                         commandType: CommandType.StoredProcedure);
                     return result;
@@ -941,6 +945,26 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
 
         }
+
+        public async Task<ProcessamentoRendasDTO> GetLastPeriodProcessed()
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                try
+                {
+                    var result = await connection.QueryFirstAsync<ProcessamentoRendasDTO>("usp_Recebimentos_GetLastPeriodProcessed",
+                        commandType: CommandType.StoredProcedure);
+                    return result;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message, ex);
+                    return null;
+                }
+            }
+
+        }
+
 
         public async Task<decimal> GetMaxValueAllowed_ManualInput(int idInquilino)
         {

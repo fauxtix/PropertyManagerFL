@@ -63,7 +63,7 @@
             new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
-            new ContextMenuItemModel { Text = "Aumento do valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fas fa-money" },
+            new ContextMenuItemModel { Text = "Aumento do valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
         });
 }
 
@@ -80,7 +80,7 @@ else
             </SfButton>
         </div>
         <hr class="divider" />
-        <div id="target" class="table table-stripped table-hover">
+        <div class="table table-stripped table-hover">
             <SfGrid ID="Tenants_Grid" Height="100%" @ref="tenantsGridObj"
                 EnableStickyHeader="true"
                 EnableAltRow="true"
@@ -592,16 +592,6 @@ else
 
     .e-collapse::before {
         content: '\e80f';
-    }
-
-    #target {
-        border: 1px dashed;
-        height: 150px;
-        padding: 10px;
-        position: relative;
-        text-align: justify;
-        color: gray;
-        user-select: none;
     }
 
 </style>

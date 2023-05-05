@@ -42,6 +42,6 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task ProcessMonthlyRentTransactions();
         Task<int> ProcessMonthlyRentPayments();
         Task<IEnumerable<ProcessamentoRendasDTO>> GetMonthlyRentsProcessed(int year);
-
+        Task<ProcessamentoRendasDTO> GetLastPeriodProcessed();
     }
 }

@@ -411,6 +411,25 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("GetLastPeriodProcessed")]
+        public async Task<IActionResult> GetLastPeriodProcessed()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var output = await _repoRecebimentos.GetLastPeriodProcessed();
+                if (output == null)
+                {
+                    return Ok(new List<ProcessamentoRendasDTO>());
+                }
+
+                return Ok(output);
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
 
         [HttpGet("GetTotalRecebimentosPrevistos_Inquilino/{id:int}")]
         public async Task<IActionResult> GetTotalRecebimentosPrevistos_Inquilino(int id) // Inquilino.Id

@@ -10,8 +10,11 @@ using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Components.Documents;
 using PropertyManagerFLApplication.Utilities;
+using System.Text;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -31,7 +34,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IImovelService _svcImoveis;
         readonly IFracaoService _svcFracoes;
         readonly IMailMergeService _MailMergeSvc;
-
+        readonly IRecebimentoService _svcRecebimentos;
         private ArrendamentoVM _arrendamento;
 
 
@@ -55,7 +58,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                     IInquilinoService svcInquilinos,
                                     IImovelService svcImoveis,
                                     IFracaoService svcFracoes,
-                                    IMailMergeService mailMergeSvc)
+                                    IMailMergeService mailMergeSvc,
+                                    IRecebimentoService svcRecebimentos)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Arrendamentos";
@@ -74,6 +78,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _svcImoveis = svcImoveis;
             _svcFracoes = svcFracoes;
             _MailMergeSvc = mailMergeSvc;
+            _svcRecebimentos = svcRecebimentos;
         }
 
         /// <summary>
@@ -641,7 +646,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public async Task<CartaRendasAtraso> GetDadosCartaRendasAtraso(ArrendamentoVM DadosArrendamento)
         {
             _arrendamento = DadosArrendamento;
-
+            string dueRentsAsString= "";
             try
             {
                 int IdProprietario = await _svcProprietarios.GetFirstId(); // nesta versão da aplicação, só existe um proprietário...
@@ -653,6 +658,33 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 ImovelVM DadosImovel = await _svcImoveis.GetImovel_ById(DadosFracao.Id_Imovel);
 
                 var moradaFracao = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado}";
+                var rentMonthsCollected = await _svcRecebimentos.GetMonthlyRentsProcessed(DateTime.Now.Year);
+                var lastMonthCollect = rentMonthsCollected.Max(r => r.DataProcessamento).Month;
+                var lastMonthPaid = _arrendamento.Data_Pagamento.Month;
+                var monthsDued = lastMonthCollect - lastMonthPaid;
+                var lastPaymentDate = _arrendamento.Data_Pagamento;
+                string months = "";
+
+                if (monthsDued == 1)
+                {
+                    months = $"{_arrendamento.Data_Pagamento.ToString("MMMM").ToTitleCase()}";
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder();
+                    for (int i = 0; i < monthsDued; i++)
+                    {
+                        months += $"{_arrendamento.Data_Pagamento.AddMonths(i).ToString("MMMM").ToTitleCase()}, ";
+                    }
+
+                    months = months.Substring(0, months.Length -2);
+                    var lastComma = months.LastIndexOf(',');
+                    if (lastComma != -1)
+                        months = months.Remove(lastComma, 1).Insert(lastComma, " e");
+                }
+
+                //lastPaymentDateAsString = $"{_arrendamento.Data_Pagamento.ToString("MMMM").ToTitleCase()} de {lastPaymentDate.ToString("yyyy")}";
+                dueRentsAsString = $"{months} de {lastPaymentDate.ToString("yyyy")}";
 
                 CartaRendasAtraso dadosCartaRendasAtraso = new CartaRendasAtraso()
                 {
@@ -664,8 +696,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     Nome = DadosProprietario.Nome,
                     Morada = DadosProprietario.Morada,
                     PrazoEmDias = "10", // TODO - adaptar pazo em dias para resolver situação de atraso no pagto. renda (appsettings?)
-                    RendasEmAtraso = "Fevereiro, Março e Abril de 2023 (para teste de emissão - 3 meses em atraso)", // para teste de emissão
-                    MontanteRendasAtraso = DadosFracao.ValorRenda * 3
+                    RendasEmAtraso = dueRentsAsString,
+                    MontanteRendasAtraso = DadosFracao.ValorRenda * monthsDued
                 };
 
                 return dadosCartaRendasAtraso;
@@ -719,8 +751,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
             };
 
             string docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
+            var output = docGerado.Substring(0, docGerado.Length - 1); // ended with 2 "", remove the last
 
-            return docGerado;
+            return output;
 
         }
 

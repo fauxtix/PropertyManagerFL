@@ -571,13 +571,13 @@ namespace PropertyManagerFL.Api.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> RegistaCartaAtraso(int id, string? doc)
+        public async Task<IActionResult> RegistaCartaAtraso(int id, string doc)
         {
             var location = GetControllerActionNames();
 
             try
             {
-                var registerOk = await _repoArrendamentos.RegistaCartaAtraso(id, doc!);
+                var registerOk = await _repoArrendamentos.RegistaCartaAtraso(id, doc);
                 if (registerOk)
                     return NoContent();
                 else

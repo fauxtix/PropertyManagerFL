@@ -1151,7 +1151,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 return;
             }
 
-            var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(Lease!);
+            var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(Lease);
             if (latePaymentLetterData is not null)
             {
                 var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
