@@ -2383,4 +2383,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloVerificarLog" xml:space="preserve">
     <value>Compruebe el Log, por favor.</value>
   </data>
+  <data name="TituloDataEmissao" xml:space="preserve">
+    <value>Fecha de emisión</value>
+  </data>
 </root>

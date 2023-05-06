@@ -30,6 +30,7 @@
                 </div>
             </FooterTemplate>
         </DialogTemplates>
+        <DialogPositionData X="@XPosition" Y="@YPosition"></DialogPositionData>
         <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
     </SfDialog>
 </div>
@@ -39,6 +40,8 @@
     [Parameter] public string Title { get; set; } = "";
     [Parameter] public string Message { get; set; } = "";
     [Parameter] public string DialogWidth { get; set; } = "25%";
+    [Parameter] public string XPosition { get; set; } = "center";
+    [Parameter] public string YPosition { get; set; } = "center";
     [Parameter] public AppDefinitions.AlertMessageType AlertMessageType { get; set; } = AppDefinitions.AlertMessageType.Info;
     [Parameter] public AppDefinitions.OpcoesRegisto OperationType { get; set; } = AppDefinitions.OpcoesRegisto.Info;
 

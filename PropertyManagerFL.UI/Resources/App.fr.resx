@@ -2396,4 +2396,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloVerificarLog" xml:space="preserve">
     <value>Vérifier le journal, s'il vous plaît.</value>
   </data>
+  <data name="TituloDataEmissao" xml:space="preserve">
+    <value>Date d'émission</value>
+  </data>
 </root>

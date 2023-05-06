@@ -2051,6 +2051,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data emissão.
+        /// </summary>
+        public static string TituloDataEmissao {
+            get {
+                return ResourceManager.GetString("TituloDataEmissao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data início.
         /// </summary>
         public static string TituloDataInicio {

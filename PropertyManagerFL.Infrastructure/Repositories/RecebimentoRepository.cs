@@ -7,8 +7,8 @@ using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
-using Syncfusion.DocIO.DLS;
 using System.Data;
+using System.Data.SqlClient;
 using static Dapper.SqlMapper;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
@@ -37,13 +37,20 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             _repoFracoes = repoFracoes;
         }
 
+
+        /// <summary>
+        /// Insere pagamento de renda na base de dados
+        /// </summary>
+        /// <param name="novoRecebimento">DTO de insert</param>
+        /// <param name="isBatchProcessing">Informa se o processamento é em batch ou manual</param>
+        /// <returns>1 = ok (commit), -1 = erro no processamento (rollback)</returns>
         public async Task<int> InsertRecebimento(NovoRecebimento novoRecebimento, bool isBatchProcessing = false)
         {
-            var idFracao = novoRecebimento.ID_Propriedade;
-            var isPagamentoRenda = novoRecebimento.Renda;
+            var IdFracao = novoRecebimento.ID_Propriedade;
+            var IsPagamentoRenda = novoRecebimento.Renda;
             string? tipoRecebimento;
 
-            if (isPagamentoRenda == false)
+            if (IsPagamentoRenda == false)
             {
                 tipoRecebimento = _repoLookups.GetDescricao(novoRecebimento.ID_TipoRecebimento, "TipoRecebimento");
             }
@@ -59,98 +66,97 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     connection.Open();
                     using (var tran = connection.BeginTransaction())
                     {
-                        try
+                        var paid = 1;
+                        var partlyPaid = 2;
+                        var fullyPaid = 3;
+                        var rentPayment = 99;
+
+                        var paymentStatus = novoRecebimento!.ValorPrevisto == novoRecebimento.ValorRecebido &&
+                            novoRecebimento.ValorRecebido > 0 ? paid : novoRecebimento.ValorEmFalta > 0 ? partlyPaid : fullyPaid;
+
+                        novoRecebimento.Estado = paymentStatus;
+
+                        var result = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                            param: novoRecebimento,
+                            commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
+                        if (IsPagamentoRenda)
                         {
-                            // 03/2023
-                            // 1 = Pago, 2 = Pago parcialmente, 3 = Não pago
-                            // a 3ª opção (status = 3) não faz mais sentido => não é possível introduzir o valor '0' na manutenção de recebimentos temporários
+                            var leaseStatusDescription = novoRecebimento!.ValorPrevisto == novoRecebimento.ValorRecebido &&
+                                novoRecebimento.ValorRecebido > 0 ? "Ok" :
+                                novoRecebimento.ValorEmFalta > 0 ? "Pagamento parcial" :
+                                novoRecebimento.ValorRecebido == 0 ? "Em dívida" : "Should know better...";
 
-                            var paymentStatus = novoRecebimento!.ValorPrevisto == novoRecebimento.ValorRecebido &&
-                                novoRecebimento.ValorRecebido > 0 ? 1 : novoRecebimento.ValorEmFalta > 0 ? 2 : 3;
-
-                            novoRecebimento.Estado = paymentStatus;
-
-                            var result = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
-                                param: novoRecebimento,
+                            // Atualiza data do último pagamento + situação do pagamento (contrato)
+                            await connection.ExecuteAsync("usp_Arrendamentos_Update_LastPaymentDate",
+                                new { Id = IdFracao, date = novoRecebimento.DataMovimento, estadopagamento = leaseStatusDescription },
                                 commandType: CommandType.StoredProcedure,
                                 transaction: tran);
-
-                            if (isPagamentoRenda)
-                            {
-                                var leaseStatusDescription = novoRecebimento!.ValorPrevisto == novoRecebimento.ValorRecebido &&
-                                    novoRecebimento.ValorRecebido > 0 ? "Ok" :
-                                    novoRecebimento.ValorEmFalta > 0 ? "Pagamento parcial" :
-                                    novoRecebimento.ValorRecebido == 0 ? "Em dívida" : "Should know better...";
-
-                                // Atualiza data do último pagamento + situação do pagamento (contrato)
-                                await connection.ExecuteAsync("usp_Arrendamentos_Update_LastPaymentDate",
-                                    new { Id = idFracao, date = novoRecebimento.DataMovimento, estadopagamento = leaseStatusDescription },
-                                    commandType: CommandType.StoredProcedure,
-                                    transaction: tran);
-                            }
-
-                            // Atualiza saldo do inquilino
-                            var tenantId = novoRecebimento.ID_Inquilino;
-
-                            var tenantData = await connection.QueryFirstOrDefaultAsync<InquilinoVM>("usp_Inquilinos_GetInquilino_Extended_ById",
-                                param: new { Id = tenantId }, commandType: CommandType.StoredProcedure, transaction: tran);
-
-                            var currentBalance = tenantData.SaldoCorrente;
-                            var _saldoCorrente = currentBalance + novoRecebimento.ValorRecebido;
-
-                            await connection.ExecuteAsync("usp_Inquilinos_UpdateSaldoCorrente",
-                                param: new { TenantId = tenantId, NovoSaldoCorrente = _saldoCorrente },
-                                commandType: CommandType.StoredProcedure,
-                                transaction: tran);
-
-                            // Cria registo na CC Inquilino
-                            CC_InquilinoNovo CC_Inquilino = new()
-                            {
-                                DataMovimento = DateTime.Now,
-                                IdInquilino = tenantId,
-                                ValorPago = novoRecebimento.ValorRecebido,
-                                ValorEmDivida = novoRecebimento.ValorEmFalta,
-                                Renda = novoRecebimento.Renda,
-                                ID_TipoRecebimento = novoRecebimento.Renda ? 99 : novoRecebimento.ID_TipoRecebimento,
-                                Notas = tipoRecebimento
-                            };
-
-                            var transactionId = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
-                                param: CC_Inquilino,
-                                commandType: CommandType.StoredProcedure,
-                                transaction: tran);
-
-                            if (isBatchProcessing)
-                            {
-                                // Delete temporary payments
-                                var deleteOk = await connection.ExecuteAsync("usp_Recebimentos_Delete_Temp",
-                                    commandType: CommandType.StoredProcedure, transaction: tran);
-                            }
-
-                            tran.Commit();
-                            _logger.LogInformation("Transação 'InsertRecebimento' terminada com sucesso");
-
-                            return result;
-
                         }
-                        catch (Exception)
+
+                        // Atualiza saldo do inquilino
+                        var tenantId = novoRecebimento.ID_Inquilino;
+
+                        var tenantData = await connection.QueryFirstOrDefaultAsync<InquilinoVM>("usp_Inquilinos_GetInquilino_Extended_ById",
+                            param: new { Id = tenantId }, commandType: CommandType.StoredProcedure, transaction: tran);
+
+                        var currentBalance = tenantData.SaldoCorrente;
+                        var _saldoCorrente = currentBalance + novoRecebimento.ValorRecebido;
+
+                        await connection.ExecuteAsync("usp_Inquilinos_UpdateSaldoCorrente",
+                            param: new { TenantId = tenantId, NovoSaldoCorrente = _saldoCorrente },
+                            commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
+                        // Cria registo na CC Inquilino
+                        CC_InquilinoNovo CC_Inquilino = new()
                         {
-                            tran.Rollback();
-                            _logger.LogError("Erro ao criar pagamento. Processamento cancelado (Rollback)");
+                            DataMovimento = DateTime.Now,
+                            IdInquilino = tenantId,
+                            ValorPago = novoRecebimento.ValorRecebido,
+                            ValorEmDivida = novoRecebimento.ValorEmFalta,
+                            Renda = novoRecebimento.Renda,
+                            ID_TipoRecebimento = novoRecebimento.Renda ? rentPayment : novoRecebimento.ID_TipoRecebimento,
+                            Notas = tipoRecebimento
+                        };
 
-                            return -1;
+                        var transactionId = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
+                            param: CC_Inquilino,
+                            commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
+                        if (isBatchProcessing)
+                        {
+                            // Delete temporary payments
+                            var deleteOk = await connection.ExecuteAsync("usp_Recebimentos_Delete_Temp",
+                                commandType: CommandType.StoredProcedure, transaction: tran);
                         }
+
+                        tran.Commit();
+                        _logger.LogInformation("Transação 'InsertRecebimento' terminada com sucesso");
+
+                        return result;
                     }
                 }
 
             }
+            catch (SqlException sqlEx)
+            {
+                _logger.LogError($"Erro na base de dados: {sqlEx.ToString()}");
+                return -1;
+            }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex.ToString());
                 return -1;
             }
         }
 
+        /// <summary>
+        /// Processamento mensal de rendas
+        /// </summary>
+        /// <returns>1 Sucesso, -1 erro</returns>
         public async Task<int> ProcessMonthlyRentPayments()
         {
             int parMonth;
@@ -166,7 +172,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         {
                             // Lê pagamentos (temp) criados
                             var pagamentosGerados = await connection.QueryAsync<RecebimentoVM>("usp_Recebimentos_Temp_GetAll",
-                                commandType: CommandType.StoredProcedure, 
+                                commandType: CommandType.StoredProcedure,
                                 transaction: tran);
 
                             parMonth = pagamentosGerados.Select(p => p.DataMovimento.Month).FirstOrDefault();
@@ -246,15 +252,19 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             var deleteOk = await connection.ExecuteAsync("usp_Recebimentos_Delete_Temp",
                                 commandType: CommandType.StoredProcedure, transaction: tran);
 
+                            // Get total paid por this specific period
+                            var totalReceived = await connection.QueryFirstOrDefaultAsync<ProcessamentoRendas>("usp_Recebimentos_GetTotalByMonthAndYear",
+                                new { month = parMonth, year = parYear },
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
                             // Register processed month 
                             var result = await connection.ExecuteAsync("usp_Recebimentos_ProcessamentoRendas_Insert",
-                                new { month = parMonth -1, year = parYear}, // (-1, porquê?) => os movimentos gerados são para o mês seguinte, o mês processado é o escolhido pelo utilizador
+                                new { month = parMonth - 1, year = parYear, TotalRecebido = totalReceived }, // (-1, porquê?) => os movimentos gerados são para o mês seguinte, o mês processado é o escolhido pelo utilizador
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
 
-
                             tran.Commit();
-                            _logger.LogInformation("Processamento mensal de rendas => Transação terminada com sucesso");
 
                             return 1;
 
@@ -320,7 +330,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             {
                 _logger.LogInformation("Acerta pagamento de renda");
 
-                if(paymentState == 2) // parcial
+                if (paymentState == 2) // parcial
                 {
                     if (saldoCorrente == valorAcerto)
                     {
@@ -354,7 +364,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 parameters.Add("@ValorEmDivida", valorEmFalta);
                 parameters.Add("@SaldoCorrente", saldoCorrente);
                 parameters.Add("@ValorRecebido", valorRecebido);
-                parameters.Add("@TenantId", idInquilino );
+                parameters.Add("@TenantId", idInquilino);
 
                 parameters.Add("@Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
 
@@ -479,8 +489,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        /// <summary>
+        /// Delete payment (due rent)
+        /// </summary>
+        /// <param name="id">Transaction Id</param>
+        /// <returns>true if success (commit), false if failed (rollback)</returns>
         public async Task<bool> DeleteRecebimento(int id)
         {
+            const int RENT_TRANSACTION = 99;
             try
             {
                 using (var connection = _context.CreateConnection())
@@ -521,7 +537,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 ValorPago = 0,
                                 ValorEmDivida = transactionAmount,
                                 Renda = transaction.Renda,
-                                ID_TipoRecebimento = transaction.Renda ? 99 : transaction.ID_TipoRecebimento,
+                                ID_TipoRecebimento = transaction.Renda ? RENT_TRANSACTION : transaction.ID_TipoRecebimento,
                                 Notas = transaction.Renda ? "Pagamento de renda foi removido" : "Recebimento (outro) foi removido"
                             };
 
@@ -564,9 +580,16 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             return true;
 
                         }
-                        catch (Exception)
+                        catch (SqlException sqlEx)
                         {
                             tran.Rollback();
+                            _logger.LogError(sqlEx.ToString(), sqlEx);
+                            return false;
+                        }
+                        catch (Exception ex)
+                        {
+                            tran.Rollback();
+                            _logger.LogError(ex.ToString(), ex);
                             return false;
                         }
                     }
@@ -933,7 +956,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 try
                 {
                     var result = await connection.QueryAsync<ProcessamentoRendasDTO>("usp_Recebimentos_MonthlyRentsProcessed",
-                        new { year},
+                        new { year },
                         commandType: CommandType.StoredProcedure);
                     return result;
                 }

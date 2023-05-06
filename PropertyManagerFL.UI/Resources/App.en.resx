@@ -2385,4 +2385,7 @@
   <data name="TituloVerificarLog" xml:space="preserve">
     <value>Check Log, please.</value>
   </data>
+  <data name="TituloDataEmissao" xml:space="preserve">
+    <value>Issue date</value>
+  </data>
 </root>

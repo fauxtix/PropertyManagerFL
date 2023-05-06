@@ -1,17 +1,10 @@
 ﻿@page "/monthlyrentprocessing"
 
-@using PropertyManagerFL.Application.Interfaces.Services.AppManager
-@using PropertyManagerFL.Application.Interfaces.Services.Common
-@using PropertyManagerFL.Application.Interfaces.Services.Validation
-@using PropertyManagerFL.Application.ViewModels.Arrendamentos
-@using PropertyManagerFL.Application.ViewModels.Recebimentos
-@using System.Globalization
-@using PropertyManagerFL.UI.Pages.Recebimentos
-@using static PropertyManagerFL.UI.Components.ConfirmMonthlyRentProcessing;
-@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+@using PropertyManagerFL.Application.ViewModels.Recebimentos;
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
-@implements IDisposable
-
+@inherits MonthlyRentProcessingBase
 
 <PageTitle>@L["TituloProcessamentoRendas"]</PageTitle>
 <PageTitleComponent PageTitle="@L["TituloProcessamentoRendas"]" WithBadge="false"></PageTitleComponent>
@@ -19,7 +12,7 @@
 <div class="container-fluid d-flex">
     <ConfirmMonthlyRentProcessing AlertMessageType="AlertMessageType.Warning"
                                   DialogTitle="@L["TituloProcessamentoRendas"]"
-                                  Message="@monthToProcess"
+                                  Message="@MonthToProcess"
                                   Visible="@ConfirmVisibility"
                                   MessageSeverityType=MessageSeverity.Warning
                                   OnConfirmationYes="@(ProcessMonthlyRents)"
@@ -36,7 +29,12 @@ else
     @if (NoProcessedMonth)
     {
         <div>
-            <SfMessage>@L["TituloNaoHaMesesProcessados"]</SfMessage>
+            <SfMessage Severity="MessageSeverity.Info"
+               ShowIcon="false"
+               ShowCloseIcon="false"
+               Variant="MessageVariant.Filled">
+                @L["TituloNaoHaMesesProcessados"]
+            </SfMessage>
         </div>
     }
     else
@@ -48,13 +46,20 @@ else
                 </SfButton>
             </div>
             <div class="w-25 mt-2">
-                <SfMessage>@L["TituloMesesProcessados"]</SfMessage>
+                <div>
+                    <SfMessage Severity="MessageSeverity.Normal"
+                       ShowIcon="false"
+                       ShowCloseIcon="false"
+                       Variant="MessageVariant.Filled">
+                        @L["TituloMesesProcessados"]
+                    </SfMessage>
+                </div>
                 <hr class="bg-black my-1">
                 <SfGrid DataSource="ProcessedRents">
                     <GridColumns>
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.Mes) HeaderText="@L["TituloMes"]" Width="50" />
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.Ano) HeaderText="@L["TituloAno"]" Width="50" />
-                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.DataProcessamento) Format="d" HeaderText="@L["TituloMovimento"]" Width="120" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.DataProcessamento) Format="d" HeaderText="@L["TituloDataEmissao"]" Width="120" />
                     </GridColumns>
                 </SfGrid>
             </div>
@@ -64,12 +69,14 @@ else
 }
 
 
-<AlertUserComponent AlertMessageType="@alertMessageType"
+<AlertUserComponent AlertMessageType="@AlertMessageType"
                     Title="@AlertTitle"
-                    OperationType="@warningType"
+                    OperationType="@WarningType"
                     Visibility="@WarningVisibility"
                     Message="@WarningMessage"
-                    OnCloseDialog="ReturnToIndex"></AlertUserComponent>
+                    XPosition="center"
+                    YPosition="bottom"
+                    OnCloseDialog="GetBack"></AlertUserComponent>
 
 <div class="container">
     <SfDialog Width="60%"
@@ -116,374 +123,3 @@ else
 </SfToast>
 
 
-@code {
-    [Inject] protected IStringLocalizer<App>? L { get; set; }
-    [Inject] protected IRecebimentoService? transactionsService { get; set; }
-    [Inject] protected IFracaoService? unitsService { get; set; }
-    [Inject] protected IArrendamentoService? leasesService { get; set; }
-    [Inject] protected NavigationManager? navigationManager { get; set; }
-    [Inject] protected ILogger<App>? _logger { get; set; }
-
-
-    protected IEnumerable<RecebimentoVM>? Transactions { get; set; }
-    protected IEnumerable<RecebimentoVM>? BatchTransactions { get; set; }
-
-    protected SfToast? ToastObj { get; set; }
-    protected SfSpinner? SpinnerObj { get; set; }
-
-
-    protected string ToastTitle = "";
-    protected string ToastContent = "";
-    protected string ToastCssClass = "";
-
-    protected string? ToastMessage;
-    protected string? ToastCss;
-    protected string? ToastIcon;
-
-
-    protected string spinnerLabel = "";
-
-    protected bool WarningVisibility { get; set; }
-    protected string? WarningMessage { get; set; }
-
-    protected int transactionId;
-    protected bool ConfirmVisibility { get; set; } = false;
-    protected string? AlertTitle = "";
-
-    protected string WarningCaption = "";
-    protected string WarningTitle = "";
-
-    protected bool EditTransationDialogVisibility { get; set; } = false;
-    protected bool SettlePaymentConfirmVisibility { get; set; } = false;
-    protected List<string> Error_Warnings_Msgs = new();
-    protected bool ErrorVisibility { get; set; } = false;
-    protected bool AddEditMonthlyTransactionsVisibility { get; set; } = false;
-
-    protected string monthToProcess = string.Empty;
-    protected string currentCulture = CultureInfo.CurrentCulture.Name;
-
-
-    OpcoesRegisto warningType = OpcoesRegisto.Warning;
-    AlertMessageType alertMessageType = AlertMessageType.Warning;
-
-    protected bool NoProcessedMonth { get; set; } = false;
-    protected IEnumerable<ProcessamentoRendasDTO> ProcessedRents { get; set; }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await CheckIfConditionsMet();
-
-        AlertTitle = L["TituloProcessamentoRendas"];
-        ToastTitle = AlertTitle;
-
-
-        ProcessedRents = (await transactionsService.GetMonthlyRentsProcessed(DateTime.Now.Year));
-        if (ProcessedRents is null)
-        {
-            NoProcessedMonth = true;
-        }
-
-        if (currentCulture == "pt")
-            currentCulture = "pt-PT";
-
-        TextInfo myTI = new CultureInfo(currentCulture, false).TextInfo;
-        monthToProcess = $"{DateTime.Now.AddMonths(1).ToString("MMMM", CultureInfo.CreateSpecificCulture(currentCulture))}  {DateTime.Now.Year}";
-        monthToProcess = myTI.ToTitleCase(monthToProcess);
-
-        ConfirmVisibility = false;
-        ToastTitle = "";
-        ToastMessage = "";
-        ToastCss = "e-toast-success";
-
-        WarningVisibility = false;
-        WarningMessage = "";
-
-    }
-
-    private async Task CheckIfConditionsMet()
-    {
-        // Antes de criar transação, verificar se há registo de frações/arrendamento disponíveis...
-
-        var leases = await leasesService.GetAll();
-        var canContinue = leases is not null || leases.Count() > 0;
-        if (leases.Any() == false)
-        {
-            WarningVisibility = true;
-            WarningMessage = L["TituloAlertaSemArrendamentos"];
-            return;
-        }
-
-        canContinue = await unitsService!.GetFracoes_Disponiveis() is not null;
-        if (canContinue == false)
-        {
-            WarningVisibility = true;
-            WarningMessage = L["TituloAlertaSemFracoes"];
-            return;
-        }
-    }
-
-    /// <summary>
-    /// Get all leases
-    /// </summary>
-    /// <returns></returns>
-    protected async Task<IEnumerable<ArrendamentoVM>> GetAll()
-    {
-        try
-        {
-            return await leasesService!.GetAll();
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// Processamento mensal de rendas
-    /// </summary>
-    /// <param name="args">Selected month and year</param>
-    /// <returns></returns>
-    protected async Task ProcessMonthlyRents(EventCallbackArgs args)
-    {
-        try
-        {
-            var selectedMonth = args.ProcessingMonth;
-            var selectedYear = args.ProcessingYear;
-            var errorMessage = await IsSelectedPeriodValid(selectedMonth, selectedYear);
-
-            if (!string.IsNullOrEmpty(errorMessage))
-            {
-                WarningVisibility = true;
-                WarningMessage = errorMessage;
-                return;
-            }
-
-            var alreadyPerformed = await RentalProcessingAlreadyMade(selectedMonth, selectedYear);
-            if (alreadyPerformed == false)
-            {
-                ConfirmVisibility = false; // dialog to confirm monthly rent processing
-
-                // No processamento de cartas de atualização, rendas deixaram de ser atualizadas
-                // Na geração de pagamento de rendas (abaixo), deverá ser tomado em
-                // linha de conta que necessitam de alteração.
-                // Ao serem os mostrados os movimentos (antes da confirmação), indicar
-                // quais as frações cujo valor da renda foi alterado.
-
-                BatchTransactions = await GenerateRents(selectedMonth, selectedYear);
-                if (BatchTransactions.Any())
-                {
-                    ToastTitle = L["TituloGerarPagamentos"];
-                    ToastMessage = L["TituloSucesso"];
-                    ToastCss = "e-toast-success";
-                    StateHasChanged();
-                    await Task.Delay(100);
-                    await ToastObj!.ShowAsync();
-
-                    AddEditMonthlyTransactionsVisibility = true;
-                }
-                else
-                {
-                    WarningVisibility = true;
-                    WarningMessage = L["TituloNaoHaPagamentosAProcessar"];
-                    return;
-                }
-            }
-            else
-            {
-                WarningVisibility = true;
-                WarningMessage = L["TituloPagamentoRendasJaEfetuado"];
-                return;
-            }
-
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-        }
-    }
-
-    public async Task HandleBatchTransaction()
-    {
-        try
-        {
-            var transactionResult = await transactionsService!.ProcessMonthlyRentPayments();
-            if (transactionResult == 1)
-            {
-                warningType = OpcoesRegisto.Info;
-                WarningMessage = L["TituloOperacaoOk"];
-                alertMessageType = AlertMessageType.Success;
-                _logger?.LogInformation(L["TituloOperacaoOk"]);
-            }
-            else
-            {
-                warningType = OpcoesRegisto.Info;
-                WarningMessage = L["TituloErroCriacaoPagamentos"];
-                alertMessageType = AlertMessageType.Success;
-                _logger?.LogError(WarningMessage);
-            }
-        }
-        catch (Exception ex)
-        {
-            warningType = OpcoesRegisto.Error;
-            WarningMessage = L["TituloErroCriacaoPagamentos"];
-            alertMessageType = AlertMessageType.Error;
-            _logger?.LogError(WarningMessage);
-
-        }
-        finally
-        {
-            StateHasChanged();
-            WarningVisibility = true;
-        }
-    }
-
-    /// <summary>
-    /// Cancela processamento de rendas. Lê e apaga registos (temp) gerados.
-    /// </summary>
-    /// <returns></returns>
-    public async Task HandleCancelBatchTransaction()
-    {
-        try
-        {
-            var temporaryPayments = GetTemporaryPayments();
-
-            if (temporaryPayments != null)
-            {
-                await DeleteTemporaryPayments();
-
-                warningType = OpcoesRegisto.Info;
-                alertMessageType = AlertMessageType.Success;
-                WarningMessage = L["TituloOperacaoOk"];
-            }
-            else
-            {
-                alertMessageType = AlertMessageType.Error;
-                _logger?.LogWarning($"{L["TituloProcessamentoRendasCancelado"]}.");
-                WarningVisibility = true;
-
-            }
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-            warningType = OpcoesRegisto.Error;
-            WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]} ({ex.ToString()}). {L["TituloVerificar"]}";
-            alertMessageType = AlertMessageType.Error;
-            WarningVisibility = true;
-        }
-    }
-
-    private async Task<string> IsSelectedPeriodValid(int selectedMonth, int selectedYear)
-    {
-        string errorMessage = "";
-        try
-        {
-            var lastPeriodProcessed = await transactionsService!.GetLastPeriodProcessed();
-            if (lastPeriodProcessed is not null)
-            {
-                var lastMonthProcessed = lastPeriodProcessed.Mes;
-                var lastYearProcessed = lastPeriodProcessed.Ano;
-                var lastMonthProcessedCaption = $"último mês processado: {lastMonthProcessed.ToString("MMMM")}";
-                if (selectedYear < lastPeriodProcessed.Ano)
-                {
-                    errorMessage = $"Período inválido ({selectedMonth} / {selectedYear}). Último processamento: {lastMonthProcessed} / {lastYearProcessed}";
-                }
-                else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth < lastPeriodProcessed.Mes)
-                {
-                    errorMessage = $"Mês inválido ({lastMonthProcessedCaption})";
-                }
-            }
-
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-            errorMessage = ex.ToString();
-        }
-
-        return errorMessage;
-    }
-
-    private async Task<bool> RentalProcessingAlreadyMade(int selectedMonth, int selectedYear)
-    {
-        try
-        {
-            return await transactionsService!.RentalProcessingPerformed(selectedMonth, selectedYear);
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-            return true;
-        }
-    }
-
-    private async Task<IEnumerable<RecebimentoVM>> GenerateRents(int selectedMonth, int selectedYear)
-    {
-        try
-        {
-            return (await transactionsService!.GeneratePagamentoRendas(selectedMonth + 1, selectedYear)).ToList();
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-            return null;
-        }
-    }
-
-    private async Task<IEnumerable<RecebimentoVM>> GetTemporaryPayments()
-    {
-        try
-        {
-            return await transactionsService!.GetAllTemp();
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-            return null;
-        }
-    }
-
-    private async Task DeleteTemporaryPayments()
-    {
-        try
-        {
-            await transactionsService.DeleteRecebimentosTemp();
-        }
-        catch (Exception ex)
-        {
-            _logger?.LogError(ex.ToString(), ex);
-        }
-    }
-
-
-    private async Task CloseDialog()
-    {
-        ToastMessage = L["TituloProcessoTerminado"];
-        ToastCss = "e-toast-success";
-        StateHasChanged();
-        await Task.Delay(100);
-        await ToastObj!.ShowAsync();
-        await Task.Delay(1000);
-
-        ReturnToIndex();
-    }
-
-    private void ReturnToIndex()
-    {
-        WarningVisibility = false;
-        ConfirmVisibility = false;
-        AddEditMonthlyTransactionsVisibility = false;
-        navigationManager!.NavigateTo("/monthlyrentprocessing");
-    }
-
-    protected async Task HideToast()
-    {
-        await ToastObj!.HideAsync();
-    }
-
-    public void Dispose()
-    {
-        SpinnerObj?.Dispose();
-        ToastObj?.Dispose();
-    }
-}

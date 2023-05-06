@@ -735,6 +735,25 @@
             </summary>
             <param name="args"></param>
         </member>
+        <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.MonthlyRentProcessingBase.GetAll">
+            <summary>
+            Get all leases
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.MonthlyRentProcessingBase.ProcessMonthlyRents(PropertyManagerFL.UI.Components.ConfirmMonthlyRentProcessing.EventCallbackArgs)">
+            <summary>
+            Processamento mensal de rendas
+            </summary>
+            <param name="args">Selected month and year</param>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.MonthlyRentProcessingBase.HandleCancelBatchTransaction">
+            <summary>
+            Cancela processamento de rendas. Lê e apaga registos (temp) gerados.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.TabAuxBase.GetDataGenerics``1(System.String)">
             <summary>
             Get Data and convert to list of ExpandoObjects
@@ -800,12 +819,6 @@
             <returns></returns>
         </member>
         <member name="M:PropertyManagerFL.UI.Pages.Arrendamentos.UpdateRentsLetter.GetAll">
-            <summary>
-            Get all leases
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:PropertyManagerFL.UI.Pages.Recebimentos.MonthlyRentProcessing.GetAll">
             <summary>
             Get all leases
             </summary>
@@ -1931,6 +1944,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataAtualizacao">
             <summary>
               Looks up a localized string similar to Data atualização.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataEmissao">
+            <summary>
+              Looks up a localized string similar to Data emissão.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataInicio">

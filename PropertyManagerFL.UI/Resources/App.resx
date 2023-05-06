@@ -1378,4 +1378,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloVerificarLog" xml:space="preserve">
     <value>Verifique Log, por favor.</value>
   </data>
+  <data name="TituloDataEmissao" xml:space="preserve">
+    <value>Data emissão</value>
+  </data>
 </root>

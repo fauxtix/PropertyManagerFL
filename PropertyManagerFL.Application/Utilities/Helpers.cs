@@ -128,6 +128,52 @@ namespace PropertyManagerFLApplication.Utilities
 			return monthYear;
 		}
 
+		public static string DecodeMonthYear(int month, int year)
+		{
+			string OutputDate = "";
+			switch(month)
+			{
+                case 1:
+                    OutputDate = "Janeiro";
+                    break;
+                case 2:
+                    OutputDate = "Fevereiro";
+                    break;
+                case 3:
+                    OutputDate = "Março";
+                    break;
+                case 4:
+                    OutputDate = "Abril";
+                    break;
+                case 5:
+                    OutputDate = "Maio";
+                    break;
+                case 6:
+                    OutputDate = "Junho";
+                    break;
+                case 7:
+                    OutputDate = "Julho";
+                    break;
+                case 8:
+                    OutputDate = "Agosto";
+                    break;
+                case 9:
+                    OutputDate = "Setembro";
+                    break;
+                case 10:
+                    OutputDate = "Outubro";
+                    break;
+                case 11:
+                    OutputDate = "Novembro";
+                    break;
+                case 12:
+                    OutputDate = "Dezembro";
+                    break;
+            }
+
+			return $"{OutputDate} de {year}";
+        }
+
 		/// <summary>
 		/// Obtém mês anterior
 		/// </summary>
