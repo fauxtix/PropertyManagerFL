@@ -535,5 +535,26 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return new List<LookupTableVM>();
             }
         }
+
+        public async Task<string> AtualizaRendaInquilino(int Id)
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/UpdateTenantRent/{Id}"))
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                        return "Renda atualizada com sucesso";
+                    else
+                        return jsonData.Trim('"');
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API");
+                return "Erro ao pesquisar API"; ;
+            }
+        }
     }
 }

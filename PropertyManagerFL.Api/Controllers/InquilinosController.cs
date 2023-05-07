@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using Syncfusion.DocIO.ReaderWriter.DataStreamParser.Escher;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -14,6 +15,7 @@ namespace PropertyManagerFL.Api.Controllers
     [ApiController]
     public class InquilinosController : ControllerBase
     {
+        private readonly IFracaoRepository _repoFracoes;
         private readonly IInquilinoRepository _repoInquilinos;
         private readonly IMapper _mapper;
         private readonly ILogger<InquilinosController> _logger;
@@ -26,12 +28,13 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="logger"></param>
         /// <param name="repoInquilinos"></param>
         /// <param name="environment"></param>
-        public InquilinosController(IMapper mapper, ILogger<InquilinosController> logger, IInquilinoRepository repoInquilinos, IWebHostEnvironment environment)
+        public InquilinosController(IMapper mapper, ILogger<InquilinosController> logger, IInquilinoRepository repoInquilinos, IWebHostEnvironment environment, IFracaoRepository repoFracoesInquilinos)
         {
             _mapper = mapper;
             this._logger = logger;
             _repoInquilinos = repoInquilinos;
             _environment = environment;
+            _repoFracoes = repoFracoesInquilinos;
         }
 
         /// <summary>
@@ -423,6 +426,50 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
+
+        [HttpGet("UpdateTenantRent/{Id:int}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> UpdateTenantRent(int Id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (Id < 0)
+                {
+                    string msg = $"{location} - paràmetro incorreto.";
+                    _logger.LogWarning(msg);
+                    return BadRequest(msg);
+                }
+
+                var tenant = await _repoInquilinos.GetInquilino_ById(Id);
+                if(tenant is null)
+                {
+                    return BadRequest("Inquilino não encontrado");
+                }
+
+                var leaseParamsNeeded = await _repoInquilinos.GetLeaseData_ByTenantId(Id);
+                var leaseStart = leaseParamsNeeded.Item1;
+                var unitId = leaseParamsNeeded.Item2;
+
+                if (unitId == 0)
+                    return NotFound("Fração não está arrendada");
+
+                var currentRentValue = (await _repoFracoes.GetUnit_ById(unitId)).ValorRenda;
+
+                await _repoInquilinos.AtualizaRendaInquilino(unitId, leaseStart, currentRentValue);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
 
         [HttpPut("AlteraDocumentoInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

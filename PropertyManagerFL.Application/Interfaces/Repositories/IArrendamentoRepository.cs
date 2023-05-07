@@ -22,6 +22,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task GeraMovimentos(Arrendamento arrendamento, int IdFracao);
         Task<bool> ChildrenExists(int IdFracao);
         Task<string> GetNomeInquilino(int Id);
+        Task<int> GetIdInquilino(int tenantId);
         void CheckNewRents();
         bool ArrendamentoExiste(int IdFracao);
         Task<ArrendamentoVM> GetArrendamento_ById(int id);

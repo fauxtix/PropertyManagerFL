@@ -245,18 +245,27 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     param: CC_Inquilino,
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
-                            }
+                            } // foreach
 
+                            // Get total paid (temp records) por this specific period before deleting them
+
+                            var param2 = new DynamicParameters();
+
+                            param2.Add("@month", parMonth);
+                            param2.Add("@year", parYear);
+                            param2.Add("totalPaid", dbType: DbType.Decimal, direction: ParameterDirection.Output);
+
+                            await connection.ExecuteAsync("usp_Recebimentos_GetTotalByMonthAndYear",
+                                param: param2,
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            var totalReceived = (decimal)param2.Get<Decimal>("totalPaid");
 
                             // Delete temporary payments
                             var deleteOk = await connection.ExecuteAsync("usp_Recebimentos_Delete_Temp",
                                 commandType: CommandType.StoredProcedure, transaction: tran);
 
-                            // Get total paid por this specific period
-                            var totalReceived = await connection.QueryFirstOrDefaultAsync<ProcessamentoRendas>("usp_Recebimentos_GetTotalByMonthAndYear",
-                                new { month = parMonth, year = parYear },
-                                commandType: CommandType.StoredProcedure,
-                                transaction: tran);
 
                             // Register processed month 
                             var result = await connection.ExecuteAsync("usp_Recebimentos_ProcessamentoRendas_Insert",
@@ -265,6 +274,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     transaction: tran);
 
                             tran.Commit();
+
+
 
                             return 1;
 
@@ -856,7 +867,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     }
 
                     // Verifica se arrendamento tem renda para atualizar
-                    // TODO => 11-04-2023 - esta verificação deverá ser removida para 'proceso manual de atualização de rendas 
+                    // TODO => 11-04-2023 - esta verificação deverá ser removida para 'proceso manual de atualização de rendas'
                     var currentYearAsString = DateTime.Now.Year.ToString();
                     var needForAnUpdate = false;
                     if (arrendamento.Data_Inicio.Month == DateTime.Now.Month)
@@ -903,21 +914,21 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     tempClientPayments.Add(clientPayment);
 
                     // atualiza renda, se mês a pagar for o da vigência do contrato
-                    // TODO - 11/04/2023 => processo abaixo deverá ser manual; usar código abaixo para criar alerta na lista de Arrendamentos
-                    if (needForAnUpdate)
-                    {
-                        // para efeito de teste, verificar se carta de atualização foi enviada
-                        var updateLetterSent = arrendamento.EnvioCartaAtualizacaoRenda;
+                    // TODO - 11/04/2023 => processo abaixo deverá ser manual e foi comentado; usar código abaixo para criar alerta na lista de Arrendamentos
+                    //if (needForAnUpdate)
+                    //{
+                    //    // para efeito de teste, verificar se carta de atualização foi enviada
+                    //    var updateLetterSent = arrendamento.EnvioCartaAtualizacaoRenda;
 
-                        var unitId = arrendamento.ID_Fracao;
-                        _logger.LogWarning($"Atualizado valor renda da fração {unitId}, ver explicação na documentação");
-                        using (var connection = _context.CreateConnection())
-                        {
-                            var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
-                            param: new { Id = unitId, NewValue = valorRenda },
-                            commandType: CommandType.StoredProcedure);
-                        }
-                    }
+                    //    var unitId = arrendamento.ID_Fracao;
+                    //    _logger.LogWarning($"Atualizado valor renda da fração {unitId}, ver explicação na documentação");
+                    //    using (var connection = _context.CreateConnection())
+                    //    {
+                    //        var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                    //        param: new { Id = unitId, NewValue = valorRenda },
+                    //        commandType: CommandType.StoredProcedure);
+                    //    }
+                    //}
                 }
 
                 return tempClientPayments;
@@ -929,6 +940,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 return null;
             }
         }
+
 
         public async Task<int> InsertRecebimentoTemp(NovoRecebimento entity)
         {

@@ -1132,5 +1132,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
 
         }
+
+        public async Task<int> GetIdInquilino(int tenantId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

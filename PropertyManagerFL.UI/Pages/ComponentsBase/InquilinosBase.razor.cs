@@ -23,6 +23,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// tenants service
         /// </summary>
         [Inject] public IInquilinoService? inquilinoService { get; set; }
+        [Inject] public IFracaoService? fracaoService { get; set; }
         [Inject] public IFiadorService? FiadorService { get; set; }
         [Inject] public IArrendamentoService? arrendamentosService { get; set; }
 
@@ -106,6 +107,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool ShowToolbarContractRevocationLetter { get; set; }
         protected DocumentoEmitido SendingLetterType { get; set; }
         protected bool SendLetterDialogVisibility { get; set; } = false;
+        protected bool ConfirmUpdateRentDialogVisibility { get; set; } = false;
         protected ArrendamentoVM? Lease { get; set; }
 
 
@@ -376,7 +378,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
                     SendLetterDialogVisibility = true;
                     break;
-
+                case "RentIncrease": // aumento da renda
+                    ConfirmUpdateRentDialogVisibility = true;
+                    break;
             }
         }
 
@@ -754,6 +758,24 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             StateHasChanged();
         }
 
+        protected async Task UpdateRentYes()
+        {
+            alertTitle = "Atualização de renda";
+
+            var updateResult = await inquilinoService.AtualizaRendaInquilino(TenantId);
+            if (updateResult != null) {
+
+                WarningMessage = updateResult;
+            }
+            else
+            {
+                WarningMessage = "Erro desconhecido (!) ao processar atualização";
+            }
+
+            ConfirmUpdateRentDialogVisibility = false;
+            AlertVisibility = true;
+
+        }
         protected void IgnoreTenantChangesAlert()
         {
             IsDirty = false;

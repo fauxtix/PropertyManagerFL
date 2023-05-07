@@ -63,7 +63,7 @@
             new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
-            new ContextMenuItemModel { Text = "Aumento do valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
+            new ContextMenuItemModel { Text = "Atualizar valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
         });
 }
 
@@ -491,6 +491,15 @@ else
                    AlertMessage="@L["MSG_ConfirmarOperacao"]"
                    OnConfirmationYes="(modulo == Modules.Inquilinos? IgnoreTenantChangesAlert: IgnoreGuarantorChangesAlert)"
                    OnConfirmationNo="(modulo == Modules.Inquilinos? ContinueEditTenant : ContinueEditGuarantor)" />
+
+
+<ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="Aumento do valor da renda"
+                   Message="@SelectedTenant?.Nome"
+                   Visible="@ConfirmUpdateRentDialogVisibility"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="UpdateRentYes"
+                   OnConfirmationNo="@(()=>ConfirmUpdateRentDialogVisibility = false)" />
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                         DialogTitle="@(L["DeleteMsg"] + " " + L["TituloInquilino"])"

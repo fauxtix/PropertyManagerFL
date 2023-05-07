@@ -1,16 +1,15 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
-using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
-
 using System.Data;
+using System.Drawing.Text;
 using System.Globalization;
 using System.Text;
-using System.Collections;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
 {
@@ -67,6 +66,24 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+
+        public async Task AtualizaValorRenda(int unitId, decimal newRentValue)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                    param: new { Id = unitId, NewValue = newRentValue },
+                    commandType: CommandType.StoredProcedure);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+            }
+        }
+
         public async Task ApagaInquilino(int id)
         {
             int idFiador = 0;
@@ -86,7 +103,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     {
                         idFiador = fiador.Id;
                     }
-                   
+
                     using (var tran = connection.BeginTransaction())
                     {
                         try
@@ -530,7 +547,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
-        public async   Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato()
+        public async Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato()
         {
 
             try
@@ -561,8 +578,54 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 var result = await connection.QuerySingleOrDefaultAsync<int>(sb.ToString());
                 return result > 0;
             }
-
         }
 
+        public async Task AtualizaRendaInquilino(int unitId, DateTime leaseStart, decimal currentRentValue)
+        {
+            var newRentValue = await GetNewRentValue(leaseStart, currentRentValue);
+            if (newRentValue > 0)
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                    param: new { Id = unitId, NewValue = newRentValue },
+                    commandType: CommandType.StoredProcedure);
+                }
+            }
+        }
+
+        public async Task<(DateTime, int)> GetLeaseData_ByTenantId(int tenantId)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    dynamic result = await connection.QueryFirstOrDefaultAsync<dynamic>("[usp_Arrendamentos_GetTenantDataToUpdateRents]",
+                    param: new { Id = tenantId },
+                    commandType: CommandType.StoredProcedure);
+
+                    var leaseStart = result.Data_Inicio; 
+                    var unitId = result.ID_Fracao; 
+                    return (leaseStart, unitId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString(), ex);
+                return (DateTime.Now, 0);
+            }
+        }
+
+        private async Task<decimal> GetNewRentValue(DateTime leaseStart, decimal valorRenda)
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var coefficient = await connection.QueryFirstOrDefaultAsync<float>("usp_Arrendamentos_Get_CurrentRentCoefficient",
+                    param: new { Ano = DateTime.Now.Year },
+                    commandType: CommandType.StoredProcedure);
+
+                return valorRenda *= (decimal)coefficient;
+            }
+        }
     }
 }
