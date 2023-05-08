@@ -7,7 +7,6 @@ using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
 using System.Data;
-using System.Drawing.Text;
 using System.Globalization;
 using System.Text;
 
@@ -373,6 +372,15 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 param: parameters, commandType: CommandType.StoredProcedure);
             }
         }
+        public async Task<decimal> GetTenantRent(int Id)
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var rentValue = await connection.QuerySingleOrDefaultAsync<decimal>("usp_Inquilinos_GetValorRenda",
+                new { Id }, commandType: CommandType.StoredProcedure);
+                return rentValue;
+            }
+        }
 
         public async Task<bool> CanInquilinoBeDeleted(int id)
         {
@@ -582,17 +590,110 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public async Task AtualizaRendaInquilino(int unitId, DateTime leaseStart, decimal currentRentValue)
         {
+
             var newRentValue = await GetNewRentValue(leaseStart, currentRentValue);
+
+            var UpdateRentHistoryParameters = new DynamicParameters();
+            UpdateRentHistoryParameters.Add("@UnitId", unitId);
+            UpdateRentHistoryParameters.Add("@PriorValue", currentRentValue);
+            UpdateRentHistoryParameters.Add("@UpdatedValue", newRentValue);
+
             if (newRentValue > 0)
             {
                 using (var connection = _context.CreateConnection())
                 {
-                    var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
-                    param: new { Id = unitId, NewValue = newRentValue },
-                    commandType: CommandType.StoredProcedure);
+                    connection.Open();
+                    using (var tran = connection.BeginTransaction())
+                    {
+
+                        try
+                        {
+                            await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                                param: new { Id = unitId, NewValue = newRentValue },
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            // criar entrada no histórico de atualização de rendas
+                            await connection.ExecuteAsync("usp_Inquilinos_InsertRentUpdate",
+                                param: UpdateRentHistoryParameters,
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            tran.Commit();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex.ToString(), ex);
+                            tran.Rollback();
+                        }
+                    }
+
+
                 }
             }
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="unitId">Unit Id</param>
+        /// <returns>Check if a rent update was already made for an unit</returns>
+        public async Task<bool> PriorRentUpdates_ThisYear(int unitId)
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QuerySingleOrDefaultAsync<int>("usp_Inquilinos_CheckForPriorRentUpdates",
+                    new { UnitId = unitId }, 
+                    commandType: CommandType.StoredProcedure);
+                return result > 0;
+            }
+
+        }
+
+        public async Task AtualizaRendaInquilino_Manual(int unitId, DateTime leaseStart, decimal oldValue, decimal newValue)
+        {
+            var UpdateRentHistoryParameters = new DynamicParameters();
+            UpdateRentHistoryParameters.Add("@UnitId", unitId);
+            UpdateRentHistoryParameters.Add("@PriorValue", oldValue);
+            UpdateRentHistoryParameters.Add("@UpdatedValue", newValue);
+
+            if (newValue > 0)
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    connection.Open();
+                    using (var tran = connection.BeginTransaction())
+                    {
+
+                        try
+                        {
+                            await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                                param: new { Id = unitId, NewValue = newValue },
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            // criar entrada no histórico de atualização de rendas
+                            await connection.ExecuteAsync("usp_Inquilinos_InsertRentUpdate",
+                                param: UpdateRentHistoryParameters,
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            tran.Commit();
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex.ToString(), ex);
+                            tran.Rollback();
+                        }
+                    }
+
+
+                }
+            }
+        }
+
 
         public async Task<(DateTime, int)> GetLeaseData_ByTenantId(int tenantId)
         {
@@ -604,8 +705,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     param: new { Id = tenantId },
                     commandType: CommandType.StoredProcedure);
 
-                    var leaseStart = result.Data_Inicio; 
-                    var unitId = result.ID_Fracao; 
+                    var leaseStart = result.Data_Inicio;
+                    var unitId = result.ID_Fracao;
                     return (leaseStart, unitId);
                 }
             }

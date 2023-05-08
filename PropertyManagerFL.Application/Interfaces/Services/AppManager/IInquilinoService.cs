@@ -37,5 +37,8 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<IEnumerable<CC_InquilinoVM>> GetTenantPaymentsHistory(int id);
         Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato();
         Task<string> AtualizaRendaInquilino(int Id);
+        Task<string> AtualizaRendaInquilino_Manual(int Id, string oldValue, string newValue);
+        Task<decimal> GetTenantRent(int Id);
+        Task<bool> PriorRentUpdates_ThisYear(int unitId);
     }
 }

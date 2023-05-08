@@ -834,7 +834,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         /// Gera pagamento de rendas (movimentos temporários)
         /// </summary>
         /// <returns>Lista de pagamentos criados, utilizador necessitará de confirmar valores entrados</returns>
-        public async Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(IEnumerable<ArrendamentoVM> arrendamentos, int month, int year) // 10/04/2023
+        public async Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(IEnumerable<ArrendamentoVM> arrendamentos, int month, int year, bool allowAutomaticRentUpdate)
         {
 
             // NOVO - 08/04/2023 - caso mês da anuidade tenha sido atingido, criar recebimento com novo valor
@@ -866,23 +866,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         continue;
                     }
 
-                    // Verifica se arrendamento tem renda para atualizar
-                    // TODO => 11-04-2023 - esta verificação deverá ser removida para 'proceso manual de atualização de rendas'
-                    var currentYearAsString = DateTime.Now.Year.ToString();
-                    var needForAnUpdate = false;
-                    if (arrendamento.Data_Inicio.Month == DateTime.Now.Month)
-                    {
-                        using (var connection = _context.CreateConnection())
-                        {
-                            var coefficient = await connection.QueryFirstOrDefaultAsync<float>("usp_Arrendamentos_Get_CurrentRentCoefficient",
-                                param: new { Ano = DateTime.Now.Year }, commandType: CommandType.StoredProcedure);
-
-                            valorRenda *= (decimal)coefficient;
-                            needForAnUpdate = true;
-                        }
-                    }
-
-
                     // TODO - verificar, quando <não> for o primeiro processamento, se a data do movimento(pagamento) é a correta
                     // motivo: quando há um processamento mensal, e se apaga um registo (inquilino não pagou...)
                     // ao ser gerado novo pagamento, a data correta de movimento deverá ser a do último mês pago + 1 (poderão haver mais pagamentos em falta...), e não a corrente);
@@ -913,22 +896,39 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     clientPayment.Inquilino = await _repoInquilinos.GetNomeInquilino(arrendamento.ID_Inquilino);
                     tempClientPayments.Add(clientPayment);
 
-                    // atualiza renda, se mês a pagar for o da vigência do contrato
-                    // TODO - 11/04/2023 => processo abaixo deverá ser manual e foi comentado; usar código abaixo para criar alerta na lista de Arrendamentos
-                    //if (needForAnUpdate)
-                    //{
-                    //    // para efeito de teste, verificar se carta de atualização foi enviada
-                    //    var updateLetterSent = arrendamento.EnvioCartaAtualizacaoRenda;
 
-                    //    var unitId = arrendamento.ID_Fracao;
-                    //    _logger.LogWarning($"Atualizado valor renda da fração {unitId}, ver explicação na documentação");
-                    //    using (var connection = _context.CreateConnection())
-                    //    {
-                    //        var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
-                    //        param: new { Id = unitId, NewValue = valorRenda },
-                    //        commandType: CommandType.StoredProcedure);
-                    //    }
-                    //}
+                    // Verifica se arrendamento tem renda para atualizar
+                    // TODO => 11-04-2023 - esta verificação deverá ser removida para 'proceso manual de atualização de rendas'
+                    var currentYearAsString = DateTime.Now.Year.ToString();
+                    var needForAnUpdate = false;
+                    if (arrendamento.Data_Inicio.Month == DateTime.Now.Month)
+                    {
+                        using (var connection = _context.CreateConnection())
+                        {
+                            var coefficient = await connection.QueryFirstOrDefaultAsync<float>("usp_Arrendamentos_Get_CurrentRentCoefficient",
+                                param: new { Ano = DateTime.Now.Year }, commandType: CommandType.StoredProcedure);
+
+                            valorRenda *= (decimal)coefficient;
+                            needForAnUpdate = true;
+                        }
+                    }
+
+
+                    // atualiza renda, se mês a pagar for o da vigência do contrato e a aplicação estiver configurada para o permitir
+                    if (needForAnUpdate && allowAutomaticRentUpdate)
+                    {
+                        // para efeito de teste, verificar se carta de atualização foi enviada
+                        var updateLetterSent = arrendamento.EnvioCartaAtualizacaoRenda;
+
+                        var unitId = arrendamento.ID_Fracao;
+                        _logger.LogWarning($"Atualizado valor renda da fração {unitId}, ver explicação na documentação");
+                        using (var connection = _context.CreateConnection())
+                        {
+                            var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
+                            param: new { Id = unitId, NewValue = valorRenda },
+                            commandType: CommandType.StoredProcedure);
+                        }
+                    }
                 }
 
                 return tempClientPayments;

@@ -60,7 +60,7 @@ else
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.Mes) HeaderText="@L["TituloMes"]" Width="50" />
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.Ano) HeaderText="@L["TituloAno"]" Width="50" />
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.DataProcessamento) Format="d" HeaderText="@L["TituloDataEmissao"]" Width="120" />
-                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.TotalRecebido) Format="c" HeaderText="Valor recebido" Width="120" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.TotalRecebido) Format="c" HeaderText="@L["TituloValorRecebido"]" Width="120" />
                     </GridColumns>
                 </SfGrid>
             </div>
@@ -76,7 +76,7 @@ else
                     Visibility="@WarningVisibility"
                     Message="@WarningMessage"
                     XPosition="center"
-                    YPosition="bottom"
+                    YPosition="center"
                     OnCloseDialog="GetBack"></AlertUserComponent>
 
 <div class="container">
@@ -118,7 +118,7 @@ else
         <ToastHideAnimationSettings Effect="ToastEffect.FadeOut"></ToastHideAnimationSettings>
     </ToastAnimationSettings>
     <ToastButtons>
-        <ToastButton Content="@L["btnFechar"]" OnClick="CloseDialog"></ToastButton>
+        <ToastButton CssClass="e-btn e-success e-round-corner" Content="@L["btnFechar"]" OnClick="CloseDialog"></ToastButton>
     </ToastButtons>
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>

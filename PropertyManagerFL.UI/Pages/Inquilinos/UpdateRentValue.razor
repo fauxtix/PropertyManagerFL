@@ -1,0 +1,123 @@
+﻿@page "/updaterentvalue/{Id:int}"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+
+<div>
+    <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
+    <hr style="color:black">
+</div>
+
+<div class="container-fluid">
+    <div class="form-group">
+        <SfTextBox CssClass="custom-class" Readonly=true Placeholder="@L["TituloInquilino"]" FloatLabelType=FloatLabelType.Always
+                   Value=@TenantName></SfTextBox>
+    </div>
+
+    <div class="group-box">
+        <div class="form-group mt-2">
+            <SfNumericTextBox Placeholder="Valor corrente" @bind-Value="@CurrentRentValue"
+                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                              TValue="decimal"
+                              Readonly="true"
+                              Width="150px"
+                              Currency="EUR">
+            </SfNumericTextBox>
+        </div>
+        <div class="form-group mt-2">
+            <SfNumericTextBox Placeholder="Novo Valor" @bind-Value="@NewRentValue"
+                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                              TValue="decimal"
+                              Width="150px"
+                              Min="@NewRentValue" Decimals="2" Step="10"
+                              ShowSpinButton=false
+                              Currency="EUR">
+                <NumericTextBoxEvents TValue="decimal" Blur="@BlurHandler" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
+            </SfNumericTextBox>
+        </div>
+    </div>
+</div>
+
+<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                    Title="@AlertTitle"
+                    OperationType="OpcoesRegisto.Warning"
+                    Visibility="@AlertVisibility"
+                    Message="@WarningMessage"
+                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+@code {
+    [Parameter] public int Id { get; set; }
+    [Parameter] public EventCallback<decimal> OnTenantRentChange { get; set; }
+
+
+    [Inject] public IInquilinoService InquilinoService { get; set; }
+    [Inject] public IConfiguration _env { get; set; }
+    [Inject] public IStringLocalizer<App> L { get; set; }
+
+    protected decimal CurrentRentValue { get; set; }
+    protected decimal NewRentValue { get; set; }
+    protected bool AutomaticRentAdjustment { get; set; }
+    protected string TenantName { get; set; } = "";
+
+    protected bool AlertVisibility { get; set; } = false;
+    protected string? AlertTitle = "";
+
+    protected bool WarningVisibility { get; set; }
+    protected string? WarningMessage { get; set; }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        TenantName = await InquilinoService.GetNomeInquilino(Id);
+        CurrentRentValue = await InquilinoService.GetTenantRent(Id);
+        NewRentValue = CurrentRentValue;
+    }
+
+    protected void onAmountChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<decimal> args)
+    {
+        var inputAmount = args.Value;
+        if (inputAmount < CurrentRentValue)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser inferior ao corrente";
+            StateHasChanged();
+            return;
+        }
+        var maxValueAllowed = CurrentRentValue * 1.1M; // 10 %
+        if (NewRentValue > maxValueAllowed)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
+            StateHasChanged();
+            return;
+
+        }
+
+        OnTenantRentChange.InvokeAsync(NewRentValue);
+        StateHasChanged();
+    }
+
+    private void BlurHandler(NumericBlurEventArgs<decimal> args)
+    {
+        var inputAmount = args.Value;
+        if (inputAmount < CurrentRentValue)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser inferior ao corrente";
+            StateHasChanged();
+            return;
+        }
+        var maxValueAllowed = CurrentRentValue * 1.1M; // 10 %
+        if (NewRentValue > maxValueAllowed)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
+            StateHasChanged();
+            return;
+        }
+    }
+
+}

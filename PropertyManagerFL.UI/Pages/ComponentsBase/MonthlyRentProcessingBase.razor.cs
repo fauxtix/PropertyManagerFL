@@ -269,14 +269,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                     WarningType = OpcoesRegisto.Info;
                     AlertMessageType = AlertMessageType.Success;
-                    WarningMessage = L["TituloOperacaoOk"];
+                    WarningMessage = L["TituloProcessamentoRendasCancelado"];
                 }
                 else
                 {
                     AlertMessageType = AlertMessageType.Error;
-                    _logger?.LogWarning($"{L["TituloProcessamentoRendasCancelado"]}.");
-                    WarningVisibility = true;
+                    WarningType = OpcoesRegisto.Error;
+                    WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]}  {L["TituloVerificar"]}";
 
+                    _logger?.LogWarning($"{L["TituloProcessamentoRendasCancelado"]}.");
                 }
             }
             catch (Exception ex)
@@ -285,11 +286,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 WarningType = OpcoesRegisto.Error;
                 WarningMessage = $"{L["TituloProcessamentoRendasCancelado"]} ({ex.ToString()}). {L["TituloVerificar"]}";
                 AlertMessageType = AlertMessageType.Error;
+            }
+            finally
+            {
+                AddEditMonthlyTransactionsVisibility = false;
                 WarningVisibility = true;
+                StateHasChanged();
             }
 
-            //AddEditMonthlyTransactionsVisibility = false;
-            StateHasChanged();
         }
 
         private async Task<string> IsSelectedPeriodValid(int selectedMonth, int selectedYear)

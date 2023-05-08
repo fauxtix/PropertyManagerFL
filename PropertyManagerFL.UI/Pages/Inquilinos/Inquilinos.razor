@@ -34,29 +34,6 @@
          TooltipText = "Collapse all",
          PrefixIcon = "e-collapse"
      },
-         new ItemModel()
-    {
-        Type = ItemType.Separator
-    },
-        new ItemModel()
-    {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-success e-round-corner",
-        Text = "Carta de atraso no pagamento de renda",
-        Id = "DueRentLetter",
-        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
-        ShowAlwaysInPopup = true,
-        Visible = ShowToolbarDueRentLetter
-    },
-    new ItemModel()
-    {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-warning e-round-corner",
-        Text = L["TituloCartaRevogacao"],
-        Id = "ContractOpposition",
-        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
-        ShowAlwaysInPopup = true,
-        Visible = ShowToolbarContractRevocationLetter,
-    },
-
     });
     var ContextMenuItems = (new List<Object> 
         { 
@@ -386,6 +363,30 @@ else
                 </SfButton>
                 <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
                           @onclick="(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+<SfDialog CssClass="responsive-dialog-30"
+          IsModal="true"
+          ShowCloseIcon="false"
+          CloseOnEscape="false"
+          @bind-Visible="ConfirmManualUpdateRentDialogVisibility">
+    <DialogTemplates>
+        <Content>
+            <UpdateRentValue Id=SelectedTenant.Id OnTenantRentChange="HandleRentChange"/>
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                          @onclick="UpdateTenantRent_Manually" Content="@L["btnSalvar"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner" Ic
+                          onCss="fas fa-times"
+                          @onclick="(()=>ConfirmManualUpdateRentDialogVisibility = false)" Content="@L["BtnSalir"]">
                 </SfButton>
             </div>
         </FooterTemplate>

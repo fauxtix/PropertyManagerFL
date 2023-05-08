@@ -16,7 +16,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<bool> UpdateRecebimento(AlteraRecebimento recebimento);
         Task<bool> UpdateRecebimentoTemp(AlteraRecebimento recebimento);
         Task<bool> DeleteRecebimento(int id);
-        Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(IEnumerable<ArrendamentoVM> arrendamentos, int month, int year);
+        Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(IEnumerable<ArrendamentoVM> arrendamentos, int month, int year, bool automaticRentUpdate = false);
         Task<decimal> GetValorUltimaRendaPaga(int id);
         Task<bool> RentalProcessingPerformed(int month, int year);
         Task<int> InsertRecebimentoTemp(NovoRecebimento entity);

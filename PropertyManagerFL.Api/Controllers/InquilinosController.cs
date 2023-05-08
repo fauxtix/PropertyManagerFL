@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using Syncfusion.DocIO.ReaderWriter.DataStreamParser.Escher;
+using PropertyManagerFL.Application.Formatting;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -305,6 +306,27 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
+        /// Check if a rent update was already made for an unit (current year)
+        /// </summary>
+        /// <param name="unitId">Unit Id</param>
+        /// <returns></returns>
+        [HttpGet("CheckForPriorRentUpdates_ThisYear/{unitId:int}")]
+        public async Task< IActionResult> CheckForPriorRentUpdates_ThisYear(int unitId)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var updateAlreadyMade = await _repoInquilinos.PriorRentUpdates_ThisYear(unitId);
+                return Ok(updateAlreadyMade);
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
+        /// <summary>
         /// Get primeiro Id do Fiador
         /// </summary>
         /// <returns></returns>
@@ -470,6 +492,59 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("UpdateTenantRent_Manually/{Id:int}/{oldValue}/{newValue}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> UpdateTenantRent_Manually(int Id, string oldValue, string newValue)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (Id < 0)
+                {
+                    string msg = $"{location} - paràmetro incorreto.";
+                    _logger.LogWarning(msg);
+                    return BadRequest(msg);
+                }
+
+                var tenant = await _repoInquilinos.GetInquilino_ById(Id);
+                if (tenant is null)
+                {
+                    return BadRequest("Inquilino não encontrado");
+                }
+
+                var leaseParamsNeeded = await _repoInquilinos.GetLeaseData_ByTenantId(Id);
+                var leaseStart = leaseParamsNeeded.Item1;
+                var unitId = leaseParamsNeeded.Item2;
+
+                if (unitId == 0)
+                    return NotFound("Fração não está arrendada");
+
+                if (!DataFormat.IsNumeric(oldValue))
+                {
+                    return BadRequest("valor corrente da renda inválido");
+                }
+                if (!DataFormat.IsNumeric(newValue))
+                {
+                    return BadRequest("Valor a atualizar inválido");
+                }
+
+                var oldValueParsed = DataFormat.DecimalParse(oldValue);
+                var newValueParsed = DataFormat.DecimalParse(newValue);
+                await _repoInquilinos.AtualizaRendaInquilino_Manual(unitId, leaseStart, oldValueParsed, newValueParsed);
+
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
 
         [HttpPut("AlteraDocumentoInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -542,6 +617,39 @@ namespace PropertyManagerFL.Api.Controllers
 
                 await _repoInquilinos.AtualizaSaldo(id, saldoCorrente);
                 return NoContent();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Atualiza saldo do inquilino
+        /// </summary>
+        /// <param name="id">Id do inquilino</param>
+        /// <param name="saldoCorrente">Verificar se saldo passado como decimal é processado corretamente!</param>
+        /// <returns></returns>
+        [HttpGet("GetTenantRent/{id:int}")]
+        public async Task<IActionResult> GetTenantRent(int id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (id < 1)
+                {
+                    return BadRequest("Id do inquilino não é válido");
+                }
+
+                var tenantToUpdate = await _repoInquilinos.GetInquilino_ById(id);
+
+                if (tenantToUpdate == null)
+                {
+                    return NotFound($"O Inquilino com o Id {id} não foi encontrado");
+                }
+
+                var rentValue = await _repoInquilinos.GetTenantRent(id);
+                return Ok(rentValue);
             }
             catch (Exception e)
             {

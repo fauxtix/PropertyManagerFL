@@ -33,6 +33,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public NavigationManager nav { get; set; }
         [Inject] protected IValidationService validatorService { get; set; }
         [Inject] protected IStringLocalizer<App> L { get; set; }
+        [Inject] public IConfiguration _config { get; set; }
 
 
         /// <summary>
@@ -75,6 +76,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected decimal SaldoEsperado;
 
+        protected decimal NewRentUpdated { get; set; }
+
         protected enum TenantFileTypes
         {
             PDF,
@@ -108,8 +111,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected DocumentoEmitido SendingLetterType { get; set; }
         protected bool SendLetterDialogVisibility { get; set; } = false;
         protected bool ConfirmUpdateRentDialogVisibility { get; set; } = false;
+        protected bool ConfirmManualUpdateRentDialogVisibility { get; set; } = false;
         protected ArrendamentoVM? Lease { get; set; }
-
+        protected bool AutomaticRentAdjustment { get; set; }
 
         /// <summary>
         /// Startup Inquilinos
@@ -152,6 +156,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             FiadorId = 0;
             TenantDocumentId = 0;
 
+            var rentAdjustmentsetting = _config.GetSection("AppSettings:AutomaticRentAdjustment").Value;
+            if (!string.IsNullOrEmpty(rentAdjustmentsetting))
+            {
+                AutomaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
+            }
 
             Tenants = await GetAllTenants();
             //if (!Tenants.Any())
@@ -336,19 +345,19 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnContextMenuClick(ContextMenuClickEventArgs<InquilinoVM> args)
         {
+            var hasActiveLease = await TenantHasLease();
+            if (hasActiveLease == false)
+            {
+                alertTitle = "Envio de cartas / atualização de renda";
+                AlertVisibility = true;
+                WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                await ToggleRow();
+                return;
+            }
+
             switch (args.Item.Id)
             {
                 case "DueRentLetter": // carta de renda em atraso
-
-                    var hasActiveLease = await TenantHasLease();
-                    if (hasActiveLease == false)
-                    {
-                        alertTitle = "Envio de carta de atraso no pagamento";
-                        AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
-                        await ToggleRow();
-                        return;
-                    }
 
                     var unpaidRents = await TenantHasUnpaidRents();
                     if (unpaidRents == false)
@@ -365,21 +374,18 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     break;
 
                 case "ContractOpposition": // carta de oposição à renovação do contrato
-                    hasActiveLease = await TenantHasLease();
-                    if (hasActiveLease == false)
-                    {
-                        alertTitle = "Envio de carta de revogação";
-                        AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
-                        await ToggleRow();
-                        return;
-                    }
-
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
                     SendLetterDialogVisibility = true;
                     break;
-                case "RentIncrease": // aumento da renda
-                    ConfirmUpdateRentDialogVisibility = true;
+                case "RentIncrease": // aumento da renda, manual ou automático (ver flag em AppSettings.json)
+                    if (AutomaticRentAdjustment)
+                    {
+                        ConfirmUpdateRentDialogVisibility = true;
+                    }
+                    else
+                    {
+                        ConfirmManualUpdateRentDialogVisibility = true;
+                    }
                     break;
             }
         }
@@ -1229,6 +1235,48 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             HideToolbar_LetterOptions();
         }
 
+        protected void HandleRentChange(decimal updatedRent)
+        {
+            NewRentUpdated = updatedRent;
+        }
+
+        protected async Task UpdateTenantRent_Manually()
+        {
+            var oldRentValue = await inquilinoService.GetTenantRent(TenantId);
+            if (NewRentUpdated == 0)
+            {
+                alertTitle = "Atualizar valor de renda";
+                WarningMessage = "Novo valor inválido. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            var updateAlreadyMade = await inquilinoService.PriorRentUpdates_ThisYear(TenantId);
+            if(updateAlreadyMade)
+            {
+                alertTitle = "Atualizar valor de renda";
+                WarningMessage = "Já foi efetuado um aumento para este ano. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            var oldRentValueAsString = oldRentValue.ToString("#,###.00");
+            var newRentValueAsString = NewRentUpdated.ToString("#,###.00");
+            var resultAsAString = await inquilinoService.AtualizaRendaInquilino_Manual(TenantId, oldRentValueAsString, newRentValueAsString);
+            if(string.IsNullOrEmpty(resultAsAString)) // sucesso; se preenchido, devolve erro
+            {
+                alertTitle = "Atualizar valor de renda";
+                WarningMessage = "Operação terminou com sucesso.";
+                AlertVisibility = true;
+            }
+            else
+            {
+                alertTitle = "Atualizar valor de renda";
+                WarningMessage = $"Operação terminou com erro ({resultAsAString})";
+                AlertVisibility = true;
+            }
+
+        }
         private void HideToolbar_LetterOptions()
         {
             ShowToolbarDueRentLetter = false;

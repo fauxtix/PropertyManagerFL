@@ -493,8 +493,8 @@ namespace PropertyManagerFL.Api.Controllers
         /// Gera pagamento de rendas temporário, sujeito a confirmação
         /// </summary>
         /// <returns></returns>
-        [HttpGet("GeneratePagamentoRendas/{month:int}/{year:int}")]
-        public async Task<IActionResult> GeneratePagamentoRendas(int month, int year)
+        [HttpGet("GeneratePagamentoRendas/{month:int}/{year:int}/{automaticRentAdjustment}")]
+        public async Task<IActionResult> GeneratePagamentoRendas(int month, int year, bool automaticRentAdjustment)
         {
             var location = GetControllerActionNames();
             try
@@ -503,7 +503,7 @@ namespace PropertyManagerFL.Api.Controllers
                     .Where(p => p.Ativo == true);
                 if (arrendamentos.Any())
                 {
-                    var pagamentosGerados = await _repoRecebimentos.GeneratePagamentoRendas(arrendamentos, month, year);
+                    var pagamentosGerados = await _repoRecebimentos.GeneratePagamentoRendas(arrendamentos, month, year, automaticRentAdjustment);
                     if (pagamentosGerados is null)
                         return BadRequest("Falha na criação de pagamentos de rendas");
 

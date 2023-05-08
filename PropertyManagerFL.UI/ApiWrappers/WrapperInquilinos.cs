@@ -556,5 +556,76 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return "Erro ao pesquisar API"; ;
             }
         }
+
+        public async Task<string> AtualizaRendaInquilino_Manual(int Id, string oldValue, string newValue)
+        {
+            try
+            {
+
+                oldValue = oldValue.ToString().Replace('.', ',');
+                newValue = newValue.ToString().Replace('.', ',');
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/UpdateTenantRent_Manually/{Id}/{oldValue}/{newValue}"))
+                {
+                    var jsonData = await response.Content.ReadAsStringAsync();
+
+                    if (response.IsSuccessStatusCode)
+                        return "";
+                    else
+                        return jsonData.Trim('"');
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API ({exc.ToString()})");
+                return "Erro ao pesquisar API"; ;
+            }
+        }
+
+        public async Task<decimal> GetTenantRent(int Id)
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetTenantRent/{Id}"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantRent = JsonConvert.DeserializeObject<decimal>(jsonData);
+                        return tenantRent;
+                    }
+                    else
+                        return -1;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API (GetTenantRent");
+                return -1;
+            }
+        }
+
+        public async Task<bool> PriorRentUpdates_ThisYear(int unitId)
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/CheckForPriorRentUpdates_ThisYear/{unitId}"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var updateAlreadyMade = JsonConvert.DeserializeObject<bool>(jsonData);
+                        return updateAlreadyMade;
+                    }
+                    else
+                        return false;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (PriorRentUpdates_ThisYear ({exc.Message})");
+                return false;
+            }
+        }
     }
 }

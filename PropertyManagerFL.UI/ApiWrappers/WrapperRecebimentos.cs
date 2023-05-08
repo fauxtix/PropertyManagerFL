@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using MediatR;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
-using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
-using System.Globalization;
-using Syncfusion.Blazor.Schedule.Internal;
+using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -14,6 +11,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly IConfiguration _env;
         private readonly ILogger<WrapperRecebimentos> _logger;
         private readonly string? _uri;
+        private readonly bool AutomaticRentAdjustment;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
 
@@ -25,6 +23,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _logger = logger;
             _httpClient = httpClient;
             _mapper = mapper;
+
+            AutomaticRentAdjustment = bool.Parse(  _env.GetSection("AppSettings:AutomaticRentAdjustment").Value);
         }
 
 
@@ -210,7 +210,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 using (HttpResponseMessage result = await _httpClient.PostAsJsonAsync($"{_uri}/InsereRecebimento/{isBatchProcessing}", recebimentoToInsert))
                 {
                     var success = result.IsSuccessStatusCode;
-                    return success? 1: 0;
+                    return success ? 1 : 0;
                 }
             }
             catch (Exception exc)
@@ -289,11 +289,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
-        public async Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(int month, int year)
+        public async Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(int month, int year, bool automaticRentAdjustment = false)
         {
             try
             {
-                var recebimentosGerados = await _httpClient.GetFromJsonAsync<IEnumerable<RecebimentoVM>>($"{_uri}/GeneratePagamentoRendas/{month}/{year}");
+                var recebimentosGerados = await _httpClient.GetFromJsonAsync<IEnumerable<RecebimentoVM>>($"{_uri}/GeneratePagamentoRendas/{month}/{year}/{automaticRentAdjustment}");
                 return recebimentosGerados!;
             }
             catch (Exception exc)

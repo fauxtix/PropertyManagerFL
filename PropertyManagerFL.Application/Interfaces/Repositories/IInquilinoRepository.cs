@@ -35,5 +35,8 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato();
         Task AtualizaRendaInquilino(int unitId, DateTime leaseStart, decimal currentRentValue);
         Task<(DateTime, int)> GetLeaseData_ByTenantId(int tenantId);
+        Task AtualizaRendaInquilino_Manual(int unitId, DateTime leaseStart, decimal oldValue, decimal newValue);
+        Task<decimal> GetTenantRent(int Id);
+        Task<bool> PriorRentUpdates_ThisYear(int unitId);
     }
 }

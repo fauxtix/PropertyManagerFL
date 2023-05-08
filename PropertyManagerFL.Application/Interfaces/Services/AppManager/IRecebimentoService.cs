@@ -28,7 +28,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 
         bool RegistoArrendamentoCriado(int IdPropriedade);
 
-        Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(int month, int year);
+        Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(int month, int year, bool automaticRentAdjustment = false);
         Task<decimal> GetValorUltimaRendaPaga(int id);
         Task<bool> RentalProcessingPerformed(int month, int year);
         Task<int> InsertRecebimentoTemp(NovoRecebimento entity);
