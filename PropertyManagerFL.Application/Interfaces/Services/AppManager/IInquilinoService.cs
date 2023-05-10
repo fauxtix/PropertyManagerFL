@@ -40,5 +40,8 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<string> AtualizaRendaInquilino_Manual(int Id, string oldValue, string newValue);
         Task<decimal> GetTenantRent(int Id);
         Task<bool> PriorRentUpdates_ThisYear(int unitId);
+        Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetAllRentUpdates();
+        Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId);
+
     }
 }

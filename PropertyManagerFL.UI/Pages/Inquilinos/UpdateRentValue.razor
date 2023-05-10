@@ -3,38 +3,53 @@
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 <div>
-    <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
+    <HeaderDialogComponent HeaderCaption="Atualização de rendas" ImageName="payment" />
     <hr style="color:black">
 </div>
 
 <div class="container-fluid">
-    <div class="form-group">
-        <SfTextBox CssClass="custom-class" Readonly=true Placeholder="@L["TituloInquilino"]" FloatLabelType=FloatLabelType.Always
-                   Value=@TenantName></SfTextBox>
+    <div class="my-2">
+        <SfMessage Severity="MessageSeverity.Info">@TenantName.Trim('"')</SfMessage>
+
+        @*        <SfTextBox CssClass="custom-class" Readonly=true Placeholder="@L["TituloInquilino"]" FloatLabelType=FloatLabelType.Always
+        Value=@TenantName></SfTextBox>
+        *@
     </div>
 
-    <div class="group-box">
+    <div class="e-amounts">
         <div class="form-group mt-2">
             <SfNumericTextBox Placeholder="Valor corrente" @bind-Value="@CurrentRentValue"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
                               Readonly="true"
-                              Width="150px"
+                              ShowSpinButton=false
+                              Width="100px"
                               Currency="EUR">
             </SfNumericTextBox>
         </div>
-        <div class="form-group mt-2">
+        <div class="form-group mt-2 mb-4">
             <SfNumericTextBox Placeholder="Novo Valor" @bind-Value="@NewRentValue"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
-                              Width="150px"
-                              Min="@NewRentValue" Decimals="2" Step="10"
-                              ShowSpinButton=false
+                              Width="130px"
+                              Min="@NewRentValue" Decimals="2" Step="1"
+                              ShowSpinButton=true
                               Currency="EUR">
-                <NumericTextBoxEvents TValue="decimal" Blur="@BlurHandler" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
+                <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
             </SfNumericTextBox>
         </div>
+
     </div>
+    <hr class="my-2" style="color:black" />
+    <div class="flex-buttons-right">
+        <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                  @onclick="InvokeSave" Content="@L["btnSalvar"]">
+        </SfButton>
+        <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                  @onclick="InvokeCancel" Content="@L["BtnSalir"]">
+        </SfButton>
+    </div>
+
 </div>
 
 <AlertUserComponent AlertMessageType="AlertMessageType.Warning"
@@ -64,6 +79,8 @@
     protected bool WarningVisibility { get; set; }
     protected string? WarningMessage { get; set; }
 
+    decimal InputAmount = 0;
+
 
     protected override async Task OnParametersSetAsync()
     {
@@ -72,52 +89,61 @@
         NewRentValue = CurrentRentValue;
     }
 
+    private async Task InvokeSave()
+    {
+        if (InputAmount == 0)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não foi alterado";
+            StateHasChanged();
+            return;
+        }
+
+        if (InputAmount < CurrentRentValue)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser inferior ao corrente";
+            StateHasChanged();
+            return;
+        }
+        var maxValueAllowed = CurrentRentValue * 1.1M; // 10 %
+        if (NewRentValue > maxValueAllowed)
+        {
+            AlertVisibility = true;
+            AlertTitle = "Alteração do valor da renda";
+            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
+            StateHasChanged();
+            return;
+        }
+
+        await OnTenantRentChange.InvokeAsync(NewRentValue);
+    }
+    private async Task InvokeCancel()
+    {
+        await OnTenantRentChange.InvokeAsync(-1);
+    }
     protected void onAmountChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<decimal> args)
     {
-        var inputAmount = args.Value;
-        if (inputAmount < CurrentRentValue)
-        {
-            AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
-            WarningMessage = "Valor não pode ser inferior ao corrente";
-            StateHasChanged();
-            return;
-        }
-        var maxValueAllowed = CurrentRentValue * 1.1M; // 10 %
-        if (NewRentValue > maxValueAllowed)
-        {
-            AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
-            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
-            StateHasChanged();
-            return;
-
-        }
-
-        OnTenantRentChange.InvokeAsync(NewRentValue);
-        StateHasChanged();
+        InputAmount = args.Value;
     }
-
-    private void BlurHandler(NumericBlurEventArgs<decimal> args)
-    {
-        var inputAmount = args.Value;
-        if (inputAmount < CurrentRentValue)
-        {
-            AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
-            WarningMessage = "Valor não pode ser inferior ao corrente";
-            StateHasChanged();
-            return;
-        }
-        var maxValueAllowed = CurrentRentValue * 1.1M; // 10 %
-        if (NewRentValue > maxValueAllowed)
-        {
-            AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
-            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
-            StateHasChanged();
-            return;
-        }
-    }
-
 }
+
+<style>
+    .flex-buttons-right {
+        display: flex;
+        align-items: end;
+        justify-content: end;
+        gap: 6px;
+        margin: 4px;
+    }
+
+    .e-amounts {
+        display: flex;
+        align-items: start;
+        justify-content: start;
+        gap: 12px;
+        margin: 4px;
+    }
+</style>

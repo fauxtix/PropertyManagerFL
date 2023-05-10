@@ -635,7 +635,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// 
+        /// Verifica se Inquilino se teve atualização de rendas para o corrente ano
         /// </summary>
         /// <param name="unitId">Unit Id</param>
         /// <returns>Check if a rent update was already made for an unit</returns>
@@ -691,6 +691,37 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
 
                 }
+            }
+        }
+
+        /// <summary>
+        /// Lista de atualizações de rendas
+        /// </summary>
+        /// <returns>Rent updates</returns>
+        public async Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetAllRentUpdates()
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<HistoricoAtualizacaoRendasVM>("usp_Inquilinos_GetAllRentUpdates",
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+
+        }
+
+        /// <summary>
+        /// Lista de atualizações de rendas por Inquilino
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns>Tenant rent updates</returns>
+        public async Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId)
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<HistoricoAtualizacaoRendasVM>("usp_Inquilinos_GetRentUpdates_ByTenantId",
+                   new { TenantId = tenantId},
+                   commandType: CommandType.StoredProcedure);
+                return result.ToList();
             }
         }
 

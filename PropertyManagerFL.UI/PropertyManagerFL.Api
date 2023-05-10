@@ -706,11 +706,6 @@
             tenants service
             </summary>
         </member>
-        <member name="P:PropertyManagerFL.UI.Pages.ComponentsBase.InquilinosBase.TenantPaymentsHistory">
-            <summary>
-            list of tenants
-            </summary>
-        </member>
         <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.InquilinosBase.OnInitializedAsync">
             <summary>
             Startup Inquilinos

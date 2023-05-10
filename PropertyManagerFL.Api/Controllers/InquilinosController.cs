@@ -83,7 +83,7 @@ namespace PropertyManagerFL.Api.Controllers
                 var tenantHistory = await _repoInquilinos.GetTenantPaymentsHistory(id);
                 if (tenantHistory is not null && tenantHistory.Count() > 0)
                 {
-                   var tenantHistoryList =  _mapper.Map<IEnumerable<CC_InquilinoVM>>(tenantHistory);
+                    var tenantHistoryList = _mapper.Map<IEnumerable<CC_InquilinoVM>>(tenantHistory);
                     return Ok(tenantHistoryList);
                 }
                 else
@@ -308,14 +308,18 @@ namespace PropertyManagerFL.Api.Controllers
         /// <summary>
         /// Check if a rent update was already made for an unit (current year)
         /// </summary>
-        /// <param name="unitId">Unit Id</param>
+        /// <param name="tenantId">To check for the corresponding Unit Id, the one verified in this method</param>
         /// <returns></returns>
-        [HttpGet("CheckForPriorRentUpdates_ThisYear/{unitId:int}")]
-        public async Task< IActionResult> CheckForPriorRentUpdates_ThisYear(int unitId)
+        [HttpGet("CheckForPriorRentUpdates_ThisYear/{tenantId:int}")]
+        public async Task<IActionResult> CheckForPriorRentUpdates_ThisYear(int tenantId)
         {
             var location = GetControllerActionNames();
             try
             {
+                var leaseParamsNeeded = await _repoInquilinos.GetLeaseData_ByTenantId(tenantId);
+                var leaseStart = leaseParamsNeeded.Item1;
+                var unitId = leaseParamsNeeded.Item2;
+
                 var updateAlreadyMade = await _repoInquilinos.PriorRentUpdates_ThisYear(unitId);
                 return Ok(updateAlreadyMade);
             }
@@ -468,7 +472,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
 
                 var tenant = await _repoInquilinos.GetInquilino_ById(Id);
-                if(tenant is null)
+                if (tenant is null)
                 {
                     return BadRequest("Inquilino não encontrado");
                 }
@@ -544,6 +548,57 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("RentUpdates")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetRentUpdates()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var rentUpdates = await _repoInquilinos.GetAllRentUpdates();
+                if(rentUpdates.Any())
+                {
+                    return Ok(rentUpdates);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        [HttpGet("RentUpdates/{tenantId}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> RentUpdates(int tenantId)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var tenantRentUpdates = await _repoInquilinos.GetRentUpdates_ByTenantId(tenantId);
+                if (tenantRentUpdates.Any())
+                {
+                    return Ok(tenantRentUpdates);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
 
 
         [HttpPut("AlteraDocumentoInquilino/{id:int}")]

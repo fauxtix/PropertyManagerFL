@@ -38,5 +38,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task AtualizaRendaInquilino_Manual(int unitId, DateTime leaseStart, decimal oldValue, decimal newValue);
         Task<decimal> GetTenantRent(int Id);
         Task<bool> PriorRentUpdates_ThisYear(int unitId);
+        Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetAllRentUpdates();
+        Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId);
     }
 }

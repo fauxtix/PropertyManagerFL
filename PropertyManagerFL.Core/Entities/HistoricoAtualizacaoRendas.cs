@@ -3,9 +3,9 @@
 public class HistoricoAtualizacaoRendas
 {
     public int Id { get; set; }
-    public int Id_Inquilino { get; set; }
-    public DateTime DataMovimento { get; set; }
-    public decimal ValorAnterior { get; set; }
-    public decimal ValorAtualizado { get; set; }
+    public int UnitId { get; set; }
+    public DateTime DateProcessed { get; set; }
+    public decimal PriorValue { get; set; }
+    public decimal UpdatedValue { get; set; }
 
 }

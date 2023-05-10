@@ -35,8 +35,8 @@
          PrefixIcon = "e-collapse"
      },
     });
-    var ContextMenuItems = (new List<Object> 
-        { 
+    var ContextMenuItems = (new List<Object>
+        {
             new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
@@ -44,7 +44,7 @@
         });
 }
 
-@if (Tenants is null)
+@if (Tenants is null || TenantUpdatedRents is null)
 {
     <LoadingData />
 }
@@ -112,7 +112,7 @@ else
                                                     <Template Context="remarks">
                                                         @{
                                                             var ctx = (remarks as CC_InquilinoVM);
-                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0  ? "yellow" : "white";
+                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0 ? "yellow" : "white";
                                                         }
                                                         <span style="background-color:@backColor">@ctx?.Notas</span>
                                                     </Template>
@@ -248,6 +248,36 @@ else
                                         }
                                     </ContentTemplate>
                                 </TabItem>
+
+                                <TabItem>
+                                    <ChildContent>
+                                        <TabHeader Text="Aumentos de renda"></TabHeader>
+                                    </ChildContent>
+                                    <ContentTemplate>
+                                        @{
+                                            TenantId = (context as InquilinoVM)!.Id;
+                                            var rentUpdates = GetTenantRentUpdates(TenantId);
+                                            <SfGrid TValue="HistoricoAtualizacaoRendasVM"
+                                            DataSource="rentUpdates"
+                                            AllowFiltering="false"
+                                            AllowGrouping="false"
+                                            Width="80%"
+                                            AllowPaging="true"
+                                            AllowSorting="true"
+                                            RowHeight="32"
+                                            AllowTextWrap="true">
+                                                <GridPageSettings PageSize="5" PageCount="5" PageSizes="true"></GridPageSettings>
+                                                <GridColumns>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="200"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["TituloFracao"]" Width="200"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) TextAlign="TextAlign.Center" HeaderText="Antes" Format="c" Width="80"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) TextAlign="TextAlign.Center" HeaderText="Depois" Format="c" Width="80"></GridColumn>
+                                                </GridColumns>
+                                            </SfGrid>
+                                        }
+                                    </ContentTemplate>
+                                </TabItem>
                             </TabItems>
                         </SfTab>
                     </DetailTemplate>
@@ -373,23 +403,26 @@ else
 <SfDialog CssClass="responsive-dialog-30"
           IsModal="true"
           ShowCloseIcon="false"
+          AllowDragging="true"
           CloseOnEscape="false"
           @bind-Visible="ConfirmManualUpdateRentDialogVisibility">
     <DialogTemplates>
         <Content>
-            <UpdateRentValue Id=SelectedTenant.Id OnTenantRentChange="HandleRentChange"/>
+            <UpdateRentValue Id=SelectedTenant.Id OnTenantRentChange="HandleRentChange" />
         </Content>
-        <FooterTemplate>
-            <div>
-                <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                          @onclick="UpdateTenantRent_Manually" Content="@L["btnSalvar"]">
-                </SfButton>
-                <SfButton CssClass="e-outline e-round-corner" Ic
-                          onCss="fas fa-times"
-                          @onclick="(()=>ConfirmManualUpdateRentDialogVisibility = false)" Content="@L["BtnSalir"]">
-                </SfButton>
-            </div>
+
+        @*        <FooterTemplate>
+        <div>
+        <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+        @onclick="UpdateTenantRent_Manually" Content="@L["btnSalvar"]">
+        </SfButton>
+        <SfButton CssClass="e-outline e-round-corner" Ic
+        onCss="fas fa-times"
+        @onclick="(()=>ConfirmManualUpdateRentDialogVisibility = false)" Content="@L["BtnSalir"]">
+        </SfButton>
+        </div>
         </FooterTemplate>
+        *@
     </DialogTemplates>
     <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
 </SfDialog>
@@ -502,6 +535,14 @@ else
                    OnConfirmationYes="UpdateRentYes"
                    OnConfirmationNo="@(()=>ConfirmUpdateRentDialogVisibility = false)" />
 
+<ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
+                   DialogTitle="Valor da renda alterado"
+                   Message="@SelectedTenant?.Nome"
+                   Visible="@ConfirmManualUpdateRentVisibility"
+                   AlertMessage="@L["MSG_ConfirmarOperacao"]"
+                   OnConfirmationYes="UpdateTenantRent_Manually"
+                   OnConfirmationNo="@(()=>ConfirmManualUpdateRentVisibility = false)" />
+
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                         DialogTitle="@(L["DeleteMsg"] + " " + L["TituloInquilino"])"
                         Message="@DeleteCaption"
@@ -541,11 +582,12 @@ else
                       OnConfirmationNo="HandleIssuedLetterCancelation" />
 
 
-<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+<AlertUserComponent AlertMessageType="@alertMessageType"
                     Title="@alertTitle"
                     OperationType="OpcoesRegisto.Warning"
                     Visibility="@AlertVisibility"
                     Message="@WarningMessage"
+                    MessageNote="@SelectedTenant?.Nome"
                     OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
 
 <ValidateErrorComponent Visible="@ErrorVisibility"

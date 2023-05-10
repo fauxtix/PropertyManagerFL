@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using MessagePack;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -10,6 +11,7 @@ using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
+using System.Collections.Generic;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 namespace PropertyManagerFL.UI.Pages.ComponentsBase
@@ -35,12 +37,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] protected IStringLocalizer<App> L { get; set; }
         [Inject] public IConfiguration _config { get; set; }
 
-
-        /// <summary>
-        /// list of tenants
-        /// </summary>
         protected IEnumerable<CC_InquilinoVM>? TenantPaymentsHistory { get; set; }
         protected IEnumerable<InquilinoVM>? Tenants { get; set; }
+        protected IEnumerable<HistoricoAtualizacaoRendasVM>? TenantUpdatedRents { get; set; }
         protected IEnumerable<FiadorVM>? Guarantors { get; set; }
 
         protected CC_InquilinoVM? SelectedHistoryPayment { get; set; }
@@ -100,7 +99,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected List<string> ValidationsMessages = new();
 
         protected Modules modulo { get; set; }
-        protected AlertMessageType? alertMessageType = AlertMessageType.Info;
+        protected AlertMessageType alertMessageType = AlertMessageType.Info;
         protected string? alertTitle = "";
 
         protected string? tenantName { get; set; }
@@ -112,6 +111,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool SendLetterDialogVisibility { get; set; } = false;
         protected bool ConfirmUpdateRentDialogVisibility { get; set; } = false;
         protected bool ConfirmManualUpdateRentDialogVisibility { get; set; } = false;
+        protected bool ConfirmManualUpdateRentVisibility { get; set; } = false;
         protected ArrendamentoVM? Lease { get; set; }
         protected bool AutomaticRentAdjustment { get; set; }
 
@@ -163,6 +163,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
 
             Tenants = await GetAllTenants();
+            TenantUpdatedRents = GetTenantRentUpdates();
             //if (!Tenants.Any())
             //{
             //    WarningMessage = "Sem dados para mostrar";
@@ -175,21 +176,35 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// Get all tenants
         /// </summary>
         /// <returns></returns>
-        public async Task<IEnumerable<InquilinoVM>> GetAllTenants()
+        protected async Task<IEnumerable<InquilinoVM>> GetAllTenants()
         {
             IEnumerable<InquilinoVM>? tenantsList = await inquilinoService!.GetAll();
             // tenantsList.OrderByDescending(p => p.Id).ToList();
             return tenantsList.ToList();
         }
 
-        public IEnumerable<DocumentoInquilinoVM> GetTenantDocuments(int id)
+        protected IEnumerable<HistoricoAtualizacaoRendasVM> GetTenantRentUpdates()
+        {
+            IEnumerable<HistoricoAtualizacaoRendasVM> result = Task.Run(async () => await inquilinoService!.GetAllRentUpdates()).Result;
+            return result;
+
+        }
+
+        protected IEnumerable<HistoricoAtualizacaoRendasVM> GetTenantRentUpdates(int tenantId)
+        {
+            IEnumerable<HistoricoAtualizacaoRendasVM> result = Task.Run(async () => await inquilinoService!.GetRentUpdates_ByTenantId(tenantId)).Result;
+            return result;
+
+        }
+
+        protected IEnumerable<DocumentoInquilinoVM> GetTenantDocuments(int id)
         {
 
             IEnumerable<DocumentoInquilinoVM> documentsList = Task.Run(async () => await inquilinoService!.GetDocumentosInquilino(id)).Result;
             return documentsList;
         }
 
-        public IEnumerable<CC_InquilinoVM> GetTenantPaymentHistory(int id)
+        protected IEnumerable<CC_InquilinoVM> GetTenantPaymentHistory(int id)
         {
 
             IEnumerable<CC_InquilinoVM> paymentsList = Task.Run(async () => await inquilinoService!.GetTenantPaymentsHistory(id)).Result;
@@ -197,7 +212,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
 
 
-        public IEnumerable<FiadorVM> GetTenantGuarantors(int id)
+        protected IEnumerable<FiadorVM> GetTenantGuarantors(int id)
         {
             IEnumerable<FiadorVM> fiadoresInquilino = Task.Run(async () => await inquilinoService!.GeFiadorInquilino_ById(id)).Result;
             return fiadoresInquilino;
@@ -384,6 +399,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
                     else
                     {
+                        var updateAlreadyMade = await inquilinoService.PriorRentUpdates_ThisYear(TenantId);
+                        if (updateAlreadyMade)
+                        {
+                            alertTitle = "Atualizar valor de renda";
+                            WarningMessage = "Já foi efetuado um aumento de renda para este inquilino. Verifique histórico, p.f.";
+                            AlertVisibility = true;
+                            return;
+                        }
+
                         ConfirmManualUpdateRentDialogVisibility = true;
                     }
                     break;
@@ -769,7 +793,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             alertTitle = "Atualização de renda";
 
             var updateResult = await inquilinoService.AtualizaRendaInquilino(TenantId);
-            if (updateResult != null) {
+            if (updateResult != null)
+            {
 
                 WarningMessage = updateResult;
             }
@@ -1008,10 +1033,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             // Verificar se inquilino tem arrendamento ativo
             var tenantsWithNoleases = (await inquilinoService.GetInquilinos_SemContrato()).ToList();
-            if(tenantsWithNoleases.Any()) 
+            if (tenantsWithNoleases.Any())
             {
                 var output = tenantsWithNoleases.Where(t => t.Id == SelectedTenant?.Id).SingleOrDefault();
-                if(output is null)
+                if (output is null)
                 {
                     return true;
                 }
@@ -1050,7 +1075,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 .GetAll())
                 .FirstOrDefault(l => l.ID_Inquilino == TenantId);
 
-            if(Lease?.Id ==  0)
+            if (Lease?.Id == 0)
             {
                 SendLetterDialogVisibility = false;
                 alertTitle = ToastTitle; ;
@@ -1238,43 +1263,49 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected void HandleRentChange(decimal updatedRent)
         {
             NewRentUpdated = updatedRent;
+            ConfirmManualUpdateRentDialogVisibility = false;
+            ConfirmManualUpdateRentVisibility = updatedRent > 0;
         }
 
         protected async Task UpdateTenantRent_Manually()
         {
+            ConfirmManualUpdateRentVisibility = false;
+            AlertVisibility = true;
+            alertMessageType = AlertMessageType.Warning;
+
             var oldRentValue = await inquilinoService.GetTenantRent(TenantId);
             if (NewRentUpdated == 0)
             {
                 alertTitle = "Atualizar valor de renda";
                 WarningMessage = "Novo valor inválido. Verifique, p.f.";
-                AlertVisibility = true;
                 return;
             }
 
             var updateAlreadyMade = await inquilinoService.PriorRentUpdates_ThisYear(TenantId);
-            if(updateAlreadyMade)
+            if (updateAlreadyMade)
             {
                 alertTitle = "Atualizar valor de renda";
-                WarningMessage = "Já foi efetuado um aumento para este ano. Verifique, p.f.";
-                AlertVisibility = true;
+                WarningMessage = "Já foi efetuado um aumento de renda para este ano. Verifique, p.f.";
                 return;
             }
 
             var oldRentValueAsString = oldRentValue.ToString("#,###.00");
             var newRentValueAsString = NewRentUpdated.ToString("#,###.00");
             var resultAsAString = await inquilinoService.AtualizaRendaInquilino_Manual(TenantId, oldRentValueAsString, newRentValueAsString);
-            if(string.IsNullOrEmpty(resultAsAString)) // sucesso; se preenchido, devolve erro
+            if (string.IsNullOrEmpty(resultAsAString)) // sucesso; se preenchido, devolve erro
             {
                 alertTitle = "Atualizar valor de renda";
                 WarningMessage = "Operação terminou com sucesso.";
-                AlertVisibility = true;
+                alertMessageType = AlertMessageType.Info;
             }
             else
             {
                 alertTitle = "Atualizar valor de renda";
                 WarningMessage = $"Operação terminou com erro ({resultAsAString})";
-                AlertVisibility = true;
+                alertMessageType = AlertMessageType.Error;
             }
+
+            StateHasChanged();
 
         }
         private void HideToolbar_LetterOptions()

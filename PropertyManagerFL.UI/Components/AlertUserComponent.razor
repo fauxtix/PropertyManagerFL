@@ -5,7 +5,7 @@
 <div class="quick-info-header">
     <SfDialog Width="@DialogWidth"
               IsModal="true"
-              Visible = "@Visibility"
+              Visible="@Visibility"
               CloseOnEscape="true"
               ShowCloseIcon="false">
         <DialogTemplates>
@@ -15,30 +15,43 @@
             <Content>
                 <div class="row m-2">
                     <div class="col-9">
+                        @if (!string.IsNullOrEmpty(MessageNote))
+                        {
+                            <div class="mb-2">
+                                <SfMessage Severity="MessageSeverity.Info"
+                                       ShowIcon="false"
+                                       Variant="MessageVariant.Outlined"
+                                       ShowCloseIcon="false">
+                                    @MessageNote
+                                </SfMessage>
+                                <hr class="my-2" style="color:black" />
+                            </div>
+                        }
                         <div>
                             <SfMessage ShowIcon="true" Severity="MessageSeverity.Warning">@(Message)</SfMessage>
+                            </div>
                         </div>
+                        <RightSideImageComponent Operation="@OperationType" />
                     </div>
-                    <RightSideImageComponent Operation="@OperationType" />
-                </div>
-            </Content>
-            <FooterTemplate>
-                <div class="mb-3">
-                    <SfButton CssClass="e-success e-outline e-round-corner" IconCss="fas fa-times"
+                </Content>
+                <FooterTemplate>
+                    <div class="mb-3">
+                        <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
                               @onclick="OnClose" Content="@L["btnOK"]">
-                    </SfButton>
-                </div>
-            </FooterTemplate>
-        </DialogTemplates>
-        <DialogPositionData X="@XPosition" Y="@YPosition"></DialogPositionData>
-        <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
-    </SfDialog>
-</div>
+                        </SfButton>
+                    </div>
+                </FooterTemplate>
+            </DialogTemplates>
+            <DialogPositionData X="@XPosition" Y="@YPosition"></DialogPositionData>
+            <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
+        </SfDialog>
+    </div>
 
-@code {
+    @code {
     [Parameter] public bool Visibility { get; set; } = false;
     [Parameter] public string Title { get; set; } = "";
     [Parameter] public string Message { get; set; } = "";
+    [Parameter] public string MessageNote { get; set; } = "";
     [Parameter] public string DialogWidth { get; set; } = "25%";
     [Parameter] public string XPosition { get; set; } = "center";
     [Parameter] public string YPosition { get; set; } = "center";

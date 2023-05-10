@@ -5,6 +5,7 @@ using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -605,11 +606,12 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
-        public async Task<bool> PriorRentUpdates_ThisYear(int unitId)
+        public async Task<bool> PriorRentUpdates_ThisYear(int tenantId)
         {
             try
             {
-                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/CheckForPriorRentUpdates_ThisYear/{unitId}"))
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/CheckForPriorRentUpdates_ThisYear/{tenantId}"))
                 {
                     if (response.IsSuccessStatusCode)
                     {
@@ -625,6 +627,53 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
                 _logger.LogError(exc, $"Erro ao pesquisar API (PriorRentUpdates_ThisYear ({exc.Message})");
                 return false;
+            }
+        }
+
+        public async Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetAllRentUpdates()
+        {
+            try
+            {
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/RentUpdates"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var rentUpdates = JsonConvert.DeserializeObject<IEnumerable<HistoricoAtualizacaoRendasVM>> (jsonData);
+                        return rentUpdates;
+                    }
+                    else
+                        return null;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates) ({exc.Message})");
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId)
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/RentUpdates/{tenantId}"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantRentUpdates = JsonConvert.DeserializeObject<IEnumerable<HistoricoAtualizacaoRendasVM>>(jsonData);
+                        return tenantRentUpdates;
+                    }
+                    else
+                        return null;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates_ByTenantId) ({exc.Message})");
+                return null;
             }
         }
     }
