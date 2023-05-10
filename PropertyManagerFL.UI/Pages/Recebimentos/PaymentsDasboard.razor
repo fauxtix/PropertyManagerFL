@@ -2,6 +2,7 @@
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Stats;
 @using PropertyManagerFL.Application.Shared.Enums;
+@using PropertyManagerFL.Application.ViewModels.Inquilinos;
 @using PropertyManagerFL.Application.ViewModels.Recebimentos;
 
 @using PropertyManagerFL.UI.Components.Cards
@@ -49,11 +50,11 @@
                                     <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
                                                 Width="250"></GridColumn>
                                     <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
-                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
                                     <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="@L["TituloValorRecebido"]" Format="C2"
-                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
                                     <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
-                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
                                 </GridColumns>
 
                             </SfGrid>
@@ -69,16 +70,57 @@
                                     <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
                                                 TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
                                     <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
-                                                Width="300"></GridColumn>
-
-@*                                    <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="Previsto" Format="N2"
-                                                TextAlign="TextAlign.Right" Width="100"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="Recebido" Format="N2"
-                                                TextAlign="TextAlign.Right" Width="100"></GridColumn>
-*@
+                                                Width="250"></GridColumn>
                                     <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
-                                                TextAlign="TextAlign.Right" Width="140"></GridColumn>
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
                                 </GridColumns>
+                            </SfGrid>
+                        </div>
+                    </div>
+                </div>
+                <div class="row card-box mt-3">
+                    <div class="col-md-12">
+                        <div class="table table-striped w-100">
+                            <AlertMessage Message="Aumentos de renda" MessageType="AppDefinitions.AlertMessageType.Success"></AlertMessage>
+                            <SfGrid DataSource="@rentsIncreased"
+                                    RowHeight="28" 
+                                    AllowTextWrap="true"
+                                    TValue="HistoricoAtualizacaoRendasVM"
+                                    GridLines="GridLine.Horizontal">
+                                <GridColumns>
+                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["TituloData"]"
+                                                TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
+                                                Width="275"></GridColumn>
+                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["Fracao"]"
+                                                Width="175"></GridColumn>
+                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) HeaderText="Antes" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
+                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) HeaderText="Depois" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
+                                    <GridColumn HeaderText="Aumento" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110">
+                                        <Template>
+                                            @{
+                                                var ctx = (context as HistoricoAtualizacaoRendasVM);
+                                                var rentIncrese = ctx.UpdatedValue - ctx.PriorValue;
+                                                <div>@rentIncrese.ToString("C2")</div>
+                                            }
+                                        </Template>
+                                    </GridColumn>
+                                    <GridColumn HeaderText="%" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110">
+                                        <Template>
+                                            @{
+                                                var ctx = (context as HistoricoAtualizacaoRendasVM);
+                                                var rateIncrease = Math.Round(((float)(ctx.UpdatedValue * 100) / (float)ctx.PriorValue) - 100, 2);
+                                                <div>@rateIncrease</div>
+                                            }
+                                        </Template>
+                                    </GridColumn>
+
+                                </GridColumns>
+
                             </SfGrid>
                         </div>
                     </div>
@@ -90,6 +132,7 @@
 @code {
 
     [Inject] public IRecebimentoService? paymentsService { get; set; }
+    [Inject] public IInquilinoService? tenantsService { get; set; }
     [Inject] public IStatsService? statsService { get; set; }
     [Inject] public IStringLocalizer<App> L { get; set; }
 
@@ -98,6 +141,7 @@
     protected IEnumerable<RecebimentoVM>? paymentsPreviousYear { get; set; }
     protected IEnumerable<RecebimentoVM>? partiallyPaidPayments { get; set; }
     protected IEnumerable<RecebimentoVM>? duePayments { get; set; }
+    protected IEnumerable<HistoricoAtualizacaoRendasVM> rentsIncreased { get; set; }
 
     protected decimal totalPaymentsThisYear { get; set; }
     protected decimal totalExpectedPaymentsThisYear { get; set; }
@@ -139,5 +183,7 @@
 
         partiallyPaidPayments = paymentsList.Where(p => p.ValorEmFalta > 0 && p.ValorRecebido > 0);
         duePayments = paymentsList.Where(p => p.ValorRecebido == 0);
+
+        rentsIncreased = (await tenantsService.GetAllRentUpdates()).ToList();
     }
 }

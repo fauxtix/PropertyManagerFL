@@ -103,6 +103,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? alertTitle = "";
 
         protected string? tenantName { get; set; }
+        protected string? TituloTabDocumentos { get; set; }
         protected int MaxFileSize = 5 * 1024 * 1024; // 5 MB
 
         protected bool ShowToolbarDueRentLetter { get; set; }
@@ -139,6 +140,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             IsDirty = false;
 
             tenantName = "";
+            TituloTabDocumentos = L["TituloDocumento"] + "s";
 
             ToastTitle = "";
             ToastMessage = "";
