@@ -725,6 +725,19 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        /// <summary>
+        /// Acertos de rendas em que a transação foi apagada (não pagamento) ou alterado o seu valor (pagamento parcial
+        /// </summary>
+        /// <returns>registos da conta-corrente do inquilino em que houve remoção/alteração</returns>
+        public async Task<IEnumerable<RentAdjustmentsVM>> GetRentAdjustments()
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<RentAdjustmentsVM>("usp_Inquilinos_GetRentAdjustments",
+                   commandType: CommandType.StoredProcedure);
+                return result.ToList();
+            }
+        }
 
         public async Task<(DateTime, int)> GetLeaseData_ByTenantId(int tenantId)
         {

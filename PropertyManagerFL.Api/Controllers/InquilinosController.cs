@@ -889,6 +889,31 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("GetRentAdjustments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetRentAdjustments()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var rentAdjustments = await _repoInquilinos.GetRentAdjustments();
+                if (rentAdjustments.Any())
+                {
+                    return Ok(rentAdjustments);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
 
         private string GetControllerActionNames()
         {

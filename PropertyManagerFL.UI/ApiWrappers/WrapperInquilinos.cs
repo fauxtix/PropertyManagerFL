@@ -676,5 +676,28 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return null;
             }
         }
+
+        public async Task<IEnumerable<RentAdjustmentsVM>> GetRentAdjustments()
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetRentAdjustments"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantsRentAdjustments = JsonConvert.DeserializeObject<IEnumerable<RentAdjustmentsVM>>(jsonData);
+                        return tenantsRentAdjustments;
+                    }
+                    else
+                        return null;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates_ByTenantId) ({exc.Message})");
+                return null;
+            }
+        }
     }
 }

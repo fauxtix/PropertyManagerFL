@@ -245,7 +245,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningVisibility = false;
 
             ValidationsMessages = validatorService!.ValidateTransactonsEntries(SelectedTransation!);
-            ToastTitle = "pagamentos";
+            ToastTitle = "Pagamentos";
 
             if (ValidationsMessages == null)
             {

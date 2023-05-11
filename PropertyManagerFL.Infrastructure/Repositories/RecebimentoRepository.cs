@@ -343,17 +343,11 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                 if (paymentState == 2) // parcial
                 {
-                    if (saldoCorrente == valorAcerto)
-                    {
+                        valorAcerto = recebimento.ValorPrevisto;
                         saldoCorrente = 0;
                         valorEmFalta = 0;
                         currentStateAfterPayment = 1;
-                    }
-                    else
-                    {
-                        saldoCorrente -= valorAcerto;
-                        valorRecebido = valorAcerto;
-                    }
+                        //valorRecebido = recebimento.ValorPrevisto; // salda pagamento em falta por completo
 
                     Notas = "Acerto de pagamento parcial";
                 }

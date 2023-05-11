@@ -13,6 +13,5 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         IEnumerable<CC_InquilinoVM> Query(string where = null);
         bool TableHasData();
         Task<IEnumerable<CC_InquilinoVM>> GetTenantCheckingAcount();
-
     }
 }

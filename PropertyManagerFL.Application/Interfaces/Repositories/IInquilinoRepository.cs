@@ -40,5 +40,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<bool> PriorRentUpdates_ThisYear(int unitId);
         Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetAllRentUpdates();
         Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId);
+        Task<IEnumerable<RentAdjustmentsVM>> GetRentAdjustments();
     }
 }

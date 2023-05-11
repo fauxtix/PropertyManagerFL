@@ -125,6 +125,34 @@
                         </div>
                     </div>
                 </div>
+                <div class="row card-box mt-3">
+                    <div class="col-md-12">
+                        <div class="table table-striped w-100">
+                            <AlertMessage Message="Pagamento de rendas com alterações/ajustamentos" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                            <SfGrid DataSource="@rentsAdjustments"
+                                    RowHeight="28"
+                                    AllowTextWrap="true"
+                                    TValue="RentAdjustmentsVM"
+                                    GridLines="GridLine.Horizontal">
+                                <GridColumns>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                                TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
+                                                Width="275"></GridColumn>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorRenda) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
+                                                Width="110"></GridColumn>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorPago) HeaderText="@L["TituloValorPago"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" Format="C2"
+                                                TextAlign="TextAlign.Right" Width="110"></GridColumn>
+                                    <GridColumn Field=@nameof(RentAdjustmentsVM.Notas) HeaderText="@L["TituloNotas"]" 
+                                                Width="250"></GridColumn>
+                                </GridColumns>
+
+                            </SfGrid>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -142,6 +170,7 @@
     protected IEnumerable<RecebimentoVM>? partiallyPaidPayments { get; set; }
     protected IEnumerable<RecebimentoVM>? duePayments { get; set; }
     protected IEnumerable<HistoricoAtualizacaoRendasVM> rentsIncreased { get; set; }
+    protected IEnumerable<RentAdjustmentsVM> rentsAdjustments { get; set; }
 
     protected decimal totalPaymentsThisYear { get; set; }
     protected decimal totalExpectedPaymentsThisYear { get; set; }
@@ -185,5 +214,6 @@
         duePayments = paymentsList.Where(p => p.ValorRecebido == 0);
 
         rentsIncreased = (await tenantsService.GetAllRentUpdates()).ToList();
+        rentsAdjustments = (await tenantsService.GetRentAdjustments()).ToList();
     }
 }
