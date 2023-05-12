@@ -22,6 +22,7 @@
             <param name="svcImoveis"></param>
             <param name="svcFracoes"></param>
             <param name="mailMergeSvc"></param>
+            <param name="svcRecebimentos"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperArrendamentos.InsertArrendamento(PropertyManagerFL.Application.ViewModels.Arrendamentos.ArrendamentoVM)">
             <summary>
@@ -162,6 +163,7 @@
             <param name="env"></param>
             <param name="logger"></param>
             <param name="httpClient"></param>
+            <param name="mapper"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperFiadores.InsereFiador(PropertyManagerFL.Application.ViewModels.Fiadores.FiadorVM)">
             <summary>
@@ -342,6 +344,7 @@
             <param name="env"></param>
             <param name="logger"></param>
             <param name="httpClient"></param>
+            <param name="mapper"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.InsereInquilino(PropertyManagerFL.Application.ViewModels.Inquilinos.InquilinoVM)">
             <summary>
@@ -754,7 +757,7 @@
             Get Data and convert to list of ExpandoObjects
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="SelectedTableByAdmin"></param>
+            <param name="sourceDbTable"></param>
             <returns></returns>
         </member>
         <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.TabAuxBase.Convert``1(System.Collections.IEnumerable)">

@@ -13,7 +13,9 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-9 control-section">
-            <SfSchedule TValue="ScheduleData.AppointmentData" @ref="ScheduleRef" Width="100%" CssClass="@(ShowSchedule ? string.Empty : "schedule-hide")" Height="650px" @bind-SelectedDate="@CurrentDate">
+            <SfSchedule TValue="ScheduleData.AppointmentData" @ref="ScheduleRef"
+                        Width="100%" CssClass="@(ShowSchedule ? string.Empty : "schedule-hide")"
+                        Height="650px" @bind-SelectedDate="@CurrentDate">
                 <ScheduleEventSettings DataSource="@dataSource"></ScheduleEventSettings>
                 <ScheduleViews>
                     <ScheduleView Option="View.Day"></ScheduleView>
@@ -195,4 +197,4 @@
             padding: 30px !important;
         }
     }
-</style>}
+</style>
