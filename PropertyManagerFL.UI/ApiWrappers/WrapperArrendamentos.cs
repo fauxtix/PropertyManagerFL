@@ -35,6 +35,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IFracaoService _svcFracoes;
         readonly IMailMergeService _MailMergeSvc;
         readonly IRecebimentoService _svcRecebimentos;
+
         private ArrendamentoVM _arrendamento;
 
 
@@ -50,6 +51,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="svcImoveis"></param>
         /// <param name="svcFracoes"></param>
         /// <param name="mailMergeSvc"></param>
+        /// <param name="svcRecebimentos"></param>
         public WrapperArrendamentos(IConfiguration env,
                                     ILogger<WrapperArrendamentos> logger,
                                     HttpClient httpClient,

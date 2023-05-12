@@ -26,6 +26,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="env"></param>
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
+        /// <param name="mapper"></param>
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,

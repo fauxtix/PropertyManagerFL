@@ -50,7 +50,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// Get Data and convert to list of ExpandoObjects
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="SelectedTableByAdmin"></param>
+        /// <param name="sourceDbTable"></param>
         /// <returns></returns>
         public async Task<IEnumerable<ExpandoObject>> GetDataGenerics<T>(string sourceDbTable) where T : class
         {
