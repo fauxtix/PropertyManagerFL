@@ -13,6 +13,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 {
     public class ArrendamentoRepository : IArrendamentoRepository
     {
+        private const int RENT_PAYMENT_TYPE = 99;
+
         private readonly IDapperContext _context;
         private readonly IProprietarioRepository _repoOwner;
         private readonly IImovelRepository _repoProperty;
@@ -44,11 +46,16 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             _repoFiador = repoFiador;
         }
 
+        /// <summary>
+        /// Cria contrato de arrendamento
+        /// </summary>
+        /// <param name="arrendamento">dados do contrato</param>
+        /// <returns>1: success, -1: failed</returns>
         public async Task<int> InsertArrendamento(NovoArrendamento arrendamento)
         {
-
+            
             var tenantId = arrendamento.ID_Inquilino;
-            var _unitId = arrendamento.ID_Fracao;
+            var unitId = arrendamento.ID_Fracao;
 
             var parameters = new DynamicParameters();
 
@@ -79,9 +86,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
             decimal guarantorSecurity = 0;
             decimal valorRecebido = arrendamento.Valor_Renda;
-            int tipoRecebimento = 99; // _repoTipoRecebimentos.GetID_ByDescription("Pagamento de Renda");
+            int tipoRecebimento = RENT_PAYMENT_TYPE;
             string descricaoMovimento = "";
-
 
             try
             {
@@ -120,7 +126,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     Renda = true,
                                     Notas = descricaoMovimento,
                                     GeradoPeloPrograma = true,
-                                    ID_Propriedade = _unitId,
+                                    ID_Propriedade = unitId,
                                     ID_TipoRecebimento = tipoRecebimento,
                                     ID_Inquilino = arrendamento.ID_Inquilino
                                 };
@@ -152,7 +158,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     Renda = false,
                                     Notas = descricaoMovimento,
                                     GeradoPeloPrograma = true,
-                                    ID_Propriedade = _unitId,
+                                    ID_Propriedade = unitId,
                                     ID_TipoRecebimento = _repoTipoRecebimentos.GetID_ByDescription("Caução"),
                                     ID_Inquilino = arrendamento.ID_Inquilino
                                 };
@@ -167,7 +173,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                             // Marca fração como alugada
                             var result = await connection.ExecuteAsync("usp_Fracoes_SetAsRented",
-                                 new { Id = _unitId },
+                                 new { Id = unitId },
                                  commandType: CommandType.StoredProcedure, transaction: tran);
 
 
@@ -826,16 +832,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             param: new { Id = id, GeneratedDocument = docGerado },
                             commandType: CommandType.StoredProcedure,
                             transaction: tran);
-
-                        // após envio de carta de atualização de renda, deverá alterar-se o valor correspondente na fração
-                        // comentado  código abaixo, processo deverá ser feito aquando do processamento de rendas
-
-                        //_logger.LogInformation("Após envio de carta de atualização de renda, deverá alterar-se o valor correspondente na fração");
-
-                        //var fracaoAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateRentValue",
-                        //    param: new { Id = unitId, NewValue = newRent },
-                        //    commandType: CommandType.StoredProcedure,
-                        //    transaction: tran);
 
                         // inclui documento nos 'documentos do inquilino'
                         _logger.LogInformation("Após envio de carta de atualização de renda, incluir documento nos 'documentos do inquilino'");

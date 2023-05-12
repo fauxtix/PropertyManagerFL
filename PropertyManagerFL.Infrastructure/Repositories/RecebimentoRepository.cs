@@ -275,8 +275,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                             tran.Commit();
 
-
-
                             return 1;
 
                         }
@@ -830,11 +828,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         /// <returns>Lista de pagamentos criados, utilizador necessitará de confirmar valores entrados</returns>
         public async Task<IEnumerable<RecebimentoVM>> GeneratePagamentoRendas(IEnumerable<ArrendamentoVM> arrendamentos, int month, int year, bool allowAutomaticRentUpdate)
         {
-
-            // NOVO - 08/04/2023 - caso mês da anuidade tenha sido atingido, criar recebimento com novo valor
-            // atualizar valor da renda do inquilino
-            // 11/04/2023 - NOTA: essa operação não deveria ser automática, mas sim manual; sistema deverá criar alerta, optando-se depois por alterar, ou não, o valor da renda com o coeficiente.
-
             try
             {
                 List<NovoRecebimento> recebimentos = new List<NovoRecebimento>();
@@ -847,11 +840,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                     DateTime userRequestedDate = new DateTime(year, month, 1).AddMonths(-1); // new 10-04-2023
                     DateTime dataUltimoPagamento = userRequestedDate; // arrendamento.Data_Pagamento;
-
-                    //if (valorUltimaRendaPaga == 0)
-                    //{
-                    //    valorUltimaRendaPaga = arrendamento.Valor_Renda;
-                    //}
 
                     // verifica se contrato já iniciou
                     var monthsUntilNow = GetMonthDifference(arrendamento.Data_Inicio, DateTime.Now);
