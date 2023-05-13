@@ -4,6 +4,7 @@ using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
+using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Spinner;
@@ -481,7 +482,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             SelectedTransation = await transactionsService.GetRecebimento_ById(transactionId);
             OriginalSelectedTransaction = await transactionsService.GetRecebimento_ById(transactionId);
-            DeleteCaption = SelectedTransation.DataMovimento.ToShortDateString(); ;
+            DeleteCaption = $"{SelectedTransation.DataMovimento.ToString("MMMM-yyyy").ToTitleCase()} - {SelectedTransation.Inquilino}";
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {

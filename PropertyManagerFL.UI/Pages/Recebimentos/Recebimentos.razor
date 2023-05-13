@@ -380,10 +380,13 @@ else
                         ValidationMessages="@ValidationsMessages"
                         OnCloseDialog="@(()=>ErrorVisibility = false)" />
 
-    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error" DialogWidth="20%"
-                        DialogTitle="@WarningTitle" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+    <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error"
+                        DialogTitle="@WarningTitle" 
+                        DialogHeight="auto"
+                        DialogWidth="27%"
+                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                         Module=Modules.Recebimentos 
-                        Message="@SelectedTransation?.DataMovimento.ToLongDateString()"
+                        Message="@DeleteCaption"
                         Visible="@DeleteConfirmVisibility"
                         OnConfirmationYes="ConfirmDeleteYes"
                         OnConfirmationNo="@(()=>DeleteConfirmVisibility=false)"></ConfirmDeleteComponent>

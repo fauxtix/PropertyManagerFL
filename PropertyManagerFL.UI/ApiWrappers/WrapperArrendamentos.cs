@@ -667,9 +667,13 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 var lastPaymentDate = _arrendamento.Data_Pagamento;
                 string months = "";
 
+                var tenantCurrentBalance = DadosInquilino.SaldoPrevisto -  DadosInquilino.SaldoCorrente;
+                if (tenantCurrentBalance > 0 && monthsDued == 0)
+                    monthsDued = 1;
+
                 if (monthsDued == 1)
                 {
-                    months = $"{_arrendamento.Data_Pagamento.ToString("MMMM").ToTitleCase()}";
+                    months = $"{_arrendamento.Data_Pagamento.AddMonths(1).ToString("MMMM").ToTitleCase()}";
                 }
                 else
                 {
