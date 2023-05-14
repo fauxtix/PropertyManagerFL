@@ -120,13 +120,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             LeaseAlerts.Clear();
             var tenantDocuments = await inquilinosService!.GetDocumentos();
-            var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.UploadDate.Year < DateTime.Now.Year);
+            var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
             if(updateLetterSentCurrentYear.Any())
             {
                 foreach (var document in tenantDocuments)
                 {
                     LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}", 1);
-
                 }
             }
 

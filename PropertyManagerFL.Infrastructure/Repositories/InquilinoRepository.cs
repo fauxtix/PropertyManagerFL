@@ -415,6 +415,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 parameters.Add("@Descricao", document.Descricao);
                 parameters.Add("@DocumentPath", document.DocumentPath);
                 parameters.Add("@TenantId", document.TenantId);
+                parameters.Add("@ReferralDate", document.ReferralDate);
                 parameters.Add("@DocumentType", document.DocumentType);
                 parameters.Add("@StorageType", document.StorageType);
                 parameters.Add("@StorageFolder", document.StorageFolder);

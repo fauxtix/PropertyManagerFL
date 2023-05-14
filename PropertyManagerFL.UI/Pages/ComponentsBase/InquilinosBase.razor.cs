@@ -7,11 +7,13 @@ using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
 using System.Collections.Generic;
+using System.Linq;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 namespace PropertyManagerFL.UI.Pages.ComponentsBase
@@ -737,7 +739,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 Descricao = "",
                 DocumentPath = "",
                 TenantId = TenantId,
-                UploadDate = DateTime.Now,
+                CreationDate = DateTime.Now,
                 StorageType = 'C',
                 StorageFolder = "tenants"
             };
@@ -1186,9 +1188,62 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             ToastTitle = "Carta de aviso - rendas em atraso";
 
-            // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
+            // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias) ??
             // alertar user em conformidade
 
+            // verifica se inquilino tem valores em divida
+            var tenantRentPayments = (await recebimentosService.GetAll()).ToList();
+            var tenantDuePayments = tenantRentPayments.Where(p => p.ID_Inquilino == TenantId && p.ValorEmFalta > 0);
+            if (tenantDuePayments.Any() == false)
+            {
+                alertTitle = "Envio de carta ao inquilino";
+                WarningMessage = "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            List<DateTime> dueLettersSent = new();
+
+            var dueMonths = tenantDuePayments.Count();
+
+
+            DocumentoInquilinoVM? lettersSent = new();
+
+            foreach (var duePayment in tenantDuePayments)
+            {
+
+                var tenantDocuments = await inquilinoService.GetDocumentosInquilino(TenantId);
+                lettersSent = tenantDocuments
+                    .FirstOrDefault(l => l.ReferralDate.Month == duePayment.DataMovimento.Month &&
+                    l.ReferralDate.Year == duePayment.DataMovimento.Year);
+
+                if (lettersSent is not null)
+                {
+                    dueLettersSent.Add(duePayment.DataMovimento);
+                }
+            }
+
+            var countLettersSent = dueLettersSent.Count;
+            if (countLettersSent > 0 && countLettersSent == dueMonths)
+            {
+                var monthAsString = dueLettersSent.Select(ds => ds.Date.ToString("MMMM").ToTitleCase());
+                var yearAsString = dueLettersSent.Select(ds => ds.Date.ToString("yyyy"));
+                alertTitle = "Envio de carta ao inquilino";
+                WarningMessage = $"Carta de alerta para pagamento em atraso (mês {monthAsString}  de {yearAsString}) já foi enviada!. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+            }
+
+            if (dueMonths > 2 && dueLettersSent.Count  < dueMonths -1)
+            {
+                alertTitle = "Envio de carta ao inquilino";
+                WarningMessage = "Há cartas de aviso que não foram enviadas!. Verifique, p.f.";
+                AlertVisibility = true;
+                return;
+
+            }
+
+            DateTime? referralDate = null;
 
             Lease = (await arrendamentosService
                 .GetAll())
@@ -1196,7 +1251,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             var leaseId = Lease.Id;
 
-            // Verificar se carta já foi enviada
+            // Verificar se foi enviada alguma carta 
             var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(leaseId);
             if (letterAlreadySent)
             {
