@@ -696,9 +696,40 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates_ByTenantId) ({exc.Message})");
+                _logger.LogError(exc, $"Erro ao pesquisar API (GetRentAdjustments) ({exc.Message})");
                 return null;
             }
         }
+
+        public async Task<IEnumerable<LatePaymentLettersVM>> GetLatePaymentLetters()
+        {
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/LatePaymentLetters"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var tenantsLatePaymentLetters = JsonConvert.DeserializeObject<IEnumerable<LatePaymentLettersVM>>(jsonData);
+                        if(tenantsLatePaymentLetters != null)
+                        {
+                            return tenantsLatePaymentLetters;
+                        }
+                        else
+                        {
+                            return Enumerable.Empty<LatePaymentLettersVM>();
+                        }
+                    }
+                    else
+                        return Enumerable.Empty<LatePaymentLettersVM>();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (GetLatePaymentLetters) ({exc.Message})");
+                return Enumerable.Empty<LatePaymentLettersVM>();
+            }
+        }
+
     }
 }

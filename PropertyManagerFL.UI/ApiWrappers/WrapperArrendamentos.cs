@@ -10,11 +10,9 @@ using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using PropertyManagerFL.Core.Entities;
-using PropertyManagerFL.UI.Components.Documents;
 using PropertyManagerFLApplication.Utilities;
 using System.Text;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -648,7 +646,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public async Task<CartaRendasAtraso> GetDadosCartaRendasAtraso(ArrendamentoVM DadosArrendamento)
         {
             _arrendamento = DadosArrendamento;
-            string dueRentsAsString= "";
+            string dueRentsAsString = "";
             try
             {
                 int IdProprietario = await _svcProprietarios.GetFirstId(); // nesta versão da aplicação, só existe um proprietário...
@@ -667,7 +665,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 var lastPaymentDate = _arrendamento.Data_Pagamento;
                 string months = "";
 
-                var tenantCurrentBalance = DadosInquilino.SaldoPrevisto -  DadosInquilino.SaldoCorrente;
+                var tenantCurrentBalance = DadosInquilino.SaldoPrevisto - DadosInquilino.SaldoCorrente;
                 if (tenantCurrentBalance > 0 && monthsDued == 0)
                     monthsDued = 1;
 
@@ -683,7 +681,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                         months += $"{_arrendamento.Data_Pagamento.AddMonths(i).ToString("MMMM").ToTitleCase()}, ";
                     }
 
-                    months = months.Substring(0, months.Length -2);
+                    months = months.Substring(0, months.Length - 2);
                     var lastComma = months.LastIndexOf(',');
                     if (lastComma != -1)
                         months = months.Remove(lastComma, 1).Insert(lastComma, " e");
@@ -807,12 +805,13 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return false;
             }
         }
-        public async Task RegistaCartaAtrasoRendas(int Id, string docGerado)
+        public async Task RegistaCartaAtrasoRendas(int Id, DateTime? referralDate, string tentiva, string docGerado)
         {
             try
             {
                 var fileName = Path.GetFileName(docGerado);
-                var endpoint = $"{_uri}/RegistaCartaAtraso/{Id}/{fileName}";
+                var referralDateAsString = referralDate!.Value.ToString("yyyy-MM-dd");
+                var endpoint = $"{_uri}/RegistaCartaAtraso/{Id}/{referralDateAsString}/{tentiva}/{fileName}";
                 using (HttpResponseMessage result = await _httpClient.GetAsync(endpoint))
                 {
                     var success = result.IsSuccessStatusCode;

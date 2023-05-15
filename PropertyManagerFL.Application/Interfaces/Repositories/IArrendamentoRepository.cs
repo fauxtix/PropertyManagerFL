@@ -1,6 +1,7 @@
 ﻿using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.Application.ViewModels.Inquilinos;
 
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
@@ -44,7 +45,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<bool> VerificaSeExisteRespostaCartaRevogacao(int id);
 
         Task<bool> VerificaEnvioCartaAtrasoEfetuado(int id);
-        Task<bool> RegistaCartaAtraso(int id, string docGerado);
+        Task<bool> RegistaCartaAtraso(int id, DateTime? referralDate, string tentativa, string docGerado);
         Task<bool> MarcaCartaAtrasoRendaComoEmitida(int id, string docGerado);
         Task<IEnumerable<LookupTableVM>> GetApplicableLaws();
         Task<CoeficienteAtualizacaoRendas> GetCoefficient_ByYear(int year);

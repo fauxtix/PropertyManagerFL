@@ -14,149 +14,181 @@
     </div>
 </header>
 
-<div id="dashboard" class="planner-dashboard">
-    <div class="content view-detail-display" style="margin: 0px;">
-        <div class="col-12 mb-3">
-            <div class="container col-lg-12 col-md-12 col-sm-12">
-                <div class="row">
-                    <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
+@if (rentsAdjustments is null)
+{
+    <LoadingData />
+}
+else
+{
+
+
+    <div id="dashboard" class="planner-dashboard">
+        <div class="content view-detail-display" style="margin: 0px;">
+            <div class="col-12 mb-3">
+                <div class="container col-lg-12 col-md-12 col-sm-12">
+                    <div class="row">
+                        <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
                                                                         ResultadoRecebido="@totalPaymentsThisYear.ToString("C2")"
                                                                         TituloPrevisto="@TituloPrevisto"
                                                                         ResultadoPrevisto="@totalExpectedPaymentsThisYear.ToString("C2")"
                                                                         TituloEmFalta="@TituloEmFalta"
                                                                         ResultadoEmFalta="@totalDuePaymentsThisYear.ToString("C2")" />
 
-                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
-                </div>
-                <div class="row card-box">
-                    <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
+                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
+                    </div>
+                    <div class="row card-box">
+                        <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
                                                                         ResultadoRecebido="@totalPaymentsPreviousYear.ToString("C2")"
                                                                         TituloPrevisto="@TituloPrevisto"
                                                                         ResultadoPrevisto="@totalExpectedPaymentsPreviousYear.ToString("C2")"
                                                                         TituloEmFalta="@TituloEmFalta"
                                                                         ResultadoEmFalta="@totalDuePaymentsPreviousYear.ToString("C2")" />
-                    <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
-                </div>
-                <div class="row card-box mt-3">
-                    <div class="col-md-7">
-                        <div class="table table-striped w-100">
-                            <AlertMessage Message="@L["TituloValoresEmDivida"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
-                            <SfGrid DataSource="@partiallyPaidPayments"
+                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
+                    </div>
+                    <div class="row card-box mt-3">
+                        <div class="col-md-7">
+                            <div class="table table-striped w-100">
+                                <AlertMessage Message="@L["TituloValoresEmDivida"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+                                <SfGrid DataSource="@partiallyPaidPayments"
                                     RowHeight="28"
                                     GridLines="GridLine.Horizontal">
-                                <GridColumns>
-                                    <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
                                                 TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
+                                        <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
                                                 Width="250"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
+                                        <GridColumn Field=@nameof(RecebimentoVM.ValorPrevisto) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="@L["TituloValorRecebido"]" Format="C2"
+                                        <GridColumn Field=@nameof(RecebimentoVM.ValorRecebido) HeaderText="@L["TituloValorRecebido"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
+                                        <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                </GridColumns>
+                                    </GridColumns>
 
-                            </SfGrid>
+                                </SfGrid>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-5">
-                        <div class="table table-striped w-100">
-                            <AlertMessage Message="@L["TituloValorDivida"]" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
-                            <SfGrid DataSource="@duePayments"
+                        <div class="col-md-5">
+                            <div class="table table-striped w-100">
+                                <AlertMessage Message="@L["TituloValorDivida"]" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                                <SfGrid DataSource="@duePayments"
                                     RowHeight="28"
                                     GridLines="GridLine.Horizontal">
-                                <GridColumns>
-                                    <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(RecebimentoVM.DataMovimento) HeaderText="@L["TituloData"]"
                                                 TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
+                                        <GridColumn Field=@nameof(RecebimentoVM.Inquilino) HeaderText="@L["TituloInquilino"]"
                                                 Width="250"></GridColumn>
-                                    <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
+                                        <GridColumn Field=@nameof(RecebimentoVM.ValorEmFalta) HeaderText="@L["TituloValorAPagar"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                </GridColumns>
-                            </SfGrid>
+                                    </GridColumns>
+                                </SfGrid>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row card-box mt-3">
-                    <div class="col-md-12">
-                        <div class="table table-striped w-100">
-                            <AlertMessage Message="Aumentos de renda" MessageType="AppDefinitions.AlertMessageType.Success"></AlertMessage>
-                            <SfGrid DataSource="@rentsIncreased"
-                                    RowHeight="28" 
+                    <div class="row card-box mt-3">
+                        <div class="col-md-12">
+                            <div class="table table-striped w-100">
+                                <AlertMessage Message="Aumentos de renda" MessageType="AppDefinitions.AlertMessageType.Success"></AlertMessage>
+                                <SfGrid DataSource="@rentsIncreased"
+                                    RowHeight="28"
                                     AllowTextWrap="true"
                                     TValue="HistoricoAtualizacaoRendasVM"
                                     GridLines="GridLine.Horizontal">
-                                <GridColumns>
-                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["TituloData"]"
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["TituloData"]"
                                                 TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
                                                 Width="275"></GridColumn>
-                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["Fracao"]"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["Fracao"]"
                                                 Width="175"></GridColumn>
-                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) HeaderText="Antes" Format="C2"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) HeaderText="Antes" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) HeaderText="Depois" Format="C2"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) HeaderText="Depois" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn HeaderText="Aumento" Format="C2"
+                                        <GridColumn HeaderText="Aumento" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110">
-                                        <Template>
-                                            @{
-                                                var ctx = (context as HistoricoAtualizacaoRendasVM);
-                                                var rentIncrese = ctx.UpdatedValue - ctx.PriorValue;
-                                                <div>@rentIncrese.ToString("C2")</div>
-                                            }
-                                        </Template>
-                                    </GridColumn>
-                                    <GridColumn HeaderText="%" Format="C2"
+                                            <Template>
+                                                @{
+                                                    var ctx = (context as HistoricoAtualizacaoRendasVM);
+                                                    var rentIncrese = ctx.UpdatedValue - ctx.PriorValue;
+                                                    <div>@rentIncrese.ToString("C2")</div>
+                                                }
+                                            </Template>
+                                        </GridColumn>
+                                        <GridColumn HeaderText="%" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110">
-                                        <Template>
-                                            @{
-                                                var ctx = (context as HistoricoAtualizacaoRendasVM);
-                                                var rateIncrease = Math.Round(((float)(ctx.UpdatedValue * 100) / (float)ctx.PriorValue) - 100, 2);
-                                                <div>@rateIncrease</div>
-                                            }
-                                        </Template>
-                                    </GridColumn>
+                                            <Template>
+                                                @{
+                                                    var ctx = (context as HistoricoAtualizacaoRendasVM);
+                                                    var rateIncrease = Math.Round(((float)(ctx.UpdatedValue * 100) / (float)ctx.PriorValue) - 100, 2);
+                                                    <div>@rateIncrease</div>
+                                                }
+                                            </Template>
+                                        </GridColumn>
 
-                                </GridColumns>
+                                    </GridColumns>
 
-                            </SfGrid>
+                                </SfGrid>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="row card-box mt-3">
-                    <div class="col-md-12">
-                        <div class="table table-striped w-100">
-                            <AlertMessage Message="Pagamento de rendas com alterações/ajustamentos" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
-                            <SfGrid DataSource="@rentsAdjustments"
+                    <div class="row card-box mt-3">
+                        <div class="col-md-12">
+                            <div class="table table-striped w-100">
+                                <AlertMessage Message="Pagamento de rendas com alterações/ajustamentos" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                                <SfGrid DataSource="@rentsAdjustments"
                                     RowHeight="28"
                                     AllowTextWrap="true"
                                     TValue="RentAdjustmentsVM"
                                     GridLines="GridLine.Horizontal">
-                                <GridColumns>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.DataMovimento) HeaderText="@L["TituloData"]"
                                                 TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
                                                 Width="275"></GridColumn>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorRenda) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.ValorRenda) HeaderText="@L["TituloValorPrevisto"]" Format="C2"
                                                 Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorPago) HeaderText="@L["TituloValorPago"]" Format="C2"
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.ValorPago) HeaderText="@L["TituloValorPago"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" Format="C2"
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" Format="C2"
                                                 TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                    <GridColumn Field=@nameof(RentAdjustmentsVM.Notas) HeaderText="@L["TituloNotas"]" 
+                                        <GridColumn Field=@nameof(RentAdjustmentsVM.Notas) HeaderText="@L["TituloNotas"]"
                                                 Width="250"></GridColumn>
-                                </GridColumns>
+                                    </GridColumns>
 
-                            </SfGrid>
+                                </SfGrid>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row card-box mt-3">
+                        <div class="col-md-12">
+                            <div class="table table-striped w-100">
+                                <AlertMessage Message="Atraso no pagamento de rendas - cartas enviadas" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                                <SfGrid DataSource="@latePaymentLetters"
+                                    RowHeight="28"
+                                    AllowTextWrap="true"
+                                    TValue="LatePaymentLettersVM"
+                                    GridLines="GridLine.Horizontal">
+                                    <GridColumns>
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.CreationDate) HeaderText="Enviada em"
+                                                TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.RefersTo) HeaderText="Mês em atraso"
+                                                Width="100"></GridColumn>
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
+                                                Width="275"></GridColumn>
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.Description) HeaderText="Descrição"
+                                                Width="300"></GridColumn>
+                                    </GridColumns>
+                                </SfGrid>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+}
 @code {
 
     [Inject] public IRecebimentoService? paymentsService { get; set; }
@@ -169,8 +201,9 @@
     protected IEnumerable<RecebimentoVM>? paymentsPreviousYear { get; set; }
     protected IEnumerable<RecebimentoVM>? partiallyPaidPayments { get; set; }
     protected IEnumerable<RecebimentoVM>? duePayments { get; set; }
-    protected IEnumerable<HistoricoAtualizacaoRendasVM> rentsIncreased { get; set; }
-    protected IEnumerable<RentAdjustmentsVM> rentsAdjustments { get; set; }
+    protected IEnumerable<HistoricoAtualizacaoRendasVM>? rentsIncreased { get; set; }
+    protected IEnumerable<RentAdjustmentsVM>? rentsAdjustments { get; set; }
+    protected IEnumerable<LatePaymentLettersVM>? latePaymentLetters { get; set; }
 
     protected decimal totalPaymentsThisYear { get; set; }
     protected decimal totalExpectedPaymentsThisYear { get; set; }
@@ -215,5 +248,6 @@
 
         rentsIncreased = (await tenantsService.GetAllRentUpdates()).ToList();
         rentsAdjustments = (await tenantsService.GetRentAdjustments()).ToList();
+        latePaymentLetters = (await tenantsService.GetLatePaymentLetters()).ToList();
     }
 }

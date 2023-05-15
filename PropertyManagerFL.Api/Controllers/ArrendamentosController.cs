@@ -566,18 +566,19 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
-        [HttpGet("RegistaCartaAtraso/{id:int}/{doc}")]
+        [HttpGet("RegistaCartaAtraso/{id:int}/{referralDateAsString}/{tentativa}/{doc}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-        public async Task<IActionResult> RegistaCartaAtraso(int id, string doc)
+        public async Task<IActionResult> RegistaCartaAtraso(int id, string referralDateAsString, string tentativa, string doc)
         {
             var location = GetControllerActionNames();
 
             try
             {
-                var registerOk = await _repoArrendamentos.RegistaCartaAtraso(id, doc);
+                var referralDate = DateTime.Parse(referralDateAsString);
+                var registerOk = await _repoArrendamentos.RegistaCartaAtraso(id, referralDate, tentativa, doc);
                 if (registerOk)
                     return NoContent();
                 else
@@ -1142,7 +1143,6 @@ namespace PropertyManagerFL.Api.Controllers
             }
 
         }
-
 
         private string GetControllerActionNames()
         {

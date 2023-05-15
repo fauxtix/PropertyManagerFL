@@ -51,7 +51,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<string> EmiteCartaOposicaoRenovacaoContrato(CartaOposicaoRenovacaoContrato DadosCartaOposicao);
         Task<bool> RegistaCartaOposicao(int Id, string docGerado);
         Task<bool> RegistaProcessamentoAtualizacaoRendas();
-        Task RegistaCartaAtrasoRendas(int Id, string docGerado);
+        Task RegistaCartaAtrasoRendas(int Id, DateTime? referralDate, string tentativa,  string docGerado);
         Task<bool> VerificaSeExisteCartaRevogacao(int id);
         Task<bool> VerificaSeExisteRespostaCartaRevogacao(int id);
 

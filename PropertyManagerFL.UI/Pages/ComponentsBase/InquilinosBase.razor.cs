@@ -1,5 +1,4 @@
-﻿using MessagePack;
-using Microsoft.AspNetCore.Components;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -12,8 +11,6 @@ using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
-using System.Collections.Generic;
-using System.Linq;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 namespace PropertyManagerFL.UI.Pages.ComponentsBase
@@ -38,6 +35,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] protected IValidationService validatorService { get; set; }
         [Inject] protected IStringLocalizer<App> L { get; set; }
         [Inject] public IConfiguration _config { get; set; }
+        [Inject] public ILogger<App> _logger{ get; set; }
 
         protected IEnumerable<CC_InquilinoVM>? TenantPaymentsHistory { get; set; }
         protected IEnumerable<InquilinoVM>? Tenants { get; set; }
@@ -1185,116 +1183,149 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task IssueLateRentLetter()
         {
-
+            DateTime? referralDate = null;
+            string tentativa = "";
             ToastTitle = "Carta de aviso - rendas em atraso";
 
             // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias) ??
             // alertar user em conformidade
 
             // verifica se inquilino tem valores em divida
-            var tenantRentPayments = (await recebimentosService.GetAll()).ToList();
-            var tenantDuePayments = tenantRentPayments.Where(p => p.ID_Inquilino == TenantId && p.ValorEmFalta > 0);
-            if (tenantDuePayments.Any() == false)
+            try
             {
-                alertTitle = "Envio de carta ao inquilino";
-                WarningMessage = "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
-                AlertVisibility = true;
-                return;
-            }
-
-            List<DateTime> dueLettersSent = new();
-
-            var dueMonths = tenantDuePayments.Count();
-
-
-            DocumentoInquilinoVM? lettersSent = new();
-
-            foreach (var duePayment in tenantDuePayments)
-            {
-
-                var tenantDocuments = await inquilinoService.GetDocumentosInquilino(TenantId);
-                lettersSent = tenantDocuments
-                    .FirstOrDefault(l => l.ReferralDate.Month == duePayment.DataMovimento.Month &&
-                    l.ReferralDate.Year == duePayment.DataMovimento.Year);
-
-                if (lettersSent is not null)
+                var tenantRentPayments = (await recebimentosService.GetAll()).ToList();
+                var tenantDuePayments = tenantRentPayments.Where(p => p.ID_Inquilino == TenantId && p.ValorEmFalta > 0);
+                if (tenantDuePayments.Any() == false)
                 {
-                    dueLettersSent.Add(duePayment.DataMovimento);
+                    alertTitle = "Envio de carta ao inquilino";
+                    WarningMessage = "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
+                    AlertVisibility = true;
+                    return;
                 }
-            }
 
-            var countLettersSent = dueLettersSent.Count;
-            if (countLettersSent > 0 && countLettersSent == dueMonths)
-            {
-                var monthAsString = dueLettersSent.Select(ds => ds.Date.ToString("MMMM").ToTitleCase());
-                var yearAsString = dueLettersSent.Select(ds => ds.Date.ToString("yyyy"));
-                alertTitle = "Envio de carta ao inquilino";
-                WarningMessage = $"Carta de alerta para pagamento em atraso (mês {monthAsString}  de {yearAsString}) já foi enviada!. Verifique, p.f.";
-                AlertVisibility = true;
-                return;
-            }
+                List<DateTime> dueLettersSent = new();
 
-            if (dueMonths > 2 && dueLettersSent.Count  < dueMonths -1)
-            {
-                alertTitle = "Envio de carta ao inquilino";
-                WarningMessage = "Há cartas de aviso que não foram enviadas!. Verifique, p.f.";
-                AlertVisibility = true;
-                return;
+                var dueMonths = tenantDuePayments.Count();
 
-            }
 
-            DateTime? referralDate = null;
+                DocumentoInquilinoVM? lettersSent = new();
 
-            Lease = (await arrendamentosService
-                .GetAll())
-                .FirstOrDefault(l => l.ID_Inquilino == TenantId);
-
-            var leaseId = Lease.Id;
-
-            // Verificar se foi enviada alguma carta 
-            var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(leaseId);
-            if (letterAlreadySent)
-            {
-                alertTitle = "Envio de carta ao inquilino";
-                WarningMessage = "Carta já foi enviada!. Verifique, p.f.";
-                AlertVisibility = true;
-                return;
-            }
-
-            var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(Lease);
-            if (latePaymentLetterData is not null)
-            {
-                var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
-                if (string.IsNullOrEmpty(docGerado))
+                foreach (var duePayment in tenantDuePayments)
                 {
-                    ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
-                    ToastCss = "e-toast-danger";
+
+                    var tenantDocuments = await inquilinoService.GetDocumentosInquilino(TenantId);
+                    lettersSent = tenantDocuments
+                        .FirstOrDefault(l => l.ReferralDate.Month == duePayment.DataMovimento.Month &&
+                        l.ReferralDate.Year == duePayment.DataMovimento.Year);
+
+                    if (lettersSent is not null)
+                    {
+                        dueLettersSent.Add(duePayment.DataMovimento);
+                    }
+                }
+
+                var countLettersSent = dueLettersSent.Count;
+                if (countLettersSent > 0 && countLettersSent == dueMonths)
+                {
+                    var monthAsString = dueLettersSent.Select(ds => ds.Date.ToString("MMMM").ToTitleCase());
+                    var yearAsString = dueLettersSent.Select(ds => ds.Date.ToString("yyyy"));
+                    alertTitle = "Envio de carta ao inquilino";
+                    WarningMessage = $"Carta de alerta para pagamento em atraso (mês {monthAsString}  de {yearAsString}) já foi enviada!. Verifique, p.f.";
+                    AlertVisibility = true;
+                    return;
+                }
+
+                if (dueMonths > 2 && dueLettersSent.Count < dueMonths - 1)
+                {
+                    alertTitle = "Envio de carta ao inquilino";
+                    WarningMessage = "Há cartas de aviso que não foram enviadas!. Verifique, p.f.";
+                    AlertVisibility = true;
+                    return;
+
+                }
+
+                var dueLettersSentCount = dueLettersSent.Count;
+                if (dueLettersSentCount > 0)
+                {
+                    var dueLetter = dueLettersSent.FirstOrDefault();
+                    var dueLettersSentDateMonth = dueLetter.Date.Month;
+                    var dueLettersSentDateYear = dueLetter.Date.Year;
+                    var referralEntry = tenantDuePayments
+                        .FirstOrDefault(p=> p.DataMovimento.Month != dueLettersSentDateMonth &&
+                                p.DataMovimento.Year == dueLettersSentDateYear);
+
+                    if (referralEntry != null)
+                    {
+                        tentativa = dueLettersSentCount == 1 ? "2ª tentiva" : "3ª tentativa";
+                        referralDate = referralEntry?.DataMovimento;
+                    }
+                }
+                else // 1ª carta a enviar
+                {
+                    tentativa = "1ª tentiva";
+                    referralDate = tenantDuePayments?.FirstOrDefault().DataMovimento;
+                }
+
+
+                Lease = (await arrendamentosService
+                    .GetAll())
+                    .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
+                var leaseId = Lease.Id;
+
+                // Verificar se foi enviada alguma carta 
+                // comentado, já não faz sentido validação, uma vez que podem ser enviadas 3 cartas
+
+                //var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(leaseId);
+                //if (letterAlreadySent)
+                //{
+                //    alertTitle = "Envio de carta ao inquilino";
+                //    WarningMessage = "Carta já foi enviada!. Verifique, p.f.";
+                //    AlertVisibility = true;
+                //    return;
+                //}
+
+                var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(Lease);
+                if (latePaymentLetterData is not null)
+                {
+                    var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
+                    if (string.IsNullOrEmpty(docGerado))
+                    {
+                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastCss = "e-toast-danger";
+                    }
+                    else
+                    {
+                        var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+                        try
+                        {
+                            await arrendamentosService.RegistaCartaAtrasoRendas(leaseId, referralDate, tentativa, documentoARegistar);
+                            ToastMessage = L["TituloOperacaoOk"];
+                            ToastCss = "e-toast-success";
+                        }
+                        catch (Exception ex)
+                        {
+                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                            ToastCss = "e-toast-danger";
+                        }
+                    }
                 }
                 else
                 {
-                    var documentoARegistar = docGerado.Replace(".docx", ".pdf");
-                    try
-                    {
-                        await arrendamentosService.RegistaCartaAtrasoRendas(leaseId, documentoARegistar);
-                        ToastMessage = L["TituloOperacaoOk"];
-                        ToastCss = "e-toast-success";
-                    }
-                    catch (Exception ex)
-                    {
-                        ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
-                        ToastCss = "e-toast-danger";
-                    }
+                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    ToastCss = "e-toast-danger";
                 }
+
+                SendLetterDialogVisibility = false;
+
+                await ShowToastMessage();
+
             }
-            else
+            catch (Exception ex)
             {
-                ToastMessage = "Erro ao obter dados para emissão de carta";
-                ToastCss = "e-toast-danger";
+                _logger.LogError(ex.Message, ex.ToString());
+                throw;
             }
-
-            SendLetterDialogVisibility = false;
-
-            await ShowToastMessage();
         }
 
         protected async Task HandleIssuedLetterCancelation()

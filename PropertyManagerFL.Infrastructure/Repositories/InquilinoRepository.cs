@@ -773,5 +773,28 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 return valorRenda *= (decimal)coefficient;
             }
         }
+
+        public async Task<IEnumerable<LatePaymentLettersVM>> GetLatePaymentLetters()
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var output = await connection.QueryAsync<LatePaymentLettersVM>("usp_Inquilinos_Stat_LatePaymentLetters",
+                        commandType: CommandType.StoredProcedure);
+                    return output.ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Enumerable.Empty<LatePaymentLettersVM>();
+            }
+
+        }
+
     }
+
+
 }

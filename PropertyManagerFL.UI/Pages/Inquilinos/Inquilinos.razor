@@ -214,6 +214,16 @@ else
                                                     TValue="DocumentoInquilinoVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.CreationDate) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.ReferralDate) HeaderText="Referência" Width="130">
+                                                        <Template Context="ReferralCtx">
+                                                            @{
+                                                                var document = (ReferralCtx as DocumentoInquilinoVM);
+                                                                var refMonth = document.ReferralDate.ToString("MMMM").ToUpperInvariant();
+                                                                var refYear = document.ReferralDate.ToString("yyyy");
+                                                            }
+                                                            <div>@(refMonth + "-" + refYear)</div>
+                                                        </Template>
+                                                    </GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.DocumentPath) HeaderText="@L["TituloDocumento"]" Width="250"></GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.StorageType) TextAlign="TextAlign.Center" HeaderText="@L["TituloTipo"]" Width="80"></GridColumn>

@@ -674,7 +674,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> RegistaCartaAtraso(int id, string docGerado)
+        public async Task<bool> RegistaCartaAtraso(int id, DateTime? referralDate, string tentativa, string docGerado)
         {
 
             try
@@ -685,9 +685,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 var tenantId = lease.ID_Inquilino;
 
                 var parameters = new DynamicParameters();
-                parameters.Add("@Descricao", "Carta de atraso no pagamento de rendas");
+                parameters.Add("@Descricao", $"Carta de atraso no pagamento de rendas {tentativa}");
                 parameters.Add("@DocumentPath", docGerado);
                 parameters.Add("@TenantId", tenantId);
+                parameters.Add("@ReferralDate", referralDate);
                 parameters.Add("@DocumentType", 18);
                 parameters.Add("@StorageType", 'S');
                 parameters.Add("@StorageFolder", "RendasAtraso");
@@ -1124,7 +1125,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
-                return null;
+                return Enumerable.Empty<LookupTableVM>();
             }
 
         }

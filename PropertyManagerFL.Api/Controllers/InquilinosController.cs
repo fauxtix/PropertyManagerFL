@@ -5,6 +5,7 @@ using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using Syncfusion.DocIO.ReaderWriter.DataStreamParser.Escher;
 using PropertyManagerFL.Application.Formatting;
+using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -565,7 +566,8 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
-                    return null;
+                    IEnumerable<HistoricoAtualizacaoRendasVM> empty = Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
+                    return Ok(empty);
                 }
             }
             catch (Exception e)
@@ -914,6 +916,34 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
+
+        [HttpGet("LatePaymentLetters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetLatePaymentLetters()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var laws = await _repoInquilinos.GetLatePaymentLetters();
+                if (laws.Any())
+                {
+                    return Ok(laws);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+
+        }
+
 
         private string GetControllerActionNames()
         {

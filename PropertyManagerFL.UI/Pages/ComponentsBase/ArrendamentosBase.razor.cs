@@ -723,59 +723,59 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             await leasesGridObj!.ExportToPdfAsync();
         }
 
-        protected async Task IssueLateRentLetter()
-        {
+        //protected async Task IssueLateRentLetter()
+        //{
 
-            ToastTitle = "Carta de aviso - rendas em atraso";
+        //    ToastTitle = "Carta de aviso - rendas em atraso";
 
-            // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
-            // alertar user em conformidade
+        //    // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
+        //    // alertar user em conformidade
 
-            // Verificar se carta já foi enviada
-            var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(LeaseId);
-            if (letterAlreadySent)
-            {
-                alertTitle = "Envio de carta ao inquilino";
-                WarningMessage = "Carta já foi enviada!. Verifique, p.f.";
-                AlertVisibility = true;
-                return;
-            }
+        //    // Verificar se carta já foi enviada
+        //    var letterAlreadySent = await arrendamentosService.VerificaEnvioCartaAtrasoEfetuado(LeaseId);
+        //    if (letterAlreadySent)
+        //    {
+        //        alertTitle = "Envio de carta ao inquilino";
+        //        WarningMessage = "Carta já foi enviada!. Verifique, p.f.";
+        //        AlertVisibility = true;
+        //        return;
+        //    }
 
-            var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(SelectedLease!);
-            if (latePaymentLetterData is not null)
-            {
-                var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
-                if (string.IsNullOrEmpty(docGerado))
-                {
-                    ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
-                    ToastCss = "e-toast-danger";
-                }
-                else
-                {
-                    var documentoARegistar = docGerado.Replace(".docx", ".pdf");
-                    try
-                    {
-                        await arrendamentosService.RegistaCartaAtrasoRendas(LeaseId, documentoARegistar);
-                        ToastMessage = L["TituloOperacaoOk"];
-                        ToastCss = "e-toast-success";
-                    }
-                    catch (Exception ex)
-                    {
-                        ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
-                        ToastCss = "e-toast-danger";
-                    }
-                }
-            }
-            else
-            {
-                ToastMessage = "Erro ao obter dados para emissão de carta";
-                ToastCss = "e-toast-danger";
-            }
+        //    var latePaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(SelectedLease!);
+        //    if (latePaymentLetterData is not null)
+        //    {
+        //        var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
+        //        if (string.IsNullOrEmpty(docGerado))
+        //        {
+        //            ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+        //            ToastCss = "e-toast-danger";
+        //        }
+        //        else
+        //        {
+        //            var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+        //            try
+        //            {
+        //                await arrendamentosService.RegistaCartaAtrasoRendas(LeaseId, documentoARegistar);
+        //                ToastMessage = L["TituloOperacaoOk"];
+        //                ToastCss = "e-toast-success";
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+        //                ToastCss = "e-toast-danger";
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ToastMessage = "Erro ao obter dados para emissão de carta";
+        //        ToastCss = "e-toast-danger";
+        //    }
 
-            SendLetterDialogVisibility = false;
+        //    SendLetterDialogVisibility = false;
 
-            await ShowToastMessage();
-        }
+        //    await ShowToastMessage();
+        //}
 
         protected async Task IssueContractOppositionLetter()
         {
@@ -1015,32 +1015,32 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         }
 
-        private async Task Process_LatePayment_Letter()
-        {
-            // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
-            // alertar user em conformidade
+        //private async Task Process_LatePayment_Letter()
+        //{
+        //    // TODO - testar se data da emissão está dentro do prazo (3 pagamentos - 90 dias)
+        //    // alertar user em conformidade
 
-            var latepaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(SelectedLease!);
-            if (latepaymentLetterData is not null)
-            {
-                var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latepaymentLetterData);
-                if (string.IsNullOrEmpty(docGerado))
-                {
-                    // TODO erro no documento gerado... informar user
-                }
-                else
-                {
-                    var documentoARegistar = docGerado.Replace(".docx", ".pdf");
-                    await arrendamentosService.RegistaCartaAtrasoRendas(LeaseId, documentoARegistar);
-                    ToastTitle = "Carta de aviso de rendas em atraso";
-                    ToastMessage = "Operação terminada com sucesso";
-                    ToastCss = "e-toast-success";
+        //    var latepaymentLetterData = await arrendamentosService!.GetDadosCartaRendasAtraso(SelectedLease!);
+        //    if (latepaymentLetterData is not null)
+        //    {
+        //        var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latepaymentLetterData);
+        //        if (string.IsNullOrEmpty(docGerado))
+        //        {
+        //            // TODO erro no documento gerado... informar user
+        //        }
+        //        else
+        //        {
+        //            var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+        //            await arrendamentosService.RegistaCartaAtrasoRendas(LeaseId, documentoARegistar);
+        //            ToastTitle = "Carta de aviso de rendas em atraso";
+        //            ToastMessage = "Operação terminada com sucesso";
+        //            ToastCss = "e-toast-success";
 
-                    await ShowToastMessage();
-                }
-            }
+        //            await ShowToastMessage();
+        //        }
+        //    }
 
-        }
+        //}
         protected async Task RowSelectHandler(RowSelectEventArgs<ArrendamentoVM> args)
         {
 
@@ -1095,9 +1095,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 case DocumentoEmitido.OposicaoRenovacaoContrato:
                     await IssueContractOppositionLetter();
                     break;
-                case DocumentoEmitido.RendasEmAtraso:
-                    await IssueLateRentLetter();
-                    break;
+                //case DocumentoEmitido.RendasEmAtraso:
+                //    await IssueLateRentLetter();
+                //    break;
                 default:
                     break;
             }
