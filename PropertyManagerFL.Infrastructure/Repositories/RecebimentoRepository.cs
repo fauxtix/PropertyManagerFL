@@ -331,10 +331,12 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var inquilino = await _repoInquilinos.GetInquilino_ById(idInquilino);
             var saldoCorrente = inquilino.SaldoCorrente;
             decimal valorEmFalta = saldoCorrente - valorAcerto;
-            decimal valorRecebido = recebimento.ValorRecebido;
+            decimal valorRecebido = valorAcerto; // recebimento.ValorRecebido;
             int currentStateAfterPayment = paymentState;
             string? Notas = "";
 
+
+            // TODO - se houver mais de um pagamento em atraso, não atualiza corretamento o saldo do inquilino !! Erro na stored procedure?
             try
             {
                 _logger.LogInformation("Acerta pagamento de renda");
@@ -351,9 +353,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 }
                 else // total - pagamento em atraso (3)
                 {
-                    saldoCorrente = 0;
-                    valorRecebido = recebimento.ValorPrevisto;
-                    valorEmFalta = 0;
+                    //saldoCorrente = 0;
+                    //valorRecebido = recebimento.ValorPrevisto;
+                    valorEmFalta = recebimento.ValorPrevisto - valorAcerto;
                     currentStateAfterPayment = 3;
                     Notas = "Pagamento de renda em atraso";
                 }
