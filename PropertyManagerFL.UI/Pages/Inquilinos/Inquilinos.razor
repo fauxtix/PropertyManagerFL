@@ -38,6 +38,7 @@
     var ContextMenuItems = (new List<Object>
         {
             new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Separator = true},
             new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
             new ContextMenuItemModel { Text = "Atualizar valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
@@ -102,7 +103,19 @@ else
                                             AllowTextWrap="true">
                                             <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                                             <GridColumns>
-                                                <GridColumn Field=@nameof(CC_InquilinoVM.DataMovimento) HeaderText="@L["TituloMovimento"]" Width="130" Format="d"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.Id) IsPrimaryKey="true" Visible="false" HeaderText="ID#" Width="80"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.TransactionId) HeaderText="TranID#" Width="90"></GridColumn>
+                                                <GridColumn Field=@nameof(CC_InquilinoVM.DataMovimento) HeaderText="@L["TituloMovimento"]" Width="160">
+                                                    <Template Context="CC_ctx">
+                                                        @{
+                                                            var rec = (CC_ctx as CC_InquilinoVM);
+                                                            var monthTran = rec.DataMovimento.ToString("MMMM").ToUpper();
+                                                            var yearTran = rec.DataMovimento.ToString("yyyy");
+                                                            var caption = $"{monthTran}-{yearTran}";
+                                                            <div>@caption</div>
+                                                        }
+                                                    </Template>
+                                                </GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.ValorPago) HeaderText="@L["TituloPagamento"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.Renda)
@@ -112,7 +125,10 @@ else
                                                     <Template Context="remarks">
                                                         @{
                                                             var ctx = (remarks as CC_InquilinoVM);
-                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0 ? "yellow" : "white";
+                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0 ||
+                                                            ctx.Notas.Contains("ltera") ||
+                                                            ctx.Notas.Contains("certo") ||
+                                                            ctx.Notas.Contains("traso") ? "yellow" : "white";
                                                         }
                                                         <span style="background-color:@backColor">@ctx?.Notas</span>
                                                     </Template>

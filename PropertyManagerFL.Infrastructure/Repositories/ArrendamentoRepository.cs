@@ -88,6 +88,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             decimal valorRecebido = arrendamento.Valor_Renda;
             int tipoRecebimento = RENT_PAYMENT_TYPE;
             string descricaoMovimento = "";
+            int transactionId = 0;
 
             try
             {
@@ -131,7 +132,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     ID_Inquilino = arrendamento.ID_Inquilino
                                 };
 
-                                await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                                transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
                                     recebimento,
                                     commandType: CommandType.StoredProcedure,
                                 transaction: tran);
@@ -164,7 +165,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 };
 
 
-                                await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                                transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
                                      param: recebimento,
                                      commandType: CommandType.StoredProcedure,
                                      transaction: tran);
@@ -185,6 +186,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     DataMovimento = DateTime.Now,
                                     IdInquilino = tenantId,
                                     ValorPago = valorRecebido * 2,
+                                    TransactionId = transactionId,
                                     ValorEmDivida = 0,
                                     Notas = "Pagamentos iniciais"
                                 };
@@ -204,6 +206,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                         IdInquilino = tenantId,
                                         ValorPago = 0,
                                         ValorEmDivida = arrendamento.SaldoInicial,
+                                        TransactionId= transactionId,
                                         Notas = "Saldo à data (negativo)"
                                     };
 

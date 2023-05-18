@@ -791,10 +791,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 _logger.LogError(ex.Message);
                 return Enumerable.Empty<LatePaymentLettersVM>();
             }
-
         }
-
     }
-
-
 }

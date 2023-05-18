@@ -1,11 +1,8 @@
-﻿using Serilog;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Application.Formatting;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
-using Syncfusion.DocIO.ReaderWriter.DataStreamParser.Escher;
-using PropertyManagerFL.Application.Formatting;
-using Microsoft.ReportingServices.ReportProcessing.ReportObjectModel;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -62,7 +59,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
-                    return NotFound();
+                    return NoContent();
                 }
             }
             catch (Exception e)
@@ -71,6 +68,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Conta corrente do inquilino
+        /// </summary>
+        /// <param name="id">Id Inquilino</param>
+        /// <returns>IEnumerable</returns>
         [HttpGet("TenantPaymentsHistory/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -82,7 +84,7 @@ namespace PropertyManagerFL.Api.Controllers
             try
             {
                 var tenantHistory = await _repoInquilinos.GetTenantPaymentsHistory(id);
-                if (tenantHistory is not null && tenantHistory.Count() > 0)
+                if (tenantHistory.Any())
                 {
                     var tenantHistoryList = _mapper.Map<IEnumerable<CC_InquilinoVM>>(tenantHistory);
                     return Ok(tenantHistoryList);
@@ -100,9 +102,9 @@ namespace PropertyManagerFL.Api.Controllers
 
 
         /// <summary>
-        /// Get tenant by id and ownership
+        /// Get tenant by id 
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Tenant Id</param>
         /// <returns></returns>
         [HttpGet("GetInquilinoById/{id:int}")]
         public async Task<IActionResult> GetInquilinoById(int id)
@@ -238,7 +240,7 @@ namespace PropertyManagerFL.Api.Controllers
 
 
         /// <summary>
-        /// Get id do inquilino da fracao arrendada
+        /// Get id do inquilino da fracao a pesquisar
         /// </summary>
         /// <param name="id">Id da fracão</param>
         /// <returns></returns>
@@ -317,9 +319,9 @@ namespace PropertyManagerFL.Api.Controllers
             var location = GetControllerActionNames();
             try
             {
-                var leaseParamsNeeded = await _repoInquilinos.GetLeaseData_ByTenantId(tenantId);
-                var leaseStart = leaseParamsNeeded.Item1;
-                var unitId = leaseParamsNeeded.Item2;
+                var leaseData = await _repoInquilinos.GetLeaseData_ByTenantId(tenantId);
+                var leaseStart = leaseData.Item1;
+                var unitId = leaseData.Item2;
 
                 var updateAlreadyMade = await _repoInquilinos.PriorRentUpdates_ThisYear(unitId);
                 return Ok(updateAlreadyMade);
@@ -414,8 +416,6 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="id"></param>
         /// <param name="alteraInquilinoDto"></param>
         /// <returns></returns>
-
-
         [HttpPut("AlteraInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -497,6 +497,13 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualização manual de renda 
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="oldValue">Valor antes da atualização</param>
+        /// <param name="newValue">Novo valor</param>
+        /// <returns></returns>
         [HttpGet("UpdateTenantRent_Manually/{Id:int}/{oldValue}/{newValue}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -515,15 +522,16 @@ namespace PropertyManagerFL.Api.Controllers
                     return BadRequest(msg);
                 }
 
-                var tenant = await _repoInquilinos.GetInquilino_ById(Id);
+                var tenant = await GetTenant(Id);
                 if (tenant is null)
                 {
                     return BadRequest("Inquilino não encontrado");
                 }
 
-                var leaseParamsNeeded = await _repoInquilinos.GetLeaseData_ByTenantId(Id);
-                var leaseStart = leaseParamsNeeded.Item1;
-                var unitId = leaseParamsNeeded.Item2;
+                var leaseParamsNeeded = await GetLeaseData(Id);
+
+                var leaseStart = leaseParamsNeeded.leaseStart;
+                var unitId = leaseParamsNeeded.unitId;
 
                 if (unitId == 0)
                     return NotFound("Fração não está arrendada");
@@ -549,6 +557,10 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Atualização de rendas (se atualização estiver configurada como automática)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("RentUpdates")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -560,7 +572,7 @@ namespace PropertyManagerFL.Api.Controllers
             try
             {
                 var rentUpdates = await _repoInquilinos.GetAllRentUpdates();
-                if(rentUpdates.Any())
+                if (rentUpdates.Any())
                 {
                     return Ok(rentUpdates);
                 }
@@ -576,6 +588,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Devolve lista de atualizações de rendas (do inquilino)
+        /// </summary>
+        /// <param name="tenantId"></param>
+        /// <returns>IEnumerable</returns>
         [HttpGet("RentUpdates/{tenantId}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -602,7 +619,12 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
-
+        /// <summary>
+        /// Atualização/alteração de documento de um inquilino
+        /// </summary>
+        /// <param name="id">Id do Inquilino</param>
+        /// <param name="alteraDocumentoInquilino">Dados do documento a atualizar</param>
+        /// <returns></returns>
         [HttpPut("AlteraDocumentoInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -628,7 +650,7 @@ namespace PropertyManagerFL.Api.Controllers
                     return BadRequest(msg);
                 }
 
-                var documentToUpdate = await _repoInquilinos.GetDocumentoById(id);
+                var documentToUpdate = await GetTenantDocument(id);
 
                 if (documentToUpdate == null)
                 {
@@ -655,7 +677,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="saldoCorrente">Verificar se saldo passado como decimal é processado corretamente!</param>
         /// <returns></returns>
         [HttpGet("AtualizaSaldo/{id:int}/{saldoCorrente}")]
-        public async Task<IActionResult> AtualizaSaldo(int id, decimal saldoCorrente)
+        public async Task<IActionResult> AtualizaSaldo(int id, string saldoCorrente)
         {
             var location = GetControllerActionNames();
             try
@@ -672,7 +694,14 @@ namespace PropertyManagerFL.Api.Controllers
                     return NotFound($"O Inquilino com o Id {id} não foi encontrado");
                 }
 
-                await _repoInquilinos.AtualizaSaldo(id, saldoCorrente);
+                if(DataFormat.IsNumeric(saldoCorrente) == false)
+                {
+                    return NotFound($"Formato do parâmetro 'SaldoCorrente' ({saldoCorrente}) não é válido");
+                }
+
+                decimal decSaldoCorrente = decimal.Parse(saldoCorrente);
+
+                await _repoInquilinos.AtualizaSaldo(id, decSaldoCorrente);
                 return NoContent();
             }
             catch (Exception e)
@@ -682,10 +711,9 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
-        /// Atualiza saldo do inquilino
+        /// Renda paga pelo inquilino
         /// </summary>
         /// <param name="id">Id do inquilino</param>
-        /// <param name="saldoCorrente">Verificar se saldo passado como decimal é processado corretamente!</param>
         /// <returns></returns>
         [HttpGet("GetTenantRent/{id:int}")]
         public async Task<IActionResult> GetTenantRent(int id)
@@ -715,12 +743,10 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
 
-
-
         /// <summary>
         /// Delete tenant
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">tenant Id</param>
         /// <returns></returns>
         /// 
         [HttpDelete("ApagaInquilino/{id:int}")]
@@ -762,6 +788,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cria novo documento de um inquilino
+        /// </summary>
+        /// <param name="novoDocumento">Dados do documento</param>
+        /// <returns></returns>
         [HttpPost("InsereDocumento")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -776,8 +807,8 @@ namespace PropertyManagerFL.Api.Controllers
                 {
                     return BadRequest();
                 }
-                var insertedId = await _repoInquilinos.CriaDocumentoInquilino(novoDocumento);
-                var viewDocument = _repoInquilinos.GetDocumentoById(insertedId);
+                var insertedDocumentId = await _repoInquilinos.CriaDocumentoInquilino(novoDocumento);
+                var viewDocument = await GetTenantDocument(insertedDocumentId);
                 var actionReturned = CreatedAtAction(nameof(GetInquilinoById), new { id = viewDocument.Id }, viewDocument);
                 return actionReturned;
             }
@@ -787,6 +818,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete tenant document
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("ApagaDocumentoInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status404NotFound)]
@@ -802,7 +838,7 @@ namespace PropertyManagerFL.Api.Controllers
                     return BadRequest();
                 }
 
-                var tenantDocumentToDelete = await _repoInquilinos.GetDocumentoById(id);
+                var tenantDocumentToDelete = await GetTenantDocument(id);
                 if (tenantDocumentToDelete == null)
                 {
                     _logger.LogWarning($"Documento do Inquilino com o Id {id} não encontrado");
@@ -826,7 +862,7 @@ namespace PropertyManagerFL.Api.Controllers
             var location = GetControllerActionNames();
             try
             {
-                var document = await _repoInquilinos.GetDocumentoById(id);
+                var document = await GetTenantDocument(id);
                 if (document is not null)
                     return Ok(document);
                 else
@@ -838,7 +874,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
-        // GET: api/<InquilinosController>
+        
+        /// <summary>
+        /// All tenants documents
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetDocumentosInquilinos")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -865,6 +905,11 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// All Tenant Documents
+        /// </summary>
+        /// <param name="id">Tenant Id</param>
+        /// <returns></returns>
         [HttpGet("GetDocumentosInquilino/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -891,6 +936,10 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Todos os aumentos de rendas (dashboard)
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("GetRentAdjustments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -917,6 +966,10 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Get Late Payment Letters
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("LatePaymentLetters")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -927,10 +980,10 @@ namespace PropertyManagerFL.Api.Controllers
             var location = GetControllerActionNames();
             try
             {
-                var laws = await _repoInquilinos.GetLatePaymentLetters();
-                if (laws.Any())
+                var letters = await _repoInquilinos.GetLatePaymentLetters();
+                if (letters.Any())
                 {
-                    return Ok(laws);
+                    return Ok(letters);
                 }
                 else
                 {
@@ -944,7 +997,20 @@ namespace PropertyManagerFL.Api.Controllers
 
         }
 
+        private async Task<InquilinoVM> GetTenant(int tenantId)
+        {
+            return await _repoInquilinos.GetInquilino_ById(tenantId);
+        }
 
+        private async Task<(DateTime leaseStart, int unitId)> GetLeaseData(int tenantId)
+        {
+            return await _repoInquilinos.GetLeaseData_ByTenantId(tenantId);
+        }
+
+        private async Task<DocumentoInquilinoVM> GetTenantDocument(int tenantId)
+        {
+            return await _repoInquilinos.GetDocumentoById(tenantId);
+        }
         private string GetControllerActionNames()
         {
             var controller = ControllerContext.ActionDescriptor.ControllerName;

@@ -8,6 +8,7 @@
         public decimal ValorEmDivida { get; set; }
         public bool Renda { get; set; }
         public int ID_TipoRecebimento { get; set; }
+        public int TransactionId { get; set; }
         public string? Notas { get; set; }
         public int IdInquilino { get; set; }
     }

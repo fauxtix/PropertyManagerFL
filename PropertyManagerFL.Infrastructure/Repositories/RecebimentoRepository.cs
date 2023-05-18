@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dapper;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -76,7 +77,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                         novoRecebimento.Estado = paymentStatus;
 
-                        var result = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                        var transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
                             param: novoRecebimento,
                             commandType: CommandType.StoredProcedure,
                             transaction: tran);
@@ -112,16 +113,17 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         // Cria registo na CC Inquilino
                         CC_InquilinoNovo CC_Inquilino = new()
                         {
-                            DataMovimento = DateTime.Now,
+                            DataMovimento = novoRecebimento.DataMovimento, // DateTime.Now,
                             IdInquilino = tenantId,
                             ValorPago = novoRecebimento.ValorRecebido,
                             ValorEmDivida = novoRecebimento.ValorEmFalta,
                             Renda = novoRecebimento.Renda,
                             ID_TipoRecebimento = novoRecebimento.Renda ? rentPayment : novoRecebimento.ID_TipoRecebimento,
+                            TransactionId = transactionId,
                             Notas = tipoRecebimento
                         };
 
-                        var transactionId = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
+                        var output = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
                             param: CC_Inquilino,
                             commandType: CommandType.StoredProcedure,
                             transaction: tran);
@@ -136,7 +138,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         tran.Commit();
                         _logger.LogInformation("Transação 'InsertRecebimento' terminada com sucesso");
 
-                        return result;
+                        return transactionId;
                     }
                 }
 
@@ -198,7 +200,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 pagamento.GeradoPeloPrograma = true;
                                 var idFracao = pagamento.ID_Propriedade;
                                 string tipoRecebimento = "Pagamento de renda";
-                                await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                                var insertTransactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
                                     param: parameters,
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
@@ -232,12 +234,13 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 // Cria registo na CC Inquilino
                                 CC_InquilinoNovo CC_Inquilino = new()
                                 {
-                                    DataMovimento = DateTime.Now,
+                                    DataMovimento = pagamento.DataMovimento, // DateTime.Now,
                                     IdInquilino = tenantId,
                                     ValorPago = pagamento.ValorRecebido,
                                     ValorEmDivida = pagamento.ValorEmFalta,
                                     Renda = pagamento.Renda,
                                     ID_TipoRecebimento = pagamento.Renda ? 99 : pagamento.ID_TipoRecebimento,
+                                    TransactionId = insertTransactionId,
                                     Notas = tipoRecebimento
                                 };
 
@@ -329,9 +332,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var recebimento = await GetRecebimento_ById(idRecebimento);
             var idInquilino = recebimento.ID_Inquilino;
             var inquilino = await _repoInquilinos.GetInquilino_ById(idInquilino);
-            var saldoCorrente = inquilino.SaldoCorrente;
-            decimal valorEmFalta = saldoCorrente - valorAcerto;
-            decimal valorRecebido = valorAcerto; // recebimento.ValorRecebido;
+            var saldoCorrente = inquilino.SaldoCorrente + valorAcerto;
+            decimal valorEmFalta = recebimento.ValorPrevisto - valorAcerto; // saldoCorrente - valorAcerto;
+            decimal valorRecebido = 0;
             int currentStateAfterPayment = paymentState;
             string? Notas = "";
 
@@ -339,26 +342,23 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             // TODO - se houver mais de um pagamento em atraso, não atualiza corretamento o saldo do inquilino !! Erro na stored procedure?
             try
             {
-                _logger.LogInformation("Acerta pagamento de renda");
-
                 if (paymentState == 2) // parcial
                 {
-                        valorAcerto = recebimento.ValorPrevisto;
-                        saldoCorrente = 0;
-                        valorEmFalta = 0;
-                        currentStateAfterPayment = 1;
-                        //valorRecebido = recebimento.ValorPrevisto; // salda pagamento em falta por completo
-
+                    valorRecebido = recebimento.ValorRecebido + valorEmFalta;
+                    valorEmFalta = 0;
                     Notas = "Acerto de pagamento parcial";
                 }
                 else // total - pagamento em atraso (3)
                 {
-                    //saldoCorrente = 0;
-                    //valorRecebido = recebimento.ValorPrevisto;
-                    valorEmFalta = recebimento.ValorPrevisto - valorAcerto;
-                    currentStateAfterPayment = 3;
-                    Notas = "Pagamento de renda em atraso";
+                    //if (inquilino.SaldoCorrente == 0)
+                    //{
+                    //    saldoCorrente = valorAcerto;
+                    //}
+                    valorRecebido = valorAcerto;
+                    Notas = "Acerto de renda em atraso";
                 }
+
+                currentStateAfterPayment = 1;
 
                 var parameters = new DynamicParameters();
 
@@ -414,13 +414,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 // Cria registo na CC Inquilino
                                 CC_InquilinoNovo CC_Inquilino = new()
                                 {
-                                    DataMovimento = DateTime.Now,
+                                    DataMovimento = alteraRecebimento.DataMovimento, // DateTime.Now,
                                     IdInquilino = tenantId,
                                     ValorPago = alteraRecebimento.ValorRecebido,
                                     ValorEmDivida = alteraRecebimento.ValorEmFalta,
                                     Renda = alteraRecebimento.Renda,
                                     ID_TipoRecebimento = alteraRecebimento.Renda ? 99 : alteraRecebimento.ID_TipoRecebimento,
-                                    Notas = "Alteração do valor de renda"
+                                    TransactionId = alteraRecebimento.Id,
+                                    Notas = "Valor do pagamento foi alterado"
                                 };
 
                                 var transactionId = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
@@ -431,7 +432,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 var tenantData = await connection.QueryFirstOrDefaultAsync<InquilinoVM>("usp_Inquilinos_GetInquilino_Extended_ById",
                                     param: new { Id = tenantId }, commandType: CommandType.StoredProcedure, transaction: tran);
 
-                                var currentBalance = tenantData.SaldoCorrente;
+                                var currentBalance = tenantData.SaldoPrevisto;
                                 var expectedAmount = alteraRecebimento.ValorPrevisto;
                                 var paidAmount = alteraRecebimento.ValorRecebido;
                                 var difference = expectedAmount - paidAmount;
@@ -537,13 +538,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             // Cria registo na CC Inquilino
                             CC_InquilinoNovo CC_Inquilino = new()
                             {
-                                DataMovimento = DateTime.Now,
+                                DataMovimento = transaction.DataMovimento, // DateTime.Now,
                                 IdInquilino = tenantId,
                                 ValorPago = 0,
                                 ValorEmDivida = transactionAmount,
                                 Renda = transaction.Renda,
                                 ID_TipoRecebimento = transaction.Renda ? RENT_TRANSACTION : transaction.ID_TipoRecebimento,
-                                Notas = transaction.Renda ? "Pagamento de renda foi removido" : "Recebimento (outro) foi removido"
+                                TransactionId = transaction.Id,
+                                Notas = transaction.Renda ? "Não há registo de pagamento de renda => removido lançamento" : "Recebimento (outro) foi removido"
                             };
 
                             var transactionId = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
@@ -971,14 +973,23 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             {
                 try
                 {
-                    var result = await connection.QueryFirstAsync<ProcessamentoRendasDTO>("usp_Recebimentos_GetLastPeriodProcessed",
-                        commandType: CommandType.StoredProcedure);
-                    return result;
+                    var query = "SELECT COUNT(1) FROM ProcessamentoRendas";
+                    var cnt = await connection.QueryFirstAsync<int>(query);
+                    if (cnt > 0)
+                    {
+                        var result = await connection.QueryFirstAsync<ProcessamentoRendasDTO>("usp_Recebimentos_GetLastPeriodProcessed",
+                            commandType: CommandType.StoredProcedure);
+                        return result;
+                    }
+                    else
+                    {
+                        return new ProcessamentoRendasDTO();
+                    }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message, ex);
-                    return null;
+                    _logger.LogError(ex.Message, "Último período processado");
+                    return new ProcessamentoRendasDTO();
                 }
             }
 
