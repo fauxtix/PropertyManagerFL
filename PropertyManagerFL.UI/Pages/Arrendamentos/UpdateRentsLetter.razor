@@ -15,7 +15,7 @@ else
     <div></div>
     <div class="container-fluid d-flex">
         <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
-                       DialogTitle= "@L["TituloMenuAtualizacaoRendas"]"
+                       DialogTitle="@L["TituloMenuAtualizacaoRendas"]"
                        Message="@currentYearAsString"
                        Visible="@AlertVisibility"
                        MessageSeverityType=MessageSeverity.Warning
@@ -74,7 +74,7 @@ else
     protected SfSpinner? SpinnerObj { get; set; }
 
     protected int currentYear = DateTime.Now.Year;
-    protected string currentYearAsString;
+    protected string currentYearAsString = "";
 
     protected override async Task OnInitializedAsync()
     {

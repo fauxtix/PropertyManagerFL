@@ -1007,9 +1007,9 @@ namespace PropertyManagerFL.Api.Controllers
             return await _repoInquilinos.GetLeaseData_ByTenantId(tenantId);
         }
 
-        private async Task<DocumentoInquilinoVM> GetTenantDocument(int tenantId)
+        private async Task<DocumentoInquilinoVM> GetTenantDocument(int documentId)
         {
-            return await _repoInquilinos.GetDocumentoById(tenantId);
+            return await _repoInquilinos.GetDocumentoById(documentId);
         }
         private string GetControllerActionNames()
         {

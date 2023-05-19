@@ -350,10 +350,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 }
                 else // total - pagamento em atraso (3)
                 {
-                    //if (inquilino.SaldoCorrente == 0)
-                    //{
-                    //    saldoCorrente = valorAcerto;
-                    //}
                     valorRecebido = valorAcerto;
                     Notas = "Acerto de renda em atraso";
                 }

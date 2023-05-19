@@ -35,7 +35,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] protected IValidationService validatorService { get; set; }
         [Inject] protected IStringLocalizer<App> L { get; set; }
         [Inject] public IConfiguration _config { get; set; }
-        [Inject] public ILogger<App> _logger{ get; set; }
+        [Inject] public ILogger<App> _logger { get; set; }
 
         protected IEnumerable<CC_InquilinoVM>? TenantPaymentsHistory { get; set; }
         protected IEnumerable<InquilinoVM>? Tenants { get; set; }
@@ -738,6 +738,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 DocumentPath = "",
                 TenantId = TenantId,
                 CreationDate = DateTime.Now,
+                ReferralDate = DateTime.Now,
+                DocumentType = 6, // Arquivos de locatário
                 StorageType = 'C',
                 StorageFolder = "tenants"
             };
@@ -1251,7 +1253,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var dueLettersSentDateMonth = dueLetter.Date.Month;
                     var dueLettersSentDateYear = dueLetter.Date.Year;
                     var referralEntry = tenantDuePayments
-                        .FirstOrDefault(p=> p.DataMovimento.Month != dueLettersSentDateMonth &&
+                        .FirstOrDefault(p => p.DataMovimento.Month != dueLettersSentDateMonth &&
                                 p.DataMovimento.Year == dueLettersSentDateYear);
 
                     if (referralEntry != null)

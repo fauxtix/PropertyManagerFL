@@ -4,6 +4,7 @@
 
 @inject NavigationManager Navigation
 @inject IStringLocalizer<App> L
+@inject IConfiguration Config
 
 <div class="top-row pl-4 navbar navbar-dark">
     <a class="navbar-brand" href="">Property Manager</a><i class="fa fa-house"></i>
@@ -55,11 +56,21 @@
                             <i class="fa fa-file-contract" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
                         </NavLink>
                     </BlazoredMenuItem>
-                    <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="updaterentsletter">
-                            <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
-                        </NavLink>
-                    </BlazoredMenuItem>
+                    @{
+                        var rentAdjustmentsetting = Config.GetSection("AppSettings:AutomaticRentAdjustment").Value;
+                        if (!string.IsNullOrEmpty(rentAdjustmentsetting))
+                        {
+                            var automaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
+                            if (automaticRentAdjustment)
+                            {
+                                <BlazoredMenuItem Css="nav-item px-3">
+                                    <NavLink href="updaterentsletter">
+                                        <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
+                                    </NavLink>
+                                </BlazoredMenuItem>
+                            }
+                        }
+                    }
                 </MenuTemplate>
             </BlazoredSubMenu>
 
