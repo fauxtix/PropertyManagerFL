@@ -1,11 +1,18 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
-using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
+using PropertyManagerFL.Application.ViewModels.Fracoes;
+using PropertyManagerFL.Application.ViewModels.Imoveis;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+using PropertyManagerFL.Application.ViewModels.MailMerge;
+using PropertyManagerFL.Application.ViewModels.Proprietarios;
+using PropertyManagerFL.Core.Entities;
+using PropertyManagerFLApplication.Utilities;
+using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -20,6 +27,14 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
 
+        readonly IProprietarioService _svcProprietarios;
+        readonly IImovelService _svcImoveis;
+        readonly IFracaoService _svcFracoes;
+        readonly IMailMergeService _MailMergeSvc;
+        readonly IRecebimentoService _svcRecebimentos;
+
+        private ArrendamentoVM _arrendamento;
+
         /// <summary>
         /// wrapper Inquilinos constructor
         /// </summary>
@@ -30,7 +45,12 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,
-                                 IMapper mapper)
+                                 IMapper mapper,
+                                 IProprietarioService svcProprietarios,
+                                 IImovelService svcImoveis,
+                                 IFracaoService svcFracoes,
+                                 IMailMergeService mailMergeSvc,
+                                 IRecebimentoService svcRecebimentos)
         {
             _httpClient = httpClient;
             _env = env;
@@ -38,6 +58,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Inquilinos";
             _mapper = mapper;
+            _svcProprietarios = svcProprietarios;
+            _svcImoveis = svcImoveis;
+            _svcFracoes = svcFracoes;
+            _MailMergeSvc = mailMergeSvc;
+            _svcRecebimentos = svcRecebimentos;
         }
 
         /// <summary>
@@ -641,7 +666,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     if (response.IsSuccessStatusCode)
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
-                        var rentUpdates = JsonConvert.DeserializeObject<IEnumerable<HistoricoAtualizacaoRendasVM>> (jsonData);
+                        var rentUpdates = JsonConvert.DeserializeObject<IEnumerable<HistoricoAtualizacaoRendasVM>>(jsonData);
                         return rentUpdates;
                     }
                     else
@@ -711,7 +736,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var tenantsLatePaymentLetters = JsonConvert.DeserializeObject<IEnumerable<LatePaymentLettersVM>>(jsonData);
-                        if(tenantsLatePaymentLetters != null)
+                        if (tenantsLatePaymentLetters != null)
                         {
                             return tenantsLatePaymentLetters;
                         }
@@ -731,5 +756,131 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
+        public async Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento)
+        {
+            _arrendamento = DadosArrendamento;
+
+            try
+            {
+                int IdProprietario = await _svcProprietarios.GetFirstId(); // nesta versão da aplicação, só existe um proprietário...
+                ProprietarioVM DadosProprietario = await _svcProprietarios.GetProprietario_ById(IdProprietario);
+
+
+                FracaoVM DadosFracao = await _svcFracoes.GetFracao_ById(DadosArrendamento.ID_Fracao);
+                ImovelVM DadosImovel = await _svcImoveis.GetImovel_ById(DadosFracao.Id_Imovel);
+
+                var moradaImovel = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado} {DadosImovel.CodPst} {DadosImovel.CodPstEx} {DadosImovel.FreguesiaImovel}";
+                var moradaFracao = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado}";
+
+                var DiaAPartirDe = "01";
+                var MesAPartirDe = DadosArrendamento.Data_Inicio.ToString("MMMM").ToTitleCase();
+                var AnoAtualizacao = DateTime.Now.Year.ToString();
+
+
+                CartaAtualizacao dadosAtualizacaoRenda = new CartaAtualizacao()
+                {
+                    Id = DadosArrendamento.Id,
+                    LocalEmissao = DadosImovel.ConcelhoImovel,
+                    DataEmissao = DateTime.Now,
+                    AnoAPartirDe = AnoAtualizacao,
+                    MesAPartirDe = MesAPartirDe,
+                    DiaAPartirDe = DiaAPartirDe,
+                    AnoAtualizacao = AnoAtualizacao,
+                    Coeficiente = "",
+                    MatrizPredial = DadosFracao.Matriz,
+                    MoradaInquilino = moradaImovel,
+                    MoradaFracao = moradaFracao,
+                    Nome = DadosProprietario.Nome,
+                    Morada = DadosProprietario.Morada,
+                    Lei = "",
+                    DataPublicacao = null
+
+                };
+
+                return dadosAtualizacaoRenda;
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao)
+        {
+            string[] aCampos = new string[] {
+                "LocalEmissao", "DataEmissao", "NomeSenhorio", "MoradaSenhorio",
+                "NomeInquilino", "MoradaInquilino",
+                "MoradaFracao",
+                "Coeficiente", "Lei", "DataPublicacao",
+                "MatrizPredial",
+                "ValorRenda", "NovoValorRenda",
+                "DiaAPartirDe", "MesAPartirDe",  "AnoAtualizacao",
+            };
+
+            string[] aDados = new string[]
+            {
+                DadosAtualizacao.LocalEmissao,
+                DadosAtualizacao.DataEmissao.ToLongDateString().ToTitleCase(),
+                DadosAtualizacao.Nome,
+                DadosAtualizacao.Morada,
+                DadosAtualizacao.NomeInquilino,
+                DadosAtualizacao.MoradaInquilino,
+                DadosAtualizacao.MoradaFracao,
+                DadosAtualizacao.Coeficiente,
+                DadosAtualizacao.Lei,
+                DadosAtualizacao.DataPublicacao,
+                DadosAtualizacao.MatrizPredial,
+                DadosAtualizacao.ValorRenda.ToString("C2"),
+                DadosAtualizacao.NovoValorRenda.ToString("C2"),
+                DadosAtualizacao.DiaAPartirDe,
+                DadosAtualizacao.MesAPartirDe,
+                DadosAtualizacao.AnoAPartirDe
+            };
+
+            var mergeModel = new MailMergeModel()
+            {
+                CodContrato = _arrendamento.Id,
+                TipoDocumentoEmitido = DocumentoEmitido.AtualizacaoRendas,
+                DocumentHeader = "",
+                MergeFields = aCampos,
+                ValuesFields = aDados,
+                WordDocument = "CartaAtualizacaoRendasManual.dotx",
+                SaveFile = true,
+                Referral = true
+            };
+
+            string docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
+
+
+            return docGerado;
+
+        }
+
+        public async Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado)
+        {
+            var docFileNormalized = docGerado.Replace("\\\\", "\\");
+            var endpoint = $"{_uri}/CreateUpdateLetterDocument/{tenantId}?docGerado=/{docFileNormalized}";
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync(endpoint))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var creationOk = JsonConvert.DeserializeObject<bool>(jsonData);
+                        return creationOk;
+                    }
+                    else
+                        return false;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates_ByTenantId) ({exc.Message})");
+                return false;
+            }
+        }
     }
 }

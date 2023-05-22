@@ -53,7 +53,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         /// <returns>1: success, -1: failed</returns>
         public async Task<int> InsertArrendamento(NovoArrendamento arrendamento)
         {
-            
+
             var tenantId = arrendamento.ID_Inquilino;
             var unitId = arrendamento.ID_Fracao;
 
@@ -206,7 +206,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                         IdInquilino = tenantId,
                                         ValorPago = 0,
                                         ValorEmDivida = arrendamento.SaldoInicial,
-                                        TransactionId= transactionId,
+                                        TransactionId = transactionId,
                                         Notas = "Saldo à data (negativo)"
                                     };
 
@@ -706,7 +706,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             // Cria registo em 'Documentos do Inquilino'
                             await connection.ExecuteAsync("usp_Inquilinos_InsertDocument",
                                 param: parameters,
-                                commandType:CommandType.StoredProcedure,
+                                commandType: CommandType.StoredProcedure,
                                 transaction: tran);
 
                             // Atualiza flag de 'carta de atraso enviada' na tabela de arrendamentos
@@ -867,6 +867,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 }
             }
         }
+
 
         public async Task<int> InsertRentCoefficient(CoeficienteAtualizacaoRendas coeficienteAtualizacaoRendas)
         {

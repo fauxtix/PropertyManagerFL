@@ -792,5 +792,45 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 return Enumerable.Empty<LatePaymentLettersVM>();
             }
         }
+
+        /// <summary>
+        /// Cria documento do inquilino, após geração de carta de atualização
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="tenantId"></param>
+        /// <param name="docGerado"></param>
+        /// <returns></returns>
+        public async Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado)
+        {
+
+            using (var connection = _context.CreateConnection())
+            {
+                try
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Descricao", "Carta de atualização de renda");
+                    parameters.Add("@DocumentPath", docGerado);
+                    parameters.Add("@ReferralDate", DateTime.Now);
+                    parameters.Add("@TenantId", tenantId);
+                    parameters.Add("@DocumentType", 16);
+                    parameters.Add("@StorageType", 'S');
+                    parameters.Add("@StorageFolder", "AtualizacaoRendas");
+
+
+                    await connection.ExecuteAsync("usp_Inquilinos_InsertDocument",
+                        param: parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message, ex);
+                    return false;
+                }
+
+            }
+        }
+
     }
 }

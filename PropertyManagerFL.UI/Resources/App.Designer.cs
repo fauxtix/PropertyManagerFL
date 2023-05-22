@@ -1772,6 +1772,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Atualizar valor da renda.
+        /// </summary>
+        public static string TituloAtualizarValorRenda {
+            get {
+                return ResourceManager.GetString("TituloAtualizarValorRenda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Último acesso.
         /// </summary>
         public static string TituloCampo2Utilizadores {
@@ -1831,6 +1840,24 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloCancelamentoProcessamentoRendas {
             get {
                 return ResourceManager.GetString("TituloCancelamentoProcessamentoRendas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Carta de atraso no pagamento de renda.
+        /// </summary>
+        public static string TituloCartaAtrasoPagamento {
+            get {
+                return ResourceManager.GetString("TituloCartaAtrasoPagamento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Carta de atualização de rendas.
+        /// </summary>
+        public static string TituloCartaAtualizacaoRendas {
+            get {
+                return ResourceManager.GetString("TituloCartaAtualizacaoRendas", resourceCulture);
             }
         }
         

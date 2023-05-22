@@ -37,11 +37,14 @@
     });
     var ContextMenuItems = (new List<Object>
         {
-            new ContextMenuItemModel { Text = "Carta de atraso no pagamento de renda", Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Text = L["TituloCartaAtrasoPagamento"], Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
             new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
             new ContextMenuItemModel { Separator = true},
-            new ContextMenuItemModel { Text = "Atualizar valor da renda", Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
+            new ContextMenuItemModel { Text =  L["TituloCartaAtualizacaoRendas"], Target = ".e-content", Id = "ManualRentUpdate", IconCss = "fas fa-envelope" },
+
+            new ContextMenuItemModel { Separator = true},
+            new ContextMenuItemModel { Text = L["TituloAtualizarValorRenda"], Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
         });
 }
 

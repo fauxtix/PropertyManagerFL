@@ -2386,4 +2386,13 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloDataEmissao" xml:space="preserve">
     <value>Fecha de emisión</value>
   </data>
+  <data name="TituloAtualizarValorRenda" xml:space="preserve">
+    <value>Actualización del alquiler</value>
+  </data>
+  <data name="TituloCartaAtrasoPagamento" xml:space="preserve">
+    <value>Carta de demora en el pago del alquiler</value>
+  </data>
+  <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
+    <value>Carta de actualización del alquiler</value>
+  </data>
 </root>

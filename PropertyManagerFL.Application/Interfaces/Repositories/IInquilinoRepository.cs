@@ -42,6 +42,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId);
         Task<IEnumerable<RentAdjustmentsVM>> GetRentAdjustments();
         Task<IEnumerable<LatePaymentLettersVM>> GetLatePaymentLetters();
-
+        Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
     }
 }

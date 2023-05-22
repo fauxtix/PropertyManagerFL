@@ -504,6 +504,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
+
         public async Task<string> EmiteCartaAtualizacao(CartaAtualizacao DadosAtualizacao)
         {
             string[] aCampos = new string[] {

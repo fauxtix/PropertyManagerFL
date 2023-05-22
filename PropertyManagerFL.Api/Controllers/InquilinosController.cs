@@ -997,6 +997,27 @@ namespace PropertyManagerFL.Api.Controllers
 
         }
 
+        [HttpGet("CreateUpdateLetterDocument/{tenantId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> CreateUpdateLetterDocument(int tenantId, [FromQuery] string docGerado)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var creationOk = await _repoInquilinos.CriaCartaAtualizacaoInquilinoDocumentosInquilino(tenantId, docGerado);
+                    return Ok(creationOk);
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+
+        }
+
+
         private async Task<InquilinoVM> GetTenant(int tenantId)
         {
             return await _repoInquilinos.GetInquilino_ById(tenantId);

@@ -2388,4 +2388,13 @@
   <data name="TituloDataEmissao" xml:space="preserve">
     <value>Issue date</value>
   </data>
+  <data name="TituloAtualizarValorRenda" xml:space="preserve">
+    <value>Update the rent value</value>
+  </data>
+  <data name="TituloCartaAtrasoPagamento" xml:space="preserve">
+    <value>Late rent payment letter</value>
+  </data>
+  <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
+    <value>Rent update letter</value>
+  </data>
 </root>

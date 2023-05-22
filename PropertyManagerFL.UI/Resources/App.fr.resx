@@ -2399,4 +2399,13 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloDataEmissao" xml:space="preserve">
     <value>Date d'émission</value>
   </data>
+  <data name="TituloAtualizarValorRenda" xml:space="preserve">
+    <value>Mise à jour du loyer</value>
+  </data>
+  <data name="TituloCartaAtrasoPagamento" xml:space="preserve">
+    <value>Lettre de retard de paiement de loyer</value>
+  </data>
+  <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
+    <value>Lettre d'actualisation du loyer</value>
+  </data>
 </root>

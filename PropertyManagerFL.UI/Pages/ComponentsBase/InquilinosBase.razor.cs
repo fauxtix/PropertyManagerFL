@@ -365,7 +365,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var hasActiveLease = await TenantHasLease();
             if (hasActiveLease == false)
             {
-                alertTitle = "Envio de cartas / atualização de renda";
+                alertTitle = "Envio de cartas ao inquilino";
                 AlertVisibility = true;
                 WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
                 await ToggleRow();
@@ -392,6 +392,26 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 case "ContractOpposition": // carta de oposição à renovação do contrato
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
+                    SendLetterDialogVisibility = true;
+                    break;
+                case "ManualRentUpdate": // carta de atualização de rendas (do inquilino
+                    alertTitle = "Envio de cartas ao inquilino";
+                    var tenantRentUpdates = await inquilinoService.GetRentUpdates_ByTenantId(TenantId);
+                    if (tenantRentUpdates is null)
+                    {
+                        AlertVisibility = true;
+                        WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
+                        return;
+                    }
+                    var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
+                    if (currentYearUpdateValues is null)
+                    {
+                        AlertVisibility = true;
+                        WarningMessage = "Não foi feito qualquer aumento de renda para o ano corrente";
+                        return;
+                    }
+
+                    SendingLetterType = DocumentoEmitido.AtualizacaoManualRenda;
                     SendLetterDialogVisibility = true;
                     break;
                 case "RentIncrease": // aumento da renda, manual ou automático (ver flag em AppSettings.json)
@@ -455,7 +475,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else
                 {
-                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!, fileName!);
+                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!,   !);
                 }
 
                 if (fileExtension!.ToLower() == ".pdf")
@@ -1055,10 +1075,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             switch (letterType)
             {
-                case DocumentoEmitido.AtualizacaoRendas:
-                    break;
                 case DocumentoEmitido.OposicaoRenovacaoContrato:
                     await IssueContractOppositionLetter();
+                    break;
+                case DocumentoEmitido.AtualizacaoManualRenda:
+                    await IssueRentUpdateLetter();
                     break;
                 case DocumentoEmitido.RendasEmAtraso:
                     await IssueLateRentLetter();
@@ -1307,6 +1328,106 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         }
                         catch (Exception ex)
                         {
+                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                            ToastCss = "e-toast-danger";
+                        }
+                    }
+                }
+                else
+                {
+                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    ToastCss = "e-toast-danger";
+                }
+
+                SendLetterDialogVisibility = false;
+
+                await ShowToastMessage();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message, ex.ToString());
+                throw;
+            }
+        }
+
+        protected async Task IssueRentUpdateLetter()
+        {
+            DateTime? referralDate = null;
+            string tentativa = "";
+            ToastTitle = "Carta de atualização de rendas para o inquilino";
+            alertTitle = ToastTitle;
+
+            try
+            {
+                Lease = (await arrendamentosService
+                    .GetAll())
+                    .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
+                var leaseId = Lease.Id;
+                var allrentUpdates = await inquilinoService.GetAllRentUpdates();
+
+                if(allrentUpdates == null)
+                {
+                    AlertVisibility = true;
+                    WarningMessage = "Não foi feito qualquer aumento de renda";
+                    return;
+                }
+
+                var tenantRentUpdates = await inquilinoService.GetRentUpdates_ByTenantId(TenantId);
+                if(tenantRentUpdates is null)
+                {
+                    AlertVisibility = true;
+                    WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
+                    return;
+                }
+                var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
+                if (currentYearUpdateValues is null)
+                {
+                    AlertVisibility = true;
+                    WarningMessage = "Não foi feito qualquer aumento de renda para o ano corrente";
+                    return;
+                }
+
+                InquilinoVM DadosInquilino = await inquilinoService.GetInquilino_ById(TenantId);
+                var currentYearAsString = DateTime.Now.Year.ToString();
+                var ValorRenda = currentYearUpdateValues!.PriorValue;
+                var NovoValorRenda = currentYearUpdateValues.UpdatedValue;
+
+
+                var rentUpdateData = await inquilinoService!.GetDadosCartaAtualizacaoInquilino(Lease);
+                if (rentUpdateData is not null)
+                {
+                    rentUpdateData.ValorRenda = ValorRenda;
+                    rentUpdateData.NomeInquilino = DadosInquilino.Nome;
+                    rentUpdateData.NovoValorRenda = NovoValorRenda;
+
+                    var docGerado = await inquilinoService.EmiteCartaAtualizacaoInquilino(rentUpdateData);
+                    if (string.IsNullOrEmpty(docGerado))
+                    {
+                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastCss = "e-toast-danger";
+                    }
+                    else
+                    {
+                        var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+                        try
+                        {
+                            var creationOk = await inquilinoService.CriaCartaAtualizacaoInquilinoDocumentosInquilino(TenantId, documentoARegistar);
+                            if (creationOk)
+                            {
+                                ToastMessage = L["TituloOperacaoOk"];
+                                ToastCss = "e-toast-success";
+                            }
+                            else
+                            {
+                                ToastMessage = L["TituloOperacaoComErro"];
+                                ToastCss = "e-toast-danger";
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError($"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.");
                             ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
                             ToastCss = "e-toast-danger";
                         }

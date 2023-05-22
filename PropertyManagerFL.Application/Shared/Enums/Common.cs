@@ -148,6 +148,7 @@
         {
             ContratoArrendamento,
             AtualizacaoRendas,
+            AtualizacaoManualRenda,
             OposicaoRenovacaoContrato,
             RendasEmAtraso
         }
