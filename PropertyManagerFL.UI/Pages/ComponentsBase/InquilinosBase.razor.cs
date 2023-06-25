@@ -475,7 +475,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else
                 {
-                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!,   !);
+                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!,   fileName!);
                 }
 
                 if (fileExtension!.ToLower() == ".pdf")
