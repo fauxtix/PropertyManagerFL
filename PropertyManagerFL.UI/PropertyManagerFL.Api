@@ -652,7 +652,7 @@
         </member>
         <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.ImoveisBase.GetProperty_Units(System.Int32)">
             <summary>
-            Get specific property units
+            Get specific property unit
             </summary>
             <returns></returns>
         </member>

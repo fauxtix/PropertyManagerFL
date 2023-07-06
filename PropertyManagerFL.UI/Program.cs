@@ -62,7 +62,7 @@ builder.Services.AddServicesDependencyInjectionConfiguration();
 
 
 
-// obriga ? autentica??o do utilizador
+// obriga autenticação do utilizador
 builder.Services.AddAuthorization(options =>
 {
     // By default, all incoming requests will be authorized according to the default policy  

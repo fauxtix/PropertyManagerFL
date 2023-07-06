@@ -24,7 +24,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _httpClient = httpClient;
             _mapper = mapper;
 
-            AutomaticRentAdjustment = bool.Parse(  _env.GetSection("AppSettings:AutomaticRentAdjustment").Value);
+            AutomaticRentAdjustment = bool.Parse(_env.GetSection("AppSettings:AutomaticRentAdjustment").Value);
         }
 
 

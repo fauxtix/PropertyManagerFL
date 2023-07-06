@@ -116,7 +116,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             return propertiesList;
         }
         /// <summary>
-        /// Get specific property units
+        /// Get specific property unit
         /// </summary>
         /// <returns></returns>
         public IEnumerable<FracaoVM> GetProperty_Units(int id)
