@@ -46,8 +46,8 @@ app {
         }
 
 .sidebar {
-    background-image: linear-gradient(180deg, #71818e 0%, #122d42 70%);
-/*    background-image: linear-gradient(to right top, #a2b6e0, #609db8, #378182, #32624b, #34411d);*/
+    /*background-image: linear-gradient(180deg, #71818e 0%, #122d42 70%);*/
+    background-image: linear-gradient(to right top, #a2b6e0, #609db8, #378182, #32624b, #34411d);
 }
 
     .sidebar .top-row {

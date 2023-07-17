@@ -703,7 +703,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
-        public async Task<IEnumerable<RentAdjustmentsVM>> GetRentAdjustments()
+        public async Task<IEnumerable<RentAdjustmentsVM>?> GetRentAdjustments()
         {
             try
             {
@@ -713,16 +713,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var tenantsRentAdjustments = JsonConvert.DeserializeObject<IEnumerable<RentAdjustmentsVM>>(jsonData);
-                        return tenantsRentAdjustments;
+                        if (tenantsRentAdjustments != null)
+                            return tenantsRentAdjustments;
+                        else
+                            return Enumerable.Empty<RentAdjustmentsVM>();
                     }
                     else
-                        return null;
+                        return Enumerable.Empty<RentAdjustmentsVM>();
                 }
             }
             catch (Exception exc)
             {
                 _logger.LogError(exc, $"Erro ao pesquisar API (GetRentAdjustments) ({exc.Message})");
-                return null;
+                return Enumerable.Empty<RentAdjustmentsVM>();
             }
         }
 
