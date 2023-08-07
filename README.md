@@ -69,13 +69,14 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 }
 ```
 
-Lease service
+Lease service (interface)
 ```cs:
 ﻿using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 
+// 'Arrendamento' translates to Lease / Rent conttract
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
     public interface IArrendamentoRepository
