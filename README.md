@@ -11,9 +11,9 @@ Application designed to assist landlords in managing their properties and rental
 - Rent Payment Tracking: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
 
 # Sample Code
-Example: Tenant's service
-```cs:
-    
+
+Example: Tenant's service (interface for dependency injection)
+```cs:   
 ﻿using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
