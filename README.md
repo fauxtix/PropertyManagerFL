@@ -69,7 +69,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 }
 ```
 
-Lease example
+Lease service
 ```cs:
 ﻿using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -125,6 +125,13 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task ExtendLeaseTerm(int Id);
     }
 }
+``
+
+Implementing 'New lease'
+
+```cs:
+
+
 ``
 
 
