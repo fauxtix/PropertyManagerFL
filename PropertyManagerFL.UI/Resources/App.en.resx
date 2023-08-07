@@ -2397,4 +2397,10 @@
   <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
     <value>Rent update letter</value>
   </data>
+  <data name="TituloMenuMensagens" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="TituloAumentosRenda" xml:space="preserve">
+    <value>Rent increases</value>
+  </data>
 </root>

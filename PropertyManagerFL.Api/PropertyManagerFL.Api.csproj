@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <DocumentationFile>C:\NewProjects\PropertyManagerFL\PropertyManagerFL.Api\bin\Debug\net6.0\PropertyManagerFL.Api.xml</DocumentationFile>
+    <UserSecretsId>cf889925-6856-4180-a58e-907791152e5a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

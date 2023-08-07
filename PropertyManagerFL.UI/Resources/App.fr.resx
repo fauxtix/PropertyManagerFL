@@ -2408,4 +2408,10 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
     <value>Lettre d'actualisation du loyer</value>
   </data>
+  <data name="TituloMenuMensagens" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="TituloAumentosRenda" xml:space="preserve">
+    <value>Augmentation des loyers</value>
+  </data>
 </root>

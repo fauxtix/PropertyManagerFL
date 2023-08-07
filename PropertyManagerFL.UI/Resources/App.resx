@@ -1390,4 +1390,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
     <value>Carta de atualização de rendas</value>
   </data>
+  <data name="TituloMenuMensagens" xml:space="preserve">
+    <value>Mensagens</value>
+  </data>
+  <data name="TituloAumentosRenda" xml:space="preserve">
+    <value>Aumentos de renda</value>
+  </data>
 </root>

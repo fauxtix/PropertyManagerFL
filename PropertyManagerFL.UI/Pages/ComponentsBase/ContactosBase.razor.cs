@@ -413,6 +413,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         private protected async Task EditContact(ContactoVM contact)
         {
             SelectedContact = contact;
+            ContactId = SelectedContact.Id;
             OriginalContactData = await contactsService.GetContacto_ById(ContactId); // TODO should use 'Clone/MemberWise'
 
 

@@ -1781,6 +1781,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Aumentos de renda.
+        /// </summary>
+        public static string TituloAumentosRenda {
+            get {
+                return ResourceManager.GetString("TituloAumentosRenda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Último acesso.
         /// </summary>
         public static string TituloCampo2Utilizadores {
@@ -2812,6 +2821,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloMenuInquilinos {
             get {
                 return ResourceManager.GetString("TituloMenuInquilinos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Mensagens.
+        /// </summary>
+        public static string TituloMenuMensagens {
+            get {
+                return ResourceManager.GetString("TituloMenuMensagens", resourceCulture);
             }
         }
         

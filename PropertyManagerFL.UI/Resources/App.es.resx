@@ -2395,4 +2395,10 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloCartaAtualizacaoRendas" xml:space="preserve">
     <value>Carta de actualización del alquiler</value>
   </data>
+  <data name="TituloMenuMensagens" xml:space="preserve">
+    <value>Mensajes</value>
+  </data>
+  <data name="TituloAumentosRenda" xml:space="preserve">
+    <value>Aumento de los alquileres</value>
+  </data>
 </root>

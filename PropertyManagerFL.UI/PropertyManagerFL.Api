@@ -1794,6 +1794,11 @@
               Looks up a localized string similar to Atualizar valor da renda.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAumentosRenda">
+            <summary>
+              Looks up a localized string similar to Aumentos de renda.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCampo2Utilizadores">
             <summary>
               Looks up a localized string similar to Último acesso.
@@ -2367,6 +2372,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMenuInquilinos">
             <summary>
               Looks up a localized string similar to Inquilinos.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMenuMensagens">
+            <summary>
+              Looks up a localized string similar to Mensagens.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMenuProcessaRendas">
