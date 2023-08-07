@@ -64,7 +64,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
     }
 }
-
+</code>
 # Screenshots
 
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
