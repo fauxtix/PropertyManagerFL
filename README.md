@@ -13,7 +13,7 @@ Application designed to assist landlords in managing their properties and rental
 # Sample Code
 
 Example: Tenant's service
-
+# cs
 ﻿using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
