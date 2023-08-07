@@ -46,7 +46,43 @@
                     <p class="dropdown-divider m-0" />
                 </div>
             </BlazoredMenuItem>
-            <BlazoredSubMenu Header="@L["TituloMenuArrendamentos"]">
+            @{
+                var rentAdjustmentsetting = Config.GetSection("AppSettings:AutomaticRentAdjustment").Value;
+                if (!string.IsNullOrEmpty(rentAdjustmentsetting))
+                {
+                    var automaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
+                    if (automaticRentAdjustment == false)
+                    {
+                        <BlazoredMenuItem Css="nav-item px-3">
+                            <NavLink href="arrendamentos">
+                                <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuArrendamentos"]
+                            </NavLink>
+                        </BlazoredMenuItem>
+                    }
+                }
+                else
+                {
+                    <BlazoredSubMenu Header="@L["TituloMenuArrendamentos"]">
+                        <HeaderTemplate>
+                            <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuArrendamentos"]
+                        </HeaderTemplate>
+                        <MenuTemplate>
+                            <BlazoredMenuItem Css="nav-item px-3">
+                                <NavLink href="arrendamentos">
+                                    <i class="fa fa-file-contract" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
+                                </NavLink>
+                            </BlazoredMenuItem>
+                                        <BlazoredMenuItem Css="nav-item px-3">
+                                            <NavLink href="updaterentsletter">
+                                                <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
+                                            </NavLink>
+                                        </BlazoredMenuItem>
+                        </MenuTemplate>
+                    </BlazoredSubMenu>
+                }
+            }
+
+@*            <BlazoredSubMenu Header="@L["TituloMenuArrendamentos"]">
                 <HeaderTemplate>
                     <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuArrendamentos"]
                 </HeaderTemplate>
@@ -73,7 +109,7 @@
                     }
                 </MenuTemplate>
             </BlazoredSubMenu>
-
+*@
             <BlazoredMenuItem>
                 <div>
                     <p class="dropdown-divider m-0" />
