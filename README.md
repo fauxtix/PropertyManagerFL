@@ -76,7 +76,7 @@ using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 
-// 'Arrendamento' translates to Lease / Rent conttract
+// 'Arrendamento' translates to Lease / Rent contract
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
     public interface IArrendamentoRepository
