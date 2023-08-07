@@ -41,17 +41,14 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> InsereInquilino(InquilinoVM inquilino);
         Task<bool> AtualizaInquilino(int id, InquilinoVM inquilino);
         Task<bool> ApagaInquilino(int id);
-
         Task<int> CriaDocumentoInquilino(DocumentoInquilinoVM documento);
         Task<bool> AtualizaDocumentoInquilino(int id, DocumentoInquilinoVM document);
-
         Task<DocumentoInquilinoVM> GetDocumentoById(int Id);
         Task<IEnumerable<DocumentoInquilinoVM>> GetDocumentos();
         Task<IEnumerable<DocumentoInquilinoVM>> GetDocumentosInquilino(int id);
         Task<bool> ApagaDocumentoInquilino(int id);
         Task<string> GetPdfFromServer(string foldername, string fileName);
         Task<string> GetServerPdfFileName(string foldername, string filename);
-
         Task<IEnumerable< FiadorVM>> GeFiadorInquilino_ById(int idInquilino);
         Task<IEnumerable<CC_InquilinoVM>> GetTenantPaymentsHistory(int id);
         Task<IEnumerable<LookupTableVM>> GetInquilinos_SemContrato();
@@ -66,7 +63,6 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento);
         Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao);
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
-
     }
 }
 </code>
