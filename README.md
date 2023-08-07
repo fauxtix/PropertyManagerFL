@@ -126,221 +126,221 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task ExtendLeaseTerm(int Id);
     }
 }
-``
+```
 
 Implementing 'New lease'
 
 ```cs:
 
-/// <summary>
-        /// Cria contrato de arrendamento
-        /// </summary>
-        /// <param name="arrendamento">dados do contrato</param>
-        /// <returns>1: success, -1: failed</returns>
-        public async Task<int> InsertArrendamento(NovoArrendamento arrendamento)
+    /// <summary>
+    /// Cria contrato de arrendamento
+    /// </summary>
+    /// <param name="arrendamento">dados do contrato</param>
+    /// <returns>1: success, -1: failed</returns>
+    public async Task<int> InsertArrendamento(NovoArrendamento arrendamento)
+    {
+
+        var tenantId = arrendamento.ID_Inquilino;
+        var unitId = arrendamento.ID_Fracao;
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@Data_Inicio", arrendamento.Data_Inicio);
+        parameters.Add("@Data_Fim", arrendamento.Data_Fim);
+        parameters.Add("@Data_Pagamento", arrendamento.Data_Pagamento);
+        parameters.Add("@SaldoInicial", arrendamento.SaldoInicial);
+        parameters.Add("@Fiador", arrendamento.Fiador);
+        parameters.Add("@Prazo_Meses", arrendamento.Prazo_Meses);
+        parameters.Add("@Prazo", arrendamento.Prazo);
+        parameters.Add("@Valor_Renda", arrendamento.Valor_Renda);
+        parameters.Add("@Doc_IRS", arrendamento.Doc_IRS);
+        parameters.Add("@Doc_Vencimento", arrendamento.Doc_Vencimento);
+        parameters.Add("@Notas", arrendamento.Notas);
+        parameters.Add("@ID_Fracao", arrendamento.ID_Fracao);
+        parameters.Add("@ID_Inquilino", arrendamento.ID_Inquilino);
+        parameters.Add("@ID_Fiador", arrendamento.ID_Fiador);
+        parameters.Add("@Caucao", arrendamento.Caucao);
+        parameters.Add("@ContratoEmitido", arrendamento.ContratoEmitido);
+        parameters.Add("@DocumentoGerado", arrendamento.DocumentoGerado);
+        parameters.Add("@Data_Saida", arrendamento.Data_Saida);
+        parameters.Add("@FormaPagamento", arrendamento.FormaPagamento);
+        parameters.Add("@Ativo", arrendamento.Ativo);
+        parameters.Add("@LeiVigente", arrendamento.LeiVigente);
+        parameters.Add("@ArrendamentoNovo", arrendamento.ArrendamentoNovo);
+        parameters.Add("@EstadoPagamento", arrendamento.EstadoPagamento);
+        parameters.Add("@RenovacaoAutomatica", arrendamento.RenovacaoAutomatica);
+
+        decimal guarantorSecurity = 0;
+        decimal valorRecebido = arrendamento.Valor_Renda;
+        int tipoRecebimento = RENT_PAYMENT_TYPE;
+        string descricaoMovimento = "";
+        int transactionId = 0;
+
+        try
         {
 
-            var tenantId = arrendamento.ID_Inquilino;
-            var unitId = arrendamento.ID_Fracao;
-
-            var parameters = new DynamicParameters();
-
-            parameters.Add("@Data_Inicio", arrendamento.Data_Inicio);
-            parameters.Add("@Data_Fim", arrendamento.Data_Fim);
-            parameters.Add("@Data_Pagamento", arrendamento.Data_Pagamento);
-            parameters.Add("@SaldoInicial", arrendamento.SaldoInicial);
-            parameters.Add("@Fiador", arrendamento.Fiador);
-            parameters.Add("@Prazo_Meses", arrendamento.Prazo_Meses);
-            parameters.Add("@Prazo", arrendamento.Prazo);
-            parameters.Add("@Valor_Renda", arrendamento.Valor_Renda);
-            parameters.Add("@Doc_IRS", arrendamento.Doc_IRS);
-            parameters.Add("@Doc_Vencimento", arrendamento.Doc_Vencimento);
-            parameters.Add("@Notas", arrendamento.Notas);
-            parameters.Add("@ID_Fracao", arrendamento.ID_Fracao);
-            parameters.Add("@ID_Inquilino", arrendamento.ID_Inquilino);
-            parameters.Add("@ID_Fiador", arrendamento.ID_Fiador);
-            parameters.Add("@Caucao", arrendamento.Caucao);
-            parameters.Add("@ContratoEmitido", arrendamento.ContratoEmitido);
-            parameters.Add("@DocumentoGerado", arrendamento.DocumentoGerado);
-            parameters.Add("@Data_Saida", arrendamento.Data_Saida);
-            parameters.Add("@FormaPagamento", arrendamento.FormaPagamento);
-            parameters.Add("@Ativo", arrendamento.Ativo);
-            parameters.Add("@LeiVigente", arrendamento.LeiVigente);
-            parameters.Add("@ArrendamentoNovo", arrendamento.ArrendamentoNovo);
-            parameters.Add("@EstadoPagamento", arrendamento.EstadoPagamento);
-            parameters.Add("@RenovacaoAutomatica", arrendamento.RenovacaoAutomatica);
-
-            decimal guarantorSecurity = 0;
-            decimal valorRecebido = arrendamento.Valor_Renda;
-            int tipoRecebimento = RENT_PAYMENT_TYPE;
-            string descricaoMovimento = "";
-            int transactionId = 0;
-
-            try
+            using (var connection = _context.CreateConnection())
             {
-
-                using (var connection = _context.CreateConnection())
+                connection.Open();
+                using (var tran = connection.BeginTransaction())
                 {
-                    connection.Open();
-                    using (var tran = connection.BeginTransaction())
+                    try
                     {
-                        try
-                        {
-                            arrendamento.Data_Pagamento = arrendamento.ArrendamentoNovo ?
-                                arrendamento.Data_Inicio.AddMonths(1) :
-                                new DateTime(DateTime.Now.Year, DateTime.Now.Month, 8).AddMonths(1);
+                        arrendamento.Data_Pagamento = arrendamento.ArrendamentoNovo ?
+                            arrendamento.Data_Inicio.AddMonths(1) :
+                            new DateTime(DateTime.Now.Year, DateTime.Now.Month, 8).AddMonths(1);
 
-                            var insertedId = await connection.QueryFirstAsync<int>("usp_arrendamentos_Insert",
-                                param: parameters,
+                        var insertedId = await connection.QueryFirstAsync<int>("usp_arrendamentos_Insert",
+                            param: parameters,
+                            commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
+
+                        if (arrendamento.ArrendamentoNovo)
+                        {
+                            // Cria pagamentos iniciais, um para 'renda paga' e outro para 'caução'
+
+                            // pagamento de renda
+                            descricaoMovimento = "Pagamento da renda na celebração do contrato";
+
+                            NovoRecebimento recebimento = new NovoRecebimento
+                            {
+                                DataMovimento = arrendamento.Data_Inicio,
+                                ValorRecebido = arrendamento.Valor_Renda,
+                                ValorPrevisto = arrendamento.Valor_Renda,
+                                ValorEmFalta = 0,
+                                Estado = 1, // pago
+                                Renda = true,
+                                Notas = descricaoMovimento,
+                                GeradoPeloPrograma = true,
+                                ID_Propriedade = unitId,
+                                ID_TipoRecebimento = tipoRecebimento,
+                                ID_Inquilino = arrendamento.ID_Inquilino
+                            };
+
+                            transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                                recebimento,
+                                commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
+
+                            // pagamento de caução -- é sempre criado registo, tenha sido escolhida a opção ou não
+                            descricaoMovimento = "Pagamento do valor da caução na celebração do contrato";
+
+                            // não foi escolhida opção, cria registo com valor em dívida
+                            if (arrendamento.Caucao == false)
+                            {
+                                guarantorSecurity = arrendamento.Valor_Renda;
+                                valorRecebido = 0;
+                            }
+
+                            DateTime dPagCaucao = arrendamento.Data_Inicio.AddMonths(1);
+                            recebimento = new NovoRecebimento
+                            {
+                                DataMovimento = dPagCaucao,
+                                ValorRecebido = valorRecebido,
+                                ValorPrevisto = arrendamento.Valor_Renda,
+                                ValorEmFalta = guarantorSecurity,
+                                Estado = 1, // pago (caução
+                                Renda = false,
+                                Notas = descricaoMovimento,
+                                GeradoPeloPrograma = true,
+                                ID_Propriedade = unitId,
+                                ID_TipoRecebimento = _repoTipoRecebimentos.GetID_ByDescription("Caução"),
+                                ID_Inquilino = arrendamento.ID_Inquilino
+                            };
+
+
+                            transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
+                                 param: recebimento,
+                                 commandType: CommandType.StoredProcedure,
+                                 transaction: tran);
+
+                        } // Contrato novo
+
+                        // Marca fração como alugada
+                        var result = await connection.ExecuteAsync("usp_Fracoes_SetAsRented",
+                             new { Id = unitId },
+                             commandType: CommandType.StoredProcedure, transaction: tran);
+
+
+                        // Cria registo na CC Inquilino (Id devolvido serve para efeitos de debug)
+                        if (arrendamento.ArrendamentoNovo)
+                        {
+                            CC_InquilinoNovo transaction = new()
+                            {
+                                DataMovimento = DateTime.Now,
+                                IdInquilino = tenantId,
+                                ValorPago = valorRecebido * 2,
+                                TransactionId = transactionId,
+                                ValorEmDivida = 0,
+                                Notas = "Pagamentos iniciais"
+                            };
+                            var IdCreated_CC = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
+                                param: transaction,
                                 commandType: CommandType.StoredProcedure,
                                 transaction: tran);
+                        }
 
-
-                            if (arrendamento.ArrendamentoNovo)
-                            {
-                                // Cria pagamentos iniciais, um para 'renda paga' e outro para 'caução'
-
-                                // pagamento de renda
-                                descricaoMovimento = "Pagamento da renda na celebração do contrato";
-
-                                NovoRecebimento recebimento = new NovoRecebimento
-                                {
-                                    DataMovimento = arrendamento.Data_Inicio,
-                                    ValorRecebido = arrendamento.Valor_Renda,
-                                    ValorPrevisto = arrendamento.Valor_Renda,
-                                    ValorEmFalta = 0,
-                                    Estado = 1, // pago
-                                    Renda = true,
-                                    Notas = descricaoMovimento,
-                                    GeradoPeloPrograma = true,
-                                    ID_Propriedade = unitId,
-                                    ID_TipoRecebimento = tipoRecebimento,
-                                    ID_Inquilino = arrendamento.ID_Inquilino
-                                };
-
-                                transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
-                                    recebimento,
-                                    commandType: CommandType.StoredProcedure,
-                                transaction: tran);
-
-
-                                // pagamento de caução -- é sempre criado registo, tenha sido escolhida a opção ou não
-                                descricaoMovimento = "Pagamento do valor da caução na celebração do contrato";
-
-                                // não foi escolhida opção, cria registo com valor em dívida
-                                if (arrendamento.Caucao == false)
-                                {
-                                    guarantorSecurity = arrendamento.Valor_Renda;
-                                    valorRecebido = 0;
-                                }
-
-                                DateTime dPagCaucao = arrendamento.Data_Inicio.AddMonths(1);
-                                recebimento = new NovoRecebimento
-                                {
-                                    DataMovimento = dPagCaucao,
-                                    ValorRecebido = valorRecebido,
-                                    ValorPrevisto = arrendamento.Valor_Renda,
-                                    ValorEmFalta = guarantorSecurity,
-                                    Estado = 1, // pago (caução
-                                    Renda = false,
-                                    Notas = descricaoMovimento,
-                                    GeradoPeloPrograma = true,
-                                    ID_Propriedade = unitId,
-                                    ID_TipoRecebimento = _repoTipoRecebimentos.GetID_ByDescription("Caução"),
-                                    ID_Inquilino = arrendamento.ID_Inquilino
-                                };
-
-
-                                transactionId = await connection.QuerySingleAsync<int>("usp_Recebimentos_Insert",
-                                     param: recebimento,
-                                     commandType: CommandType.StoredProcedure,
-                                     transaction: tran);
-
-                            } // Contrato novo
-
-                            // Marca fração como alugada
-                            var result = await connection.ExecuteAsync("usp_Fracoes_SetAsRented",
-                                 new { Id = unitId },
-                                 commandType: CommandType.StoredProcedure, transaction: tran);
-
-
-                            // Cria registo na CC Inquilino (Id devolvido serve para efeitos de debug)
-                            if (arrendamento.ArrendamentoNovo)
+                        else // existing lease
+                        {
+                            if (arrendamento.SaldoInicial > 0) // amount due
                             {
                                 CC_InquilinoNovo transaction = new()
                                 {
                                     DataMovimento = DateTime.Now,
                                     IdInquilino = tenantId,
-                                    ValorPago = valorRecebido * 2,
+                                    ValorPago = 0,
+                                    ValorEmDivida = arrendamento.SaldoInicial,
                                     TransactionId = transactionId,
-                                    ValorEmDivida = 0,
-                                    Notas = "Pagamentos iniciais"
+                                    Notas = "Saldo à data (negativo)"
                                 };
+
                                 var IdCreated_CC = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
                                     param: transaction,
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
                             }
 
-                            else // existing lease
+                            // Update tenant balance
+                            var tenantBalance = guarantorSecurity; // > 0 if guarantor's security not paid
+                            if (arrendamento.SaldoInicial > 0) // is tenant balance (existing lease) negative?
+                                tenantBalance += arrendamento.SaldoInicial;
+
+                            if (tenantBalance > 0)
                             {
-                                if (arrendamento.SaldoInicial > 0) // amount due
-                                {
-                                    CC_InquilinoNovo transaction = new()
-                                    {
-                                        DataMovimento = DateTime.Now,
-                                        IdInquilino = tenantId,
-                                        ValorPago = 0,
-                                        ValorEmDivida = arrendamento.SaldoInicial,
-                                        TransactionId = transactionId,
-                                        Notas = "Saldo à data (negativo)"
-                                    };
+                                var updateParameters = new DynamicParameters();
+                                updateParameters.Add("@TenantId", tenantId);
+                                updateParameters.Add("@NovoSaldoCorrente", -tenantBalance, dbType: DbType.Decimal); // negative entry (there are due values)
 
-                                    var IdCreated_CC = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
-                                        param: transaction,
-                                        commandType: CommandType.StoredProcedure,
-                                        transaction: tran);
-                                }
-
-                                // Update tenant balance
-                                var tenantBalance = guarantorSecurity; // > 0 if guarantor's security not paid
-                                if (arrendamento.SaldoInicial > 0) // is tenant balance (existing lease) negative?
-                                    tenantBalance += arrendamento.SaldoInicial;
-
-                                if (tenantBalance > 0)
-                                {
-                                    var updateParameters = new DynamicParameters();
-                                    updateParameters.Add("@TenantId", tenantId);
-                                    updateParameters.Add("@NovoSaldoCorrente", -tenantBalance, dbType: DbType.Decimal); // negative entry (there are due values)
-
-                                    await connection.ExecuteScalarAsync("usp_Inquilinos_UpdateSaldoCorrente",
-                                       param: updateParameters,
-                                       commandType: CommandType.StoredProcedure,
-                                       transaction: tran);
-                                }
+                                await connection.ExecuteScalarAsync("usp_Inquilinos_UpdateSaldoCorrente",
+                                   param: updateParameters,
+                                   commandType: CommandType.StoredProcedure,
+                                   transaction: tran);
                             }
-
-                            tran.Commit();
-
-                            return insertedId; // Lease Id created
                         }
-                        catch (Exception ex)
-                        {
-                            tran.Rollback();
-                            _logger.LogError(ex.Message);
-                            return -1;
-                        }
+
+                        tran.Commit();
+
+                        return insertedId; // Lease Id created
+                    }
+                    catch (Exception ex)
+                    {
+                        tran.Rollback();
+                        _logger.LogError(ex.Message);
+                        return -1;
                     }
                 }
+            }
 
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return -1;
-            }
         }
-``
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return -1;
+        }
+    }
+```
 
 
 # Screenshots
