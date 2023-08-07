@@ -13,7 +13,6 @@ Application designed to assist landlords in managing their properties and rental
 # Sample Code
 Example: Tenant's service
 ```cs:
-<code>
     
 ﻿using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
@@ -65,7 +64,6 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
     }
 }
-</code>
 
 # Screenshots
 
