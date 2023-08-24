@@ -90,7 +90,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
     }
 }
 ```
-
+#
 Lease service (interface)
 ```cs:
 ﻿using PropertyManagerFL.Core.Entities;
