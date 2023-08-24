@@ -9,7 +9,8 @@ Application designed to assist landlords in managing their properties and rental
 - Rent Lease Creation: PMFL simplifies the process of creating rent leases.
 
 - Rent Payment Tracking: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
-
+- Keeping track of rental property expenses: As a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
+ Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
 # Sample Code
 
 Examples:
