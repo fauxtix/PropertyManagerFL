@@ -14,10 +14,15 @@ Application designed to assist landlords in managing their properties and rental
 - Tenant letters management:
   
   Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+  
   Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
+  
   Increase in Rent - an invitation to renew so the tenant can decide whether to stay
+  
   Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
+  
   Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
+  
   Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin.
 
 # Sample Code
