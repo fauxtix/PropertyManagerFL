@@ -9,8 +9,16 @@ Application designed to assist landlords in managing their properties and rental
 - Rent Lease Creation: PMFL simplifies the process of creating rent leases.
 
 - Rent Payment Tracking: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
-- Keeping track of rental property expenses: As a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
+- Keeping track of rental property expenses: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
  Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
+- Tenant letters management:
+  . Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+  . Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
+  . Increase in Rent - an invitation to renew so the tenant can decide whether to stay
+  . Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
+  . Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
+  . Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin.
+
 # Sample Code
 
 Examples:
