@@ -31,7 +31,7 @@ Application designed to assist landlords in managing their properties and rental
   Each of these situations presupposes a letter alerting them to the change
   
 - Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
-
+#
 # Sample Code
 
 Examples:
