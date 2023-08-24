@@ -26,7 +26,9 @@ Application designed to assist landlords in managing their properties and rental
   
   Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
   
-
+- Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
+  Each of these situations presupposes a letter alerting them to the change
+  
 - Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
 # Sample Code
