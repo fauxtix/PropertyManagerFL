@@ -12,7 +12,7 @@ Application designed to assist landlords in managing their properties and rental
 - Keeping track of rental property expenses: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
  Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
 - Tenant letters management:
-  . Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+  -- Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
   . Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
   . Increase in Rent - an invitation to renew so the tenant can decide whether to stay
   . Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
