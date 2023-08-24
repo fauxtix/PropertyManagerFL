@@ -237,11 +237,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             modulo = Modules.Inquilinos;
 
-
+            SelectedTenant = args.RowData;
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
-                SelectedTenant = args.RowData;
                 OriginalTenantData = await inquilinoService.GetInquilino_ById(TenantId); // TODO should use 'Clone/MemberWise'
 
                 AddEditTenantVisibility = true;
@@ -858,14 +857,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 switch (modulo)
                 {
                     case Modules.Inquilinos:
-                        ToastTitle = L["DeleteMsg"] + L["TituloInquilino"]; ;
-                        alertTitle = L["DeleteMsg"] + L["TituloInquilino"];
+                        ToastTitle = L["DeleteMsg"] + " " +  L["TituloInquilino"]; ;
+                        alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
                         resultOk = await inquilinoService!.ApagaInquilino(SelectedTenant!.Id);
                         DeleteTenantVisibility = false;
                         break;
                     case Modules.Fiadores:
-                        alertTitle = L["DeleteMsg"] + L["TituloFiador"];
-                        ToastTitle = L["DeleteMsg"] + L["TituloFiador"]; ;
+                        alertTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
+                        ToastTitle = L["DeleteMsg"] + " " + L["TituloFiador"]; ;
                         resultOk = await FiadorService!.ApagaFiador(SelectedGuarantor!.Id);
                         DeleteGuarantorVisibility = false;
                         break;
@@ -888,8 +887,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     switch (modulo)
                     {
                         case Modules.Inquilinos:
-                            ToastTitle = L["DeleteMsg"] + L["TituloInquilino"]; ;
-                            alertTitle = L["DeleteMsg"] + L["TituloInquilino"];
+                            ToastTitle = L["DeleteMsg"] + " " + L["TituloInquilino"]; ;
+                            alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
                             WarningMessage = "Inquilino tem contrato de arrendamento ativo! Verifique, p.f.";
                             DeleteCaption = SelectedTenant.Nome;
 
@@ -899,8 +898,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                             break;
                         case Modules.Fiadores:
                             WarningMessage = "Erro ao apagar Fiador. Confirme log, p.f.";
-                            alertTitle = L["DeleteMsg"] + L["TituloFiador"];
-                            ToastTitle = L["DeleteMsg"] + L["TituloFiador"];
+                            alertTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
+                            ToastTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
                             DeleteCaption = SelectedGuarantor?.Nome;
 
                             resultOk = await FiadorService!.ApagaFiador(SelectedGuarantor!.Id);
@@ -915,7 +914,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             catch (Exception exc)
             {
                 AlertVisibility = true;
-                alertTitle = modulo == Modules.Inquilinos ? L["DeleteMsg"] + L["TituloInquilino"] : L["DeleteMsg"] + L["TituloFiador"];
+                alertTitle = modulo == Modules.Inquilinos ? L["DeleteMsg"] + " " + L["TituloInquilino"] : L["DeleteMsg"] + " " + L["TituloFiador"];
                 WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. {exc.Message}";
             }
 

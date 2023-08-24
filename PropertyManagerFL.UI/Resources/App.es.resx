@@ -2401,4 +2401,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloAumentosRenda" xml:space="preserve">
     <value>Aumento de los alquileres</value>
   </data>
+  <data name="TituloMesesQueFaltam" xml:space="preserve">
+    <value>Faltan (meses)</value>
+  </data>
 </root>

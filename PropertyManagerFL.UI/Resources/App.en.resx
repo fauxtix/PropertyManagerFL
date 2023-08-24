@@ -2403,4 +2403,7 @@
   <data name="TituloAumentosRenda" xml:space="preserve">
     <value>Rent increases</value>
   </data>
+  <data name="TituloMesesQueFaltam" xml:space="preserve">
+    <value>Months to go</value>
+  </data>
 </root>

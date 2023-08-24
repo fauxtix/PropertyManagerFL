@@ -1396,4 +1396,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloAumentosRenda" xml:space="preserve">
     <value>Aumentos de renda</value>
   </data>
+  <data name="TituloMesesQueFaltam" xml:space="preserve">
+    <value>Faltam (meses)</value>
+  </data>
 </root>

@@ -192,7 +192,7 @@ else
                             }
                         </Template>
                     </GridColumn>
-                    <GridColumn HeaderText="Faltam (meses)" Width="100">
+                    <GridColumn HeaderText="@L["TituloMesesQueFaltam"]" Width="110">
                         <Template>
                             @{
                                 var currentLease = (context as ArrendamentoVM);
@@ -228,7 +228,7 @@ else
                     @*<GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
                             HeaderText="Carta Atualiz. enviada" Width="120" TextAlign="TextAlign.Center"/>*@
 
-                    <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="230">
+                    <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="130">
                         <GridCommandColumns>
                             <GridCommandColumn Type=CommandButtonType.Edit
                                            ButtonOption="@(new CommandButtonOptions()

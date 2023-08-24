@@ -2414,4 +2414,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloAumentosRenda" xml:space="preserve">
     <value>Augmentation des loyers</value>
   </data>
+  <data name="TituloMesesQueFaltam" xml:space="preserve">
+    <value>Il reste (mois)</value>
+  </data>
 </root>

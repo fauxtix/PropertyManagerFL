@@ -2888,6 +2888,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Faltam (meses).
+        /// </summary>
+        public static string TituloMesesQueFaltam {
+            get {
+                return ResourceManager.GetString("TituloMesesQueFaltam", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Método de Pagamento.
         /// </summary>
         public static string TituloMetodoPagamento {

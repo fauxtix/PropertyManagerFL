@@ -2409,6 +2409,11 @@
               Looks up a localized string similar to Meses processados.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMesesQueFaltam">
+            <summary>
+              Looks up a localized string similar to Faltam (meses).
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMetodoPagamento">
             <summary>
               Looks up a localized string similar to Método de Pagamento.
