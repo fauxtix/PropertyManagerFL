@@ -25,7 +25,7 @@ Application designed to assist landlords in managing their properties and rental
   Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
   
   Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
-  - 
+  `` 
 
 - Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
