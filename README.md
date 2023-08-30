@@ -6,7 +6,7 @@ Application designed to assist landlords in managing their properties and rental
 
 - Centralized Property and Tenant Information: PMFL allows landlords to store all property and tenant details in one convenient location. From property specifications to tenant records and contact information, everything is easily accessible whenever you need it.
 
-- Rent Lease Creation: PMFL simplifies the process of creating rent leases. It allows the the creation of existing ones.
+- Rent Lease Creation: PMFL simplifies the process of creating rent leases; new and existing ones.
 
 - Rent Payment Tracking: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
 - Keeping track of rental property expenses: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
