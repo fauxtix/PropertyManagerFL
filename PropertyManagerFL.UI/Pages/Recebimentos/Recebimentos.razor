@@ -189,7 +189,7 @@ else
                                         chipCss = "e-success";
                                         tranStatus = "Ok";
                                     }
-                                    else if(currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido > currentTransaction.ValorPrevisto)
+                                    else if(currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido < currentTransaction.ValorPrevisto)
                                     {
                                         chipCss = "e-warning";
                                         tranStatus = "Acerto";

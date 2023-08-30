@@ -9,7 +9,7 @@
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 <div>
-    <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
+    <HeaderDialogComponent HeaderCaption="@L["TituloPagamentos"]" ImageName="payment" />
     <hr style="color:black">
 </div>
 <div class="container-fluid">
@@ -22,11 +22,11 @@
                        Width="120"
                        Value="@SelectedRecord?.DataMovimento.ToShortDateString()"></SfTextBox>
         </div>
-        <div>
+        <div class="mt-2">
             <SfTextBox Readonly="true" Placeholder="@L["TituloImovel"]" FloatLabelType="FloatLabelType.Always"
                        Value="@SelectedRecord?.Imovel"></SfTextBox>
         </div>
-        <div>
+        <div class="mt-2">
             <SfTextBox Readonly="true" Placeholder="@L["TituloInquilino"]" FloatLabelType="FloatLabelType.Always"
                        Value="@SelectedRecord?.Inquilino"></SfTextBox>
         </div>
@@ -34,21 +34,24 @@
         {
             <div>
                 <SfTextBox CssClass="custom-class" Readonly="true" Placeholder="@L["TituloUltimoPagamento"]" FloatLabelType="FloatLabelType.Always"
-                       Width="120"
-                       Value="@ultimoPagamentoRenda.ToShortDateString()"></SfTextBox>
+                           Width="120"
+                           Value="@ultimoPagamentoRenda.ToShortDateString()"></SfTextBox>
             </div>
         }
         <div class="display-amounts">
             <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorPrevisto"]" FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorPrevisto.ToString("C2")"></SfTextBox>
             <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorRecebido"]" FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorRecebido.ToString("C2")"></SfTextBox>
-            <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloEmFalta"]" FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorEmFalta.ToString("C2")"></SfTextBox>
+            <SfTextBox Readonly="true" CssClass="@InDebtColor"
+                       Placeholder="@L["TituloEmFalta"]"
+                       FloatLabelType="FloatLabelType.Always"
+                       Value="@SelectedRecord?.ValorEmFalta.ToString("C2")"></SfTextBox>
         </div>
 
-        <div class="form-group mt-2">
+        <div hidden="@(!AllowEnteringAmountPaid)" class="form-group mt-2">
             <SfNumericTextBox Placeholder="@L["TituloValorPago"]" @bind-Value="@SelectedRecord.ValorRecebido"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
-                              Width="150px"                              
+                              Width="150px"
                               Decimals="2" Step="10"
                               ShowSpinButton=true
                               Currency="EUR">
@@ -60,7 +63,7 @@
                        HtmlAttributes="NotesAttribute"
                        CssClass="e-field e-corner"
                        FloatLabelType="FloatLabelType.Always"
-                       @bind-Value="@SelectedRecord.Notas">
+            @bind-Value="@SelectedRecord.Notas">
             </SfTextBox>
         </div>
     </EditForm>
@@ -116,10 +119,16 @@
     protected bool WarningVisibility { get; set; }
     protected string? WarningMessage { get; set; }
 
+    protected bool AllowEnteringAmountPaid = true;
+    protected string InDebtColor = "black";
 
     protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
     {
             {"rows", "3" }
+    };
+    protected Dictionary<string, object> ColorAttribute = new Dictionary<string, object>()
+    {
+            {"color", "yellow" }
     };
 
     protected override void OnInitialized()
@@ -139,6 +148,16 @@
         ValorEmFalta = SelectedRecord.ValorEmFalta;
         ultimoPagamentoRenda = await ArrendamentosService!.GetLastPaymentDate(SelectedRecord.ID_Propriedade);
         ValueReceived = SelectedRecord!.ValorRecebido;
+
+        if (ValorEmFalta > 0)
+        {
+            AllowEnteringAmountPaid = false;
+            InDebtColor = "custom-class e-error";
+        }
+        else
+        {
+            InDebtColor = "custom-class e-success";
+        }
     }
 
 
@@ -176,7 +195,9 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        gap: 3px;
+        margin-top: 12px;
+        margin-bottom: 12px;
+        gap: 12px;
     }
 
     .custom-class.e-control-wrapper .e-textbox {
@@ -185,5 +206,11 @@
 
     .right-align.e-control-wrapper .e-textbox {
         text-align: right;
+    }
+
+    /* To specify font size and color */
+    .e-float-input.e-control-wrapper:not(.e-error) input:valid ~ label.e-float-text, .e-float-input.e-control-wrapper:not(.e-error) input ~ label.e-label-top.e-float-text {
+        color: #343a40;
+        font-size: 14px;
     }
 </style>

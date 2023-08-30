@@ -102,7 +102,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningTitle = "";
 
             var leases = await leasesService.GetAll();
-            LeasesCount = leases.Count();
+            LeasesCount = leases.Count() == 6 ? 12 : leases.Count();
 
             await GetTransactions();
         }

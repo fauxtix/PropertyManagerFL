@@ -333,13 +333,13 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var idInquilino = recebimento.ID_Inquilino;
             var inquilino = await _repoInquilinos.GetInquilino_ById(idInquilino);
             var saldoCorrente = inquilino.SaldoCorrente + valorAcerto;
-            decimal valorEmFalta = recebimento.ValorPrevisto - valorAcerto; // saldoCorrente - valorAcerto;
+            decimal valorEmFalta = recebimento.ValorEmFalta; // recebimento.ValorPrevisto - valorAcerto; 30/08/2023
             decimal valorRecebido = 0;
             int currentStateAfterPayment = paymentState;
             string? Notas = "";
 
 
-            // TODO - se houver mais de um pagamento em atraso, não atualiza corretamento o saldo do inquilino !! Erro na stored procedure?
+            // TODO - se houver mais de um pagamento em atraso, não atualiza corretamente o saldo do inquilino !! Erro na stored procedure?
             try
             {
                 if (paymentState == 2) // parcial
@@ -365,6 +365,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 parameters.Add("@ValorEmDivida", valorEmFalta);
                 parameters.Add("@SaldoCorrente", saldoCorrente);
                 parameters.Add("@ValorRecebido", valorRecebido);
+                parameters.Add("@UpdatedDate", DateTime.UtcNow);
                 parameters.Add("@TenantId", idInquilino);
 
                 parameters.Add("@Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);

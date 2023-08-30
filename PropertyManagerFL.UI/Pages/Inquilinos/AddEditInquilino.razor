@@ -22,7 +22,7 @@
                                Placeholder="@L["TituloNome"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="@FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Nome">
+                    @bind-Value="@Tenant!.Nome">
                     </SfTextBox>
                 </div>
                 <div class="form-group mt-2">
@@ -30,7 +30,7 @@
                                Placeholder="@L["TituloMorada"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Morada">
+                    @bind-Value="@Tenant!.Morada">
                     </SfTextBox>
                 </div>
                 <div class="form-group mt-2">
@@ -38,14 +38,14 @@
                                Placeholder="@L["TituloNaturalidade"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Naturalidade">
+                    @bind-Value="@Tenant!.Naturalidade">
                     </SfTextBox>
                 </div>
                 <div class="group-box">
                     <SfDatePicker Enabled="true" Placeholder="@L["TituloDtNascimento"]"
                                   CssClass="e-align-middle e-corner"
                                   FloatLabelType="FloatLabelType.Always"
-                                  @bind-Value="@Tenant.DataNascimento">
+                    @bind-Value="@Tenant.DataNascimento">
                         <DatePickerEvents TValue="DateTime" ValueChange="DtNascChanged"></DatePickerEvents>
                     </SfDatePicker>
                     <SfTextBox Placeholder="@L["MSG_Idade"]" Readonly="true"
@@ -67,18 +67,18 @@
                     <SfTextBox Placeholder="@L["TituloIdentificacao"]"
                                CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Identificacao">
+                    @bind-Value="@Tenant!.Identificacao">
                     </SfTextBox>
                     <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]"
                                   CssClass="e-corner"
                                   FloatLabelType="FloatLabelType.Always"
-                                  @bind-Value="@Tenant.ValidadeCC">
+                    @bind-Value="@Tenant.ValidadeCC">
                         <DatePickerEvents TValue="DateTime"></DatePickerEvents>
                     </SfDatePicker>
                     <SfTextBox Placeholder="NIF"
                                CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.NIF">
+                    @bind-Value="@Tenant!.NIF">
                     </SfTextBox>
 
                 </div>
@@ -87,13 +87,13 @@
                                Width="130px"
                                CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Contacto1">
+                    @bind-Value="@Tenant!.Contacto1">
                     </SfTextBox>
                     <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #2")"
                                Width="130px"
                                CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.Contacto2">
+                    @bind-Value="@Tenant!.Contacto2">
                     </SfTextBox>
                 </div>
                 <div class="form-group mt-2">
@@ -101,7 +101,7 @@
                                Placeholder="e-mail"
                                CssClass="e-field e-corner"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Tenant!.eMail">
+                    @bind-Value="@Tenant!.eMail">
                     </SfTextBox>
                 </div>
             </div>
@@ -113,13 +113,13 @@
                                            Value=true
                                            Label="Titular"
                                            TChecked="bool"
-                                           @bind-Checked="@(Tenant.Titular)">
+                            @bind-Checked="@(Tenant.Titular)">
                             </SfRadioButton>
                             <SfRadioButton Name="TitularInquilino"
                                            Label="@L["TituloInquilino"]"
                                            Value=false
                                            TChecked="bool"
-                                           @bind-Checked="@(Tenant.Titular)">
+                            @bind-Checked="@(Tenant.Titular)">
                             </SfRadioButton>
                         </div>
                     </div>
@@ -138,32 +138,32 @@
                                    HtmlAttributes="NotesAttribute"
                                    CssClass="e-field e-corner"
                                    FloatLabelType="FloatLabelType.Always"
-                                   @bind-Value="@Tenant.Notas">
+                        @bind-Value="@Tenant.Notas">
                         </SfTextBox>
                     </div>
                     @if (EditMode == OpcoesRegisto.Gravar && Tenant.Titular)
                     {
                         <div class="group-box">
                             <SfTextBox Placeholder="@L["TituloEstado"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@Status">
+                                       Readonly="true"
+                                       CssClass="e-field e-corner custom-class"
+                                       FloatLabelType="FloatLabelType.Always"
+                                       Value="@Status">
                             </SfTextBox>
                             <SfTextBox Placeholder="@L["TituloUltimoMesPago"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@LastMonthPaid">
+                                       Readonly="true"
+                                       CssClass="e-field e-corner custom-class"
+                                       FloatLabelType="FloatLabelType.Always"
+                                       Value="@LastMonthPaid">
                             </SfTextBox>
 
                             @if (RealBalance == 0)
                             {
                                 <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@CurrentBalance">
+                                           Readonly="true"
+                                           CssClass="e-field e-corner custom-class"
+                                           FloatLabelType="FloatLabelType.Always"
+                                           Value="@CurrentBalance">
                                 </SfTextBox>
                             }
 
@@ -172,22 +172,22 @@
                             @if (RealBalance != 0)
                             {
                                 <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@CurrentBalance">
+                                           Readonly="true"
+                                           CssClass="e-field e-corner custom-class"
+                                           FloatLabelType="FloatLabelType.Always"
+                                           Value="@CurrentBalance">
                                 </SfTextBox>
                                 <SfTextBox Placeholder="@L["TituloSaldoPrevisto"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@Tenant.SaldoPrevisto.ToString("C2")">
+                                           Readonly="true"
+                                           CssClass="e-field e-corner custom-class"
+                                           FloatLabelType="FloatLabelType.Always"
+                                           Value="@Tenant.SaldoPrevisto.ToString("C2")">
                                 </SfTextBox>
                                 <SfTextBox Placeholder="@L["TituloDiferenca"]"
-                                   Readonly="true"
-                                   CssClass="e-field e-corner custom-class"
-                                   FloatLabelType="FloatLabelType.Always"
-                                   Value="@(RealBalance.ToString("C2"))">
+                                           Readonly="true"
+                                           CssClass="@InDebtColor"
+                                           FloatLabelType="FloatLabelType.Always"
+                                           Value="@(RealBalance.ToString("C2"))">
                                 </SfTextBox>
                             }
                         </div>
@@ -215,6 +215,7 @@
     protected string? CurrentBalanceColor;
     protected string? LastMonthPaid;
 
+    protected string InDebtColor = "black";
 
     public IEnumerable<LookupTableVM>? MaritalStatus { get; set; }
 
@@ -233,6 +234,14 @@
         RealBalance = Tenant.SaldoPrevisto - Tenant.SaldoCorrente;
         LastMonthPaid = await inquilinoService.GetUltimoMesPago_Inquilino(Tenant.Id);
 
+        if(RealBalance > 0)
+        {
+            InDebtColor = "e-field e-corner custom-class e-error";
+        }
+        else
+        {
+            InDebtColor = "e-field e-corner custom-class e-success";
+        }
     }
 
     protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
