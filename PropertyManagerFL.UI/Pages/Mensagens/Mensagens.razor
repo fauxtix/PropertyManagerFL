@@ -9,8 +9,8 @@
 
 @using Syncfusion.Blazor.Navigations
 
-<PageTitle>Mensagens</PageTitle>
-<PageTitleComponent PageTitle="Mensagens"></PageTitleComponent>
+<PageTitle>@L["TituloMenuMensagens"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuMensagens"]"></PageTitleComponent>
 @if (_messages is null && InquilinosLookup is null)
 {
     <LoadingData />
@@ -21,7 +21,7 @@ else
         <SfTab OverflowMode="OverflowMode.Scrollable">
             <TabItems>
                 <TabItem>
-                    <HeaderTemplate>Mensagem</HeaderTemplate>
+                    <HeaderTemplate>@L["TituloMensagem"]</HeaderTemplate>
                     <ContentTemplate>
                         <div class="row">
                             <div class="col-md-6 offset-2">
@@ -29,16 +29,16 @@ else
                                     @*<input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" />*@
                                     <div class="group-box g-5">
                                         <div class="mb-1">
-                                            <SfRadioButton Name="options" Label="Recebida do inquilino" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                            <SfRadioButton Name="options" Label="@L["TituloRecebidaInquilino"]" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                            <SfRadioButton Name="options" Label="Enviada ao inquilino" Value="2" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                            <SfRadioButton Name="options" Label="@L["TituloEnviadaInquilino"]" Value="2" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                            <SfRadioButton Name="options" Label="Outro Recebimento" Value="3" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                            <SfRadioButton Name="options" Label="@L["TituloOutroRecebimentoMensagem"]" Value="3" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                            <SfRadioButton Name="options" Label="Outro Envio" Value="4" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                            <SfRadioButton Name="options" Label="@L["TituloOutroEnvioMensagem"]" Value="4" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
                                         </div>
@@ -74,20 +74,20 @@ else
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label asp-for="SubjectTitle">Assunto</label>
+                                        <label asp-for="SubjectTitle">@L["msgUploadSubject"]</label>
                                         <SfTextBox Type="InputType.Text"
                                                @bind-Value="@_message!.SubjectTitle"
-                                               CssClass="form-control" Placeholder="Assunto" />
+                                                   CssClass="form-control" Placeholder="@L["msgUploadSubject"]" />
                                     </div>
                                     <div class="my-3">
-                                        <label asp-for="MessageContent">Mensagem</label>
+                                        <label asp-for="MessageContent">@L["TituloMensagem"]</label>
                                         <SfTextBox Multiline="true" Type="InputType.Text" ID="message"
                                                @bind-Value="@_message!.MessageContent"
-                                               CssClass="form-control" Placeholder="Mensagem" />
+                                                   CssClass="form-control" Placeholder="@L["TituloMensagem"]" />
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="example-label">Referência</label>
+                                        <label class="example-label">@L["TituloReferencia"]"</label>
                                         <SfAutoComplete TValue="string" TItem="ComposeMessageVM" Placeholder="e.g. Ref#..." DataSource="@_messages" Autofill=true @bind-Value="@_message.ReferenceId">
                                             <AutoCompleteFieldSettings Value="ReferenceId" />
                                         </SfAutoComplete>
@@ -95,11 +95,11 @@ else
                                     <div class="group-box">
                                         <div class="form-group mt-2">
                                             <SfButton CssClass="e-btn e-outline e-success" IconCss="fas fa-save"
-                                                  Content="Guarda mensagem" OnClick="(()=>SendMessage(1))" />
-                                            <SfButton CssClass="e-btn e-outline e-warning" IconCss="fas fa-paper-plane"
-                                                  Content="Guarda mensagem e envia email" OnClick="(()=>SendMessage(2))" />
+                                                      Content="@L["TituloGuardaMensagem"]" OnClick="(()=>SendMessage(1))" />
+                                            <SfButton CssClass="e-btn e-outline e-primary" IconCss="fas fa-paper-plane"
+                                                      Content="@L["TituloGuardaMensagemEnviaEmail"]" OnClick="(()=>SendMessage(2))" />
                                             <SfButton CssClass="e-btn e-outline e-secondary" IconCss="fas fa-times"
-                                                  Content="Cancelar" OnClick="GotoIndex" />
+                                                  Content="@L["btnCancelar"]" OnClick="GotoIndex" />
                                         </div>
                                     </div>
                                 </EditForm>
@@ -111,7 +111,7 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>Recebidas</HeaderTemplate>
+                    <HeaderTemplate>@L["TituloMensagensRecebidas"]</HeaderTemplate>
                     <ContentTemplate>
                         <div class="container">
                             <h2 class="display-4 fw-normal"></h2>
@@ -139,8 +139,8 @@ else
                                     <GridColumns>
                                         <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
                                         <GridColumn Field=@nameof(ComposeMessageVM.MessageReceivedOn) EditType="EditType.DatePickerEdit"
-                                                HeaderText="Receção" Format="d" Width="90"></GridColumn>
-                                        <GridColumn AllowEditing="false" HeaderText="Inquilino" Width="80" TextAlign="TextAlign.Center">
+                                                    HeaderText="@L["TituloRececaoMensagens"]" Format="d" Width="90"></GridColumn>
+                                        <GridColumn AllowEditing="false" HeaderText="@L["TituloInquilino"]" Width="80" TextAlign="TextAlign.Center">
                                             <Template Context="msgCtx">
                                                 @{
                                                     var msg = (msgCtx as ComposeMessageVM);
@@ -148,10 +148,10 @@ else
                                                 }
                                             </Template>
                                         </GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="Remetente" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="Referência" Width="80"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="@L["TituloRemetente"]" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloReferencia"]" Width="80"></GridColumn>
                                     </GridColumns>
                                 </SfGrid>
                             </div>
@@ -159,7 +159,7 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>Enviadas</HeaderTemplate>
+                    <HeaderTemplate>@L["TituloMensagensEnviadas"]</HeaderTemplate>
                     <ContentTemplate>
                         <div class="container">
                             <h2 class="display-4 fw-normal"></h2>
@@ -187,12 +187,12 @@ else
                                         <GridColumns>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageSentOn) EditType="EditType.DatePickerEdit"
-                                                    HeaderText="Envio" Width="90" Format="d"></GridColumn>
+                                                        HeaderText="@L["TituloEnvioMensagem"]" Width="90" Format="d"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.DestinationEmail) AllowEditing="false"
-                                                    HeaderText="Destinatário" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="Referência" Width="80"></GridColumn>
+                                                        HeaderText="@L["TituloDestinatarioMensagem"]" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloReferencia"]" Width="80"></GridColumn>
                                         </GridColumns>
                                     </SfGrid>
                                 </div>
@@ -204,7 +204,7 @@ else
         </SfTab>
     </div>
 
-    <div hidden="true" class="accordion" id="accordionPanelsStayOpenExample">
+    <div hidden="hidden" class="accordion" id="accordionPanelsStayOpenExample">
         <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
@@ -392,12 +392,12 @@ else
                                         <GridColumns>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageSentOn) EditType="EditType.DatePickerEdit"
-                                                    HeaderText="Envio" Width="90" Format="d"></GridColumn>
+                                                    HeaderText="@L["TituloEnvioMensagem"]" Width="90" Format="d"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.DestinationEmail) AllowEditing="false"
-                                                    HeaderText="Destinatário" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="Referência" Width="80"></GridColumn>
+                                                    HeaderText="@L["TituloDestinatario"]" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
+                                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloMensagem"]" Width="80"></GridColumn>
                                         </GridColumns>
                                     </SfGrid>
                                 </div>
@@ -409,6 +409,8 @@ else
         </div>
 
     </div>
+
+
 }
 @code {
 
@@ -624,7 +626,7 @@ else
         {
             case 1:
                 senderReceiverLabel = "e-Mail do Destinatário";
-                comboPlaceHolder = "Remetente";
+                comboPlaceHolder = L["TituloRemetente"];
                 ShowTenantsCombo = true;
                 ShowResultMessage = false;
                 _message.MessageReceivedOn = DateTime.UtcNow;
@@ -632,7 +634,7 @@ else
                 break;
             case 2: // enviada ao inquilino
                 senderReceiverLabel = "e-Mail do Destinatário";
-                comboPlaceHolder = "Destinatário";
+                comboPlaceHolder = L["TituloDestinatarioMensagem"];
 
                 ShowTenantsCombo = true;
                 ShowResultMessage = false;

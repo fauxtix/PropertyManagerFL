@@ -2231,6 +2231,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Destinatário.
+        /// </summary>
+        public static string TituloDestinatarioMensagem {
+            get {
+                return ResourceManager.GetString("TituloDestinatarioMensagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dias.
         /// </summary>
         public static string TituloDias {
@@ -2330,11 +2339,29 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enviada ao Inquilino.
+        /// </summary>
+        public static string TituloEnviadaInquilino {
+            get {
+                return ResourceManager.GetString("TituloEnviadaInquilino", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Envio de carta ao Inquilino.
         /// </summary>
         public static string TituloEnvioCartaInquilino {
             get {
                 return ResourceManager.GetString("TituloEnvioCartaInquilino", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Envio.
+        /// </summary>
+        public static string TituloEnvioMensagem {
+            get {
+                return ResourceManager.GetString("TituloEnvioMensagem", resourceCulture);
             }
         }
         
@@ -2555,6 +2582,24 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Guarda mensagem.
+        /// </summary>
+        public static string TituloGuardaMensagem {
+            get {
+                return ResourceManager.GetString("TituloGuardaMensagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Guarda mensagem e envi e-mail.
+        /// </summary>
+        public static string TituloGuardaMensagemEnviaEmail {
+            get {
+                return ResourceManager.GetString("TituloGuardaMensagemEnviaEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Identificação.
         /// </summary>
         public static string TituloIdentificacao {
@@ -2767,6 +2812,24 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloMensagem {
             get {
                 return ResourceManager.GetString("TituloMensagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enviadas.
+        /// </summary>
+        public static string TituloMensagensEnviadas {
+            get {
+                return ResourceManager.GetString("TituloMensagensEnviadas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recebidas.
+        /// </summary>
+        public static string TituloMensagensRecebidas {
+            get {
+                return ResourceManager.GetString("TituloMensagensRecebidas", resourceCulture);
             }
         }
         
@@ -3077,6 +3140,24 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Outro envio.
+        /// </summary>
+        public static string TituloOutroEnvioMensagem {
+            get {
+                return ResourceManager.GetString("TituloOutroEnvioMensagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Outro recebimento.
+        /// </summary>
+        public static string TituloOutroRecebimentoMensagem {
+            get {
+                return ResourceManager.GetString("TituloOutroRecebimentoMensagem", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pagamento.
         /// </summary>
         public static string TituloPagamento {
@@ -3365,6 +3446,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recebida do Inquilino.
+        /// </summary>
+        public static string TituloRecebidaInquilino {
+            get {
+                return ResourceManager.GetString("TituloRecebidaInquilino", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recebimentos.
         /// </summary>
         public static string TituloRecebimentos {
@@ -3374,11 +3464,38 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Receção.
+        /// </summary>
+        public static string TituloRececaoMensagens {
+            get {
+                return ResourceManager.GetString("TituloRececaoMensagens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Recibo Vencimento.
         /// </summary>
         public static string TituloReciboVencimento {
             get {
                 return ResourceManager.GetString("TituloReciboVencimento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Referência.
+        /// </summary>
+        public static string TituloReferencia {
+            get {
+                return ResourceManager.GetString("TituloReferencia", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remetente.
+        /// </summary>
+        public static string TituloRemetente {
+            get {
+                return ResourceManager.GetString("TituloRemetente", resourceCulture);
             }
         }
         

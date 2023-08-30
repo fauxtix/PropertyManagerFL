@@ -19,7 +19,7 @@
                            Placeholder="Título"
                            CssClass="e-field  e-corner"
                            FloatLabelType="@FloatLabelType.Auto"
-                           @bind-Value="@Document!.Title">
+                @bind-Value="@Document!.Title">
                 </SfTextBox>
             </div>
             <div class="form-group my-2">
@@ -28,35 +28,44 @@
                            HtmlAttributes="@NotesAttribute"
                            CssClass="e-field  e-corner"
                            FloatLabelType="FloatLabelType.Auto"
-                           @bind-Value="@Document!.Description">
+                @bind-Value="@Document!.Description">
                 </SfTextBox>
             </div>
-            <div class="form-group my-2">
-                <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                Value="@idxTipoCategoriaDocumento" ShowClearButton="true" Width="250px"
-                                Enabled="@(EditMode == OpcoesRegisto.Inserir)"
-                                FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="Categoria Documento" DataSource="@DocumentTypeCategories" FloatLabelType="FloatLabelType.Always">
-                    <DropDownListTemplates TItem="DocumentType">
-                    </DropDownListTemplates>
-                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoDocumento"></DropDownListEvents>
-                    <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                </SfDropDownList>
-            </div>
-            <div class="form-group my-2">
-                <SfDropDownList TValue="int" TItem="DocumentType" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                Value="@idxTipoDocumento" ShowClearButton="true" Width="250px"
-                                Enabled="@(ShowTipoDocumento && (EditMode == OpcoesRegisto.Inserir))"
-                                FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="Tipo Documento" DataSource="@DocumentTypes" FloatLabelType="FloatLabelType.Always">
-                    <DropDownListTemplates TItem="DocumentType">
-                    </DropDownListTemplates>
-                    <DropDownListEvents TValue="int" TItem="DocumentType" ValueChange="onChangeTipoCategoriaDocumento"></DropDownListEvents>
-                    <DropDownListFieldSettings Value="Id" Text="Name"></DropDownListFieldSettings>
-                </SfDropDownList>
-            </div>
+            @if (EditMode == OpcoesRegisto.Inserir)
+            {
+                <div class="form-group my-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxTipoCategoriaDocumento" ShowClearButton="true" Width="250px"
+                                    Enabled="@(EditMode == OpcoesRegisto.Inserir)"
+                                    FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Categoria Documento" DataSource="@DocumentCategories" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="DocumentType">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeDocumentTypeCategories"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="form-group my-2">
+                    <SfDropDownList TValue="int" TItem="DocumentType" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxTipoDocumento" ShowClearButton="true" Width="250px"
+                                    Enabled="@(ShowTipoDocumento && (EditMode == OpcoesRegisto.Inserir))"
+                                    FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Tipo Documento" DataSource="@DocumentTypes" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="DocumentType">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="DocumentType" ValueChange="onChangeDocumentType"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Name"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+            }
+            else
+            {
+                <div class="form-group my-2 ml-2 mr-4">
+                    <SfMessage Severity="MessageSeverity.Success" ShowIcon="false" Variant="MessageVariant.Text">@documentCategory.</SfMessage>
+                </div>
+            }
         </div>
-        <div hidden="@(HideUploader && (EditMode == OpcoesRegisto.Gravar))" class="form-group my-3">
+        <div hidden="@HideUploader" class="form-group my-3">
             <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=false
                         DropArea=".control-fluid"
                         AllowMultiple="false" AllowedExtensions=".pdf"
@@ -66,8 +75,25 @@
                 <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
             </SfUploader>
         </div>
-        <div hidden="@HideUploadedFile" class="form-group my-2">
-            <SfMessage Severity="MessageSeverity.Success" ShowIcon="false" Variant="MessageVariant.Text">@uploadedFile</SfMessage>
+        <div class="form-group my-2 mx-2">
+            @if (EditMode == OpcoesRegisto.Gravar)
+            {
+                <div class="form-group my-2">
+                    <SfMessage Severity="MessageSeverity.Success" ShowIcon="false" Variant="MessageVariant.Text">@uploadedFile</SfMessage>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <SfTextBox Enabled="true"
+                               Placeholder="URL"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                    @bind-Value="@Document!.URL">
+                    </SfTextBox>
+                </div>
+
+            }
         </div>
 
     </EditForm>
@@ -77,6 +103,7 @@
 
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
     [Inject] public IDocumentosService? documentsService { get; set; }
+    [Inject] public IStringLocalizer<App> L { get; set; }
 
     [Parameter] public DocumentoVM? Document { get; set; }
     [Parameter] public OpcoesRegisto EditMode { get; set; }
@@ -86,15 +113,16 @@
     protected int idxTipoCategoriaDocumento = 0;
 
     protected bool HideDocumentCategory = true;
-    protected bool HideUploader = true;
-    protected bool HideUploadedFile = true;
+    protected bool HideUploader = false;
+    protected bool HideUploadedFile = false;
 
     protected bool ShowTipoDocumento;
 
     protected string? DocumentCategoryCaption;
     protected string? uploadedFile;
+    protected string? documentCategory;
 
-    public IEnumerable<LookupTableVM>? DocumentTypeCategories { get; set; }
+    public IEnumerable<LookupTableVM>? DocumentCategories { get; set; }
     public IEnumerable<DocumentType>? DocumentTypes { get; set; }
 
     protected SfUploader? sfUploader;
@@ -111,38 +139,41 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        DocumentTypeCategories = (await LookupTablesService!.GetLookupTableData("DocumentTypeCategories")).ToList();
-        DocumentTypes = (await GetCategoryTypes());
+        DocumentCategories = (await LookupTablesService!.GetLookupTableData("DocumentTypeCategories")).ToList();
+        DocumentTypes = (await GetDocumentTypes());
+        HideUploader = false;
 
         if (EditMode == OpcoesRegisto.Gravar)
         {
+
             idxTipoCategoriaDocumento = Document!.DocumentTypeId;
             idxTipoDocumento = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).TypeCategoryId;
+            documentCategory = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).Name;
+            HideUploader = true;
+            uploadedFile = Document.URL;
         }
         HideDocumentCategory = true;
-        HideUploadedFile = true;
-        HideUploader = true;
+        //        HideUploadedFile = true;
 
         ShowTipoDocumento = false;
     }
 
-    protected async Task onChangeTipoDocumento(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected async Task onChangeDocumentTypeCategories(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
     {
         ShowTipoDocumento = true;
         idxTipoCategoriaDocumento = args.Value;
-        Document!.DocumentTypeId = idxTipoCategoriaDocumento;
+        Document!.DocumentCategoryId = idxTipoCategoriaDocumento;
 
-        DocumentTypes = (await GetCategoryTypes()).Where(dt => dt.TypeCategoryId == idxTipoCategoriaDocumento);
+        DocumentTypes = DocumentTypes.Where(dt => dt.TypeCategoryId == idxTipoCategoriaDocumento);
 
         StateHasChanged();
     }
 
-    protected void onChangeTipoCategoriaDocumento(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DocumentType> args)
+    protected void onChangeDocumentType(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, DocumentType> args)
     {
         if (args == null || args.Value == 0) return;
-
         idxTipoDocumento = args.Value;
-
+        Document.DocumentTypeId = idxTipoDocumento;
         HideDocumentCategory = false;
         if (EditMode != OpcoesRegisto.Inserir)
             return;
@@ -169,7 +200,7 @@
         }
     }
 
-    private async Task<IEnumerable<DocumentType>> GetCategoryTypes()
+    private async Task<IEnumerable<DocumentType>> GetDocumentTypes()
     {
         return (await documentsService!.GetAll_DocumentTypes()).ToList();
     }
@@ -183,6 +214,13 @@
 
         Document!.URL = uploadedFile;
 
+        StateHasChanged();
+    }
+
+    protected void HandleDocumentSource(ChangeArgs<bool> args)
+    {
+        var localUpload = args.Value;
+        HideUploadedFile = !localUpload;
         StateHasChanged();
     }
 

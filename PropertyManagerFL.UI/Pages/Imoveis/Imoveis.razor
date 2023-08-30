@@ -59,7 +59,7 @@ else
             <SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
                    Visible=@WarningVisibility>@WarningMessage</SfMessage>
         </div>
-        <div id="target" class="table table-stripped table-hover">
+        <div id="target" class="table table-stripped table-hover" style="background-color:#fefefe">
             <SfGrid ID="Properties_Grid"
                 @ref="propertiesGridObj"
                 DataSource="@properties"

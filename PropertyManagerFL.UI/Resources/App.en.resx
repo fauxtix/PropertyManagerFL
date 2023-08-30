@@ -2406,4 +2406,43 @@
   <data name="TituloMesesQueFaltam" xml:space="preserve">
     <value>Months to go</value>
   </data>
+  <data name="TituloDestinatarioMensagem" xml:space="preserve">
+    <value>Receiver</value>
+  </data>
+  <data name="TituloEnviadaInquilino" xml:space="preserve">
+    <value>Sent to the Tenant</value>
+  </data>
+  <data name="TituloEnvioMensagem" xml:space="preserve">
+    <value>Delivery</value>
+  </data>
+  <data name="TituloGuardaMensagem" xml:space="preserve">
+    <value>Save message</value>
+  </data>
+  <data name="TituloGuardaMensagemEnviaEmail" xml:space="preserve">
+    <value>Save message and send e-mail</value>
+  </data>
+  <data name="TituloMensagensEnviadas" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="TituloMensagensRecebidas" xml:space="preserve">
+    <value>Received</value>
+  </data>
+  <data name="TituloOutroEnvioMensagem" xml:space="preserve">
+    <value>Other message sending</value>
+  </data>
+  <data name="TituloOutroRecebimentoMensagem" xml:space="preserve">
+    <value>Other reception</value>
+  </data>
+  <data name="TituloRecebidaInquilino" xml:space="preserve">
+    <value>Received from the Tenant</value>
+  </data>
+  <data name="TituloRececaoMensagens" xml:space="preserve">
+    <value>Reception</value>
+  </data>
+  <data name="TituloReferencia" xml:space="preserve">
+    <value>Reference</value>
+  </data>
+  <data name="TituloRemetente" xml:space="preserve">
+    <value>Sender</value>
+  </data>
 </root>

@@ -12,5 +12,6 @@
         public DateTime CreatedOn { get; set; }
         public DateTime LastModifiedOn { get; set; }
         public int DocumentTypeId { get; set; }
+        public int DocumentCategoryId { get; set; }
     }
 }

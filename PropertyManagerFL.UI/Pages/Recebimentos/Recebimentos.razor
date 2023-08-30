@@ -142,13 +142,17 @@ else
                                     var currentTransaction = (Registo as RecebimentoVM);
                                     if (currentTransaction is not null)
                                     {
-                                        if (currentTransaction.ValorPrevisto > 0)
+                                        if (currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido == currentTransaction.ValorPrevisto)
                                         {
                                             <span>@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
                                         }
+                                        else if(currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido > currentTransaction.ValorPrevisto)
+                                        {
+                                            <span style="color:orange">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                        }
                                         else
                                         {
-                                            <span style="color:darkorange">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                            <span style="color:red">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
                                         }
                                     }
                                 }
@@ -173,7 +177,37 @@ else
                                 }
                             </Template>
                         </GridColumn>
-                        <GridColumn Field=@nameof(RecebimentoVM.Estado) AllowFiltering="false" AllowSorting="true"
+                        <GridColumn AllowSorting="false" HeaderText="Status" Width="100px" TextAlign="TextAlign.Center">
+                            <Template Context="Registo">
+                                @{
+                                    var currentTransaction = (Registo as RecebimentoVM);
+                                    string chipCss = "";
+                                    string tranStatus = "";
+
+                                    if (currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido == currentTransaction.ValorPrevisto)
+                                    {
+                                        chipCss = "e-success";
+                                        tranStatus = "Ok";
+                                    }
+                                    else if(currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido > currentTransaction.ValorPrevisto)
+                                    {
+                                        chipCss = "e-warning";
+                                        tranStatus = "Acerto";
+                                    }
+                                    else
+                                    {
+                                        chipCss = "e-danger";
+                                        tranStatus = "Não paga";
+                                    }
+                                    <SfChip>
+                                    <ChipItems>
+                                        <ChipItem Text="@tranStatus" CssClass="@chipCss"></ChipItem>
+                                    </ChipItems>
+                                </SfChip>
+                                }
+                              </Template>
+                        </GridColumn>
+@*                         <GridColumn Field=@nameof(RecebimentoVM.Estado) AllowFiltering="false" AllowSorting="true"
                                 HideAtMedia="(min-width: 900px)"
                                 HeaderText="@L["TituloSituacao"]"
                                 Width="140">
@@ -202,7 +236,7 @@ else
                                 }
                             </Template>
                         </GridColumn>
-
+ *@
 @*                        <GridColumn Field=@nameof(RecebimentoVM.Notas) HeaderText="@L["TituloNotas"]"
                                 Width="250">
                         </GridColumn>
@@ -509,10 +543,11 @@ else
        .e-chip {
         /* Align the chip element */
         width: 120px !important;
+        
     }
     .e-chip-text {
         width:100px;
-        text-align:right;
+        text-align:center;
     }
    .e-collapse::before {
         content: '\e80f';

@@ -2044,6 +2044,11 @@
               Looks up a localized string similar to Todas as despesas.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDestinatarioMensagem">
+            <summary>
+              Looks up a localized string similar to Destinatário.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDias">
             <summary>
               Looks up a localized string similar to Dias.
@@ -2099,9 +2104,19 @@
               Looks up a localized string similar to Entregou caução.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloEnviadaInquilino">
+            <summary>
+              Looks up a localized string similar to Enviada ao Inquilino.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloEnvioCartaInquilino">
             <summary>
               Looks up a localized string similar to Envio de carta ao Inquilino.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloEnvioMensagem">
+            <summary>
+              Looks up a localized string similar to Envio.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloErroCriacaoPagamentos">
@@ -2224,6 +2239,16 @@
               Looks up a localized string similar to Grupo.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloGuardaMensagem">
+            <summary>
+              Looks up a localized string similar to Guarda mensagem.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloGuardaMensagemEnviaEmail">
+            <summary>
+              Looks up a localized string similar to Guarda mensagem e envi e-mail.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloIdentificacao">
             <summary>
               Looks up a localized string similar to Identificação.
@@ -2342,6 +2367,16 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMensagem">
             <summary>
               Looks up a localized string similar to Mensagem.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMensagensEnviadas">
+            <summary>
+              Looks up a localized string similar to Enviadas.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMensagensRecebidas">
+            <summary>
+              Looks up a localized string similar to Recebidas.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMenuArrendamentos">
@@ -2514,6 +2549,16 @@
               Looks up a localized string similar to Outras.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloOutroEnvioMensagem">
+            <summary>
+              Looks up a localized string similar to Outro envio.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloOutroRecebimentoMensagem">
+            <summary>
+              Looks up a localized string similar to Outro recebimento.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPagamento">
             <summary>
               Looks up a localized string similar to Pagamento.
@@ -2674,14 +2719,34 @@
               Looks up a localized string similar to Qtd.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRecebidaInquilino">
+            <summary>
+              Looks up a localized string similar to Recebida do Inquilino.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloRecebimentos">
             <summary>
               Looks up a localized string similar to Recebimentos.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRececaoMensagens">
+            <summary>
+              Looks up a localized string similar to Receção.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloReciboVencimento">
             <summary>
               Looks up a localized string similar to Recibo Vencimento.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloReferencia">
+            <summary>
+              Looks up a localized string similar to Referência.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRemetente">
+            <summary>
+              Looks up a localized string similar to Remetente.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloRenda">

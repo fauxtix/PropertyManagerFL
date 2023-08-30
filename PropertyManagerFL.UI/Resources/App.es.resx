@@ -2404,4 +2404,43 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloMesesQueFaltam" xml:space="preserve">
     <value>Faltan (meses)</value>
   </data>
+  <data name="TituloDestinatarioMensagem" xml:space="preserve">
+    <value>Destinatario</value>
+  </data>
+  <data name="TituloEnviadaInquilino" xml:space="preserve">
+    <value>Enviada al inquilino</value>
+  </data>
+  <data name="TituloEnvioMensagem" xml:space="preserve">
+    <value>Envío</value>
+  </data>
+  <data name="TituloGuardaMensagem" xml:space="preserve">
+    <value>Guardar mensaje</value>
+  </data>
+  <data name="TituloGuardaMensagemEnviaEmail" xml:space="preserve">
+    <value>Guardar mensaje y enviar e-mail</value>
+  </data>
+  <data name="TituloMensagensEnviadas" xml:space="preserve">
+    <value>Enviados</value>
+  </data>
+  <data name="TituloMensagensRecebidas" xml:space="preserve">
+    <value>Recibidas</value>
+  </data>
+  <data name="TituloOutroEnvioMensagem" xml:space="preserve">
+    <value>Otro envío</value>
+  </data>
+  <data name="TituloOutroRecebimentoMensagem" xml:space="preserve">
+    <value>Otra recepción</value>
+  </data>
+  <data name="TituloRecebidaInquilino" xml:space="preserve">
+    <value>Recibidas del Arrendatario</value>
+  </data>
+  <data name="TituloRececaoMensagens" xml:space="preserve">
+    <value>Recepción</value>
+  </data>
+  <data name="TituloReferencia" xml:space="preserve">
+    <value>Referencia</value>
+  </data>
+  <data name="TituloRemetente" xml:space="preserve">
+    <value>Remitente</value>
+  </data>
 </root>

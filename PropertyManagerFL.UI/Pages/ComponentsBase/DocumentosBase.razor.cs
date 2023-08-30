@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using Microsoft.JSInterop;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
@@ -8,7 +9,6 @@ using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
-using System.ComponentModel;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 using PdfFontFamily = Syncfusion.Pdf.Graphics.PdfFontFamily;
 using PdfNumberStyle = Syncfusion.Pdf.PdfNumberStyle;
@@ -26,6 +26,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public IDocumentosService? DocumentsService { get; set; }
         [Inject] protected IValidationService? validatorService { get; set; }
         [Inject] protected IStringLocalizer<App>? L { get; set; }
+        [Inject] protected NavigationManager? NavigationManager { get; set; }
+        [Inject]  protected IJSRuntime? JSRuntime { get; set; }
 
 
         /// <summary>
@@ -65,6 +67,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? documentDescription;
         protected string? documentsFolder;
 
+        protected bool localUpload = true;
         protected string DeleteMsg { get; set; } = string.Empty;
         protected string DirtyMsg { get; set; } = string.Empty;
 
@@ -92,7 +95,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningMessage = "";
             DocumentId = 0;
             IsDirty = false;
-
+            localUpload = true;
             Documents = await GetAllDocuments();
             if (!Documents.Any())
             {
@@ -119,7 +122,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             DocumentId = args.RowData.Id;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
             AddEditVisibility = true;
-                EditCaption = L["editionMsg"] + " " + L["TituloDocumento"]; ;
+            EditCaption = L["editionMsg"] + " " + L["TituloDocumento"]; ;
             RecordMode = OpcoesRegisto.Gravar;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
             OriginalDocumentData = await DocumentsService.GetDocument_ById(DocumentId); // TODO should use 'Clone/MemberWise'
@@ -175,26 +178,32 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 RecordMode = OpcoesRegisto.Info;
                 var fileName = args.RowData.URL;
-                PdfFilePath = DocumentsService.GetPdfFilename(documentsFolder!, fileName!);
-                if (string.IsNullOrEmpty(PdfFilePath))
+                if (fileName.ToLower().StartsWith("http"))
                 {
-                    ShowPdfVisibility = false;
-
-                    ToastTitle = "Leitura de pdf";
-                    ToastMessage = "Ficheiro não existe no local indicado! Verifique, p.f.";
-                    ToastCss = "e-toast-danger";
-                    ShowPdfVisibility = false;
-                    StateHasChanged();
-                    await Task.Delay(100);
-                    await ToastObj!.ShowAsync();
+                    await JSRuntime!.InvokeAsync<object>("open", fileName, "_blank");
                 }
                 else
                 {
-                    ShowPdfVisibility = true;
+                    PdfFilePath = DocumentsService.GetPdfFilename(documentsFolder!, fileName!);
+                    if (string.IsNullOrEmpty(PdfFilePath))
+                    {
+                        ShowPdfVisibility = false;
+
+                        ToastTitle = "Leitura de pdf";
+                        ToastMessage = "Ficheiro não existe no local indicado! Verifique, p.f.";
+                        ToastCss = "e-toast-danger";
+                        ShowPdfVisibility = false;
+                        StateHasChanged();
+                        await Task.Delay(100);
+                        await ToastObj!.ShowAsync();
+                    }
+                    else
+                    {
+                        ShowPdfVisibility = true;
+                    }
                 }
             }
         }
-
 
         protected async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
         {
@@ -390,6 +399,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 Description = "",
                 DocumentTypeId = 0,
                 IsPublic = true,
+                LocalUpload = true,
                 Title = "",
                 URL = "",
             };

@@ -2417,4 +2417,43 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloMesesQueFaltam" xml:space="preserve">
     <value>Il reste (mois)</value>
   </data>
+  <data name="TituloDestinatarioMensagem" xml:space="preserve">
+    <value>Destinataire</value>
+  </data>
+  <data name="TituloEnviadaInquilino" xml:space="preserve">
+    <value>Envoyée au locataire</value>
+  </data>
+  <data name="TituloEnvioMensagem" xml:space="preserve">
+    <value>Envoi</value>
+  </data>
+  <data name="TituloGuardaMensagem" xml:space="preserve">
+    <value>Enregistrer le message</value>
+  </data>
+  <data name="TituloGuardaMensagemEnviaEmail" xml:space="preserve">
+    <value>Enregistrer le message et envoyer un e-mail</value>
+  </data>
+  <data name="TituloMensagensEnviadas" xml:space="preserve">
+    <value>Envoyés</value>
+  </data>
+  <data name="TituloMensagensRecebidas" xml:space="preserve">
+    <value>Reçus</value>
+  </data>
+  <data name="TituloOutroEnvioMensagem" xml:space="preserve">
+    <value>Outro envio</value>
+  </data>
+  <data name="TituloOutroRecebimentoMensagem" xml:space="preserve">
+    <value>Autre message</value>
+  </data>
+  <data name="TituloRecebidaInquilino" xml:space="preserve">
+    <value>Reçu du locataire</value>
+  </data>
+  <data name="TituloRececaoMensagens" xml:space="preserve">
+    <value>Réception</value>
+  </data>
+  <data name="TituloReferencia" xml:space="preserve">
+    <value>Référence</value>
+  </data>
+  <data name="TituloRemetente" xml:space="preserve">
+    <value>Expéditeur</value>
+  </data>
 </root>

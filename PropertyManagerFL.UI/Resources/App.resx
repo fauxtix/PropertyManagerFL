@@ -1399,4 +1399,43 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloMesesQueFaltam" xml:space="preserve">
     <value>Faltam (meses)</value>
   </data>
+  <data name="TituloDestinatarioMensagem" xml:space="preserve">
+    <value>Destinatário</value>
+  </data>
+  <data name="TituloEnviadaInquilino" xml:space="preserve">
+    <value>Enviada ao Inquilino</value>
+  </data>
+  <data name="TituloEnvioMensagem" xml:space="preserve">
+    <value>Envio</value>
+  </data>
+  <data name="TituloGuardaMensagem" xml:space="preserve">
+    <value>Guarda mensagem</value>
+  </data>
+  <data name="TituloGuardaMensagemEnviaEmail" xml:space="preserve">
+    <value>Guarda mensagem e envi e-mail</value>
+  </data>
+  <data name="TituloMensagensEnviadas" xml:space="preserve">
+    <value>Enviadas</value>
+  </data>
+  <data name="TituloMensagensRecebidas" xml:space="preserve">
+    <value>Recebidas</value>
+  </data>
+  <data name="TituloOutroEnvioMensagem" xml:space="preserve">
+    <value>Outro envio</value>
+  </data>
+  <data name="TituloOutroRecebimentoMensagem" xml:space="preserve">
+    <value>Outro recebimento</value>
+  </data>
+  <data name="TituloRecebidaInquilino" xml:space="preserve">
+    <value>Recebida do Inquilino</value>
+  </data>
+  <data name="TituloRececaoMensagens" xml:space="preserve">
+    <value>Receção</value>
+  </data>
+  <data name="TituloReferencia" xml:space="preserve">
+    <value>Referência</value>
+  </data>
+  <data name="TituloRemetente" xml:space="preserve">
+    <value>Remetente</value>
+  </data>
 </root>

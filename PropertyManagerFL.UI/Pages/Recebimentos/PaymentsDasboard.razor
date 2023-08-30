@@ -141,10 +141,15 @@ else
                                     <SfGrid DataSource="@rentsAdjustments"
                                             RowHeight="28"
                                             AllowTextWrap="true"
+                                            AllowSorting="true"
                                             TValue="RentAdjustmentsVM"
                                             GridLines="GridLine.Horizontal">
                                         <GridColumns>
+                                            <GridColumn Field=@nameof(RentAdjustmentsVM.Id) HeaderText="#Id" IsPrimaryKey="true"
+                                                        TextAlign="TextAlign.Center" Width="60"></GridColumn>
                                             <GridColumn Field=@nameof(RentAdjustmentsVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                                        TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                                            <GridColumn Field=@nameof(RentAdjustmentsVM.UpdatedDate) HeaderText="Alteração"
                                                         TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
                                             <GridColumn Field=@nameof(RentAdjustmentsVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
                                                         Width="275"></GridColumn>
@@ -157,7 +162,36 @@ else
                                             <GridColumn Field=@nameof(RentAdjustmentsVM.Notas) HeaderText="@L["TituloNotas"]"
                                                         Width="250"></GridColumn>
                                         </GridColumns>
-
+                                        <GridAggregates>
+                                            <GridAggregate>
+                                                <GridAggregateColumns>
+                                                    <GridAggregateColumn Field=@nameof(RentAdjustmentsVM.ValorRenda) Type="AggregateType.Sum" Format="C2">
+                                                        <FooterTemplate>
+                                                            @{
+                                                                var groupTotal = (context as AggregateTemplateContext);
+                                                                <p class="my-1">@groupTotal!.Sum.ToString()</p>
+                                                            }
+                                                        </FooterTemplate>
+                                                    </GridAggregateColumn>
+                                                    <GridAggregateColumn Field=@nameof(RentAdjustmentsVM.ValorPago) Type="AggregateType.Sum" Format="C2">
+                                                        <FooterTemplate>
+                                                            @{
+                                                                var groupTotal = (context as AggregateTemplateContext);
+                                                                <p class="my-1">@groupTotal!.Sum.ToString()</p>
+                                                            }
+                                                        </FooterTemplate>
+                                                    </GridAggregateColumn>
+                                                    <GridAggregateColumn Field=@nameof(RentAdjustmentsVM.ValorEmDivida) Type="AggregateType.Sum" Format="C2">
+                                                        <FooterTemplate>
+                                                            @{
+                                                                var groupTotal = (context as AggregateTemplateContext);
+                                                                <p class="my-1">@groupTotal!.Sum.ToString()</p>
+                                                            }
+                                                        </FooterTemplate>
+                                                    </GridAggregateColumn>
+                                                </GridAggregateColumns>
+                                            </GridAggregate>
+                                        </GridAggregates>
                                     </SfGrid>
                                 </div>
                             </div>
@@ -249,7 +283,7 @@ else
         duePayments = paymentsList.Where(p => p.ValorRecebido == 0);
 
         rentsIncreased = (await tenantsService.GetAllRentUpdates()).ToList();
-        rentsAdjustments = (await tenantsService.GetRentAdjustments()).ToList();
+        rentsAdjustments = (await tenantsService.GetRentAdjustments()).ToList().OrderBy(o => o.TransactionId).ThenBy(o => o.Id);
         latePaymentLetters = (await tenantsService.GetLatePaymentLetters()).ToList();
     }
 }
