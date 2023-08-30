@@ -6,10 +6,32 @@ Application designed to assist landlords in managing their properties and rental
 
 - Centralized Property and Tenant Information: PMFL allows landlords to store all property and tenant details in one convenient location. From property specifications to tenant records and contact information, everything is easily accessible whenever you need it.
 
-- Rent Lease Creation: PMFL simplifies the process of creating rent leases.
+- Rent Lease Creation: PMFL simplifies the process of creating rent leases. It allows the the creation of existing ones.
 
 - Rent Payment Tracking: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
+- Keeping track of rental property expenses: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
+ Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
 
+- Tenant letters management:
+  
+  Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+  
+  Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
+  
+  Increase in Rent - an invitation to renew so the tenant can decide whether to stay
+  
+  Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
+  
+  Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
+  
+  Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
+
+  
+- Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
+  Each of these situations presupposes a letter alerting them to the change
+  
+- Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
+#
 # Sample Code
 
 Examples:
@@ -68,7 +90,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
     }
 }
 ```
-
+#
 Lease service (interface)
 ```cs:
 ﻿using PropertyManagerFL.Core.Entities;
@@ -127,7 +149,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
     }
 }
 ```
-
+#
 Implementing 'New lease'
 
 ```cs:
@@ -341,10 +363,12 @@ Implementing 'New lease'
         }
     }
 ```
-
+#
 
 # Screenshots
 
+- Properties
+  #
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
 
 ![Properties](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d1cf7d8f-900d-49c3-9065-82a86a92803a)
@@ -352,6 +376,8 @@ Implementing 'New lease'
 ![Properties_edit_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/8dbe7cfa-bea7-4260-96e6-75390c6fcfdc)
 ![Properties_edit_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/135498e8-f373-41d8-bf8f-35d3f6fb5a20)
 
+- Tenants
+  #
 ![Tenants](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/40d50281-d7ae-4acb-8b75-f40087801743)
 ![Tenants_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6edc7a70-b197-4e3b-b9e6-f540811d74ba)
 ![Tenants_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/11dce827-b339-4ac2-a8b8-b72bab92b956)
@@ -360,12 +386,18 @@ Implementing 'New lease'
 ![Tenants_documents_create_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/9fb35174-0c4a-4ecd-9105-4f75f91cf465)
 ![Tenants_guarantor](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d8742713-ecd6-48eb-b800-8eaed7c1cf3f)
 
+- Units
+ #
 ![Unit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/54a0caae-2265-49e6-8b87-e500d43ab15d)
 ![Unit_Images](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/77df0a32-2d8a-4699-ba78-2b66a8d00279)
 
+- Monthly payments
+ #
 ![MonthlyRentPayment_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/67874f25-5fb6-4e66-8cfd-1783c5eb1c29)
 ![MonthlyRentPayment_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6169ae59-9c2d-4db2-b407-f8e2d7bc6e58)
 
+- Payments
+  #
 ![Payments_Dashboard_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d4fe17c6-6977-4c60-b2a2-c5f3e22d7cb3)
 ![Payments_Dashboard_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/9961bd55-7314-45d0-bb26-f035b3800627)
 ![Payments](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/cdcc4ce8-ed48-48e9-8241-fe3a4da2770e)
@@ -374,9 +406,13 @@ Implementing 'New lease'
 ![Payments_new_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/0cfa598b-43ff-4398-9d9c-0523cfdaa363)
 ![Payments_new_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/aaf6cf89-7dca-46e2-a54f-1cf9984b56b4)
 
+- Leases
+ #
 ![Leases](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b573364b-939b-4f70-be09-acc9634093f5)
 ![Leases_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/85d07a7a-8c79-4fba-a252-359cf0a1e593)
 
+- Expenses
+ #
 ![Expenses_maintenance](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b164b028-23b8-4b6c-b057-e70d2f7ba095)
 ![Expenses_maintenance_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6dda062b-02e5-410c-a5ae-bc1bf961677c)
 ![Expenses_maintenance_subCategories_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c47278d5-e37e-44d0-9132-1f1cf8ec1d39)
@@ -386,9 +422,14 @@ Implementing 'New lease'
 ![Expenses_dashboard_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6e7a0cd7-39d2-4690-9dca-1f7de3c34b5d)
 ![Expenses_dashboard_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/37b05f59-b63b-47c9-9fbc-4552d6e27fa3)
 
-
+- Scheduler
+  #
 ![Scheduler_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/8419c317-ec2a-472e-8d4a-cb174b62a6f7)
 
+- Communicating with tenants
+  #
 ![Messages](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/33ed9de2-d80e-418f-bb00-df5d2a15ad32)
 
+- Contacts
+  #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
