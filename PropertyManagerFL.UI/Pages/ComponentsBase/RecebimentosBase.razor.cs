@@ -251,7 +251,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (ValidationsMessages == null)
             {
 
-                // Se fôr pagamento de renda, verifica se data entrada é anterior à data do último pagamento
+                // Se fôr pagamento de renda, verifica se data de entrada é anterior à data do último pagamento
                 if (SelectedTransation.Renda)
                 {
                     var rentsPaid = Transactions.Where(r => r.Renda && r.ID_Inquilino == SelectedTransation.ID_Inquilino).ToList();
