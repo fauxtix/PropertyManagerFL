@@ -89,7 +89,7 @@ else
                     <div class="row card-box mt-3">
                         <div class="col-md-12">
                             <div class="table table-striped w-100">
-                                <AlertMessage Message="Aumentos de renda" MessageType="AppDefinitions.AlertMessageType.Success"></AlertMessage>
+                                <AlertMessage Message="@L["TituloAumentosRenda"]" MessageType="AppDefinitions.AlertMessageType.Success"></AlertMessage>
                                 <SfGrid DataSource="@rentsIncreased"
                                         RowHeight="28"
                                         AllowTextWrap="true"
@@ -100,13 +100,13 @@ else
                                                     TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
                                         <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
                                                     Width="275"></GridColumn>
-                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["Fracao"]"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["TituloFracao"]"
                                                     Width="175"></GridColumn>
-                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) HeaderText="Antes" Format="C2"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) HeaderText="@L["TituloAntes"]" Format="C2"
                                                     TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) HeaderText="Depois" Format="C2"
+                                        <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) HeaderText="@L["TituloAgora"]" Format="C2"
                                                     TextAlign="TextAlign.Right" Width="110"></GridColumn>
-                                        <GridColumn HeaderText="Aumento" Format="C2"
+                                        <GridColumn HeaderText="@L["TituloAumento"]" Format="C2"
                                                     TextAlign="TextAlign.Right" Width="110">
                                             <Template>
                                                 @{
@@ -138,7 +138,7 @@ else
                         <div class="row card-box mt-3">
                             <div class="col-md-12">
                                 <div class="table table-striped w-100">
-                                    <AlertMessage Message="Pagamento de rendas com alterações/acertos" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                                    <AlertMessage Message="@L["TituloPagamentosComAlteracoes"]" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
                                     <SfGrid DataSource="@rentsAdjustments"
                                             RowHeight="28"
                                             AllowTextWrap="true"
@@ -208,20 +208,20 @@ else
                     <div class="row card-box mt-3">
                         <div class="col-md-12">
                             <div class="table table-striped w-100">
-                                <AlertMessage Message="Atraso no pagamento de rendas - cartas enviadas" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
+                                <AlertMessage Message="@L["TituloAtrasoRendasCartasEnviadas"]" MessageType="AppDefinitions.AlertMessageType.Error"></AlertMessage>
                                 <SfGrid DataSource="@latePaymentLetters"
                                         RowHeight="28"
                                         AllowTextWrap="true"
                                         TValue="LatePaymentLettersVM"
                                         GridLines="GridLine.Horizontal">
                                     <GridColumns>
-                                        <GridColumn Field=@nameof(LatePaymentLettersVM.CreationDate) HeaderText="Enviada em"
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.CreationDate) HeaderText="@L["TituloEnviadaEm"]"
                                                     TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                                        <GridColumn Field=@nameof(LatePaymentLettersVM.RefersTo) HeaderText="Mês em atraso"
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.RefersTo) HeaderText="@L["TituloMesEmAtraso"]"
                                                     Width="100"></GridColumn>
                                         <GridColumn Field=@nameof(LatePaymentLettersVM.NomeInquilino) HeaderText="@L["TituloInquilino"]"
                                                     Width="275"></GridColumn>
-                                        <GridColumn Field=@nameof(LatePaymentLettersVM.Description) HeaderText="Descrição"
+                                        <GridColumn Field=@nameof(LatePaymentLettersVM.Description) HeaderText="@L["rbtDescricao"]"
                                                     Width="300"></GridColumn>
                                     </GridColumns>
                                 </SfGrid>

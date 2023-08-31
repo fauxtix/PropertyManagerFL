@@ -1719,6 +1719,11 @@
               Looks up a localized string similar to Acertar pagamento.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAgora">
+            <summary>
+              Looks up a localized string similar to Agora.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAlertaSemArrendamentos">
             <summary>
               Looks up a localized string similar to Não há registo de Arrendamentos! Verifique, por favor..
@@ -1747,6 +1752,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAnoConstrucao">
             <summary>
               Looks up a localized string similar to Ano Construção.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAntes">
+            <summary>
+              Looks up a localized string similar to Antes.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAplicarFiltro">
@@ -1784,6 +1794,11 @@
               Looks up a localized string similar to Ativa.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAtrasoRendasCartasEnviadas">
+            <summary>
+              Looks up a localized string similar to Atraso no pagamento de rendas - cartas enviadas.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAtualizacaoRendas">
             <summary>
               Looks up a localized string similar to Atualização de rendas.
@@ -1792,6 +1807,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAtualizarValorRenda">
             <summary>
               Looks up a localized string similar to Atualizar valor da renda.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAumento">
+            <summary>
+              Looks up a localized string similar to Aumento.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAumentosRenda">
@@ -2102,6 +2122,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloEntregaCaucao">
             <summary>
               Looks up a localized string similar to Entregou caução.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloEnviadaEm">
+            <summary>
+              Looks up a localized string similar to Enviada em.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloEnviadaInquilino">
@@ -2434,6 +2459,11 @@
               Looks up a localized string similar to Mês anterior.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMesEmAtraso">
+            <summary>
+              Looks up a localized string similar to Mês em atraso.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMesesDecorridos">
             <summary>
               Looks up a localized string similar to Meses decorridos.
@@ -2592,6 +2622,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPagamentosAcertar">
             <summary>
               Looks up a localized string similar to Acertar.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPagamentosComAlteracoes">
+            <summary>
+              Looks up a localized string similar to Pagamento de rendas com alterações/acertos.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPagamentosEmDia">

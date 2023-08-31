@@ -2445,4 +2445,28 @@
   <data name="TituloRemetente" xml:space="preserve">
     <value>Sender</value>
   </data>
+  <data name="String1" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TituloAgora" xml:space="preserve">
+    <value>Now</value>
+  </data>
+  <data name="TituloAntes" xml:space="preserve">
+    <value>Before</value>
+  </data>
+  <data name="TituloAtrasoRendasCartasEnviadas" xml:space="preserve">
+    <value>Late payment of rents - letters sent out</value>
+  </data>
+  <data name="TituloAumento" xml:space="preserve">
+    <value>Increase</value>
+  </data>
+  <data name="TituloEnviadaEm" xml:space="preserve">
+    <value>Sent in</value>
+  </data>
+  <data name="TituloMesEmAtraso" xml:space="preserve">
+    <value>Overdue month</value>
+  </data>
+  <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
+    <value>Rent payments with changes/adjustments</value>
+  </data>
 </root>

@@ -2456,4 +2456,25 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloRemetente" xml:space="preserve">
     <value>Expéditeur</value>
   </data>
+  <data name="TituloAgora" xml:space="preserve">
+    <value>Maintenant</value>
+  </data>
+  <data name="TituloAntes" xml:space="preserve">
+    <value>Avant</value>
+  </data>
+  <data name="TituloAtrasoRendasCartasEnviadas" xml:space="preserve">
+    <value>Retard de paiement du loyer - lettres envoyées</value>
+  </data>
+  <data name="TituloAumento" xml:space="preserve">
+    <value>Augmentation</value>
+  </data>
+  <data name="TituloEnviadaEm" xml:space="preserve">
+    <value>Posté le</value>
+  </data>
+  <data name="TituloMesEmAtraso" xml:space="preserve">
+    <value>Mois en retard</value>
+  </data>
+  <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
+    <value>Paiements de loyers avec changements/ajustements</value>
+  </data>
 </root>

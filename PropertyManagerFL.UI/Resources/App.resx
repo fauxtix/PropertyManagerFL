@@ -1438,4 +1438,25 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloRemetente" xml:space="preserve">
     <value>Remetente</value>
   </data>
+  <data name="TituloAgora" xml:space="preserve">
+    <value>Agora</value>
+  </data>
+  <data name="TituloAntes" xml:space="preserve">
+    <value>Antes</value>
+  </data>
+  <data name="TituloAtrasoRendasCartasEnviadas" xml:space="preserve">
+    <value>Atraso no pagamento de rendas - cartas enviadas</value>
+  </data>
+  <data name="TituloAumento" xml:space="preserve">
+    <value>Aumento</value>
+  </data>
+  <data name="TituloEnviadaEm" xml:space="preserve">
+    <value>Enviada em</value>
+  </data>
+  <data name="TituloMesEmAtraso" xml:space="preserve">
+    <value>Mês em atraso</value>
+  </data>
+  <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
+    <value>Pagamento de rendas com alterações/acertos</value>
+  </data>
 </root>

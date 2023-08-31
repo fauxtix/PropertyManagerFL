@@ -1646,6 +1646,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Agora.
+        /// </summary>
+        public static string TituloAgora {
+            get {
+                return ResourceManager.GetString("TituloAgora", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Não há registo de Arrendamentos! Verifique, por favor..
         /// </summary>
         public static string TituloAlertaSemArrendamentos {
@@ -1696,6 +1705,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloAnoConstrucao {
             get {
                 return ResourceManager.GetString("TituloAnoConstrucao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Antes.
+        /// </summary>
+        public static string TituloAntes {
+            get {
+                return ResourceManager.GetString("TituloAntes", resourceCulture);
             }
         }
         
@@ -1763,6 +1781,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Atraso no pagamento de rendas - cartas enviadas.
+        /// </summary>
+        public static string TituloAtrasoRendasCartasEnviadas {
+            get {
+                return ResourceManager.GetString("TituloAtrasoRendasCartasEnviadas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Atualização de rendas.
         /// </summary>
         public static string TituloAtualizacaoRendas {
@@ -1777,6 +1804,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloAtualizarValorRenda {
             get {
                 return ResourceManager.GetString("TituloAtualizarValorRenda", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aumento.
+        /// </summary>
+        public static string TituloAumento {
+            get {
+                return ResourceManager.GetString("TituloAumento", resourceCulture);
             }
         }
         
@@ -2335,6 +2371,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloEntregaCaucao {
             get {
                 return ResourceManager.GetString("TituloEntregaCaucao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enviada em.
+        /// </summary>
+        public static string TituloEnviadaEm {
+            get {
+                return ResourceManager.GetString("TituloEnviadaEm", resourceCulture);
             }
         }
         
@@ -2933,6 +2978,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Mês em atraso.
+        /// </summary>
+        public static string TituloMesEmAtraso {
+            get {
+                return ResourceManager.GetString("TituloMesEmAtraso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Meses decorridos.
         /// </summary>
         public static string TituloMesesDecorridos {
@@ -3217,6 +3271,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloPagamentosAcertar {
             get {
                 return ResourceManager.GetString("TituloPagamentosAcertar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pagamento de rendas com alterações/acertos.
+        /// </summary>
+        public static string TituloPagamentosComAlteracoes {
+            get {
+                return ResourceManager.GetString("TituloPagamentosComAlteracoes", resourceCulture);
             }
         }
         

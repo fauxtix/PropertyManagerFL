@@ -107,7 +107,7 @@ else
                                                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                                                 <GridEvents OnRecordDoubleClick="UnitDoubleClickHandler" CommandClicked="OnUnitCommandClicked" TValue="FracaoVM" />
                                                 <GridColumns>
-                                                    <GridColumn Field=@nameof(FracaoVM.Descricao) HeaderText="@L["TituloIdentificacao"]" Width="320"></GridColumn>
+                                                    <GridColumn Field=@nameof(FracaoVM.Descricao) HeaderText="@L["TituloIdentificacao"]" Width="250"></GridColumn>
                                                     <GridColumn Field=@nameof(FracaoVM.Andar) HeaderText="@L["TituloAndar"]" Width="90" TextAlign="TextAlign.Center"></GridColumn>
                                                     <GridColumn Field=@nameof(FracaoVM.Lado) HeaderText="@L["TituloLado"]" Width="90" TextAlign="TextAlign.Center"></GridColumn>
                                                     <GridColumn Field=@nameof(FracaoVM.ValorRenda) HeaderText="@L["TituloRenda"]" Width="100" Format="C2">
@@ -201,7 +201,7 @@ else
         </div>
     </div>
 
-    <SfDialog CssClass="responsive-dialog-50"
+    <SfDialog CssClass="responsive-dialog-40"
           IsModal="true"
           ShowCloseIcon="false"
           CloseOnEscape="false"

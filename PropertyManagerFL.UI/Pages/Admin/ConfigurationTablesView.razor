@@ -15,15 +15,15 @@
 @inject NavigationManager NavManager
 
 @inherits PropertyManagerFL.UI.Pages.ComponentsBase.TabAuxBase
-@*@attribute [Authorize(Roles = "Admin")]
-*@
+@attribute [Authorize(Roles = "Admin")]
+
 
 @{
     var Tool = (new List<object>() {
     "Search",
     "PdfExport",
         new ItemModel()
-            { PrefixIcon = "e-searchclose", TooltipText = "Clear", Align = ItemAlign.Right, Id = "ClearSearch" },
+            { PrefixIcon = "fas fa-times", TooltipText = "Clear", Align = ItemAlign.Right, Id = "ClearSearch" },
             });
 }
 <div id="TabAux" class="col-lg-12 control-section">

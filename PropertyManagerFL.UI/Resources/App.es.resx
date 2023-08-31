@@ -2443,4 +2443,25 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloRemetente" xml:space="preserve">
     <value>Remitente</value>
   </data>
+  <data name="TituloAgora" xml:space="preserve">
+    <value>Ahora</value>
+  </data>
+  <data name="TituloAntes" xml:space="preserve">
+    <value>Antes</value>
+  </data>
+  <data name="TituloAtrasoRendasCartasEnviadas" xml:space="preserve">
+    <value>Retraso en el pago del alquiler: envío de cartas</value>
+  </data>
+  <data name="TituloAumento" xml:space="preserve">
+    <value>Aumento</value>
+  </data>
+  <data name="TituloEnviadaEm" xml:space="preserve">
+    <value>Enviado en</value>
+  </data>
+  <data name="TituloMesEmAtraso" xml:space="preserve">
+    <value>Mes de retraso</value>
+  </data>
+  <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
+    <value>Pagos de alquileres con cambios/ajustes</value>
+  </data>
 </root>
