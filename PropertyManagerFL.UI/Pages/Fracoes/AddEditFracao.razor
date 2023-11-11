@@ -32,52 +32,56 @@ else
                     <ContentTemplate>
                         <EditForm Model="@PropertyUnit">
                             <div class="row my-2 fs-6">
-                                <div>
-                                    <SfCheckBox Label="@L["TituloAtiva"]" TChecked="bool" @bind-Checked=@PropertyUnit.Ativa
-                                            LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
-                                </div>
                                 <div class="col-md-7">
                                     <div class="row">
-                                        <div class="col-md-3 my-2 fs-6"><label>@L["TituloPropriedade"]</label></div>
-                                        <div class="col-md-9 fw-bold fs-4">
-                                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">@DescricaoImovel</SfMessage>
+                                        <div class="col-md-12 fw-bold fs-4">
+                                            <div class="input-group mt-2">
+                                                <SfTextBox Readonly="true"
+                                                           Placeholder="@L["TituloImovel"]"
+                                                           CssClass="e-field  e-corner"
+                                                           FloatLabelType="@FloatLabelType.Always"
+                                                           Value="@DescricaoImovel">
+                                                </SfTextBox>
+                                            </div>
+
+                                            @* <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">@DescricaoImovel</SfMessage> *@
                                         </div>
                                     </div>
                                     <div class="input-group mt-2">
                                         <SfTextBox Enabled="true" @ref="txtDescription"
-                                               Placeholder="@L["TituloIdentificacao"]"
-                                               CssClass="e-field  e-corner"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.Descricao">
+                                                   Placeholder="@L["TituloIdentificacao"]"
+                                                   CssClass="e-field  e-corner"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.Descricao">
                                         </SfTextBox>
                                     </div>
                                     <div class="group-box">
                                         <SfTextBox Enabled="true" Width="20%"
-                                               Placeholder="@L["TituloAndar"]"
-                                               CssClass="e-field  e-corner custom-class"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.Andar">
+                                                   Placeholder="@L["TituloAndar"]"
+                                                   CssClass="e-field  e-corner custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.Andar">
                                         </SfTextBox>
                                         <SfTextBox Enabled="true" Width="15%"
-                                               Placeholder="@L["TituloLado"]"
-                                               CssClass="e-field  e-corner float-right custom-class"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.Lado">
+                                                   Placeholder="@L["TituloLado"]"
+                                                   CssClass="e-field  e-corner float-right custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.Lado">
                                         </SfTextBox>
                                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                                    Width="35%" Value="@idxTypologyState" ShowClearButton="false" PopupWidth="auto"
-                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                    Placeholder="@L["TituloTipologia"]" DataSource="@TypologiesStates" FloatLabelType="FloatLabelType.Always">
+                                                        Width="35%" Value="@idxTypologyState" ShowClearButton="false" PopupWidth="auto"
+                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                        Placeholder="@L["TituloTipologia"]" DataSource="@TypologiesStates" FloatLabelType="FloatLabelType.Always">
                                             <DropDownListTemplates TItem="LookupTableVM">
                                             </DropDownListTemplates>
                                             <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTypologyState"></DropDownListEvents>
                                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                                         </SfDropDownList>
                                         <SfTextBox Width="30%"
-                                               Placeholder="@L["TituloArtigoMatricial"]"
-                                               CssClass="e-field  e-corner float-right custom-class"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.Matriz">
+                                                   Placeholder="@L["TituloArtigoMatricial"]"
+                                                   CssClass="e-field  e-corner float-right custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.Matriz">
                                         </SfTextBox>
                                     </div>
                                     <div class="mt-2">
@@ -85,68 +89,68 @@ else
                                     </div>
                                     <div class="group-box">
                                         <SfTextBox Enabled="true" @ref="txtLicHabitacao"
-                                               Width="130px"
-                                               Placeholder="@L["TituloNumero"]"
-                                               CssClass="e-field custom-class"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.LicencaHabitacao">
+                                                   Width="130px"
+                                                   Placeholder="@L["TituloNumero"]"
+                                                   CssClass="e-field custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.LicencaHabitacao">
                                         </SfTextBox>
                                         <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
-                                                  CssClass="e-align-middle "
-                                                  FloatLabelType="FloatLabelType.Always"
-                                                  @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
+                                                      CssClass="e-align-middle "
+                                                      FloatLabelType="FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
                                         </SfDatePicker>
                                     </div>
                                     <hr class="divider" />
                                     <div class="group-box">
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="30%"
-                                                      Placeholder="@L["TituloAreaPrivativa"]" style="text-align-last:end; margin-right:10px;"
-                                                      CssClass="e-field  e-corner"
-                                                      FloatLabelType="@FloatLabelType.Always"
-                                                      @bind-Value="@PropertyUnit!.AreaBrutaPrivativa">
+                                                          Placeholder="@L["TituloAreaPrivativa"]" style="text-align-last:end; margin-right:10px;"
+                                                          CssClass="e-field  e-corner"
+                                                          FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.AreaBrutaPrivativa">
                                         </SfNumericTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="37%"
-                                                      Placeholder="@L["TituloAreaDependente"]" style="text-align-last:end; margin-right:10px;"
-                                                      CssClass="e-field  e-corner"
-                                                      FloatLabelType="@FloatLabelType.Always"
-                                                      @bind-Value="@PropertyUnit!.AreaBrutaDependente">
+                                                          Placeholder="@L["TituloAreaDependente"]" style="text-align-last:end; margin-right:10px;"
+                                                          CssClass="e-field  e-corner"
+                                                          FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.AreaBrutaDependente">
                                         </SfNumericTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="true" Width="33%"
-                                                      Placeholder="@L["TituloCasasBanho"]" Step="1" Min=1 Max=3
-                                                      CssClass="e-field  e-corner"
-                                                      FloatLabelType="@FloatLabelType.Always"
-                                                      @bind-Value="@PropertyUnit!.CasasBanho">
+                                                          Placeholder="@L["TituloCasasBanho"]" Step="1" Min=1 Max=3
+                                                          CssClass="e-field  e-corner"
+                                                          FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.CasasBanho">
                                         </SfNumericTextBox>
                                     </div>
                                     <div class="group-box">
                                         <SfTextBox Enabled="true"
-                                               Placeholder="@L["TituloUltimaAvaliacao"]"
-                                               CssClass="e-field  e-corner custom-class"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.AnoUltAvaliacao">
+                                                   Placeholder="@L["TituloUltimaAvaliacao"]"
+                                                   CssClass="e-field  e-corner custom-class"
+                                                   FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.AnoUltAvaliacao">
                                         </SfTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="false" Currency="EUR"
-                                                      Placeholder="@L["TituloValorAvaliacao"]" style="text-align-last:end; margin-right:10px;"
-                                                      CssClass="e-field  e-corner custom-class"
-                                                      FloatLabelType="@FloatLabelType.Always"
-                                                      @bind-Value="@PropertyUnit!.ValorUltAvaliacao">
+                                                          Placeholder="@L["TituloValorAvaliacao"]" style="text-align-last:end; margin-right:10px;"
+                                                          CssClass="e-field  e-corner custom-class"
+                                                          FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.ValorUltAvaliacao">
                                         </SfNumericTextBox>
 
                                         @*Quando arrendamento termina, ou aquando da sua criação, fração está 'livre'; só nessa situação, deverá ser possível 'mexer' no valor da renda*@
                                         <SfNumericTextBox Enabled="@(EditMode == OpcoesRegisto.Inserir || OkToLease)"
-                                                      ShowSpinButton="false"
-                                                      Currency="EUR"
-                                                      Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
-                                                      CssClass="e-field  e-corner custom-class"
-                                                      FloatLabelType="@FloatLabelType.Always"
-                                                      @bind-Value="@PropertyUnit!.ValorRenda">
+                                                          ShowSpinButton="false"
+                                                          Currency="EUR"
+                                                          Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
+                                                          CssClass="e-field  e-corner e-success custom-class"
+                                                          FloatLabelType="@FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.ValorRenda">
                                         </SfNumericTextBox>
                                     </div>
                                     <div class="my-2">
                                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                                    Width="100%" Value="@idxUnitType" ShowClearButton="false" PopupWidth="auto"
-                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                    Placeholder="@L["TituloTipoFracao"]" DataSource="@UnitTypes" FloatLabelType="FloatLabelType.Always">
+                                                        Width="100%" Value="@idxUnitType" ShowClearButton="false" PopupWidth="auto"
+                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                        Placeholder="@L["TituloTipoFracao"]" DataSource="@UnitTypes" FloatLabelType="FloatLabelType.Always">
                                             <DropDownListTemplates TItem="LookupTableVM">
                                             </DropDownListTemplates>
                                             <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnitType"></DropDownListEvents>
@@ -156,6 +160,13 @@ else
                                 </div>
 
                                 <div class="col-md-5">
+                                    <div class="group-ckeckbox">
+                                        <SfCheckBox CssClass="e-customsize" Label="@L["TituloAtiva"]" TChecked="bool" @bind-Checked=@PropertyUnit.Ativa
+                                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    </div>
+
+                                    @* <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Caraterísticas</SfMessage> *@
+
                                     <div class="group-ckeckbox">
                                         <SfCheckBox Label="@L["TituloCozinhaEquipada"]" TChecked="bool" @bind-Checked=@PropertyUnit.CozinhaEquipada LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                                         <SfCheckBox Label="@L["TituloGasCanalizado"]" TChecked="bool" @bind-Checked=@PropertyUnit.GasCanalizado LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
@@ -167,9 +178,9 @@ else
                                     </div>
                                     <div class="mt-2">
                                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                                    Value="@idxCertificate" ShowClearButton="false" PopupWidth="auto"
-                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                    Placeholder="@L["TituloCertificacaoEnergetica"]" DataSource="@Certifications" FloatLabelType="FloatLabelType.Always">
+                                                        Value="@idxCertificate" ShowClearButton="false" PopupWidth="auto"
+                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                        Placeholder="@L["TituloCertificacaoEnergetica"]" DataSource="@Certifications" FloatLabelType="FloatLabelType.Always">
                                             <DropDownListTemplates TItem="LookupTableVM">
                                             </DropDownListTemplates>
                                             <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeCertificationState"></DropDownListEvents>
@@ -178,9 +189,9 @@ else
                                     </div>
                                     <div class="mt-2">
                                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                                    Width="100%" Value="@idxConservationState" ShowClearButton="false" PopupWidth="auto"
-                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                    Placeholder="@L["TituloEstadoConservacao"]" DataSource="@ConservationStates" FloatLabelType="FloatLabelType.Always">
+                                                        Width="100%" Value="@idxConservationState" ShowClearButton="false" PopupWidth="auto"
+                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                        Placeholder="@L["TituloEstadoConservacao"]" DataSource="@ConservationStates" FloatLabelType="FloatLabelType.Always">
                                             <DropDownListTemplates TItem="LookupTableVM">
                                             </DropDownListTemplates>
                                             <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeConservationState"></DropDownListEvents>
@@ -192,9 +203,9 @@ else
                                         @if (OkToLease && PropertyUnit.Ativa)
                                         {
                                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                                    Width="100%" Value="@idxSituationState" ShowClearButton="false" PopupWidth="auto"
-                                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                    Placeholder="@L["TituloSituacao"]" DataSource="@SituationStates" FloatLabelType="FloatLabelType.Always">
+                                                            Width="100%" Value="@idxSituationState" ShowClearButton="false" PopupWidth="auto"
+                                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                            Placeholder="@L["TituloSituacao"]" DataSource="@SituationStates" FloatLabelType="FloatLabelType.Always">
                                                 <DropDownListTemplates TItem="LookupTableVM">
                                                 </DropDownListTemplates>
                                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnitStatus"></DropDownListEvents>
@@ -204,20 +215,20 @@ else
                                         else
                                         {
                                             <SfTextBox Placeholder="@L["TituloSituacao"]"
-                                               Readonly=true
-                                               CssClass="e-field  e-corner"
-                                               FloatLabelType="@FloatLabelType.Always"
-                                               Value="@UnitStatus">
+                                                       Readonly=true
+                                                       CssClass="e-field  e-corner"
+                                                       FloatLabelType="@FloatLabelType.Always"
+                                                       Value="@UnitStatus">
                                             </SfTextBox>
 
                                         }
                                     </div>
                                     <div class="mt-2">
                                         <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
-                                               HtmlAttributes="NotesAttribute"
-                                               CssClass="e-field e-corner"
-                                               FloatLabelType="FloatLabelType.Always"
-                                               @bind-Value="@PropertyUnit!.Notas">
+                                                   HtmlAttributes="NotesAttribute"
+                                                   CssClass="e-field e-corner"
+                                                   FloatLabelType="FloatLabelType.Always"
+                                        @bind-Value="@PropertyUnit!.Notas">
                                         </SfTextBox>
                                     </div>
                                 </div>
@@ -229,8 +240,8 @@ else
                     <HeaderTemplate>@L["TituloImagens"]</HeaderTemplate>
                     <ContentTemplate>
                         <ViewUnitImages EditMode=@EditMode
-                                    SelectedUnit="PropertyUnit"
-                                    ImagensFracao="unitImages" />
+                                        SelectedUnit="PropertyUnit"
+                                        ImagensFracao="unitImages" />
                     </ContentTemplate>
                 </TabItem>
             </TabItems>
@@ -277,9 +288,6 @@ else
     protected int lastEvaluationBathRooms;
 
     protected int propertyConstructionYear;
-
-    private string stringChecked;
-
 
     public List<LookupTableVM>? Properties { get; set; } = new();
     public List<LookupTableVM>? TypologiesStates { get; set; } = new();
@@ -486,7 +494,7 @@ else
     }
 }
 
-<style>
+<style type="text/css" scoped>
     .custom-class.e-control-wrapper .e-textbox {
         text-align: center;
     }
@@ -525,5 +533,26 @@ else
     //.e-carousel .e-carousel-indicators {
         // bottom: auto;
         //
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-frame {
+        height: 30px;
+        width: 30px;
+        padding: 8px 0;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-check {
+        font-size: 16px;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-ripple-container {
+        height: 52px;
+        top: -11px;
+        width: 47px;
+    }
+
+    .e-customsize.e-checkbox-wrapper .e-label {
+        line-height: 30px;
+        font-size: 16px;
     }
 </style>

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Infrastructure.Context;
@@ -10,7 +11,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 {
     public class ContactRepository : IContactRepository
     {
-        private readonly DapperContext _context;
+        private readonly IDapperContext _context;
         private readonly ILogger<ContactRepository> _logger;
 
         public ContactRepository(DapperContext context, ILogger<ContactRepository> logger)
@@ -85,8 +86,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get todos os contactos");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<ContactoVM>("usp_Contactos_GetAll",

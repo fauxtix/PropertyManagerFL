@@ -29,7 +29,7 @@
 
 }
 
-<style>
+<style type="text/css" scoped>
     @@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@600;700&display=swap');
 
     * {
@@ -60,9 +60,9 @@
         padding: 2.75em 2.5em;
         box-shadow: 0 1.5em 2.5em -.5em rgba(#000000, .1);
         transition: transform .45s ease, background .45s ease;
-        h3
+    }
 
-    {
+    h3 {
         color: #2E3C40;
         font-size: 3.5em;
         font-weight: 600;
@@ -102,63 +102,29 @@
         line-height: 1.2;
         margin: auto 0 0;
         transition: color .45s ease;
-        svg
+    }
 
-    {
+    svg {
         margin-left: .5em;
         transition: transform .6s ease;
-        path
+    }
 
-    {
+    path {
         transition: fill .45s ease;
     }
 
-    }
-    }
 
     &:hover {
         background: #753BBD;
         transform: scale(1.02);
-        h3
 
-    {
-        color: #FFFFFF;
-        border-bottom-color: #A754C4;
-    }
+        @@keyframes point {
+            0% {
+                transform: translateX(0);
+            }
 
-    h4 {
-        color: #FFFFFF;
-    }
-
-    p {
-        opacity: 1;
-        transform: none;
-    }
-
-    .link-text {
-        color: #FFFFFF;
-        svg
-
-    {
-        animation: point 1.25s infinite alternate;
-        path
-
-    {
-        fill: #FFFFFF;
-    }
-
-    }
-    }
-    }
-    }
-
-    @@keyframes point {
-        0% {
-            transform: translateX(0);
+            100% {
+                transform: translateX(.125em);
+            }
         }
-
-        100% {
-            transform: translateX(.125em);
-        }
-    }
 </style>
