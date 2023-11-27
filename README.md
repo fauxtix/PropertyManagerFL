@@ -43,6 +43,8 @@ It's a simple process to implement:
 - copy the translated text and replace the text in the letter;
 - finish the process by saving the updated documents (overwriting the existing ones).
 
+# Database
+For the database structure (tables, functions, stored procedures,... access https://github.com/fauxtix/PropertyManagerFL/tree/master/SqlData_Script
 #
 
 ## 🌟 Contributing
