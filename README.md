@@ -47,15 +47,14 @@ It's a simple process to implement:
 
 ## 🌟 Contributing
 
-Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/DaisyPets/issues
+Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/PropertyManagerFL/Issues 
+Fork the project (https://github.com/fauxtix/PropertyManagerFL/fork)
 
-Fork the project (https://github.com/fauxtix/DaisyPets/fork)
-
-Create a branch for your modification (git checkout -b fauxtix/DaisyPets)
+Create a branch for your modification (git checkout -b fauxtix/PropertyManagerFL)
 
 Commit (git commit -am 'Add some fooBar')
 
-Push_ (git push origin fauxtix/DaisyPets)
+Push_ (git push origin fauxtix/PropertyManagerFL)
 
 Create a new Pull Request
 
@@ -63,7 +62,7 @@ When contributing code, please follow the existing code style and submit a pull 
 
 ## ⚖ License
 
-The DaisyPets project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/daisypets/blob/main/LICENSE) file.
+The DaisyPets project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
 
 ## 📞 Contact
 
