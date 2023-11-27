@@ -18,11 +18,11 @@ jobs:
       - name: Adding README - English (US)
         uses: dephraiim/translate-readme@main
         with:
-          LANG: en-US
+          LANG: en
       - name: Adding README - Spanish
         uses: dephraiim/translate-readme@main
         with:
-          LANG: es-ES
+          LANG: es
       - name: Adding README - French
         uses: dephraiim/translate-readme@main
         with:
