@@ -32,6 +32,9 @@ Application designed to assist landlords in managing their properties and rental
   
 - Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
+# Localization / globalization
+The application supports Portuguese, English, French and Spanish languages. 
+
 #
 
 # Screenshots
