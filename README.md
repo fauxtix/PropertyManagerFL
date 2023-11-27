@@ -44,7 +44,7 @@ It's a simple process to implement:
 - finish the process by saving the updated documents (overwriting the existing ones).
 
 # Database
-For the database structure (tables, functions, stored procedures,... access https://github.com/fauxtix/PropertyManagerFL/tree/master/SqlData_Script
+For the database structure (tables, functions, stored procedures,...)  access the scripts at https://github.com/fauxtix/PropertyManagerFL/tree/master/SqlData_Script
 #
 
 ## 🌟 Contributing
