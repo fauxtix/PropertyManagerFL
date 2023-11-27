@@ -34,7 +34,7 @@ Application designed to assist landlords in managing their properties and rental
 # Localization / globalization
 The application supports Portuguese, English, French and Spanish languages (nearing completion).
 
-Some of the tables used in the application will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
+Some of the tables used in the application (mainly **lookup** ones) will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
 
 The same goes for the wording of the various letters sent to tenants, as each country may have different templates/rules to apply, which will have to be adapted accordingly.
 It's a simple process to implement:
