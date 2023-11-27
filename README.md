@@ -65,7 +65,7 @@ When contributing code, please follow the existing code style and submit a pull 
 
 ## ⚖ License
 
-The DaisyPets project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
+The Property Manager FL project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
 
 ## 📞 Contact
 
