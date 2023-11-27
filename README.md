@@ -14,22 +14,22 @@ Application designed to assist landlords in managing their properties and rental
 
 - **Tenant letters management**:
   
-  >Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+>Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
   
-  >Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
+>Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
   
-  >Increase in Rent - an invitation to renew so the tenant can decide whether to stay
+>Increase in Rent - an invitation to renew so the tenant can decide whether to stay
   
-  >Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
+>Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
   
-  >Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
+>Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
   
-  >Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
+>Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
   
-- >Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
+>Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
   Each of these situations presupposes a letter alerting them to the change
   
-- >Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
+>Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
 # Localization / globalization
 The application supports Portuguese, English, French and Spanish languages (nearing completion).
