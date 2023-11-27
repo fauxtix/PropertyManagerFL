@@ -1,26 +1,5 @@
 BEGIN TRANSACTION;
-INSERT INTO HelpIndex_Parent (Id,NomeProjeto,NomeExe,NomeWord,NomePdf,Descricao,dCriacao) VALUES (1,'HouseRentalSoft','C:\GitProjects\HouseRentalSoft\HouseRentalSoft\bin\Debug\PropertyRentalSoft.exe','','','Gestão de Arrendamentos','2020-01-08 11:45:00');
-INSERT INTO HelpIndex (Id,NomeForm,Titulo,Descricao,Pagina,ID_Parent) VALUES (1,'FrmArrendamento','Gestão de Arrendamentos','{\rtf1\ansi\ansicpg1252\deff0\deflang2070{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
 
-\viewkind4\uc1\pard\f0\fs23 Gest\''e3o de arrendamentos.\par
-
-}
-
-',0,1);
-INSERT INTO HelpIndex (Id,NomeForm,Titulo,Descricao,Pagina,ID_Parent) VALUES (2,'frmDespesas','Gestão de Despesas','{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fnil\fcharset0 Segoe UI;}}
-
-\viewkind4\uc1\pard\lang2070\f0\fs23 Texto de ajuda para despesas.\par
-
-}
-
-',0,1);
-INSERT INTO HelpIndex (Id,NomeForm,Titulo,Descricao,Pagina,ID_Parent) VALUES (3,'FrmFracoes','Gestão de Frações','{\rtf1\ansi\deff0{\fonttbl{\f0\fnil\fcharset0 Segoe UI;}}
-
-\viewkind4\uc1\pard\lang2070\f0\fs23 Texto de Ajuda de fra\''e7\''f5es\par
-
-}
-
-',0,1);
 INSERT INTO TipoContacto (Id,Descricao,Notas) VALUES (1,'Pinturas','Notas sobre pinturas');
 INSERT INTO TipoContacto (Id,Descricao,Notas) VALUES (2,'Limpezas','Notas sobre limpezas');
 INSERT INTO TipoContacto (Id,Descricao,Notas) VALUES (3,'Imobiliária','');
