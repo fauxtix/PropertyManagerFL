@@ -179,7 +179,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<IEnumerable<InquilinoVM>> GetAll()
         {
-            _logger.LogInformation("Lendo todos os Inquilinos do API");
             try
             {
                 var tenants = await _httpClient.GetFromJsonAsync<IEnumerable<InquilinoVM>>($"{_uri}/GetInquilinos");
@@ -198,7 +197,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<InquilinoVM?> Query_ById(int id)
         {
-            _logger.LogInformation("Get tenant from API");
             try
             {
                 var tenant = await _httpClient.GetFromJsonAsync<InquilinoVM>($"{_uri}/GetInquilinoById/{id}");
@@ -340,7 +338,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<InquilinoVM> GetInquilino_ById(int id)
         {
-            _logger.LogInformation("Get tenant from API");
             try
             {
                 var tenant = await _httpClient.GetFromJsonAsync<InquilinoVM>($"{_uri}/GetInquilinoById/{id}");

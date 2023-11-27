@@ -287,7 +287,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
             try
             {
-                _logger.LogInformation("Atualiza dados do arrendamento");
 
                 using (var connection = _context.CreateConnection())
                 {
@@ -433,8 +432,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public async Task<bool> ChildrenExists(int idFracao)
         {
-            _logger.LogInformation("Verifica se arrendamento tem pagamentos efetuados");
-
             using (var connection = _context.CreateConnection())
             {
                 var result = await connection.QuerySingleAsync<int>("usp_arrendamentos_CheckForPayments", new { Id = idFracao }, commandType: CommandType.StoredProcedure);
@@ -487,8 +484,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public string GetDocumentoGerado(int Id)
         {
-            _logger.LogInformation("Get contrato gerado para consulta");
-
             using (var connection = _context.CreateConnection())
             {
                 string DocGerado = connection.QuerySingleOrDefault<string>("usp_Arrendamentos_GetGenerated_Document",
@@ -500,8 +495,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public async Task<bool> ContratoEmitido(int Id)
         {
-            _logger.LogInformation("Verifica se Contrato foi emitido");
-
             // usp_Arrendamentos_Contract_Issued
             using (var connection = _context.CreateConnection())
             {
@@ -515,8 +508,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Verifica se Carta de Atualização de Rendas foi emitida");
-
                 using (var connection = _context.CreateConnection())
                 {
                     bool AtualizacaoRendasProcessada = await connection.QuerySingleOrDefaultAsync<bool>("usp_Arrendamentos_Was_UpdateRentsLetter_Issued",
@@ -535,8 +526,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public void MarcaContratoComoEmitido(int Id, string docGerado)
         {
-            _logger.LogInformation("Marca contrato como emitido");
-
             using (var connection = _context.CreateConnection())
             {
                 connection.Execute("usp_Arrendamentos_SetLease_As_Issued",
@@ -637,8 +626,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Verifica se Carta de Revogação/Oposição foi emitida");
-
                 //var lease = await GetArrendamento_ById(id);
                 //var tenantId = lease.ID_Inquilino;
 
@@ -663,8 +650,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Verifica se Carta de Revogação/Oposição, foi respondida pelo Inquilino");
-
                 var lease = await GetArrendamento_ById(id);
                 var answered = lease.RespostaCartaRevogacao;
 
@@ -772,7 +757,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         var lease = await GetArrendamento_ById(id);
                         var tenantId = lease.ID_Inquilino;
 
-                        _logger.LogInformation("Marca carta de atraso de renda como emitida");
+                        _logger.LogInformation($"Marca carta de atraso de renda como emitida (tennatd Id:{tenantId})");
 
                         var result = await connection.ExecuteAsync("usp_Arrendamentos_SetLateRentPaymentLetter_Issued",
                             param: new { Id = id, GeneratedDocument = docGerado },
@@ -830,7 +815,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                         var newRent = currentRent * (decimal)coefficient;
 
-                        _logger.LogInformation("Marca carta de atualização de renda como emitida");
+                        _logger.LogInformation($"Marca carta de atualização de renda como emitida ({tenantId})");
 
                         var result = await connection.ExecuteAsync("usp_Arrendamentos_SetUpdateRentsLetter_Issued",
                             param: new { Id = id, GeneratedDocument = docGerado },
@@ -838,7 +823,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             transaction: tran);
 
                         // inclui documento nos 'documentos do inquilino'
-                        _logger.LogInformation("Após envio de carta de atualização de renda, incluir documento nos 'documentos do inquilino'");
+                        //_logger.LogInformation("Após envio de carta de atualização de renda, incluir documento nos 'documentos do inquilino'");
 
                         var parameters = new DynamicParameters();
                         parameters.Add("@Descricao", "Carta de atualização de renda");
@@ -895,8 +880,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Atualiza coeficiente de atualização de rendas");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var result = await connection.ExecuteAsync("usp_Arrendamentos_Update_RentCoefficient",
@@ -945,8 +928,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public void MarcaContratoComoNaoEmitido(int Id)
         {
-            _logger.LogInformation("Marca contrato como não emitido");
-
             using (var connection = _context.CreateConnection())
             {
                 connection.Execute(" usp_Arrendamentos_SetLease_NotIssued",
@@ -957,8 +938,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public decimal TotalRendas()
         {
-            _logger.LogInformation("Get total de rendas pagas");
-
             using (var connection = _context.CreateConnection())
             {
                 decimal decTotal = connection.QuerySingleOrDefault<decimal>("usp_Arrendamentos_IncomeReceived",

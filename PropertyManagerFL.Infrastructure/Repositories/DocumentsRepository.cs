@@ -87,8 +87,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get todos os documentos");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<DocumentoVM>("usp_Documents_GetAll",

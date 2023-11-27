@@ -118,7 +118,7 @@
     [Inject] public IFiadorService? fiadorService { get; set; }
     [Inject] public IStringLocalizer<App>? L { get; set; }
 
-    [Parameter] public FiadorVM Fiador { get; set; }
+    [Parameter] public FiadorVM? Fiador { get; set; }
     [Parameter] public OpcoesRegisto EditMode { get; set; }
     [Parameter] public string? HeaderCaption { get; set; }
 
@@ -137,7 +137,7 @@
     {
         MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
         idxMaritalStatus = Fiador!.ID_EstadoCivil;
-        NomeInquilino = await inquilinoService.GetNomeInquilino(Fiador.IdInquilino);
+        NomeInquilino = await inquilinoService!.GetNomeInquilino(Fiador.IdInquilino);
     }
 
     protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
@@ -152,7 +152,7 @@
     }
 }
 
-<style>
+<style type="text/css" scoped>
 
     .single-line {
         margin: 0 12px 0 12px;

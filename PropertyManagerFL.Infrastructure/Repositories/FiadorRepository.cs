@@ -80,8 +80,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get todos os fiadores");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<FiadorVM>("usp_Fiadores_GetAll",

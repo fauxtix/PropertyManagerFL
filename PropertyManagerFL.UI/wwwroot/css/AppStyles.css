@@ -444,7 +444,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
         transform: translate(-50%, -50%);
     }
 
-.e-searchclose::before {
+.fa fa-times::before {
     content: '\e745';
 }
 

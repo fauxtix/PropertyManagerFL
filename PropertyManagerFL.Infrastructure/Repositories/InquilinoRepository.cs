@@ -144,7 +144,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Chamada a GetAll(repositório) dos Inquilinos");
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<InquilinoVM>("usp_Inquilinos_GetAll",
@@ -164,8 +163,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Chamada a Get_ById(repositório) dos Inquilinos");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryFirstOrDefaultAsync<InquilinoVM>("usp_Inquilinos_GetInquilino_Extended_ById",

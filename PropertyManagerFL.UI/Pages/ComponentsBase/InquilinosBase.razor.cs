@@ -241,7 +241,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
-                OriginalTenantData = await inquilinoService.GetInquilino_ById(TenantId); // TODO should use 'Clone/MemberWise'
+                OriginalTenantData = await inquilinoService.GetInquilino_ById(SelectedTenant.Id); // TODO should use 'Clone/MemberWise'
 
                 AddEditTenantVisibility = true;
                 EditCaption = $"{L["EditMsg"]} {L["TituloInquilino"]}";
@@ -750,7 +750,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             RecordMode = OpcoesRegisto.Inserir;
             NewCaption = $"{L["NewMsg"]} {L["TituloDocumento"]}";
-
             TenantDocument = new DocumentoInquilinoVM()
             {
                 Descricao = "",

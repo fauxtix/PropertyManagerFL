@@ -48,7 +48,6 @@ namespace PropertyManagerFL.Api.Controllers
 
         public async Task<IActionResult> GetInquilinos()
         {
-            _logger.LogInformation("Lendo todos os inquilinos do Api");
             var location = GetControllerActionNames();
             try
             {
@@ -578,8 +577,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
-                    IEnumerable<HistoricoAtualizacaoRendasVM> empty = Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
-                    return Ok(empty);
+                    return Ok(Enumerable.Empty<HistoricoAtualizacaoRendasVM>());
                 }
             }
             catch (Exception e)
@@ -1042,7 +1040,7 @@ namespace PropertyManagerFL.Api.Controllers
 
         private ObjectResult InternalError(string message)
         {
-            _logger.LogWarning(message);
+            _logger.LogError(message);
             return StatusCode(500, "Algo de errado ocorreu. Contacte o Administrador");
         }
     }

@@ -84,8 +84,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Getting All Expenses");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<DespesaVM>("usp_Despesas_GetAll",

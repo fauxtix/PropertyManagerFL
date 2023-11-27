@@ -145,7 +145,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -230,7 +230,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
         }
         public virtual FileManagerResponse Create(string path, string name, params FileManagerDirectoryContent[] data)
@@ -425,7 +425,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                                 }
                                 else
                                 {
-                                    throw e;
+                                    throw;
                                 }
                             }
                         }
@@ -689,7 +689,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                                 }
                                 else
                                 {
-                                    throw e;
+                                    throw;
                                 }
                             }
                         }
@@ -902,7 +902,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                                 }
                                 else
                                 {
-                                    throw e;
+                                    throw;
                                 }
                             }
                         }
@@ -1072,7 +1072,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
         }
         protected virtual string WildcardToRegex(string pattern)
@@ -1695,7 +1695,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                         }
                         else
                         {
-                            throw e;
+                            throw;
                         }
                     }
                 }
@@ -1720,7 +1720,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                         }
                         else
                         {
-                            throw e;
+                            throw;
                         }
                     }
                 }
@@ -1746,7 +1746,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                 }
                 else
                 {
-                    throw e;
+                    throw;
                 }
             }
         }
@@ -1774,7 +1774,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                         }
                         else
                         {
-                            throw e;
+                            throw;
                         }
                     }
                 }
@@ -1797,7 +1797,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                 }
                 else
                 {
-                    throw e;
+                    throw;
                 }
 
             }
@@ -1831,7 +1831,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             }
             catch (Exception e)
             {
-                throw e;
+                throw;
             }
         }
         protected virtual AccessPermission GetPermission(string location, string name, bool isFile)
@@ -2039,7 +2039,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                 }
                 else
                 {
-                    throw e;
+                    throw;
                 }
             }
             return hasChild;
@@ -2061,7 +2061,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
                 }
                 else
                 {
-                    throw e;
+                    throw;
                 }
             }
             return hasAcceess;
@@ -2083,7 +2083,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             {
                 if (e.GetType().Name != "UnauthorizedAccessException")
                 {
-                    throw e;
+                    throw;
                 }
             }
             return size;
@@ -2105,7 +2105,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             {
                 if (e.GetType().Name != "UnauthorizedAccessException")
                 {
-                    throw e;
+                    throw;
                 }
             }
             return files;
@@ -2127,7 +2127,7 @@ namespace Syncfusion.EJ2.FileManager.PhysicalFileProvider
             {
                 if (e.GetType().Name != "UnauthorizedAccessException")
                 {
-                    throw e;
+                    throw;
                 }
             }
             return files;

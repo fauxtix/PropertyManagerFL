@@ -82,8 +82,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get todos os Imóveis");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var imoveis = await connection.QueryAsync<ImovelVM>("usp_Imoveis_GetAll",

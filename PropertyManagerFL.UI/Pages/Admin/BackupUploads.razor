@@ -70,7 +70,7 @@
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="py-2">
-                        <SfProgressBar @ref="PBObject" Type="ProgressType.Circular" ID="CircularSegment"
+                        <SfProgressBar Type="ProgressType.Circular" ID="CircularSegment"
                                        Height="200px" Width="200px" TrackThickness="15" ProgressThickness="15"
                                        Value="@PercentCompleted" Minimum="0" Maximum="100" StartAngle="220"
                                        EndAngle="140" SegmentCount="50" GapWidth="5"
@@ -159,7 +159,6 @@
 
     protected Theme CurrentTheme = Theme.Bootstrap4;
     string ColorTrack = "#969696";
-    protected SfProgressBar PBObject;
 
     public SfButton? ProcessBtn { get; set; }
     protected string Content = "Progress";
@@ -171,22 +170,18 @@
     bool IsTaskRunning = false;
 
     string[]? uploadFolders;
-    string? ZipFileName;
-    string? UploadFolder;
     string? OptionMessage;
 
     protected class UploadFilesModel
     {
-        public string FolderName { get; set; }
-        public string FileName { get; set; }
-        public string OptionCaption { get; set; }
+        public string? FolderName { get; set; }
+        public string? FileName { get; set; }
+        public string? OptionCaption { get; set; }
     }
 
-    protected List<UploadFilesModel> uploadsModel;
+    protected List<UploadFilesModel>? uploadsModel;
     protected override void OnInitialized()
     {
-        ZipFileName = "";
-        UploadFolder = "";
         OptionMessage = "";
         UploadFolder_Properties = Path.Combine(_hostingEnvironment!.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsPropriedades"));
         UploadFolder_Tenants = Path.Combine(_hostingEnvironment.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsInquilinos"));
@@ -204,7 +199,7 @@
             {
                  FolderName = UploadFolder_Properties!,
                   FileName = "Properties",
-                   OptionCaption = localizerApp["TituloMenuImoveis"]
+                   OptionCaption = localizerApp!["TituloMenuImoveis"]
             },
             new UploadFilesModel()
             {
@@ -350,7 +345,7 @@
         }
     }
 }
-<style>
+<style type="text/css" scoped>
     .e-save-report::before {
         content: '\e701';
     }

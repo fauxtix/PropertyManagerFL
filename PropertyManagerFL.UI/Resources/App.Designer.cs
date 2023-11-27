@@ -3140,6 +3140,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Observações.
+        /// </summary>
+        public static string TituloObservacoes {
+            get {
+                return ResourceManager.GetString("TituloObservacoes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reveja os valores gerados, antes de finalizar processo. Em caso de necessidade, altere coluna &apos;Valor Pago&apos; e escolha opção &apos;Atualizar&apos;&apos;.
         /// </summary>
         public static string TituloOperacaoBatch {

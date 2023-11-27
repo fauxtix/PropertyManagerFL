@@ -8,7 +8,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
     {
         private readonly IConfiguration _env;
         private readonly ILogger<WrapperAppLogs> _logger;
-        private readonly string? _uri;
         private readonly string? _appLogUri;
         private readonly HttpClient _httpClient;
 
@@ -69,7 +68,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var data = await response.Content.ReadAsStringAsync();
                         var output = JsonConvert.DeserializeObject<IEnumerable<AppLogDto>>(data);
-                        return output.ToList();
+                        return output?.ToList() ?? Enumerable.Empty<AppLogDto>();
                     }
                     else
                     {

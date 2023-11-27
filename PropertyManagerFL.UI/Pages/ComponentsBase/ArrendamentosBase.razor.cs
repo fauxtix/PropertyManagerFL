@@ -335,7 +335,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     LeaseTermCaption = "Confirma operação?";
                     alertMessageType = AlertMessageType.Info;
                     var monthsToEnd = GetMonthDifference(DateTime.Now, SelectedLease.Data_Fim);
-                    if(monthsToEnd != 1)
+                    if(monthsToEnd > 0 && monthsToEnd != 1)
                     {
                         LeaseTermCaptionNote = $"Contrato só termina dentro de {monthsToEnd} meses!";
                         alertMessageType = AlertMessageType.Warning;

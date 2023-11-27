@@ -437,7 +437,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Lendo todas as frações");
 
                 using (var connection = _context.CreateConnection())
                 {
@@ -483,8 +482,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get frações de um Imóvel");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var list = (await connection.QueryAsync<FracaoVM>("usp_Fracoes_GetPropertyUnits",
@@ -572,8 +569,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var sp = "usp_Fracoes_GetAvailable";
             try
             {
-                _logger.LogInformation("Get frações disponíveis");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<LookupTableVM>(sp, commandType: CommandType.StoredProcedure);
@@ -594,8 +589,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var sp = "usp_Fracoes_GetFracoes_WithDuePayments";
             try
             {
-                _logger.LogInformation("Get frações com pagamentos parciais");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<LookupTableVM>(sp, commandType: CommandType.StoredProcedure);
@@ -616,8 +609,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             var sp = "usp_Fracoes_GetUnitsWithoutLease";
             try
             {
-                _logger.LogInformation("Get frações sem contrato");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<LookupTableVM>(sp,
@@ -667,8 +658,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get nome da fração");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var sqlUpdate = $"SELECT Descricao FROM Fracao WHERE Id = @Id";
@@ -708,8 +697,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Verifica se fração está livre");
-
                 using (var connection = _context.CreateConnection())
                 {
                     int situacaoFracao = await connection.QueryFirstOrDefaultAsync<int>
@@ -753,8 +740,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get situação da fração");
-
                 using (var connection = _context.CreateConnection())
                 {
                     string sql = $"SELECT * FROM SituacaoFracao";

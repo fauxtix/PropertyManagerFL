@@ -10,9 +10,8 @@
     <img class="house-image" src="images/main-image.jpg" />
 </div>
 @code {
-    private GoogleMap? map1;
+
     private MapOptions? mapOptions;
-    private string Height = "80%";
 
     protected override void OnAfterRender(bool firstRender)
     {
@@ -33,7 +32,7 @@
     }
 }
 
-<style>
+<style type="text/css" scoped>
     .house-image {
         position: fixed;
         width:100%;

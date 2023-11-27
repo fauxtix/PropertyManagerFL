@@ -1114,7 +1114,7 @@
       fn.apply(void 0, args);
     } catch (e) {
       if (!PRODUCTION) {
-        throw e;
+        throw;
       }
     }
   }

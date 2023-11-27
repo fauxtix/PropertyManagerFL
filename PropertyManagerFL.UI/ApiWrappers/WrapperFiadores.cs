@@ -107,7 +107,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<IEnumerable<FiadorVM>> GetAll()
         {
-            _logger.LogInformation("Lendo todos os Fiadores do API");
             try
             {
                 var tenants = await _httpClient.GetFromJsonAsync<IEnumerable<FiadorVM>>($"{_uri}/GetFiadores");
@@ -126,7 +125,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<FiadorVM?> Query_ById(int id)
         {
-            _logger.LogInformation("Get tenant from API");
             try
             {
                 var tenant = await _httpClient.GetFromJsonAsync<FiadorVM>($"{_uri}/GetFiadorById/{id}");
@@ -222,7 +220,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<FiadorVM> GetFiador_ById(int id)
         {
-            _logger.LogInformation("Get tenant guarantor from API");
             try
             {
                 var fiador = await _httpClient.GetFromJsonAsync<FiadorVM>($"{_uri}/GetFiadorById/{id}");

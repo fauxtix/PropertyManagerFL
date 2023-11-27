@@ -164,7 +164,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<ImovelVM> GetImovel_ById(int id)
         {
-            _logger.LogInformation("Get property from API");
             try
             {
                 var property = await _httpClient.GetFromJsonAsync<ImovelVM>($"{_uri}/GetImovelById/{id}");

@@ -12,9 +12,9 @@
 @inherits InquilinosBase
 
 <PageTitle>@L["TituloMenuInquilinos"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]"></PageTitleComponent>
 
-@{
+    @{
     var Tool = (new List<object>() {
         "Search",
         "PdfExport",
@@ -57,30 +57,30 @@ else
     <div class="container-fluid">
         <div class="source-options">
             <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-                  @onclick="@onAddTenant" IsPrimary="true">
+                      @onclick="@onAddTenant" IsPrimary="true">
             </SfButton>
         </div>
         <hr class="divider" />
         <div class="table table-stripped table-hover">
             <SfGrid ID="Tenants_Grid" Height="100%" @ref="tenantsGridObj"
-                EnableStickyHeader="true"
-                EnableAltRow="true"
-                EnableHover="true"
-                DataSource="@Tenants"
-                AllowFiltering="false"
-                AllowGrouping="false"
-                AllowPdfExport="true"
-                Toolbar="@Tool"
-                ContextMenuItems="@ContextMenuItems"
-                AllowPaging="true"
-                AllowSorting="true"
-                RowHeight="32"
-                AllowTextWrap="true">
+                    EnableStickyHeader="true"
+                    EnableAltRow="true"
+                    EnableHover="true"
+                    DataSource="@Tenants"
+                    AllowFiltering="false"
+                    AllowGrouping="false"
+                    AllowPdfExport="true"
+                    Toolbar="@Tool"
+                    ContextMenuItems="@ContextMenuItems"
+                    AllowPaging="true"
+                    AllowSorting="true"
+                    RowHeight="32"
+                    AllowTextWrap="true">
                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                 <GridEvents OnRecordDoubleClick="OnTenantDoubleClickHandler"
-                        RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
-                        ContextMenuItemClicked="OnContextMenuClick"
-                        OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTenantCommandClicked" TValue="InquilinoVM" />
+                            RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
+                            ContextMenuItemClicked="OnContextMenuClick"
+                            OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTenantCommandClicked" TValue="InquilinoVM" />
                 <GridTemplates>
                     <DetailTemplate>
                         <SfTab CssClass="e-outline e-info e-round-corner py-3" HeaderPlacement="HeaderPosition.Top">
@@ -96,14 +96,14 @@ else
                                             var tenantPaymentHistory = GetTenantPaymentHistory(TenantId);
                                         }
                                         <SfGrid TValue="CC_InquilinoVM"
-                                            DataSource="tenantPaymentHistory"
-                                            AllowFiltering="false"
-                                            AllowGrouping="false"
-                                            Width="80%" EnableAltRow="true"
-                                            AllowPaging="true"
-                                            AllowSorting="true"
-                                            RowHeight="32"
-                                            AllowTextWrap="true">
+                                                DataSource="tenantPaymentHistory"
+                                                AllowFiltering="false"
+                                                AllowGrouping="false"
+                                                Width="80%" EnableAltRow="true"
+                                                AllowPaging="true"
+                                                AllowSorting="true"
+                                                RowHeight="32"
+                                                AllowTextWrap="true">
                                             <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                                             <GridColumns>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.Id) IsPrimaryKey="true" Visible="false" HeaderText="ID#" Width="80"></GridColumn>
@@ -122,18 +122,25 @@ else
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.ValorPago) HeaderText="@L["TituloPagamento"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.ValorEmDivida) HeaderText="@L["TituloEmFalta"]" TextAlign="TextAlign.Right" Width="120" Format="C2"></GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.Renda)
-                                                        TextAlign="TextAlign.Center" HeaderText="@L["TituloRenda"]" DisplayAsCheckBox="true" Width="80" Visible="false"></GridColumn>
+                                                            TextAlign="TextAlign.Center" HeaderText="@L["TituloRenda"]" DisplayAsCheckBox="true" Width="80" Visible="false"></GridColumn>
                                                 <GridColumn Field=@nameof(CC_InquilinoVM.Notas)
-                                                        HeaderText="@L["MSG_Appt_Validation_Remarks"]">
+                                                            HeaderText="@L["MSG_Appt_Validation_Remarks"]">
                                                     <Template Context="remarks">
                                                         @{
-                                                            var ctx = (remarks as CC_InquilinoVM);
-                                                            var backColor = ctx?.ValorEmDivida > 0 || ctx?.ValorPago == 0 ||
-                                                            ctx.Notas.Contains("ltera") ||
-                                                            ctx.Notas.Contains("certo") ||
-                                                            ctx.Notas.Contains("traso") ? "yellow" : "white";
+                                                            CC_InquilinoVM? ctx = (remarks as CC_InquilinoVM);
+                                                            string backColor = "";
+                                                            string textColor = "black";
+                                                            if (ctx!.Notas!.Contains("ltera") || ctx.Notas.Contains("certo") || ctx.Notas.Contains("traso"))
+                                                                backColor = "yellow";
+                                                            else if (ctx.ValorPago == 0)
+                                                            {
+                                                                textColor = "white";
+                                                                backColor = "red";
+                                                            }
+
+                                                            else backColor = "white";
                                                         }
-                                                        <span style="background-color:@backColor">@ctx?.Notas</span>
+                                                        <div class="py-1" style="color:@textColor; background-color:@backColor">@ctx?.Notas</div>
                                                     </Template>
                                                 </GridColumn>
                                             </GridColumns>
@@ -152,46 +159,46 @@ else
                                             {
                                                 <div class="source-options mt-2">
                                                     <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@(L["btnNovo"] + " " + L["TituloFiador"])"
-                                                      @onclick="@onAddGuarantor" IsPrimary="true">
+                                                              @onclick="@onAddGuarantor" IsPrimary="true">
                                                     </SfButton>
                                                 </div>
                                             }
 
                                             <SfGrid TValue="FiadorVM"
-                                            DataSource="@fiadores"
-                                            AllowFiltering="false"
-                                            AllowGrouping="false"
-                                            Width="70%"
-                                            AllowPaging="false"
-                                            AllowSorting="false"
-                                            RowHeight="32"
-                                            AllowTextWrap="true">
+                                                    DataSource="@fiadores"
+                                                    AllowFiltering="false"
+                                                    AllowGrouping="false"
+                                                    Width="70%"
+                                                    AllowPaging="false"
+                                                    AllowSorting="false"
+                                                    RowHeight="32"
+                                                    AllowTextWrap="true">
                                                 <GridEvents CommandClicked="OnGuarantorCommandClicked" TValue="FiadorVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(FiadorVM.Nome) HeaderText="@L["lblNomeAutor"]" Width="250"></GridColumn>
                                                     <GridColumn Field=@nameof(FiadorVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
-                                                        Width="130" HideAtMedia="(min-width: 900px)"
-                                                        TextAlign="TextAlign.Center"></GridColumn>
+                                                                Width="130" HideAtMedia="(min-width: 900px)"
+                                                                TextAlign="TextAlign.Center"></GridColumn>
                                                     <GridColumn Field=@nameof(FiadorVM.IRSAnual) HeaderText="@L["TituloIrsAnual"]"
-                                                        Format="C2"
-                                                        Width="130" HideAtMedia="(min-width: 900px)"
-                                                        TextAlign="TextAlign.Right"></GridColumn>
+                                                                Format="C2"
+                                                                Width="130" HideAtMedia="(min-width: 900px)"
+                                                                TextAlign="TextAlign.Right"></GridColumn>
                                                     <GridColumn Field=@nameof(FiadorVM.Vencimento) HeaderText="@L["TituloVencimento"]"
-                                                        Format="C2"
-                                                        Width="130" HideAtMedia="(min-width: 900px)"
-                                                        TextAlign="TextAlign.Right"></GridColumn>
+                                                                Format="C2"
+                                                                Width="130" HideAtMedia="(min-width: 900px)"
+                                                                TextAlign="TextAlign.Right"></GridColumn>
                                                     <GridColumn Field=@nameof(FiadorVM.eMail) HeaderText="@L["lblEmail"]" HideAtMedia="(min-width: 900px)" Width="250"></GridColumn>
                                                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
                                                         <GridCommandColumns>
                                                             <GridCommandColumn Type=CommandButtonType.Edit
-                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-primary e-round",
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                                                             </GridCommandColumn>
                                                             <GridCommandColumn Type=CommandButtonType.Delete
-                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
@@ -215,32 +222,43 @@ else
                                             <div class="row my-2">
                                                 <div class="col d-flex justify-content-start">
                                                     <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-                                                          @onclick="@onAddTenantDocument" IsPrimary="true">
+                                                              @onclick="@onAddTenantDocument" IsPrimary="true">
                                                     </SfButton>
                                                 </div>
                                             </div>
                                             <SfGrid TValue="DocumentoInquilinoVM"
-                                            DataSource="docs"
-                                            AllowFiltering="false"
-                                            AllowGrouping="false"
-                                            Width="80%"
-                                            AllowPaging="true"
-                                            AllowSorting="true"
-                                            RowHeight="32"
-                                            AllowTextWrap="true">
+                                                    DataSource="docs"
+                                                    AllowFiltering="false"
+                                                    AllowGrouping="false"
+                                                    Width="80%"
+                                                    AllowPaging="true"
+                                                    AllowSorting="true"
+                                                    RowHeight="32"
+                                                    AllowTextWrap="true">
                                                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
                                                 <GridEvents CommandClicked="OnTenantDocumentCommandClicked"
-                                                    TValue="DocumentoInquilinoVM" />
+                                                            TValue="DocumentoInquilinoVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.CreationDate) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.ReferralDate) HeaderText="Referência" Width="130">
                                                         <Template Context="ReferralCtx">
                                                             @{
+                                                                var refMsg = "";
                                                                 var document = (ReferralCtx as DocumentoInquilinoVM);
-                                                                var refMonth = document.ReferralDate.ToString("MMMM").ToUpperInvariant();
-                                                                var refYear = document.ReferralDate.ToString("yyyy");
+                                                                var documentType = document?.StorageType;
+                                                                if (documentType == 'S')
+                                                                {
+                                                                    var refMonth = document?.ReferralDate.ToString("MMMM").ToUpperInvariant();
+                                                                    var refYear = document?.ReferralDate.ToString("yyyy");
+                                                                    refMsg = (refMonth + "-" + refYear);
+                                                                }
+                                                                else
+                                                                {
+                                                                    refMsg = "N/A";
+                                                                }
+                                                                <div>@refMsg</div>
                                                             }
-                                                            <div>@(refMonth + "-" + refYear)</div>
+
                                                         </Template>
                                                     </GridColumn>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>
@@ -249,21 +267,21 @@ else
                                                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
                                                         <GridCommandColumns>
                                                             <GridCommandColumn Type=CommandButtonType.Edit
-                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-primary e-round",
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                                                             </GridCommandColumn>
                                                             <GridCommandColumn Type=CommandButtonType.Delete
-                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
                                                                        })">
                                                             </GridCommandColumn>
                                                             <GridCommandColumn Type=CommandButtonType.None
-                                                                       ButtonOption="@(new CommandButtonOptions()
+                                                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-success e-round",
                                                                            IconCss = "fa fa-file"
@@ -287,21 +305,31 @@ else
                                             TenantId = (context as InquilinoVM)!.Id;
                                             var rentUpdates = GetTenantRentUpdates(TenantId);
                                             <SfGrid TValue="HistoricoAtualizacaoRendasVM"
-                                            DataSource="rentUpdates"
-                                            AllowFiltering="false"
-                                            AllowGrouping="false"
-                                            Width="80%"
-                                            AllowPaging="true"
-                                            AllowSorting="true"
-                                            RowHeight="32"
-                                            AllowTextWrap="true">
+                                                    DataSource="rentUpdates"
+                                                    AllowFiltering="false"
+                                                    AllowGrouping="false"
+                                                    Width="50%"
+                                                    AllowPaging="true"
+                                                    AllowSorting="true"
+                                                    RowHeight="32"
+                                                    AllowTextWrap="true">
                                                 <GridPageSettings PageSize="5" PageCount="5" PageSizes="true"></GridPageSettings>
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
-                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="200"></GridColumn>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["TituloFracao"]" Width="200"></GridColumn>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) TextAlign="TextAlign.Center" HeaderText="Antes" Format="c" Width="80"></GridColumn>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) TextAlign="TextAlign.Center" HeaderText="Depois" Format="c" Width="80"></GridColumn>
+                                                    <GridColumn TextAlign="TextAlign.Center" HeaderText="Perc%" Format="c" Width="80">
+                                                        <Template Context="ctxUpdates">
+                                                            @{
+                                                                var ctx = (ctxUpdates as HistoricoAtualizacaoRendasVM);
+                                                                var initialRent = ctx.PriorValue;
+                                                                var currentRent = ctx.UpdatedValue;
+                                                                var resultAsPercentage = Math.Round(Math.Abs((initialRent - currentRent) / currentRent * 100), 2);
+                                                            }
+                                                            <span>@resultAsPercentage</span>
+                                                        </Template>
+                                                    </GridColumn>
                                                 </GridColumns>
                                             </SfGrid>
                                         }
@@ -314,58 +342,58 @@ else
 
                 <GridColumns>
                     <GridColumn Field=@nameof(InquilinoVM.Id) HeaderText="#" IsIdentity=true IsPrimaryKey=true
-                            Width="80"></GridColumn>
+                                Width="80"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.Nome) HeaderText="@L["TituloNome"]" Width="250"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.Ativo) HeaderText="@L["chkActive"]" HideAtMedia="(min-width: 900px)"
-                            Width="100" DisplayAsCheckBox=true TextAlign="TextAlign.Center"></GridColumn>
+                                Width="100" DisplayAsCheckBox=true TextAlign="TextAlign.Center"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
-                            Width="130" HideAtMedia="(min-width: 900px)"
-                            TextAlign="TextAlign.Center"></GridColumn>
+                                Width="130" HideAtMedia="(min-width: 900px)"
+                                TextAlign="TextAlign.Center"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.eMail) HeaderText="eMail" HideAtMedia="(min-width: 900px)" Width="250"></GridColumn>
                     <GridColumn HeaderText="@L["TituloSaldoPrevisto"]"
-                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                                Width="110" TextAlign="TextAlign.Right" Format="C2">
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
                                 var SaldoPrevisto = inquilino.SaldoPrevisto;
-                                <span>@inquilino!.SaldoPrevisto.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                                <span>@inquilino!.SaldoPrevisto.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.SaldoCorrente) HeaderText="@L["TituloSaldoCorrente"]"
-                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                                Width="110" TextAlign="TextAlign.Right" Format="C2">
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
                                 var saldoCorrente = inquilino.SaldoCorrente;
                                 var color = saldoCorrente < 0 ? "color:red" : "color:black";
-                                <span style="@color">@inquilino.SaldoCorrente.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                                <span style="@color">@inquilino.SaldoCorrente.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
                     </GridColumn>
                     <GridColumn HeaderText="@L["TituloDiferenca"]"
-                            Width="110" TextAlign="TextAlign.Right" Format="C2">
+                                Width="110" TextAlign="TextAlign.Right" Format="C2">
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
                                 var saldoCorrente = inquilino.SaldoCorrente;
                                 var diferenca = inquilino!.SaldoPrevisto > 0 ? inquilino!.SaldoPrevisto - inquilino.SaldoCorrente : 0;
                                 var color = diferenca > 0 ? "color:red" : "color:black";
-                                <span style="@color">@diferenca.ToString("C2",  CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                                <span style="@color">@diferenca.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
                     </GridColumn>
                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="100">
                         <GridCommandColumns>
                             <GridCommandColumn Type=CommandButtonType.Edit
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-primary e-round",
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                             </GridCommandColumn>
                             <GridCommandColumn Type=CommandButtonType.Delete
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
@@ -626,28 +654,28 @@ else
 <SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
            Visible=@WarningVisibility>@WarningMessage</SfMessage>
 
-<SfSpinner @ref="SpinnerObj"
-           Label="@L["MSG_PreparandoDados"]" Size="50"
-           Type="SpinnerType.Bootstrap5"
-           CssClass="e-spin-overlay">
-</SfSpinner>
+    <SfSpinner @ref="SpinnerObj"
+               Label="@L["MSG_PreparandoDados"]" Size="50"
+               Type="SpinnerType.Bootstrap5"
+               CssClass="e-spin-overlay">
+    </SfSpinner>
 
-<SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
-         Title="@ToastTitle" Icon="@ToastIcon"
-         Content="@ToastMessage"
-         CssClass="@ToastCss" Timeout="2000"
-         ShowCloseButton="true">
-    <ToastAnimationSettings>
-        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
-        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
-    </ToastAnimationSettings>
-    <ToastButtons>
-        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
-    </ToastButtons>
-    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
-</SfToast>
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+             Title="@ToastTitle" Icon="@ToastIcon"
+             Content="@ToastMessage"
+             CssClass="@ToastCss" Timeout="2000"
+             ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
 
-@code {
+    @code {
     protected void RowBound(RowDataBoundEventArgs<CC_InquilinoVM> Args)
     {
         bool dueValue = Args.Data.ValorEmDivida > 0;

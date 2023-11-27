@@ -1459,4 +1459,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
     <value>Pagamento de rendas com alterações/acertos</value>
   </data>
+  <data name="TituloObservacoes" xml:space="preserve">
+    <value>Observações</value>
+  </data>
 </root>

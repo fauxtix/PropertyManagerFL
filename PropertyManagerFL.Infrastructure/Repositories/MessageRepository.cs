@@ -76,8 +76,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get todos os fiadores");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<Message>("usp_Messages_GetAll",

@@ -102,8 +102,6 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             try
             {
-                _logger.LogInformation("Get conta-corrente dos inquilinos");
-
                 using (var connection = _context.CreateConnection())
                 {
                     var output = await connection.QueryAsync<CC_InquilinoVM>("usp_CC_Inquilinos_GetAll",

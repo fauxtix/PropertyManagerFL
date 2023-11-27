@@ -9,27 +9,31 @@
 <div>
     <HeaderDialogComponent HeaderCaption="@HeaderCaption"
                            ImageName="home-owner" />
-    <hr />
+</div>
+<hr style="color:black" />
+<div>
+    <div class="m-2 p-2">
+        <SfMessage ShowIcon="true" Severity="MessageSeverity.Info" Variant="MessageVariant.Outlined">@nomeInquilino</SfMessage>
+    </div>
 </div>
 
 <div>
-
-    <EditForm Model="@Document" style="margin:auto;padding:10px;">
+    <EditForm Model="@Document" style="margin:auto;padding:5px;">
         <div class="row">
             @if (EditMode == OpcoesRegisto.Inserir)
             {
                 <div class="input-group mt-3">
                     <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
-                            DropArea=".control-fluid"
-                            AllowMultiple=false AllowedExtensions=" .docx, .pdf"
-                            MaxFileSize="@MaxFileSize">
+                                DropArea=".control-fluid"
+                                AllowMultiple=false AllowedExtensions=" .docx, .pdf"
+                                MaxFileSize="@MaxFileSize">
                         <UploaderAsyncSettings SaveUrl="api/uploadtenantdocuments/Save"
-                                           RemoveUrl="api/uploadtenantdocuments/remove" />
+                                               RemoveUrl="api/uploadtenantdocuments/remove" />
                         <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
                     </SfUploader>
                 </div>
             }
-            <div class="input-group mt-2">
+            <div hidden="@string.IsNullOrEmpty(Document.DocumentPath)" class="input-group mt-2">
                 <SfTextBox Enabled="false"
                            Placeholder="@L["TituloDocumento"]"
                            CssClass="form-control  e-corner"
@@ -37,12 +41,12 @@
                            Value="@Document!.DocumentPath">
                 </SfTextBox>
             </div>
-            <div class="input-group mt-2">
+            <div class="input-group m-2">
                 <SfTextBox Enabled="true"
                            Placeholder="@L["rbtDescricao"]"
                            CssClass="form-control  e-corner"
                            FloatLabelType="@FloatLabelType.Auto"
-                           @bind-Value="@Document!.Descricao">
+                @bind-Value="@Document!.Descricao">
                 </SfTextBox>
             </div>
 
@@ -58,6 +62,7 @@
     [Parameter] public string? HeaderCaption { get; set; }
     [Parameter] public OpcoesRegisto EditMode { get; set; }
 
+    protected string nomeInquilino = "";
 
     protected string? PathDocumento;
 
@@ -65,7 +70,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        var x = HeaderCaption;
+        nomeInquilino = await inquilinoService.GetNomeInquilino(Document.TenantId);
+        nomeInquilino = nomeInquilino.Replace('"', ' ');
     }
 
     private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
