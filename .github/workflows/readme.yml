@@ -14,7 +14,14 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      # ISO Langusge Codes: https://cloud.google.com/translate/docs/languages  
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          directory: path/to/directory
+          branch: main
+          force: false
+          github_token: ${{ secrets.FL_TOKEN }}
+      # ISO Langusge Codes: https://cloud.google.com/translate/docs/  
       - name: Adding README - English (US)
         uses: dephraiim/translate-readme@main
         with:
