@@ -47,7 +47,7 @@ It's a simple process to implement:
 For the database structure (tables, functions, stored procedures,...), you can access the scripts at https://github.com/fauxtix/PropertyManagerFL/tree/master/SqlData_Script
 #
 
-**Technologies used**: C#, Blazor with Syncfusion components, and SQL Server (.Net 6).
+**Technologies used**: C#, Blazor with Syncfusion components and SQL Server (.Net 6).
 
 ## 🌟 Contributing
 
