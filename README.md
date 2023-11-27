@@ -38,10 +38,10 @@ Some of the tables used in the application will require user intervention, since
 
 The same goes for the wording of the various letters sent to tenants, as each country may have different templates/rules to apply, which will have to be adapted accordingly.
 It's a simple process to implement:
-- use Winword to open each template document used in the application (templates / dotx)
-- copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs
-- simply copy the translated text and replace the text in the letter
-- to finish the process, simply save the document(s), overwriting the existing one(s).
+- use Winword to open each template document used in the application (templates / dotx);
+- copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs;
+- copy the translated text and replace the text in the letter;
+- finish the process by saving the updated documents (overwriting the existing ones).
 
 #
 
