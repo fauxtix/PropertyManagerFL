@@ -45,6 +45,39 @@ It's a simple process to implement:
 
 #
 
+## 🌟 Contributing
+
+Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/DaisyPets/issues
+
+Fork the project (https://github.com/fauxtix/DaisyPets/fork)
+
+Create a branch for your modification (git checkout -b fauxtix/DaisyPets)
+
+Commit (git commit -am 'Add some fooBar')
+
+Push_ (git push origin fauxtix/DaisyPets)
+
+Create a new Pull Request
+
+When contributing code, please follow the existing code style and submit a pull request with your changes.
+
+## ⚖ License
+
+The DaisyPets project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/daisypets/blob/main/LICENSE) file.
+
+## 📞 Contact
+
+If you have any questions or need further assistance, you can reach out to the project maintainer:
+
+- 👨‍💻 Maintainer: Fausto Luís
+- ✉ Email: fauxtix.luix@hotmail.com
+
+Feel free to contact me with any feedback or inquiries.
+
+Thank you for using Daisy Pets!
+
+#
+
 # Screenshots
 
 - **Main screen**
