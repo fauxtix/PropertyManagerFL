@@ -26,9 +26,6 @@ jobs:
           force: false
           github_token: ${{ secrets.FL_TOKEN }}
 
-      - name: Set Working Directory
-        run: cd path/to/directory
-
       # ISO Language Codes: https://cloud.google.com/translate/docs/  
       - name: Adding README - English (US)
         uses: dephraiim/translate-readme@main
