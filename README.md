@@ -36,6 +36,7 @@ Application designed to assist landlords in managing their properties and rental
 The application supports Portuguese, English, French and Spanish languages (nearing completion).
 
 Some of the tables used in the application will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
+The same goes for the wording of the various letters sent to tenants, as each country may have different rules, which will have to be adapted accordingly.
 
 #
 
@@ -45,7 +46,7 @@ Some of the tables used in the application will require user intervention, since
   #
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
 
-- Properties
+- **Properties**
  #
 ![Properties](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d1cf7d8f-900d-49c3-9065-82a86a92803a)
 ![Properties_edit_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/13edd0bd-3925-4a16-8011-fb515ffdd239)
