@@ -74,7 +74,7 @@ If you have any questions or need further assistance, you can reach out to the p
 
 Feel free to contact me with any feedback or inquiries.
 
-Thank you for using Daisy Pets!
+Thank you for using PropertyManagerFL!
 
 #
 
