@@ -17,8 +17,9 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
-          directory: https://github.com/fauxtix/PropertyManagerFL
+          directory: fauxtix/PropertyManagerFL
           branch: main
+          path: path/to/directory
           force: false
           github_token: ${{ secrets.FL_TOKEN }}
       # ISO Langusge Codes: https://cloud.google.com/translate/docs/  
