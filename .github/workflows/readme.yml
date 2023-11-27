@@ -19,7 +19,6 @@ jobs:
 
       - name: Push changes
         run: |
-          cd fauxtix/PropertyManagerFL
           git config user.email "github-actions@github.com"
           git config user.name "GitHub Actions"
           git add .
