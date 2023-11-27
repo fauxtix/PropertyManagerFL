@@ -59,6 +59,8 @@ Push_ (git push origin fauxtix/PropertyManagerFL)
 
 Create a new Pull Request
 
+More info on https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
+
 When contributing code, please follow the existing code style and submit a pull request with your changes.
 
 ## ⚖ License
