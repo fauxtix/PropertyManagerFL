@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
 
@@ -19,14 +18,14 @@ jobs:
           node-version: 12.x
 
       - name: Push changes
-        uses: ad-m/github-push-action@v0.6.0
-        with:
-          directory: fauxtix/PropertyManagerFL
-          branch: main
-          force: false
-          github_token: ${{ secrets.FL_TOKEN }}
+        run: |
+          cd fauxtix/PropertyManagerFL
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          git add .
+          git commit -m "Translate README"
+          git push origin main
 
-      # ISO Language Codes: https://cloud.google.com/translate/docs/  
       - name: Adding README - English (US)
         uses: dephraiim/translate-readme@main
         with:
@@ -50,4 +49,4 @@ jobs:
       - name: Adding README - Arabic
         uses: dephraiim/translate-readme@main
         with:
-          LANG: ar     
+          LANG: ar
