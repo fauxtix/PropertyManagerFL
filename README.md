@@ -53,7 +53,7 @@ Fork the project (https://github.com/fauxtix/PropertyManagerFL/fork)
 
 Create a branch for your modification (git checkout -b fauxtix/PropertyManagerFL)
 
-Commit (git commit -am 'Add some fooBar')
+Commit (git commit -am 'added a new feature - some files changed')
 
 Push_ (git push origin fauxtix/PropertyManagerFL)
 
