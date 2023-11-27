@@ -48,6 +48,7 @@ It's a simple process to implement:
 ## 🌟 Contributing
 
 Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/PropertyManagerFL/Issues 
+
 Fork the project (https://github.com/fauxtix/PropertyManagerFL/fork)
 
 Create a branch for your modification (git checkout -b fauxtix/PropertyManagerFL)
