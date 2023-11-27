@@ -37,7 +37,7 @@ The application supports Portuguese, English, French and Spanish languages (near
 
 Some of the tables used in the application will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
 
-The same goes for the wording of the various letters sent to tenants, as each country may have different rules, which will have to be adapted accordingly.
+The same goes for the wording of the various letters sent to tenants, as each country may have different templates/rules to apply, which will have to be adapted accordingly.
 It's a simple process to implement: basically, just use Winword to open each template document used in the application (templates / dotx), copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs. Then simply copy the translated text and replace the text in the letter. Then just save the document.
 
 #
