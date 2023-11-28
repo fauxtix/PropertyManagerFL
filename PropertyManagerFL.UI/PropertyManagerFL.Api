@@ -566,7 +566,7 @@
         </member>
         <member name="M:PropertyManagerFL.UI.Pages.ComponentsBase.DocumentosBase.OnInitializedAsync">
             <summary>
-            Startup Documentos
+            Documentos
             </summary>
             <returns></returns>
         </member>
@@ -1754,6 +1754,11 @@
               Looks up a localized string similar to Ano Construção.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAnos">
+            <summary>
+              Looks up a localized string similar to Anos.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAntes">
             <summary>
               Looks up a localized string similar to Antes.
@@ -1992,6 +1997,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataInicio">
             <summary>
               Looks up a localized string similar to Data início.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDepois">
+            <summary>
+              Looks up a localized string similar to Depois.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDespesa">
@@ -2464,6 +2474,11 @@
               Looks up a localized string similar to Mês em atraso.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloMeses">
+            <summary>
+              Looks up a localized string similar to Meses.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMesesDecorridos">
             <summary>
               Looks up a localized string similar to Meses decorridos.
@@ -2537,6 +2552,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloNovaDespesaPorDuplicacao">
             <summary>
               Looks up a localized string similar to Nova despesa (por duplicação).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloNovoValor">
+            <summary>
+              Looks up a localized string similar to Novo valor.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloNumero">
@@ -2977,6 +2997,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorAvaliacao">
             <summary>
               Looks up a localized string similar to Valor avaliação.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorCorrente">
+            <summary>
+              Looks up a localized string similar to Valor corrente.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorDivida">
