@@ -43,7 +43,11 @@ It's a simple process to implement:
 - copy the translated text and replace the text in the letter;
 - finish the process by saving the updated documents (overwriting the existing ones).
 
+# Database
+For the database structure (SQl Server), you can access the scripts (tables, stored procedures, funcions, ...) at https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database
 #
+
+**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 6).
 
 ## 🌟 Contributing
 
@@ -59,13 +63,13 @@ Push_ (git push origin fauxtix/PropertyManagerFL)
 
 Create a new Pull Request
 
-More info on https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
+More info: https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
 
 When contributing code, please follow the existing code style and submit a pull request with your changes.
 
 ## ⚖ License
 
-The DaisyPets project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
+The Property Manager FL project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
 
 ## 📞 Contact
 
