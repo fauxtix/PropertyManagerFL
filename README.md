@@ -69,7 +69,7 @@ When contributing code, please follow the existing code style and submit a pull 
 
 ## ⚖ License
 
-The Property Manager FL project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
+The source code for the site is licensed under the MIT license, which you can find in the MIT-LICENSE.txt file.
 
 ## 📞 Contact
 
