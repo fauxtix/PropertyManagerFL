@@ -473,9 +473,9 @@
         var yearToShow = year > 0 ? year.ToString() : "";
         var monthToShow = month > 0 ? month.ToString() : "";
 
-        var yearLabel = year == 1 ? "ano" : year > 1 ? "anos" : "";
-        var monthLabel = month == 1 ? "mês" : month > 1 ? "meses" : "";
-        var _em = !string.IsNullOrEmpty(monthLabel) && year > 0 ? "e" : "";
+        var yearLabel = year == 1 ? L["TituloAno"] : year > 1 ? L["TituloAnos"] : "";
+        var monthLabel = month == 1 ? L["TituloMes"] : month > 1 ? L["TituloMeses"] : "";
+        var _em = !string.IsNullOrEmpty(monthLabel) && year > 0 ? L["MSG_E"] : "";
 
 
         return $"{yearToShow} {yearLabel} {_em} {monthToShow} {monthLabel}";

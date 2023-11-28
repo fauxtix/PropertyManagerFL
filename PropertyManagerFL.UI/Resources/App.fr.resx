@@ -2486,4 +2486,10 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloDepois" xml:space="preserve">
     <value>Après</value>
   </data>
+  <data name="TituloAnos" xml:space="preserve">
+    <value>Années</value>
+  </data>
+  <data name="TituloMeses" xml:space="preserve">
+    <value>Mois</value>
+  </data>
 </root>

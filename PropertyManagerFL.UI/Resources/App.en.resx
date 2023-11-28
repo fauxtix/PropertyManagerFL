@@ -2478,4 +2478,10 @@
   <data name="TituloDepois" xml:space="preserve">
     <value>After</value>
   </data>
+  <data name="TituloAnos" xml:space="preserve">
+    <value>Years</value>
+  </data>
+  <data name="TituloMeses" xml:space="preserve">
+    <value>Months</value>
+  </data>
 </root>

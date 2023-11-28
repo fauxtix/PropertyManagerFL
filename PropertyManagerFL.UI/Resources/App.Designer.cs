@@ -1709,6 +1709,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Anos.
+        /// </summary>
+        public static string TituloAnos {
+            get {
+                return ResourceManager.GetString("TituloAnos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Antes.
         /// </summary>
         public static string TituloAntes {
@@ -2992,6 +3001,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloMesEmAtraso {
             get {
                 return ResourceManager.GetString("TituloMesEmAtraso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Meses.
+        /// </summary>
+        public static string TituloMeses {
+            get {
+                return ResourceManager.GetString("TituloMeses", resourceCulture);
             }
         }
         

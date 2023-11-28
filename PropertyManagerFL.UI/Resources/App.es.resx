@@ -2473,4 +2473,10 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloDepois" xml:space="preserve">
     <value>Después</value>
   </data>
+  <data name="TituloAnos" xml:space="preserve">
+    <value>Años</value>
+  </data>
+  <data name="TituloMeses" xml:space="preserve">
+    <value>Meses</value>
+  </data>
 </root>

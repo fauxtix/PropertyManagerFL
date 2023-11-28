@@ -1471,4 +1471,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloDepois" xml:space="preserve">
     <value>Depois</value>
   </data>
+  <data name="TituloAnos" xml:space="preserve">
+    <value>Anos</value>
+  </data>
+  <data name="TituloMeses" xml:space="preserve">
+    <value>Meses</value>
+  </data>
 </root>
