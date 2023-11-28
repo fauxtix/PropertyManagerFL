@@ -2475,4 +2475,7 @@
   <data name="TituloValorCorrente" xml:space="preserve">
     <value>Current value</value>
   </data>
+  <data name="TituloDepois" xml:space="preserve">
+    <value>After</value>
+  </data>
 </root>

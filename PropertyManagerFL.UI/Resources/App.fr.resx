@@ -2483,4 +2483,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloValorCorrente" xml:space="preserve">
     <value>Valeur actuelle</value>
   </data>
+  <data name="TituloDepois" xml:space="preserve">
+    <value>Après</value>
+  </data>
 </root>

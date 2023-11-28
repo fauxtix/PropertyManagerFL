@@ -1468,4 +1468,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloValorCorrente" xml:space="preserve">
     <value>Valor corrente</value>
   </data>
+  <data name="TituloDepois" xml:space="preserve">
+    <value>Depois</value>
+  </data>
 </root>

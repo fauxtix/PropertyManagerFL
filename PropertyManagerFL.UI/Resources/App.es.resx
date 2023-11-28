@@ -2470,4 +2470,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloValorCorrente" xml:space="preserve">
     <value>Valor actual</value>
   </data>
+  <data name="TituloDepois" xml:space="preserve">
+    <value>Después</value>
+  </data>
 </root>

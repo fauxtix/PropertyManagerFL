@@ -240,7 +240,7 @@ else
                                                             TValue="DocumentoInquilinoVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.CreationDate) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
-                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.ReferralDate) HeaderText="Referência" Width="130">
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.ReferralDate) HeaderText="@L["TituloReferencia"]" Width="130">
                                                         <Template Context="ReferralCtx">
                                                             @{
                                                                 var refMsg = "";
@@ -317,8 +317,8 @@ else
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DateProcessed) HeaderText="@L["MSG_CriadoEm"]" Width="130" Format="d"></GridColumn>
                                                     <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.DescricaoFracao) HeaderText="@L["TituloFracao"]" Width="200"></GridColumn>
-                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) TextAlign="TextAlign.Center" HeaderText="Antes" Format="c" Width="80"></GridColumn>
-                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) TextAlign="TextAlign.Center" HeaderText="Depois" Format="c" Width="80"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.PriorValue) TextAlign="TextAlign.Center" HeaderText="@L["TituloAntes"]" Format="c" Width="80"></GridColumn>
+                                                    <GridColumn Field=@nameof(HistoricoAtualizacaoRendasVM.UpdatedValue) TextAlign="TextAlign.Center" HeaderText="@L["TituloDepois"]" Format="c" Width="80"></GridColumn>
                                                     <GridColumn TextAlign="TextAlign.Center" HeaderText="Perc%" Format="c" Width="80">
                                                         <Template Context="ctxUpdates">
                                                             @{
@@ -686,7 +686,7 @@ else
     }
 
 }
-<style>
+<style type="text/css" scoped>
     .e-toolbar-right {
         left: 0;
     }

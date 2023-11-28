@@ -2141,6 +2141,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Depois.
+        /// </summary>
+        public static string TituloDepois {
+            get {
+                return ResourceManager.GetString("TituloDepois", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Despesa.
         /// </summary>
         public static string TituloDespesa {
