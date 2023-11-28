@@ -2464,4 +2464,10 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
     <value>Pagos de alquileres con cambios/ajustes</value>
   </data>
+  <data name="TituloNovoValor" xml:space="preserve">
+    <value>Nuevo valor</value>
+  </data>
+  <data name="TituloValorCorrente" xml:space="preserve">
+    <value>Valor actual</value>
+  </data>
 </root>

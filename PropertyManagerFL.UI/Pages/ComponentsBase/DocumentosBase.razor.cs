@@ -72,7 +72,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string DirtyMsg { get; set; } = string.Empty;
 
         /// <summary>
-        /// Startup Documentos
+        /// Documentos
         /// </summary>
         /// <returns></returns>
         protected override async Task OnInitializedAsync()

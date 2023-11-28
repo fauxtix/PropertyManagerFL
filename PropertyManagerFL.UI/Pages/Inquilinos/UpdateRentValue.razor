@@ -3,7 +3,7 @@
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 <div>
-    <HeaderDialogComponent HeaderCaption="Atualização de rendas" ImageName="payment" />
+    <HeaderDialogComponent HeaderCaption="@L["TituloAtualizacaoRendas"]" ImageName="payment" />
     <hr style="color:black">
 </div>
 
@@ -18,7 +18,7 @@
 
     <div class="e-amounts">
         <div class="form-group mt-2">
-            <SfNumericTextBox Placeholder="Valor corrente" @bind-Value="@CurrentRentValue"
+                <SfNumericTextBox Placeholder="@L["TituloValorCorrente"]" @bind-Value="@CurrentRentValue"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
                               Readonly="true"
@@ -28,7 +28,7 @@
             </SfNumericTextBox>
         </div>
         <div class="form-group mt-2 mb-4">
-            <SfNumericTextBox Placeholder="Novo Valor" @bind-Value="@NewRentValue"
+                <SfNumericTextBox Placeholder="@L["TituloNovoValor"]" @bind-Value="@NewRentValue"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
                               Width="130px"
@@ -91,10 +91,10 @@
 
     private async Task InvokeSave()
     {
+        AlertTitle = "Alteração do valor da renda";
         if (InputAmount == 0)
         {
             AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
             WarningMessage = "Valor não foi alterado";
             StateHasChanged();
             return;
@@ -103,7 +103,6 @@
         if (InputAmount < CurrentRentValue)
         {
             AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
             WarningMessage = "Valor não pode ser inferior ao corrente";
             StateHasChanged();
             return;
@@ -112,7 +111,6 @@
         if (NewRentValue > maxValueAllowed)
         {
             AlertVisibility = true;
-            AlertTitle = "Alteração do valor da renda";
             WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
             StateHasChanged();
             return;
@@ -130,7 +128,7 @@
     }
 }
 
-<style>
+<style type="text/css" scoped>
     .flex-buttons-right {
         display: flex;
         align-items: end;

@@ -3122,6 +3122,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Novo valor.
+        /// </summary>
+        public static string TituloNovoValor {
+            get {
+                return ResourceManager.GetString("TituloNovoValor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Número.
         /// </summary>
         public static string TituloNumero {
@@ -3910,6 +3919,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloValorAvaliacao {
             get {
                 return ResourceManager.GetString("TituloValorAvaliacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valor corrente.
+        /// </summary>
+        public static string TituloValorCorrente {
+            get {
+                return ResourceManager.GetString("TituloValorCorrente", resourceCulture);
             }
         }
         

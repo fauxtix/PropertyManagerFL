@@ -1462,4 +1462,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloObservacoes" xml:space="preserve">
     <value>Observações</value>
   </data>
+  <data name="TituloNovoValor" xml:space="preserve">
+    <value>Novo valor</value>
+  </data>
+  <data name="TituloValorCorrente" xml:space="preserve">
+    <value>Valor corrente</value>
+  </data>
 </root>

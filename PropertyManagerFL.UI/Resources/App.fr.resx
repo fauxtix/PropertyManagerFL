@@ -2477,4 +2477,10 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloPagamentosComAlteracoes" xml:space="preserve">
     <value>Paiements de loyers avec changements/ajustements</value>
   </data>
+  <data name="TituloNovoValor" xml:space="preserve">
+    <value>Nouvelle valeur</value>
+  </data>
+  <data name="TituloValorCorrente" xml:space="preserve">
+    <value>Valeur actuelle</value>
+  </data>
 </root>

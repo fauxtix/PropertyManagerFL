@@ -84,8 +84,8 @@ namespace PropertyManagerFL.UI.Pages.GoogleMaps
 #if DEBUG
             Console.WriteLine("GMap Initialized:");
             Console.WriteLine($"\t Height: {Height}");
-            Console.WriteLine($"\t Zoom: {Options.Zoom}");
-            Console.WriteLine($"\t Center: ({Options.Center.Lat}, {Options.Center.Lng})");
+            Console.WriteLine($"\t Zoom: {Options?.Zoom}");
+            Console.WriteLine($"\t Center: ({Options?.Center.Lat}, {Options?.Center.Lng})");
 #endif
             if (MeMarker != null)
             {
