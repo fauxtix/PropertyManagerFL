@@ -11,16 +11,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-
-      - name: Configure Git
-        run: |
-          git config --global user.email "fauxtix.luix@hotmail.com"
-          git config --global user.name "fauxtix"
 
       - name: Adding README - Chinese Simplified
         uses: dephraiim/translate-readme@main
