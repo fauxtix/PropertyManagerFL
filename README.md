@@ -38,10 +38,10 @@ Some of the tables used in the application (mainly **lookup** ones) will require
 
 The same goes for the wording of the various letters sent to tenants, as each country may have different templates/rules to apply, which will have to be adapted accordingly.
 It's a simple process to carry out:
-1. use Winword to open each template document used in the application (templates / dotx);
-2. copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs;
-3. copy the translated text and replace the text in the letter;
-4. finish the process by saving the updated documents (overwriting the existing ones).
+1. Use Winword to open each template document used in the application (templates / dotx);
+2. Copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs;
+3. Copy the translated text and replace the text in the letter;
+4. Finish the process by saving the updated documents (overwriting the existing ones).
 
 # Database
 For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database
