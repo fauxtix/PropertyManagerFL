@@ -40,7 +40,7 @@ The same goes for the wording of the various letters sent to tenants, as each co
 It's a simple process to carry out:
 1. Use Winword to open each template document used in the application (templates / dotx), stored in https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs;
 2. Copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs;
-3. Copy the translated text and replace the text in the letter;
+3. Copy the translated text and replace the text in the letter (safeguarding the placeholders of variable fields);
 4. Finish the process by saving the updated documents (overwriting the existing ones).
 
 # Database
