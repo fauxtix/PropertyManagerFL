@@ -2204,6 +2204,11 @@
               Looks up a localized string similar to Estender prazo do contrato.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloExpandir">
+            <summary>
+              Looks up a localized string similar to Expandir.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloFeminino">
             <summary>
               Looks up a localized string similar to Feminino.
@@ -2797,6 +2802,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloReciboVencimento">
             <summary>
               Looks up a localized string similar to Recibo Vencimento.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRecolher">
+            <summary>
+              Looks up a localized string similar to Recolher.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloReferencia">

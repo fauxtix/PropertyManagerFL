@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -27,6 +26,8 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="repoArrendamentos"></param>
         /// <param name="mapper"></param>
         /// <param name="logger"></param>
+        /// <param name="repoInquilinos"></param>
+        /// <param name="environment"></param>
         public ArrendamentosController(IArrendamentoRepository repoArrendamentos,
                                        IMapper mapper,
                                        ILogger<ArrendamentosController> logger,

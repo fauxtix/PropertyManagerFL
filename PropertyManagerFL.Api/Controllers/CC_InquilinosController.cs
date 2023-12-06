@@ -26,12 +26,12 @@ namespace PropertyManagerFL.Api.Controllers
 		public CC_InquilinosController(IMapper mapper, ILogger<CC_InquilinosController> logger, ICC_InquilinoRepository repoCC_Inquilinos)
         {
             _mapper = mapper;
-            this._logger = logger;
+            _logger = logger;
             _repoCC_Inquilinos = repoCC_Inquilinos;
         }
 
         /// <summary>
-        /// Returns all transactions
+        /// Returns all the tenants transactions
         /// </summary>
         /// <returns>IEnumerable Inquilino</returns>
         // GET: api/<InquilinosController>

@@ -62,7 +62,7 @@
 
 
 
-@code {
+    @code {
     [Parameter] public string? DialogTitle { get; set; }
     [Parameter] public string Message { get; set; } = string.Empty;
     [Parameter] public EventCallback<EventCallbackArgs> OnConfirmationYes { get; set; }
@@ -139,6 +139,7 @@
                 break;
         }
 
+        if (SelectedMonth == 13) SelectedMonth = 1;
         var MesageCaption = $"{MonthList.FirstOrDefault(p => p.Id == SelectedMonth).Descricao} de {YearsList.FirstOrDefault(y => y.Id == SelectedYear).Descricao}";
         AlertMessage = $"Confirma processamento para  {MesageCaption}?";
         StateHasChanged();

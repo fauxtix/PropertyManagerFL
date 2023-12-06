@@ -26,7 +26,7 @@ public static class SwaggerConfig
                     {
                         Name = "Fausto Luís",
                         Email = "fauxtix.luix@gmail.com",
-                        Url = new Uri("https://github.com/fsandrade")
+                        Url = new Uri("https://github.com/fauxtix")
                     },
                     License = new OpenApiLicense
                     {

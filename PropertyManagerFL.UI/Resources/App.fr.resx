@@ -2492,4 +2492,10 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloMeses" xml:space="preserve">
     <value>Mois</value>
   </data>
+  <data name="TituloExpandir" xml:space="preserve">
+    <value>Agrandir tout</value>
+  </data>
+  <data name="TituloRecolher" xml:space="preserve">
+    <value>Réduire tout</value>
+  </data>
 </root>

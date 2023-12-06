@@ -47,7 +47,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns>Success</returns>
         public async Task<bool> InsereFracao(FracaoVM unit)
         {
-            _logger.LogInformation("Criação de fração no API");
             try
             {
                 using (HttpResponseMessage result = await _httpClient.PostAsJsonAsync($"{_uri}/InsereFracao", unit))

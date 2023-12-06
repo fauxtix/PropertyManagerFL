@@ -2479,4 +2479,10 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloMeses" xml:space="preserve">
     <value>Meses</value>
   </data>
+  <data name="TituloExpandir" xml:space="preserve">
+    <value>Expandir</value>
+  </data>
+  <data name="TituloRecolher" xml:space="preserve">
+    <value>Colapsar</value>
+  </data>
 </root>

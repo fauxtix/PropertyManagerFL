@@ -2519,6 +2519,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Expandir.
+        /// </summary>
+        public static string TituloExpandir {
+            get {
+                return ResourceManager.GetString("TituloExpandir", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Feminino.
         /// </summary>
         public static string TituloFeminino {
@@ -3586,6 +3595,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloReciboVencimento {
             get {
                 return ResourceManager.GetString("TituloReciboVencimento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recolher.
+        /// </summary>
+        public static string TituloRecolher {
+            get {
+                return ResourceManager.GetString("TituloRecolher", resourceCulture);
             }
         }
         

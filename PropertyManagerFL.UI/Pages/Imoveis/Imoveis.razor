@@ -14,22 +14,22 @@
 @inherits ImoveisBase
 
 <PageTitle>@L["TituloMenuImoveis"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloMenuImoveis"]"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloMenuImoveis"]"></PageTitleComponent>
 
-@{
+    @{
     var Tool = (new List<object>() {
         "Search",
         "PdfExport",
      new ItemModel()
      {
-         Text = "Expand all",
-         TooltipText = "Expand all",
+         Text = L["TituloExpandir"],
+         TooltipText = "Expandir tudo",
          PrefixIcon = "e-expand"
      },
      new ItemModel()
      {
-         Text = "Collapse all",
-         TooltipText = "Collapse all",
+         Text = L["TituloRecolher"],
+         TooltipText = "Recolher tudo",
          PrefixIcon = "e-collapse"
      }
     });
@@ -51,47 +51,47 @@ else
     <div class="col-lg-12 control-section">
         <div class="source-options">
             <SfButton CssClass="e-success e-round-corner mx-3 pull-left" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-            @onclick="@onAddProperty" IsPrimary="true">
+                      @onclick="@onAddProperty" IsPrimary="true">
             </SfButton>
         </div>
         <hr class="divider" />
         <div>
             <SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
                        Visible=@WarningVisibility>@WarningMessage</SfMessage>
-        </div>
-        <div id="target" class="table table-stripped table-hover" style="background-color:#fefefe">
-            <SfGrid ID="Properties_Grid"
-            @ref="propertiesGridObj"
-                    DataSource="@properties"
-                    Toolbar="@Tool"
-                    AllowFiltering="false"
-                    AllowGrouping="false"
-                    AllowPaging="true"
-                    AllowSorting="true"
-                    RowHeight="32"
-                    AllowPdfExport=true
-                    AllowSelection="true"
-                    AllowTextWrap="true">
+            </div>
+            <div id="target" class="table table-stripped table-hover" style="background-color:#fefefe">
+                <SfGrid ID="Properties_Grid"
+                        @ref="propertiesGridObj"
+                        DataSource="@properties"
+                        Toolbar="@Tool"
+                        AllowFiltering="false"
+                        AllowGrouping="false"
+                        AllowPaging="true"
+                        AllowSorting="true"
+                        RowHeight="32"
+                        AllowPdfExport=true
+                        AllowSelection="true"
+                        AllowTextWrap="true">
 
-                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
-                <GridEvents OnToolbarClick="ToolbarClickHandler"
-                            OnRecordDoubleClick="PropertyDoubleClickHandler" CommandClicked="OnPropertyCommandClicked" TValue="ImovelVM" />
-                <GridTemplates>
-                    <DetailTemplate>
-                        <SfTab CssClass="e-outline e-info e-round-corner py-3" HeaderPlacement="HeaderPosition.Top">
-                            <TabItems>
-                                <TabItem>
-                                    <ChildContent>
-                                        <TabHeader Text="@L["TituloMenuFracoes"]"></TabHeader>
-                                    </ChildContent>
-                                    <ContentTemplate>
-                                        @{
+                    <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                    <GridEvents OnToolbarClick="ToolbarClickHandler"
+                                OnRecordDoubleClick="PropertyDoubleClickHandler" CommandClicked="OnPropertyCommandClicked" TValue="ImovelVM" />
+                    <GridTemplates>
+                        <DetailTemplate>
+                            <SfTab CssClass="e-outline e-info e-round-corner py-3" HeaderPlacement="HeaderPosition.Top">
+                                <TabItems>
+                                    <TabItem>
+                                        <ChildContent>
+                                            <TabHeader Text="@L["TituloMenuFracoes"]"></TabHeader>
+                                        </ChildContent>
+                                        <ContentTemplate>
+                                            @{
                                             PropertyId = (context as ImovelVM)!.Id;
                                             var units = GetProperty_Units(PropertyId);
                                             <div class="row my-2">
                                                 <div>
                                                     <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-                                                    @onclick="@onAddUnit">
+                                                              @onclick="@onAddUnit">
                                                     </SfButton>
                                                 </div>
                                             </div>
@@ -209,7 +209,7 @@ else
               IsModal="true"
               ShowCloseIcon="false"
               CloseOnEscape="false"
-    @bind-Visible="AddEditPropertyVisibility">
+              @bind-Visible="AddEditPropertyVisibility">
         <DialogTemplates>
             <Content>
                 <AddEditImovel Property="@SelectedProperty"
@@ -219,10 +219,10 @@ else
             <FooterTemplate>
                 <div>
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                    @onclick="SavePropertytData" Content="@L["btnSalvar"]">
+                              @onclick="SavePropertytData" Content="@L["btnSalvar"]">
                     </SfButton>
                     <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                    @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                              @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
                     </SfButton>
                 </div>
             </FooterTemplate>
@@ -234,7 +234,7 @@ else
               IsModal="true"
               ShowCloseIcon="false"
               CloseOnEscape="false"
-    @bind-Visible="AddEditUnitVisibility">
+              @bind-Visible="AddEditUnitVisibility">
         <DialogTemplates>
             <Content>
                 <AddEditFracao PropertyUnit="SelectedUnit"
@@ -245,10 +245,10 @@ else
             <FooterTemplate>
                 <div>
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                    @onclick="SaveUnitData" Content="@L["btnSalvar"]">
+                              @onclick="SaveUnitData" Content="@L["btnSalvar"]">
                     </SfButton>
                     <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                    @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
+                              @onclick="@(()=>CloseEditDialog())" Content="@L["BtnSalir"]">
                     </SfButton>
                 </div>
             </FooterTemplate>

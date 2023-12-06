@@ -2484,4 +2484,10 @@
   <data name="TituloMeses" xml:space="preserve">
     <value>Months</value>
   </data>
+  <data name="TituloExpandir" xml:space="preserve">
+    <value>Expand All</value>
+  </data>
+  <data name="TituloRecolher" xml:space="preserve">
+    <value>Collapse All</value>
+  </data>
 </root>

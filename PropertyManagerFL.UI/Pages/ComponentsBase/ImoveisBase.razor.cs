@@ -150,15 +150,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             if (args.Item.Id == "Properties_Grid_pdfexport")
             {
-                await PdfExport(1);
+                await PdfExport();
             }
-            if (args.Item.Text == "Expand all")
+            if (args.Item.Text == L["TituloExpandir"])
             {
-                await propertiesGridObj.ExpandAllDetailRowAsync();
+                await propertiesGridObj!.ExpandAllDetailRowAsync();
             }
-            if (args.Item.Text == "Collapse all")
+            if (args.Item.Text == L["TituloRecolher"])
             {
-                await propertiesGridObj.CollapseAllDetailRowAsync();
+                await propertiesGridObj!.CollapseAllDetailRowAsync();
             }
         }
 
@@ -188,7 +188,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
         };
 
-        protected async Task PdfExport(int unitId)
+        protected async Task PdfExport()
         {
 
             WarningMessage = "";
@@ -229,7 +229,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             };
             Theme.Caption = CaptionThemeStyle;
 
-            var selectedRecord = await propertiesGridObj.GetSelectedRecordsAsync();
+            var selectedRecord = await propertiesGridObj!.GetSelectedRecordsAsync();
 
             int _propertyId;
             string? propertyAddress;
@@ -255,32 +255,32 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 propertyHasElevator = selectedRecord.First().Elevador ? "Sim" : "Não";
                 propertyPhoto = Path.Combine(hostingEnvironment!.WebRootPath, "uploads", "properties", selectedRecord!.First().Foto!);
 
-                byte[] imageArray = System.IO.File.ReadAllBytes(propertyPhoto);
+                byte[] imageArray = File.ReadAllBytes(propertyPhoto);
                 string base64ImageRepresentation = Convert.ToBase64String(imageArray);
 
                 List<PdfHeaderFooterContent> PropertyHeaderContent = new List<PdfHeaderFooterContent>
                 {
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value="RESUMO DO IMÓVEL", Position = new PdfPosition() { X = 220, Y = 0 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 20} },
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Descrição", Position = new PdfPosition() { X = 300, Y = 50 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Construção", Position = new PdfPosition() { X = 600, Y = 50 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Construção", Position = new PdfPosition() { X = 590, Y = 50 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyDescription, Position = new PdfPosition() { X = 300, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value= propertyConstructionYear, Position = new PdfPosition() { X = 600, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value= propertyConstructionYear, Position = new PdfPosition() { X = 590, Y = 65 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
 
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Morada", Position = new PdfPosition() { X = 300, Y = 90 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Porta", Position = new PdfPosition() { X = 600, Y = 90 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Porta", Position = new PdfPosition() { X = 590, Y = 90 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyAddress, Position = new PdfPosition() { X = 300, Y = 105 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value= propertyDoorNumber, Position = new PdfPosition() { X = 600, Y = 105 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value= propertyDoorNumber, Position = new PdfPosition() { X = 590, Y = 105 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
 
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Freguesia", Position = new PdfPosition() { X = 300, Y = 130 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Concelho", Position = new PdfPosition() { X = 600, Y = 130 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Concelho", Position = new PdfPosition() { X = 590, Y = 130 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
                      new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyCountyParish, Position = new PdfPosition() { X = 300, Y = 145 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyCounty, Position = new PdfPosition() { X = 600, Y = 145 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyCounty, Position = new PdfPosition() { X = 590, Y = 145 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
 
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Elevador", Position = new PdfPosition() { X = 600, Y = 210 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyHasElevator, Position = new PdfPosition() { X = 600, Y = 225 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Elevador", Position = new PdfPosition() { X = 590, Y = 210 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyHasElevator, Position = new PdfPosition() { X = 590, Y = 225 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
 
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Estado Conservação", Position = new PdfPosition() { X = 300, Y = 250 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
-                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyConservationState, Position = new PdfPosition() { X = 300, Y = 265 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Estado Conservação", Position = new PdfPosition() { X = 590, Y = 250 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878"} },
+                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value=propertyConservationState, Position = new PdfPosition() { X = 590, Y = 265 }, Style = new PdfContentStyle() { TextBrushColor = "#000000"} },
 
                      new PdfHeaderFooterContent()
                      {
@@ -293,11 +293,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                          }
                      },
                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="FL Soft Systems", Position = new PdfPosition() { X = 20, Y = 255 }, Style = new PdfContentStyle() { TextBrushColor = "#C67878", FontSize = 15} },
-                    new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Rua José Joaquim Marques, 4 3 E", Position = new PdfPosition() { X = 20, Y = 280 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 10} },
-                    new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Tel +351 937111222", Position = new PdfPosition() { X = 20, Y = 295 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 10} },
+                    new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Rua José Joaquim Marques, 999 9 E", Position = new PdfPosition() { X = 20, Y = 280 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 10} },
+                    new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Tel +351 937 111 222", Position = new PdfPosition() { X = 20, Y = 295 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 10} },
                     new PdfHeaderFooterContent() { Type = ContentType.Text, Value="Montijo - Portugal", Position = new PdfPosition() { X = 20, Y = 310 }, Style = new PdfContentStyle() { TextBrushColor = "#000000", FontSize = 10} },
-
-
                 };
 
                 List<PdfHeaderFooterContent> PropertyFooterContent = new List<PdfHeaderFooterContent>
@@ -360,7 +358,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             ExportProperties.Columns = new List<GridColumn>()
             {
                 #pragma warning disable BL0005
-                new GridColumn(){ Field="Descricao", HeaderText="Descrição", TextAlign=TextAlign.Left, Width="200"},
+                new GridColumn(){ Field="Descricao", HeaderText="Fração", TextAlign=TextAlign.Left, Width="200"},
                 new GridColumn(){ Field="Andar", HeaderText="Andar",   TextAlign=TextAlign.Center, Width="50"},
                 new GridColumn(){ Field="Lado", HeaderText="Lado",   TextAlign=TextAlign.Center, Width="50"},
                 new GridColumn(){ Field="ValorRenda", HeaderText="Renda", TextAlign=TextAlign.Right, Width="60"},
@@ -428,7 +426,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             SelectedUnit = await unitsService!.GetFracao_ById(UnitId);
             OriginalUnitData = await unitsService!.GetFracao_ById(UnitId);
 
-            DeleteUnitCaption = $"[{SelectedUnit.Descricao}";
+            DeleteUnitCaption = SelectedUnit.Descricao;
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
@@ -563,7 +561,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 else // Insert
                 {
-                    ToastTitle = L["NewtMsg"] + " " + L["TituloFracao"];
+                    ToastTitle = L["NewMsg"] + " " + L["TituloFracao"];
 
                     var unitInserted = await unitsService!.InsereFracao(SelectedUnit!);
                     if (unitInserted)

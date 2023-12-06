@@ -165,7 +165,7 @@
                     </div>
                     <div class="image-container">
                         <div class="item">
-                            <img src="/uploads/properties/@Property.Foto" alt="Imagem da propriedade">
+                            <img src="/uploads/properties/@Property?.Foto" alt="Imagem da propriedade">
                         </div>
                     </div>
                     <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
@@ -271,10 +271,10 @@
         var DPIG_Mes = Property.DataUltimaInspecaoGas.Month;
         var AnoC = Convert.ToInt32(Property!.AnoConstrucao);
 
-        DateTime DataPrimeiraInspecaoRequerida;
         int AnosDesdeConstrucao = DateTime.Now.Year - AnoC;
         int AnoPrimeiraInspecaoRequerida = AnoC + 20;
 
+        //DateTime DataPrimeiraInspecaoRequerida;
         //InibeSelecaoUltimaInspecao = true;
         //DataPrimeiraInspecaoRequerida = new DateTime(AnoPrimeiraInspecaoRequerida, DPIG_Mes, DPIG_Dia);
         //DataProxInspecaoGas = DataPrimeiraInspecaoRequerida.AddYears(5);
@@ -335,7 +335,7 @@
         }
     }
 
-    protected async Task OnYearChange(Syncfusion.Blazor.Inputs.ChangedEventArgs args)
+    protected void OnYearChange(Syncfusion.Blazor.Inputs.ChangedEventArgs args)
     {
         var ConstrYear = int.Parse(args.Value);
         if (DataFormat.IsInteger(ConstrYear))
@@ -385,8 +385,6 @@
 
     private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
     {
-        string? fileExtension = "";
-
         var fileName = args.FileData[0].Name;
         uploadedFile = Path.Combine(HostingEnvironment!.WebRootPath, "uploads", "properties", fileName);
         if (File.Exists(uploadedFile))
@@ -480,12 +478,6 @@
 
         return $"{yearToShow} {yearLabel} {_em} {monthToShow} {monthLabel}";
     }
-
-    void SubmitValidForm()
-    {
-        Console.WriteLine("Form Submitted Successfully!");
-    }
-
 }
 
 <style type="text/css" scoped>
@@ -521,11 +513,10 @@
         padding: 3px;
     }
 
-    img {
+/*     img {
         width: inherit
     }
-
-    //Tabs
+ */
     .e-content .e-item {
         font-size: 12px;
         padding: 10px;

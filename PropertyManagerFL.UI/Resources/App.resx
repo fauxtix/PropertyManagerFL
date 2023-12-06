@@ -1477,4 +1477,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloMeses" xml:space="preserve">
     <value>Meses</value>
   </data>
+  <data name="TituloExpandir" xml:space="preserve">
+    <value>Expandir</value>
+  </data>
+  <data name="TituloRecolher" xml:space="preserve">
+    <value>Recolher</value>
+  </data>
 </root>
