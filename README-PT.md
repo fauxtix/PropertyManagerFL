@@ -54,9 +54,9 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
 
 As contribuições para este projeto são bem-vindas! Se encontrar algum problema ou tiver sugestões de melhoria, por favor abra um problema no repositório GitHub: https://github.com/fauxtix/PropertyManagerFL/Issues 
 
-Bifurcar o projeto (https://github.com/fauxtix/PropertyManagerFL/fork)
+Bifurcar (fork) o projeto (https://github.com/fauxtix/PropertyManagerFL/fork)
 
-Crie um ramo para a sua modificação (git checkout -b fauxtix/PropertyManagerFL)
+Crie um branch para a sua modificação (git checkout -b fauxtix/PropertyManagerFL)
 
 Commit (git commit -am 'added a new feature - some files changed')
 
@@ -74,9 +74,8 @@ O código fonte do site está licenciado sob a licença MIT, que pode ser encont
 
 ## 📞 Contacto
 
-Se tiveres alguma dúvida ou precisares de mais assistência, podes contactar o responsável pelo projeto:
+Se tiver alguma dúvida ou precisar de mais assistência, pode contactar o responsável pelo projeto:
 
-- 👨‍💻 Mantenedor: Fausto Luís
+- 👨‍💻 Responável pela manutenção: Fausto Luís
 - ✉ Email: fauxtix.luix@hotmail.com
 
-Sinta-se à vontade para me contactar com qualquer feedback ou perguntas.
