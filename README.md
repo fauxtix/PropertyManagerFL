@@ -52,7 +52,7 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
 
 # Écrans
 
-- **Écrã de entrada**
+- **Ecrã de entrada**
   #
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
 
