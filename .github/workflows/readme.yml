@@ -4,49 +4,42 @@ on:
   push:
     branches:
       - main
+      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: 16
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.x     
 
-    - name: Push changes
-      run: |
-        git config user.email "github-actions@github.com"
-        git config user.name "GitHub Actions"
-        git add .
-        git commit -m "Translate README"
-        git push origin main
+      - name: Adding README - Spanish
+        uses: dephraiim/translate-readme@main
+        with:
+          LANG: es
 
-    - name: Adding README - English (US)
-      uses: dephraiim/translate-readme@main
-      with:
-        LANG: en
+      - name: Adding README - Portuguese
+        uses: dephraiim/translate-readme@main
+        with:
+          LANG: pt
 
-    - name: Adding README - Spanish
-      uses: dephraiim/translate-readme@main
-      with:
-        LANG: es
+      - name: Adding README - French
+        uses: dephraiim/translate-readme@main
+        with:
+          LANG: fr
 
-    - name: Adding README - French
-      uses: dephraiim/translate-readme@main
-      with:
-        LANG: fr
-
-    - name: Adding README - Hindi
-      uses: dephraiim/translate-readme@main
-      with:
-        LANG: hi
-
-    - name: Adding README - Arabic
-      uses: dephraiim/translate-readme@main
-      with:
-        LANG: ar
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions@example.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Translate README"
+          git push

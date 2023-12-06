@@ -1,103 +1,69 @@
 # PropertyManagerFL
 
-Application designed to assist landlords in managing their properties and rentals. With a user-friendly interface and a range of helpful features, PropertManagerFL (PMFL) serves as a centralized platform for landlords, to streamline their property management tasks.
+Aplicação concebida para ajudar os senhorios na gestão das suas propriedades e alugueres. Com uma interface de fácil utilização e uma série de funcionalidades úteis, o PropertManagerFL (PMFL) funciona como uma plataforma centralizada para os senhorios, para agilizar as suas tarefas de gestão de propriedades.
 
-# Key Features
+# Principais características
 
-- **Centralized Property and Tenant Information**: PMFL allows landlords to store all property and tenant details in one convenient location. From property specifications to tenant records and contact information, everything is easily accessible whenever you need it.
+- **Informação centralizada sobre propriedades e inquilinos**: O PMFL permite que os proprietários armazenem todos os detalhes da propriedade e do inquilino num único local conveniente. Desde especificações de propriedades a registos de inquilinos e informações de contacto, tudo é facilmente acessível sempre que precisar.
 
-- **Rent Lease Creation**: PMFL simplifies the process of creating rent leases; new and existing ones.
+- **Criação de contratos de arrendamento**: O PMFL simplifica o processo de criação de contratos de arrendamento, novos e existentes.
 
-- **Rent Payment Tracking**: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
-- **Keeping track of rental property expenses**: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
- Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
+- **Controlo de pagamentos de rendas**: O PMFL fornece um sistema abrangente de acompanhamento de pagamentos de rendas, ajudando os senhorios a manterem-se actualizados sobre as transacções e a tratarem prontamente de quaisquer pagamentos em atraso.
 
-- **Tenant letters management**:
+- **Acompanhamento das despesas do imóvel alugado**: como proprietário, ficará perdido (mesmo com um contabilista) se não acompanhar corretamente as despesas do imóvel alugado.
+ Manter registos detalhados das despesas não só o ajudará a sentir-se mais organizado, como também facilitará o preenchimento dos seus impostos, permitindo-lhe ver mais oportunidades de deduções e compreender o retorno de cada um dos seus investimentos em arrendamento.
+
+- **Gestão de cartas de inquilinos**:
   
-  >Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
+  >Convite à renovação - Dá ao inquilino algum tempo para decidir se quer renovar o contrato de arrendamento ou sair.
     
-  >Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
+  >Carta de rescisão - assinala o fim do contrato de arrendamento. Pode dever-se ao facto de o inquilino tencionar mudar-se ou à recusa do senhorio em renovar o contrato de arrendamento
     
-  >Increase in Rent - an invitation to renew so the tenant can decide whether to stay
+  >Aumento da renda - um convite à renovação para que o inquilino possa decidir se quer ficar
     
-  >Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
+  >Alteração das informações de pagamento - para evitar confusões e continuar a receber os pagamentos da renda a tempo, os senhorios devem informar os inquilinos das alterações de pagamento
     
-  >Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
+  >Aviso de renda em atraso - para colocar avisos de renda por escrito. Um senhorio pode necessitar de provas de que um inquilino se atrasou cronicamente no pagamento como base para rescindir o contrato de arrendamento
     
-  >Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
+  >Carta de pagamento ou desistência - aviso sobre rendas não pagas. Exige o pagamento da renda atual e das rendas em atraso até uma determinada data ou será iniciado um processo de despejo
     
-  >Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
-    Each of these situations presupposes a letter alerting them to the change
+  >Aumentos de renda - o processo é automático para o ano seguinte, a partir da data de início do contrato, ou através de um procedimento manual para cada inquilino.
+    Cada uma destas situações pressupõe uma carta a alertar para a alteração
     
-  >Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
+  >Comunicação com os condóminos - mensagens enviadas ou recebidas de/para os condóminos, através da utilização de correio eletrónico
 
-# Localization / globalization
-The application supports Portuguese, English, French and Spanish languages (nearing completion).
+# Localização / globalização
+A aplicação suporta os idiomas português, inglês, francês e espanhol.
 
-Some of the tables used in the application (mainly **lookup** ones) will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
+Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o português foi utilizado como língua nativa para o seu preenchimento/configuração.
 
-The same goes for the wording of the various letters sent to tenants, as each country may have different templates/rules to apply, which will have to be adapted accordingly.
-It's a simple process to implement:
-- use Winword to open each template document used in the application (templates / dotx);
-- copy its text, and use a translator (Google, DeepL, ...) to adapt it to your needs;
-- copy the translated text and replace the text in the letter;
-- finish the process by saving the updated documents (overwriting the existing ones).
+O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma vez que cada país pode ter diferentes modelos/regras a aplicar, que terão de ser adaptados em conformidade.
+É um processo simples de efetuar:
+1. Utilize o Winword para abrir cada documento modelo utilizado na aplicação (templates / dotx), armazenado em https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs;
+2. Copie o seu texto e utilize um tradutor (Google, DeepL, ...) para o adaptar às suas necessidades;
+3. Copie o texto traduzido e substitua o texto da carta (salvaguardando os placeholders dos campos variáveis);
+4. Termine o processo guardando os documentos actualizados (substituindo os existentes).
 
-# Database
-For the database structure (SQl Server), you can access the scripts (tables, stored procedures, funcions, ...) at https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database
+# Base de dados
+Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) no projeto PropertyManagerFL.Infrastructure/Database
 #
 
-**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 6).
+**Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
 
-## 🌟 Contributing
+# Imagens de ecrã
 
-Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/PropertyManagerFL/Issues 
-
-Fork the project (https://github.com/fauxtix/PropertyManagerFL/fork)
-
-Create a branch for your modification (git checkout -b fauxtix/PropertyManagerFL)
-
-Commit (git commit -am 'added a new feature - some files changed')
-
-Push_ (git push origin fauxtix/PropertyManagerFL)
-
-Create a new Pull Request
-
-More info: https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
-
-When contributing code, please follow the existing code style and submit a pull request with your changes.
-
-## ⚖ License
-
-The Property Manager FL project is licensed under the MIT License. You can find more information in the [LICENSE](https://github.com/fauxtix/PropertyManagerFL/blob/main/LICENSE) file.
-
-## 📞 Contact
-
-If you have any questions or need further assistance, you can reach out to the project maintainer:
-
-- 👨‍💻 Maintainer: Fausto Luís
-- ✉ Email: fauxtix.luix@hotmail.com
-
-Feel free to contact me with any feedback or inquiries.
-
-Thank you for using PropertyManagerFL!
-
-#
-
-# Screenshots
-
-- **Main screen**
+- **Ecrã de entrada**
   #
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
 
-- **Properties**
+- **Propriedades**
  #
 ![Properties](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d1cf7d8f-900d-49c3-9065-82a86a92803a)
 ![Properties_edit_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/13edd0bd-3925-4a16-8011-fb515ffdd239)
 ![Properties_edit_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/8dbe7cfa-bea7-4260-96e6-75390c6fcfdc)
 ![Properties_edit_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/135498e8-f373-41d8-bf8f-35d3f6fb5a20)
 
-- **Tenants**
+- **Inquilinos**
   #
 ![Tenants](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/40d50281-d7ae-4acb-8b75-f40087801743)
 ![Tenants_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6edc7a70-b197-4e3b-b9e6-f540811d74ba)
@@ -107,17 +73,17 @@ Thank you for using PropertyManagerFL!
 ![Tenants_documents_create_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/9fb35174-0c4a-4ecd-9105-4f75f91cf465)
 ![Tenants_guarantor](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d8742713-ecd6-48eb-b800-8eaed7c1cf3f)
 
-- **Units**
+- **Frações**
  #
 ![Unit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/54a0caae-2265-49e6-8b87-e500d43ab15d)
 ![Unit_Images](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/77df0a32-2d8a-4699-ba78-2b66a8d00279)
 
-- **Monthly payments**
+- **Pagamentos mensais**
  #
 ![MonthlyRentPayment_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/67874f25-5fb6-4e66-8cfd-1783c5eb1c29)
 ![MonthlyRentPayment_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6169ae59-9c2d-4db2-b407-f8e2d7bc6e58)
 
-- **Payments**
+- **Pagamentos**
   #
 ![Payments_Dashboard_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d4fe17c6-6977-4c60-b2a2-c5f3e22d7cb3)
 ![Payments_Dashboard_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/9961bd55-7314-45d0-bb26-f035b3800627)
@@ -127,12 +93,12 @@ Thank you for using PropertyManagerFL!
 ![Payments_new_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/0cfa598b-43ff-4398-9d9c-0523cfdaa363)
 ![Payments_new_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/aaf6cf89-7dca-46e2-a54f-1cf9984b56b4)
 
-- **Leases**
+- **Contratos de arrendamento**
  #
 ![Leases](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b573364b-939b-4f70-be09-acc9634093f5)
 ![Leases_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/85d07a7a-8c79-4fba-a252-359cf0a1e593)
 
-- **Expenses**
+- **Despesas**
  #
 ![Expenses_maintenance](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b164b028-23b8-4b6c-b057-e70d2f7ba095)
 ![Expenses_maintenance_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6dda062b-02e5-410c-a5ae-bc1bf961677c)
@@ -143,15 +109,44 @@ Thank you for using PropertyManagerFL!
 ![Expenses_dashboard_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6e7a0cd7-39d2-4690-9dca-1f7de3c34b5d)
 ![Expenses_dashboard_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/37b05f59-b63b-47c9-9fbc-4552d6e27fa3)
 
-- **Scheduler**
+- **Agenda de marcações**
   #
 ![Scheduler_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/8419c317-ec2a-472e-8d4a-cb174b62a6f7)
 
-- **Communicating with tenants**
+- **Communicação de/para Inquilinos**
   #
 ![Messages](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/33ed9de2-d80e-418f-bb00-df5d2a15ad32)
 
-- **Contacts**
+- **Contactos**
   #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
+
+## Contribuição
+
+As contribuições para este projeto são bem-vindas! Se encontrar algum problema ou tiver sugestões de melhoria, por favor abra um problema no repositório GitHub: https://github.com/fauxtix/PropertyManagerFL/Issues 
+
+Bifurcar (fork) o projeto (https://github.com/fauxtix/PropertyManagerFL/fork)
+
+Crie um branch para a sua modificação (git checkout -b fauxtix/PropertyManagerFL)
+
+Commit (git commit -am 'added a new feature - some files changed')
+
+Fazer push_ (git push origin fauxtix/PropertyManagerFL)
+
+Criar um novo Pull Request
+
+Mais informações: https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
+
+Quando contribuir com código, por favor siga o estilo de código existente e submeta um pull request com as suas alterações.
+
+## Licença
+
+O código fonte do site está licenciado sob a licença MIT, que pode ser encontrada no ficheiro MIT-LICENSE.txt.
+
+## 📞 Contacto
+
+Se tiver alguma dúvida ou precisar de mais assistência, pode contactar o responsável pelo projeto:
+
+- 👨‍💻 Responável pela manutenção: Fausto Luís
+- ✉ Email: fauxtix.luix@hotmail.com
 
