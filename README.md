@@ -1,5 +1,7 @@
 # PropertyManagerFL
 
+(For the Portuguese version of this README file, please read README-PT).
+
 Application designed to assist landlords in managing their properties and rentals. With a user-friendly interface and a range of helpful features, PropertManagerFL (PMFL) serves as a centralized platform for landlords, to streamline their property management tasks.
 
 # Key Features
