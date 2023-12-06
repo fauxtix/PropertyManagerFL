@@ -33,7 +33,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
   >Comunicação com os condóminos - mensagens enviadas ou recebidas de/para os condóminos, através da utilização de correio eletrónico
 
 # Localização / globalização
-A aplicação suporta os idiomas português, inglês, francês e espanhol (em fase de conclusão).
+A aplicação suporta os idiomas português, inglês, francês e espanhol.
 
 Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o português foi utilizado como língua nativa para o seu preenchimento/configuração.
 
