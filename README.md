@@ -6,7 +6,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 
 - **Informação centralizada sobre propriedades e inquilinos**: O PMFL permite que os proprietários armazenem todos os detalhes da propriedade e do inquilino num único local conveniente. Desde especificações de propriedades a registos de inquilinos e informações de contacto, tudo é facilmente acessível sempre que precisar.
 
-- **Criação de contratos de arrendamento**: O PMFL simplifica o processo de criação de contratos de arrendamento, novos e existentes.
+- **Criação de contratos de arrendamento**: O PMFL simplifica o processo de criação de contratos de arrendamento (novos e existentes).
 
 - **Controlo de pagamentos de rendas**: O PMFL fornece um sistema abrangente de acompanhamento de pagamentos de rendas, ajudando os senhorios a manterem-se actualizados sobre as transacções e a tratarem prontamente de quaisquer pagamentos em atraso.
 
@@ -35,7 +35,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 # Localização / globalização
 A aplicação suporta os idiomas português, inglês, francês e espanhol.
 
-Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o português foi utilizado como língua nativa para o seu preenchimento/configuração.
+Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o Português foi utilizado como língua nativa para o seu preenchimento/configuração.
 
 O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma vez que cada país pode ter diferentes modelos/regras a aplicar, que terão de ser adaptados em conformidade. É um processo simples de efetuar:
 
@@ -121,7 +121,15 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
   #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
 
-## Contribuição
+- **Manutenção**
+  #
+![Management_CoefAtual](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6e4c2bb9-6f79-46f8-ae8e-5892081c6891)
+![Management_Tables_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/ce70eded-fc43-433f-ac1b-116877a6c6e6)
+![Management_Tables_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/a1ab269d-dbc2-4a93-a583-153a4f093260)
+![Management_LogViewer](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/5b3e38c8-74da-4c9c-b6a5-704329aff130)
+
+
+## 🌟 Contribuição
 
 As contribuições para este projeto são bem-vindas! Se encontrar algum problema ou tiver sugestões de melhoria, por favor abra um problema no repositório GitHub: https://github.com/fauxtix/PropertyManagerFL/Issues 
 
@@ -147,6 +155,6 @@ O código fonte do site está licenciado sob a licença MIT, que pode ser encont
 
 Se tiver alguma dúvida ou precisar de mais assistência, pode contactar o responsável pelo projeto:
 
-- 👨‍💻 Responável pela manutenção: Fausto Luís
+- 👨‍💻 Responsável pela manutenção: Fausto Luís
 - ✉ Email: fauxtix.luix@hotmail.com
 
