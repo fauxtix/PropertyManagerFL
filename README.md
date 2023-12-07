@@ -6,7 +6,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 
 - **Informação centralizada sobre propriedades e inquilinos**: O PMFL permite que os proprietários armazenem todos os detalhes da propriedade e do inquilino num único local conveniente. Desde especificações de propriedades a registos de inquilinos e informações de contacto, tudo é facilmente acessível sempre que precisar.
 
-- **Criação de contratos de arrendamento**: O PMFL simplifica o processo de criação de contratos de arrendamento, novos e existentes.
+- **Criação de contratos de arrendamento**: O PMFL simplifica o processo de criação de contratos de arrendamento (novos e existentes).
 
 - **Controlo de pagamentos de rendas**: O PMFL fornece um sistema abrangente de acompanhamento de pagamentos de rendas, ajudando os senhorios a manterem-se actualizados sobre as transacções e a tratarem prontamente de quaisquer pagamentos em atraso.
 
