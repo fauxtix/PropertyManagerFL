@@ -121,6 +121,14 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
   #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
 
+- **Manutenção**
+  #
+![Management_CoefAtual](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6e4c2bb9-6f79-46f8-ae8e-5892081c6891)
+![Management_Tables_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/ce70eded-fc43-433f-ac1b-116877a6c6e6)
+![Management_Tables_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/a1ab269d-dbc2-4a93-a583-153a4f093260)
+![Management_LogViewer](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/5b3e38c8-74da-4c9c-b6a5-704329aff130)
+
+
 ## 🌟 Contribuição
 
 As contribuições para este projeto são bem-vindas! Se encontrar algum problema ou tiver sugestões de melhoria, por favor abra um problema no repositório GitHub: https://github.com/fauxtix/PropertyManagerFL/Issues 
