@@ -121,7 +121,7 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
   #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
 
-## Contribuição
+## 🌟 Contribuição
 
 As contribuições para este projeto são bem-vindas! Se encontrar algum problema ou tiver sugestões de melhoria, por favor abra um problema no repositório GitHub: https://github.com/fauxtix/PropertyManagerFL/Issues 
 
