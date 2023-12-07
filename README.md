@@ -155,6 +155,6 @@ O código fonte do site está licenciado sob a licença MIT, que pode ser encont
 
 Se tiver alguma dúvida ou precisar de mais assistência, pode contactar o responsável pelo projeto:
 
-- 👨‍💻 Responável pela manutenção: Fausto Luís
+- 👨‍💻 Responsável pela manutenção: Fausto Luís
 - ✉ Email: fauxtix.luix@hotmail.com
 
