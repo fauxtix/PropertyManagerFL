@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using PropertyManagerFL.Application.Interfaces.Repositories;
-using PropertyManagerFL.Application.ViewModels.Imoveis;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
+using PropertyManagerFL.Application.Interfaces.Repositories;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -12,15 +10,12 @@ namespace PropertyManagerFL.Api.Controllers
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<ReportController> _logger;
-        private readonly IFracaoRepository _repoFracoes;
         private readonly IImovelRepository _repoImoveis;
-        private readonly IInquilinoRepository _repoInquilinos;
 
-        public ReportController(IWebHostEnvironment webHostEnvironment, ILogger<ReportController> logger, IFracaoRepository repoFracoes, IImovelRepository repoImoveis)
+        public ReportController(IWebHostEnvironment webHostEnvironment, ILogger<ReportController> logger, IImovelRepository repoImoveis)
         {
             _webHostEnvironment = webHostEnvironment;
             _logger = logger;
-            _repoFracoes = repoFracoes;
             _repoImoveis = repoImoveis;
 
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);

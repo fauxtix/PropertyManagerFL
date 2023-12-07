@@ -337,14 +337,18 @@
             Wrapper de Inquilinos
             </summary>
         </member>
-        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos},System.Net.Http.HttpClient,AutoMapper.IMapper,PropertyManagerFL.Application.Interfaces.Services.AppManager.IProprietarioService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IImovelService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IFracaoService,PropertyManagerFL.Application.Interfaces.Services.Common.IMailMergeService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IRecebimentoService)">
+        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos},System.Net.Http.HttpClient,AutoMapper.IMapper,PropertyManagerFL.Application.Interfaces.Services.AppManager.IProprietarioService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IImovelService,PropertyManagerFL.Application.Interfaces.Services.AppManager.IFracaoService,PropertyManagerFL.Application.Interfaces.Services.Common.IMailMergeService)">
             <summary>
-            wrapper Inquilinos constructor
+            Tenant's service constructor
             </summary>
             <param name="env"></param>
             <param name="logger"></param>
             <param name="httpClient"></param>
             <param name="mapper"></param>
+            <param name="svcProprietarios"></param>
+            <param name="svcImoveis"></param>
+            <param name="svcFracoes"></param>
+            <param name="mailMergeSvc"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.InsereInquilino(PropertyManagerFL.Application.ViewModels.Inquilinos.InquilinoVM)">
             <summary>

@@ -16,7 +16,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <summary>
         /// Sumário de recebimentos
         /// </summary>
-        /// <param name="statsService"></param>
+        /// <param name="repoStats"></param>
         /// <param name="logger"></param>
         public PaymentsDashboardController(IStatsRepository repoStats, ILogger<PaymentsDashboardController> logger)
         {

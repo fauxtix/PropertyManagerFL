@@ -34,7 +34,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IMailMergeService _MailMergeSvc;
         readonly IRecebimentoService _svcRecebimentos;
 
-        private ArrendamentoVM _arrendamento;
+        private ArrendamentoVM? _arrendamento;
 
 
         /// <summary>
@@ -354,8 +354,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos / GetAll())");
+                return Enumerable.Empty<ArrendamentoVM>();
             }
         }
 
@@ -1050,7 +1050,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var output = JsonConvert.DeserializeObject<IEnumerable<LookupTableVM>>(jsonData);
-                        return output.ToList();
+                        return output?.ToList() ?? new List<LookupTableVM>();
                     }
                     else
                     {

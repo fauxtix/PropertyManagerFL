@@ -33,7 +33,7 @@
                     </SfUploader>
                 </div>
             }
-            <div hidden="@string.IsNullOrEmpty(Document.DocumentPath)" class="input-group mt-2">
+            <div hidden="@string.IsNullOrEmpty(Document!.DocumentPath)" class="input-group mt-2">
                 <SfTextBox Enabled="false"
                            Placeholder="@L["TituloDocumento"]"
                            CssClass="form-control  e-corner"
@@ -56,7 +56,7 @@
 </div>
 
 @code {
-    [Inject] public IInquilinoService? inquilinoService { get; set; }
+    [Inject] public IInquilinoService inquilinoService { get; set; }
 
     [Parameter] public DocumentoInquilinoVM? Document { get; set; }
     [Parameter] public string? HeaderCaption { get; set; }
@@ -70,7 +70,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        nomeInquilino = await inquilinoService.GetNomeInquilino(Document.TenantId);
+        nomeInquilino = await inquilinoService.GetNomeInquilino(Document!.TenantId);
         nomeInquilino = nomeInquilino.Replace('"', ' ');
     }
 
@@ -86,11 +86,10 @@
             }
 
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             throw;
         }
         StateHasChanged();
     }
-
 }

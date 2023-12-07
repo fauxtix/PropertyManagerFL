@@ -11,7 +11,7 @@
         public bool Ativo { get; set; }
         public int Contagem { get; set; }
         public double Percentagem { get; set; }
-        public string Descricao { get; set; }
+        public string? Descricao { get; set; }
     }
 
     public class ExpensesSummaryData

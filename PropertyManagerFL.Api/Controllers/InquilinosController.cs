@@ -27,6 +27,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="logger"></param>
         /// <param name="repoInquilinos"></param>
         /// <param name="environment"></param>
+        /// <param name="repoFracoesInquilinos"></param>
         public InquilinosController(IMapper mapper, ILogger<InquilinosController> logger, IInquilinoRepository repoInquilinos, IWebHostEnvironment environment, IFracaoRepository repoFracoesInquilinos)
         {
             _mapper = mapper;
@@ -608,7 +609,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
-                    return null;
+                    return Ok(Enumerable.Empty<HistoricoAtualizacaoRendasVM>());
                 }
             }
             catch (Exception e)

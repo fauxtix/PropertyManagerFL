@@ -31,17 +31,20 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IImovelService _svcImoveis;
         readonly IFracaoService _svcFracoes;
         readonly IMailMergeService _MailMergeSvc;
-        readonly IRecebimentoService _svcRecebimentos;
 
-        private ArrendamentoVM _arrendamento;
+        private ArrendamentoVM? _arrendamento;
 
         /// <summary>
-        /// wrapper Inquilinos constructor
+        /// Tenant's service constructor
         /// </summary>
         /// <param name="env"></param>
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
         /// <param name="mapper"></param>
+        /// <param name="svcProprietarios"></param>
+        /// <param name="svcImoveis"></param>
+        /// <param name="svcFracoes"></param>
+        /// <param name="mailMergeSvc"></param>
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,
@@ -49,8 +52,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                  IProprietarioService svcProprietarios,
                                  IImovelService svcImoveis,
                                  IFracaoService svcFracoes,
-                                 IMailMergeService mailMergeSvc,
-                                 IRecebimentoService svcRecebimentos)
+                                 IMailMergeService mailMergeSvc)
         {
             _httpClient = httpClient;
             _env = env;
@@ -62,7 +64,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _svcImoveis = svcImoveis;
             _svcFracoes = svcFracoes;
             _MailMergeSvc = mailMergeSvc;
-            _svcRecebimentos = svcRecebimentos;
         }
 
         /// <summary>
@@ -315,7 +316,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
-        public IEnumerable<Inquilino> Query(string where = null)
+        public IEnumerable<Inquilino> Query(string where = "")
         {
             throw new NotImplementedException();
         }
@@ -509,7 +510,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var tenantPaymentsHistory = JsonConvert.DeserializeObject<IEnumerable<CC_InquilinoVM>>(jsonData);
-                        return tenantPaymentsHistory.ToList();
+                        return tenantPaymentsHistory?.ToList() ?? new List<CC_InquilinoVM>();
                     }
                     else
                     {
@@ -543,7 +544,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var tenantsWithNoLease = JsonConvert.DeserializeObject<IEnumerable<LookupTableVM>>(jsonData);
-                        return tenantsWithNoLease.ToList();
+                        return tenantsWithNoLease?.ToList() ?? new List<LookupTableVM>();
                     }
                     else
                     {
