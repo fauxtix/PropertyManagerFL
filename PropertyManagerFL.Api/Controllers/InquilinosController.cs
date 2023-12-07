@@ -925,7 +925,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
-                    return NotFound();
+                    return Ok(Enumerable.Empty<DocumentoInquilinoVM>());
                 }
             }
             catch (Exception e)
