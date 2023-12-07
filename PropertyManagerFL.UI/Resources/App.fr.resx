@@ -2498,4 +2498,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloRecolher" xml:space="preserve">
     <value>Réduire tout</value>
   </data>
+  <data name="TituloLocalidade" xml:space="preserve">
+    <value>Localization</value>
+  </data>
 </root>

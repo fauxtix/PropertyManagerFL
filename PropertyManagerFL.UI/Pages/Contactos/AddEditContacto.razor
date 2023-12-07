@@ -8,6 +8,7 @@
 @using PropertyManagerFL.UI.ApiWrappers;
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
+
 <div>
     <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="home-owner"></HeaderDialogComponent>
     <hr class="divider"/>
@@ -18,7 +19,7 @@
             <div class="col-12">
                 <div class="form-group">
                     <SfTextBox Enabled="true"
-                               Placeholder="Nome"
+                               Placeholder="@L["TituloNome"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="@FloatLabelType.Always"
                                @bind-Value="@Contact!.Nome">
@@ -26,7 +27,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <SfTextBox Enabled="true"
-                               Placeholder="Morada"
+                               Placeholder="@L["TituloMorada"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="FloatLabelType.Always"
                                @bind-Value="@Contact!.Morada">
@@ -34,7 +35,7 @@
                 </div>
                 <div class="form-group mt-2">
                     <SfTextBox Enabled="true"
-                               Placeholder="Localidade"
+                               Placeholder="@L["TituloLocalidade"]"
                                CssClass="e-field  e-corner"
                                FloatLabelType="FloatLabelType.Always"
                                @bind-Value="@Contact!.Localidade">
@@ -42,15 +43,15 @@
                 </div>
 
                 <div class="group-box">
-                    <SfTextBox Placeholder="Contacto" Width="150px"
+                    <SfTextBox Placeholder="@L["TituloCampo3Editoras"]" Width="150px"
                                CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
                                @bind-Value="@Contact!.Contacto">
                     </SfTextBox>
                     <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                     Value="@idxTipoContacto" ShowClearButton="true" Width="250px"
-                                    FilterBarPlaceholder="Selecione" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="Tipo Contacto" DataSource="@ContactTypes" FloatLabelType="FloatLabelType.Always">
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloTipoContacto"]" DataSource="@ContactTypes" FloatLabelType="FloatLabelType.Always">
                         <DropDownListTemplates TItem="LookupTableVM">
                         </DropDownListTemplates>
                         <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoContacto"></DropDownListEvents>
@@ -68,7 +69,7 @@
             </div>
 
             <div class="form-group mt-2">
-                <SfTextBox Multiline=true Placeholder="Observações"
+                <SfTextBox Multiline=true Placeholder="@L["TituloObservacoes"]"
                            HtmlAttributes="NotesAttribute"
                            CssClass="e-field e-corner"
                            FloatLabelType="FloatLabelType.Always"
@@ -83,6 +84,8 @@
 
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
     [Inject] public IContactosService? contactsService { get; set; }
+
+    [Inject] public IStringLocalizer<App> L{ get; set; }
 
     [Parameter] public ContactoVM? Contact { get; set; }
     [Parameter] public OpcoesRegisto EditMode { get; set; }

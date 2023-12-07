@@ -2485,4 +2485,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloRecolher" xml:space="preserve">
     <value>Colapsar</value>
   </data>
+  <data name="TituloLocalidade" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
 </root>

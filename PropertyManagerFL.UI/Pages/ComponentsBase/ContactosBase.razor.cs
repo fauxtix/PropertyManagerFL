@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
+using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
@@ -22,6 +23,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// </summary>
         [Inject] public IContactosService? contactsService { get; set; }
         [Inject] protected IValidationService? validatorService { get; set; }
+        [Inject] protected IStringLocalizer<App>? L{ get; set; }
 
 
         /// <summary>
@@ -79,7 +81,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             Contacts = await GetAllContacts();
             if (!Contacts.Any())
             {
-                WarningMessage = "Sem dados para mostrar";
+                WarningMessage = L["TituloSemDadosParaMostrar"];
                 WarningVisibility = true;
             }
 
@@ -91,7 +93,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task<IEnumerable<ContactoVM>> GetAllContacts()
         {
-            IEnumerable<ContactoVM>? ContactsList = await contactsService.GetAll();
+            IEnumerable<ContactoVM> ContactsList = await contactsService!.GetAll();
             ContactsList.OrderByDescending(p => p.Id).ToList();
             return ContactsList;
         }
@@ -103,7 +105,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             SelectedContact = await contactsService!.GetContacto_ById(ContactId);
             OriginalContactData = await contactsService.GetContacto_ById(ContactId); // TODO should use 'Clone/MemberWise'
             AddEditVisibility = true;
-            EditCaption = $"Editar dados do Contacto";
+            EditCaption = $"{L["EditMsg"]} {L["TituloCampo3Editoras"]}";
             RecordMode = OpcoesRegisto.Gravar;
         }
 
@@ -123,7 +125,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 AddEditVisibility = true;
-                EditCaption = $"Editar dados do Contacto";
+                EditCaption = $"{L["EditMsg"]} {L["TituloCampo3Editoras"]}";
                 RecordMode = OpcoesRegisto.Gravar;
                 StateHasChanged();                
             }
@@ -148,7 +150,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             new PdfHeaderFooterContent()
             {
                 Type = ContentType.Text,
-                Value = "Lista de Contactos",
+                Value =  "Listagem de contactos",
                 Position = new PdfPosition()
                  {
                         X = 0,
@@ -193,9 +195,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             ExportProperties.Columns = new List<GridColumn>()
             {
-                new GridColumn(){ Field="Nome", HeaderText="Nome", TextAlign=TextAlign.Left, Width="250"},
-                new GridColumn(){ Field="Contacto", HeaderText="Contacto", TextAlign=TextAlign.Left, Width="100"},
-                new GridColumn(){ Field="TipoContacto", HeaderText=" Tipo", TextAlign=TextAlign.Left, Width="150"}
+                new GridColumn(){ Field="Nome", HeaderText=L["TituloNome"], TextAlign=TextAlign.Left, Width="250"},
+                new GridColumn(){ Field="Contacto", HeaderText=L["TituloCampo3Editoras"], TextAlign=TextAlign.Left, Width="100"},
+                new GridColumn(){ Field="TipoContacto", HeaderText=L["TituloTipo"], TextAlign=TextAlign.Left, Width="150"}
             };
 
             await contactsGridObj.PdfExport(ExportProperties);
@@ -219,19 +221,19 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (RecordMode == OpcoesRegisto.Gravar)
                 {
-                    ToastTitle = "Gravação de dados do Contacto";
+                    ToastTitle = L["updateRecordsMsg"] + " " + L["TituloCampo3Editoras"];
 
                     var updateOk = await contactsService!.AtualizaContacto(SelectedContact!.Id, SelectedContact);
                     if (updateOk)
                     {
                         ToastCss = "e-toast-success";
-                        ToastMessage = "Operação terminou com sucesso";
+                        ToastMessage = L["TituloOperacaoComSucesso"];
                         ToastIcon = "fas fa-check";
                     }
                     else
                     {
                         ToastCss = "e-toast-danger";
-                        ToastMessage = "Erro ao atualizar dados";
+                        ToastMessage = L["FalhaGravacaoRegisto"];
                         ToastIcon = "fas fa-exclamation";
                     }
 
@@ -245,13 +247,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (insertOk)
                     {
                         ToastCss = "e-toast-success";
-                        ToastMessage = "Operação terminou com sucesso";
+                        ToastMessage = L["TituloOperacaoComSucesso"];
                         ToastIcon = "fas fa-check";
                     }
                     else
                     {
                         ToastCss = "e-toast-danger";
-                        ToastMessage = "Erro ao inserir imóvel na base de dados";
+                        ToastMessage = L["FalhaCriacaoRegisto"];
                         ToastIcon = "fas fa-exclamation";
                     }
 
@@ -290,7 +292,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddContact(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
-            NewCaption = "Novo Contacto";
+            NewCaption = L["NewMsg"] + " " + L["TituloCampo3Editoras"];
 
             SelectedContact = new ContactoVM()
             {
@@ -344,7 +346,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             WarningVisibility = false;
             WarningMessage = "";
-            ToastTitle = "Apagar Contacto";
+            ToastTitle = L["DeleteMsg"] + " " + L["TituloCampo3Editoras"];
 
             try
             {
@@ -355,13 +357,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Contacts = await GetAllContacts();
                     //await contactsGridObj!.Refresh();
                     ToastCss = "e-toast-success";
-                    ToastMessage = "Operação concluída com sucesso";
+                    ToastMessage = L["TituloOperacaoComSucesso"];
                     ToastIcon = "fas fa-check";
                 }
                 else
                 {
                     ToastCss = "e-toast-danger";
-                    ToastMessage = "Erro ao remover Fração";
+                    ToastMessage = L["FalhaAnulacaoRegisto"];
                     ToastIcon = "fas fa-exclamation";
 
                     //WarningVisibility = true;
@@ -378,7 +380,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 ToastTitle = "Error";
                 ToastCss = "e-toast-danger";
-                ToastMessage = "Erro ao remover Contacto";
+                ToastMessage = L["FalhaAnulacaoRegisto"];
                 ToastIcon = "fas fa-exclamation";
 
                 StateHasChanged();
@@ -418,7 +420,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
 
             AddEditVisibility = true;
-            EditCaption = $"Editar dados do Contacto";
+            EditCaption = $"{L["EditMsg"]} {L["TituloCampo3Editoras"]}";
             RecordMode = OpcoesRegisto.Gravar;
         }
 

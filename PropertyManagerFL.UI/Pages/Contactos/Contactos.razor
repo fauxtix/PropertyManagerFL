@@ -32,7 +32,7 @@
 </style>
 *@
 <PageTitle>Contactos</PageTitle>
-<PageTitleComponent PageTitle="Contactos"></PageTitleComponent>
+<PageTitleComponent PageTitle="@L["Site_Menu_Contactos"]"></PageTitleComponent>
 
 @if (Contacts is null)
 {
@@ -42,7 +42,7 @@ else
 {
     <div class="container-fluid">
         <div class="source-options">
-            <SfButton CssClass="e-success e-round-corner mx-3 mb-2 pull-left" IconCss="fa fa-plus" Content="Novo"
+            <SfButton CssClass="e-success e-round-corner mx-3 mb-2 pull-left" IconCss="fa fa-plus" Content="@L["NewMsg"]"
                   @onclick="@onAddContact" IsPrimary="true">
             </SfButton>
         </div>
@@ -66,7 +66,7 @@ else
                             </Template>
                             <GroupTemplate>
                                 <div>
-                                    <span class="category fs-500 fw-bold" >Tipo: @context.Text</span>
+                                    <span class="category fs-500 fw-bold" > @L["TituloTipo"]: @context.Text</span>
                                 </div>
                             </GroupTemplate>
                         </ListViewTemplates>

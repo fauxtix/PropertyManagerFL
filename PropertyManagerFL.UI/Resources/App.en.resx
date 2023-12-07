@@ -2490,4 +2490,7 @@
   <data name="TituloRecolher" xml:space="preserve">
     <value>Collapse All</value>
   </data>
+  <data name="TituloLocalidade" xml:space="preserve">
+    <value>Location</value>
+  </data>
 </root>

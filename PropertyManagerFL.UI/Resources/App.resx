@@ -1483,4 +1483,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloRecolher" xml:space="preserve">
     <value>Recolher</value>
   </data>
+  <data name="TituloLocalidade" xml:space="preserve">
+    <value>Localidade</value>
+  </data>
 </root>

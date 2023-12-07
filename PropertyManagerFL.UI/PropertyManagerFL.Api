@@ -2389,6 +2389,11 @@
               Looks up a localized string similar to Listagens.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloLocalidade">
+            <summary>
+              Looks up a localized string similar to Localidade.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloManutencaoDespesas">
             <summary>
               Looks up a localized string similar to Manutenção de despesas.
