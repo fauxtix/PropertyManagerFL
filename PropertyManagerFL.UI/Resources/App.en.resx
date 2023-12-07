@@ -238,7 +238,7 @@
     <value>Price</value>
   </data>
   <data name="lblSinopse" xml:space="preserve">
-    <value>Synopsis</value>
+    <value>Notes</value>
   </data>
   <data name="lblSobreAutor" xml:space="preserve">
     <value>About the Author</value>
@@ -2492,5 +2492,17 @@
   </data>
   <data name="TituloLocalidade" xml:space="preserve">
     <value>Location</value>
+  </data>
+  <data name="TituloAlteracao" xml:space="preserve">
+    <value>Updated in</value>
+  </data>
+  <data name="TituloCategoriaDocumento" xml:space="preserve">
+    <value>Document category</value>
+  </data>
+  <data name="TituloConfirmarProcessamento" xml:space="preserve">
+    <value>Confirm processing for</value>
+  </data>
+  <data name="TituloTipoDocumento" xml:space="preserve">
+    <value>Document type</value>
   </data>
 </root>

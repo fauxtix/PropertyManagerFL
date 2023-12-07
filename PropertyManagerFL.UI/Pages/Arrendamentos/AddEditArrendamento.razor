@@ -30,7 +30,7 @@ else
                         var _prazo = SelectedLease.Prazo.ToString() + " anos";
 
                         <div class="group-ckeckbox">
-                            <SfCheckBox Label="Ativo" Disabled="true" TChecked="bool" @bind-Checked=@SelectedLease!.Ativo
+                            <SfCheckBox Label="@L["chkActive"]" Disabled="true" TChecked="bool" @bind-Checked=@SelectedLease!.Ativo
                                 LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         </div>
                         <div class="group-box">

@@ -1,6 +1,7 @@
 ﻿@using PropertyManagerFL.Application.Shared.Enums;
 @using Syncfusion.Blazor.Buttons
 @using Microsoft.Extensions.Localization
+@using System.Globalization
 
 @inject IStringLocalizer<App> L
 
@@ -19,14 +20,14 @@
         </Header>
         <Content>
             <div class="group-box m-2 p-2">
-                <SfComboBox TValue="int" TItem="Mes" Placeholder="Mês"
+                <SfComboBox TValue="int" TItem="Mes" Placeholder="@L["TituloMes"]"
                             FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedMonth"
                             DataSource="@MonthList">
                     <ComboBoxFieldSettings Text="Descricao" Value="Id" />
                     <ComboBoxEvents TItem="Mes" TValue="int"
                                     ValueChange="MonthChangeHandler" />
                 </SfComboBox>
-                <SfComboBox TValue="int" TItem="Ano" Placeholder="Ano"
+                <SfComboBox TValue="int" TItem="Ano" Placeholder="@L["TituloAno"]"
                             FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedYear"
                             DataSource="@YearsList">
                     <ComboBoxFieldSettings Text="Descricao" Value="Id" />
@@ -39,26 +40,26 @@
                 <div class="col-9">
                     <div>
                         <SfMessage Severity=MessageSeverityType Variant="MessageVariant.Text" ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
+                        </div>
                     </div>
+                    <RightSideImageComponent Operation="@IconType" />
                 </div>
-                <RightSideImageComponent Operation="@IconType" />
-            </div>
-        </Content>
-        <FooterTemplate>
-            <hr />
-            <div>
-                <SfButton CssClass="@OkButtonColor" IconCss="fas fa-check"
-                          @onclick="OnConfirmYes" Content="@L["Sim"]">
-                </SfButton>
-                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                          @onclick="OnConfirmNo" Content="@L["Nao"]">
-                </SfButton>
-            </div>
-        </FooterTemplate>
-    </DialogTemplates>
-    <DialogPositionData X="@PositionX" Y="@PositionY"></DialogPositionData>
-    <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
-</SfDialog>
+            </Content>
+            <FooterTemplate>
+                <hr />
+                <div>
+                    <SfButton CssClass="@OkButtonColor" IconCss="fas fa-check"
+                              @onclick="OnConfirmYes" Content="@L["Sim"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                              @onclick="OnConfirmNo" Content="@L["Nao"]">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogPositionData X="@PositionX" Y="@PositionY"></DialogPositionData>
+        <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
+    </SfDialog>
 
 
 
@@ -98,7 +99,7 @@
     public class EventCallbackArgs
     {
         public int ProcessingMonth { get; set; }
-        public int ProcessingYear{ get; set; }
+        public int ProcessingYear { get; set; }
     }
 
     private Dictionary<string, object> ErrorTextBox_Rows = new Dictionary<string, object>()
@@ -141,13 +142,13 @@
 
         if (SelectedMonth == 13) SelectedMonth = 1;
         var MesageCaption = $"{MonthList.FirstOrDefault(p => p.Id == SelectedMonth).Descricao} de {YearsList.FirstOrDefault(y => y.Id == SelectedYear).Descricao}";
-        AlertMessage = $"Confirma processamento para  {MesageCaption}?";
+        AlertMessage = $"{L["TituloConfirmarProcessamento"]}  {MesageCaption}?";
         StateHasChanged();
     }
 
     protected void OnConfirmYes()
     {
-        args = new EventCallbackArgs {  ProcessingMonth = SelectedMonth, ProcessingYear= SelectedYear};
+        args = new EventCallbackArgs { ProcessingMonth = SelectedMonth, ProcessingYear = SelectedYear };
         OnConfirmationYes.InvokeAsync(args);
     }
     protected void OnConfirmNo()
@@ -159,7 +160,7 @@
     {
         SelectedMonth = args.Value;
         var strSelectedMonth = $"{args.ItemData.Descricao} de {SelectedYear.ToString()}";
-        AlertMessage = $"Confirma processamento para  {strSelectedMonth}?";
+        AlertMessage = $"{L["TituloConfirmarProcessamento"]}  {strSelectedMonth}?";
         HideMessage = false;
         StateHasChanged();
     }
@@ -168,7 +169,7 @@
         SelectedYear = args.Value;
         var strSelectedYear = $"{SelectedMonth.ToString()} de  {args.ItemData.Descricao}";
         HideMessage = false;
-        AlertMessage = $"Confirma processamento para  {SelectedYear}?";
+        AlertMessage = $"{L["TituloConfirmarProcessamento"]}  {SelectedYear}?";
         StateHasChanged();
 
     }
@@ -187,22 +188,16 @@
 
     protected List<Mes> GetMonths()
     {
-        return new List<Mes>
-        {
-            new Mes { Id = 1, Descricao = "Janeiro" },
-            new Mes { Id = 2, Descricao = "Fevereiro" },
-            new Mes { Id = 3, Descricao = "Março" },
-            new Mes { Id = 4, Descricao = "Abril" },
-            new Mes { Id = 5, Descricao = "Maio" },
-            new Mes { Id = 6, Descricao = "Junho" },
-            new Mes { Id = 7, Descricao = "Julho" },
-            new Mes { Id = 8, Descricao = "Agosto" },
-            new Mes { Id = 9, Descricao = "Setembro" },
-            new Mes { Id = 10, Descricao = "Outubro" },
-            new Mes { Id = 11, Descricao = "Novembro" },
-            new Mes { Id = 12, Descricao = "Dezembro" }
-        };
+        string[] names = DateTimeFormatInfo.CurrentInfo.MonthNames;
+
+        var listOfMonthNames = names
+             .Take(12)
+             .Select((name, index) => new Mes { Id = index + 1, Descricao = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name) })
+             .ToList();
+
+        return listOfMonthNames;
     }
+
     protected List<Ano> GetYears()
     {
         return new List<Ano>

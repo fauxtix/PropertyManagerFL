@@ -1673,6 +1673,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alteração.
+        /// </summary>
+        public static string TituloAlteracao {
+            get {
+                return ResourceManager.GetString("TituloAlteracao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Alterações não serão guardadas. Confirma?.
         /// </summary>
         public static string TituloAlteracoesNaoSeraoGuardadas {
@@ -1970,6 +1979,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Categoria de documento.
+        /// </summary>
+        public static string TituloCategoriaDocumento {
+            get {
+                return ResourceManager.GetString("TituloCategoriaDocumento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Certificação energética.
         /// </summary>
         public static string TituloCertificacaoEnergetica {
@@ -2020,6 +2038,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloConfirmar {
             get {
                 return ResourceManager.GetString("TituloConfirmar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Confirma processamento para.
+        /// </summary>
+        public static string TituloConfirmarProcessamento {
+            get {
+                return ResourceManager.GetString("TituloConfirmarProcessamento", resourceCulture);
             }
         }
         
@@ -2663,7 +2690,7 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Guarda mensagem e envi e-mail.
+        ///   Looks up a localized string similar to Guarda mensagem e envia e-mail.
         /// </summary>
         public static string TituloGuardaMensagemEnviaEmail {
             get {
@@ -3811,6 +3838,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloTipoContacto {
             get {
                 return ResourceManager.GetString("TituloTipoContacto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tipo de documento.
+        /// </summary>
+        public static string TituloTipoDocumento {
+            get {
+                return ResourceManager.GetString("TituloTipoDocumento", resourceCulture);
             }
         }
         

@@ -91,10 +91,10 @@ else
             <FooterTemplate>
                 <div>
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                          @onclick="SaveContactData" Content="Gravar">
+                          @onclick="SaveContactData" Content="@L["btnSalvar"]">
                     </SfButton>
                     <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                          @onclick="CloseEditDialog" Content="Sair">
+                              @onclick="CloseEditDialog" Content="@L["MSG_GoBack"]">
                     </SfButton>
                 </div>
             </FooterTemplate>
@@ -112,8 +112,8 @@ else
                    OnConfirmationNo="ContinueEdit" />
 
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                        DialogTitle="Apagar Contacto"
-                        Message="@DeleteCaption" ConfirmationText="Confirma operação?"
+                            DialogTitle="@(L["DeleteMsg"] + " " + L["TituloCampo3Editoras"])"
+                            Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                         Visible="@DeleteVisibility"
                         DialogWidth="20%"
                         DialogHeight="auto"
@@ -136,7 +136,7 @@ else
         <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
     </ToastAnimationSettings>
     <ToastButtons>
-        <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        <ToastButton Content="@L["MSG_GoBack"]" OnClick="@HideToast"></ToastButton>
     </ToastButtons>
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>

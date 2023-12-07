@@ -1412,7 +1412,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
     <value>Guarda mensagem</value>
   </data>
   <data name="TituloGuardaMensagemEnviaEmail" xml:space="preserve">
-    <value>Guarda mensagem e envi e-mail</value>
+    <value>Guarda mensagem e envia e-mail</value>
   </data>
   <data name="TituloMensagensEnviadas" xml:space="preserve">
     <value>Enviadas</value>
@@ -1485,5 +1485,17 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   </data>
   <data name="TituloLocalidade" xml:space="preserve">
     <value>Localidade</value>
+  </data>
+  <data name="TituloAlteracao" xml:space="preserve">
+    <value>Alteração</value>
+  </data>
+  <data name="TituloCategoriaDocumento" xml:space="preserve">
+    <value>Categoria de documento</value>
+  </data>
+  <data name="TituloConfirmarProcessamento" xml:space="preserve">
+    <value>Confirma processamento para</value>
+  </data>
+  <data name="TituloTipoDocumento" xml:space="preserve">
+    <value>Tipo de documento</value>
   </data>
 </root>

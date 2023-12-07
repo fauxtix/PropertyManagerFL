@@ -2488,4 +2488,16 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloLocalidade" xml:space="preserve">
     <value>Ubicación</value>
   </data>
+  <data name="TituloAlteracao" xml:space="preserve">
+    <value>Cambio en</value>
+  </data>
+  <data name="TituloCategoriaDocumento" xml:space="preserve">
+    <value>Categoría de documento</value>
+  </data>
+  <data name="TituloConfirmarProcessamento" xml:space="preserve">
+    <value>Confirmar tratamiento para</value>
+  </data>
+  <data name="TituloTipoDocumento" xml:space="preserve">
+    <value>Tipo de documento</value>
+  </data>
 </root>

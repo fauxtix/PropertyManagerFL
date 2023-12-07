@@ -1734,6 +1734,11 @@
               Looks up a localized string similar to Não é possivel continuar. Não há registo de frações!.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAlteracao">
+            <summary>
+              Looks up a localized string similar to Alteração.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAlteracoesNaoSeraoGuardadas">
             <summary>
               Looks up a localized string similar to Alterações não serão guardadas. Confirma?.
@@ -1899,6 +1904,11 @@
               Looks up a localized string similar to Categoria despesa.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCategoriaDocumento">
+            <summary>
+              Looks up a localized string similar to Categoria de documento.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCertificacaoEnergetica">
             <summary>
               Looks up a localized string similar to Certificação energética.
@@ -1927,6 +1937,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloConfirmar">
             <summary>
               Looks up a localized string similar to Confirmar.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloConfirmarProcessamento">
+            <summary>
+              Looks up a localized string similar to Confirma processamento para.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloConservacao">
@@ -2286,7 +2301,7 @@
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloGuardaMensagemEnviaEmail">
             <summary>
-              Looks up a localized string similar to Guarda mensagem e envi e-mail.
+              Looks up a localized string similar to Guarda mensagem e envia e-mail.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloIdentificacao">
@@ -2922,6 +2937,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloTipoContacto">
             <summary>
               Looks up a localized string similar to Tipo de contacto.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloTipoDocumento">
+            <summary>
+              Looks up a localized string similar to Tipo de documento.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloTipoFracao">

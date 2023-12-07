@@ -66,7 +66,7 @@ else
                 <GridEvents OnToolbarClick="ToolbarClickHandler" OnRecordDoubleClick="OnDocumentDoubleClickHandler"
                         CommandClicked="OnDocumentCommandClicked" TValue="DocumentoVM" />
                 <GridColumns>
-                    <GridColumn Field=@nameof(DocumentoVM.CreatedOn) TextAlign="TextAlign.Center" HeaderText="Data" Width="100" Format="d"></GridColumn>
+                    <GridColumn Field=@nameof(DocumentoVM.CreatedOn) TextAlign="TextAlign.Center" HeaderText="@L["TituloData"]" Width="100" Format="d"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.Title) HeaderText="@L["lblTitulo"]" Width="300"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.Description) HeaderText="@L["lblSinopse"]" HideAtMedia="(min-width: 900px)" Width="350"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.DocumentType) HeaderText="@L["TituloTipo"]" Width="260"></GridColumn>
@@ -194,7 +194,7 @@ else
         <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
     </ToastAnimationSettings>
     <ToastButtons>
-        <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
     </ToastButtons>
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>

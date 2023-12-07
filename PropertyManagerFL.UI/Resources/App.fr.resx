@@ -2501,4 +2501,16 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloLocalidade" xml:space="preserve">
     <value>Localization</value>
   </data>
+  <data name="TituloAlteracao" xml:space="preserve">
+    <value>Actualisé le</value>
+  </data>
+  <data name="TituloCategoriaDocumento" xml:space="preserve">
+    <value>Catégorie de document</value>
+  </data>
+  <data name="TituloConfirmarProcessamento" xml:space="preserve">
+    <value>Confirmer le traitement pour</value>
+  </data>
+  <data name="TituloTipoDocumento" xml:space="preserve">
+    <value>Type de document</value>
+  </data>
 </root>
