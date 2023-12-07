@@ -35,7 +35,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 # Localização / globalização
 A aplicação suporta os idiomas português, inglês, francês e espanhol.
 
-Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o português foi utilizado como língua nativa para o seu preenchimento/configuração.
+Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) necessitarão da intervenção do utilizador, uma vez que o Português foi utilizado como língua nativa para o seu preenchimento/configuração.
 
 O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma vez que cada país pode ter diferentes modelos/regras a aplicar, que terão de ser adaptados em conformidade. É um processo simples de efetuar:
 
