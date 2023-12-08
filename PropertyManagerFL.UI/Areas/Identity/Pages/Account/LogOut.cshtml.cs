@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using PropertyManagerFL.UI;
 using System.Security.Claims;
 
 namespace Web.Blazor.Areas.Identity.Pages.Account
@@ -12,9 +13,9 @@ namespace Web.Blazor.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly UserManager<IdentityUser> _userManager;
 
-        private readonly ILogger<LogoutModel> _logger;
+        private readonly ILogger<App> _logger;
         public LogoutModel(SignInManager<IdentityUser> signInManager,
-                           ILogger<LogoutModel> logger,
+                           ILogger<App> logger,
                            UserManager<IdentityUser> userManager)
         {
             _signInManager = signInManager;

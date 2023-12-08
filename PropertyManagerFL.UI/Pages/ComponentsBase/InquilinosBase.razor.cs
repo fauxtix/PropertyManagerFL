@@ -13,6 +13,7 @@ using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
+
 namespace PropertyManagerFL.UI.Pages.ComponentsBase
 {
     /// <summary>
@@ -34,8 +35,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public NavigationManager nav { get; set; }
         [Inject] protected IValidationService validatorService { get; set; }
         [Inject] protected IStringLocalizer<App> L { get; set; }
-        [Inject] public IConfiguration _config { get; set; }
-        [Inject] public ILogger<App> _logger { get; set; }
+        [Inject] public IConfiguration? _config { get; set; }
+        [Inject] public ILogger<App>? _logger { get; set; }
 
         protected IEnumerable<CC_InquilinoVM>? TenantPaymentsHistory { get; set; }
         protected IEnumerable<InquilinoVM>? Tenants { get; set; }
@@ -158,12 +159,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             FiadorId = 0;
             TenantDocumentId = 0;
 
-            var rentAdjustmentsetting = _config.GetSection("AppSettings:AutomaticRentAdjustment").Value;
+            var rentAdjustmentsetting = _config?.GetSection("AppSettings:AutomaticRentAdjustment").Value;
             if (!string.IsNullOrEmpty(rentAdjustmentsetting))
             {
                 AutomaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
             }
-
+            _logger?.LogInformation("Mensagem de teste para verificar log na base de dados (GetAllTenants)");
             Tenants = await GetAllTenants();
             TenantUpdatedRents = GetTenantRentUpdates();
             //if (!Tenants.Any())

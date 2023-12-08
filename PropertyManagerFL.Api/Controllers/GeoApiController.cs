@@ -153,7 +153,7 @@ namespace PropertyManagerFL.Api.Controllers
             {
                 using var httpResponse = await _httpClient.GetAsync(endpoint);
                 if (!httpResponse.IsSuccessStatusCode)
-                    throw new Exception("Oops... Something went wrong");
+                    throw new Exception("Algo de errado ocorreu. Contacte o Administrador");
 
                 var listaMunicipios = await httpResponse.Content.ReadFromJsonAsync<ListaMunicipios>();
                 if (listaMunicipios is not null)

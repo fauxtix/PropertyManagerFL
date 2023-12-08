@@ -17,21 +17,24 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("PMConnection");
 
-Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Warning()
-        .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
-        .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Warning)
-        .Enrich.FromLogContext()
+
+builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
+{
+    Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+            .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .Enrich.FromLogContext()
         .WriteTo.MSSqlServer(connectionString,
         sinkOptions: new MSSqlServerSinkOptions()
         {
+            SchemaName = "dbo",
             AutoCreateSqlTable = true,
             TableName = "PMLogs"
         })
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
-builder.Host.UseSerilog();
-
+        //        .WriteTo.Console()
+        .CreateLogger();
+}).UseSerilog();
 
 builder.Services.AddCors();
 
@@ -60,12 +63,11 @@ builder.Services.AddServicesDependencyInjectionConfiguration();
 
 
 
-// obriga autenticação do utilizador
-builder.Services.AddAuthorization(options =>
-{
-    // By default, all incoming requests will be authorized according to the default policy  
-    options.FallbackPolicy = options.DefaultPolicy;
-});
+// força a abertura da página de login no arranque da aplicação
+//builder.Services.AddAuthorization(options =>
+//{
+//    options.FallbackPolicy = options.DefaultPolicy;
+//});
 
 #region Localization
 
