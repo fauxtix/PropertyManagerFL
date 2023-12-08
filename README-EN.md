@@ -1,7 +1,5 @@
 # PropertyManagerFL
 
-(For the Portuguese version of this README file, see README-PT).
-
 Application designed to assist landlords in managing their properties and rentals. With a user-friendly interface and a range of helpful features, PropertManagerFL (PMFL) serves as a centralized platform for landlords, to streamline their property management tasks.
 
 # Key Features
@@ -156,4 +154,12 @@ Thank you for using PropertyManagerFL!
 - **Contacts**
   #
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
+
+- **App Management**
+ #
+
+![Management_CoefAtual_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/63717d27-9a58-40d6-83e0-ae304084eb24)
+![Management_Tables_1_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/1bb2471c-7dbb-4f9e-bdbe-fcea69b55ec8)
+![Management_Tables_2_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/fde12d70-4a74-4593-bfa5-fb007aa08851)
+![Management_LogViewer_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c0ec8d33-a195-43b9-a80d-0cdf2b4f5d71)
 
