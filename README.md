@@ -52,7 +52,7 @@ Relativamente à estrutura da base de dados (SQl Server), pode aceder aos script
 
 **Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
 
-# Imagens de ecrã
+# Imagens da aplicação
 
 - **Ecrã de entrada**
   #
