@@ -41,7 +41,7 @@ Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) 
 
 O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma vez que cada país pode ter diferentes modelos/regras a aplicar, que terão de ser adaptados em conformidade. É um processo simples de efetuar:
 
-1. Utilize o Winword para abrir cada documento modelo utilizado na aplicação (templates / dotx), armazenado em https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs;
+1. Utilize o Winword para abrir cada documento modelo utilizado na aplicação (templates / dotx), armazenado na [pasta dos documentos](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs);
 2. Copie o seu texto e utilize um tradutor (Google, DeepL, ...) para o adaptar às suas necessidades;
 3. Copie o texto traduzido e substitua o texto da carta (salvaguardando os placeholders dos campos variáveis);
 4. Termine o processo guardando os documentos actualizados (substituindo os existentes).
