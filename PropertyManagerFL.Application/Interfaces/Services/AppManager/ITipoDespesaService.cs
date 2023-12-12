@@ -9,7 +9,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> Update(int id, TipoDespesaVM entity);
         Task<bool> Delete(int id);
         Task<int> GetFirstId();
-        Task<IEnumerable<TipoDespesaVM>> Query(string where = null);
+        Task<IEnumerable<TipoDespesaVM>> Query(string where = "");
         Task<TipoDespesaVM> Get_ById(int id);
         Task<IEnumerable<TipoDespesaVM>> GetAll();
         string RegistoComErros(TipoDespesa tipoDespesa);

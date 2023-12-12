@@ -9,7 +9,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<bool> Update(AlteraProprietario entity);
         Task Delete(int id);
         int GetFistId();
-        IEnumerable<Proprietario> Query(string where = null);
+        IEnumerable<Proprietario> Query(string where = "");
         Task<Proprietario> Query_ById(int Id);
         string RegistoComErros(Proprietario proprietario);
         Task<bool> TableHasData();

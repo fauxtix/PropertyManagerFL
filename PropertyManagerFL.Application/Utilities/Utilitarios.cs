@@ -550,7 +550,7 @@ namespace PropertyManagerFLApplication.Utilities
 
 		public static bool UsaNotifier()
 		{
-			string sUsaNotifier = ApplicationConfiguration.UsaNotifier;
+			string sUsaNotifier = ApplicationConfiguration.UsaNotifier ?? string.Empty;
 			if (sUsaNotifier.ToLower() == "sim")
 				return true;
 			else
@@ -565,13 +565,13 @@ namespace PropertyManagerFLApplication.Utilities
 
 		public static string PastaListagens()
 		{
-			string sPastaImagens = ApplicationConfiguration.PastaListagens;
+			string sPastaImagens = ApplicationConfiguration.PastaListagens ?? string.Empty;
 			return sPastaImagens;
 		}
 
 		public static string DefaultConnection()
 		{
-			string sConnection = ApplicationConfiguration.DefaultConnection;
+			string sConnection = ApplicationConfiguration.DefaultConnection ?? string.Empty;
 			return sConnection;
 
 		}
@@ -678,7 +678,7 @@ namespace PropertyManagerFLApplication.Utilities
 			while (true)
 			{
 				string sValName = "url" + counter.ToString();
-				string url = (string)subKey.GetValue(sValName);
+				string url = (string)subKey.GetValue(sValName) ;
 				if (url is null)
 				{
 					break; // TODO: might not be correct. Was : Exit While
@@ -707,305 +707,104 @@ namespace PropertyManagerFLApplication.Utilities
 
 		}
 
-		public static string ValorPorExtenso(decimal valor)
-		{
-			int cent = 0;
-			try
-			{
-				// se for =0 retorna 0 eros
-				if (valor == 0)
-				{
-					return "Zero Euros";
-				}
-				// Verifica a parte decimal, ou seja, os cêntimos
-				cent = Convert.ToInt32(decimal.Round((valor - (int)valor) * 100, MidpointRounding.ToEven));
-				// Verifica apenas a parte inteira
-				//number = Convert.ToInt32(number);
-				valor = (int)valor;
-				// Caso existam cêntimos
-				if (cent > 0)
-				{
-					// Caso seja 1 não coloca "euros" mas sim "euro"
-					if (valor == 1)
-					{
-						return "Um Euro e " + getDecimal(Convert.ToByte(cent)) + " Cêntimos";
-					}
-					// Caso o valor seja inferior a 1 euro
-					else if (valor == 0)
-					{
-						return getDecimal(Convert.ToByte(cent)) + "Cêntimos";
-					}
-					else
-					{
-						return getInteger(valor) + " Euros e " + getDecimal(Convert.ToByte(cent)) + " Cêntimos";
-					}
-				}
-				else
-				{
-					// Caso seja 1 não coloca "euros" mas sim "euro"
-					if (valor == 1)
-					{
-						return "Um Euro";
-					}
-					else
-					{
-						return getInteger(valor) + " Euros";
-					}
-				}
-			}
-			catch
-			{
-				return "";
-			}
-		}
+        public static string ValorPorExtenso(decimal valor)
+        {
+            int cent = 0;
+            try
+            {
+                if (valor == 0)
+                {
+                    return "Zero Euros";
+                }
 
-		public static string getDecimal(byte number)
-		{
-			try
-			{
-				Convert.ToInt32(number);
+                cent = Convert.ToInt32(decimal.Round((valor - (int)valor) * 100, MidpointRounding.ToEven));
+                valor = (int)valor;
 
-				if (number == 0)
-				{
-					return "";
-				}
+                if (cent > 0)
+                {
+                    return (valor, cent) switch
+                    {
+                        (1, _) => $"Um Euro e {getDecimal(Convert.ToByte(cent))} Cêntimos",
+                        (0, _) => $"{getDecimal(Convert.ToByte(cent))} Cêntimos",
+                        _ => $"{getInteger(valor)} Euros e {getDecimal(Convert.ToByte(cent))} Cêntimos",
+                    };
+                }
+                else
+                {
+                    return (valor) switch
+                    {
+                        (1) => "Um Euro",
+                        _ => $"{getInteger(valor)} Euros",
+                    };
+                }
+            }
+            catch
+            {
+                return "";
+            }
+        }
 
-				if (number >= 1 && number <= 19)
-				{
-					string[] strArray = {"Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
-				"Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezasseis", "Dezassete", "Dezoito", "Dezanove"};
+        public static string getDecimal(byte number)
+        {
+            try
+            {
+                return number switch
+                {
+                    0 => "",
+                    >= 1 and <= 19 => new[]
+                    {
+                "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
+                "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezasseis", "Dezassete", "Dezoito", "Dezanove"
+            }[number - 1] + " ",
+                    >= 20 and <= 99 when (number % 10) == 0 => new[] { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" }[number / 10 - 2],
+                    >= 20 and <= 99 => $"{new[] { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" }[number / 10 - 2]} e {getDecimal(Convert.ToByte(number % 10))}",
+                    _ => "",
+                };
+            }
+            catch
+            {
+                return "";
+            }
+        }
 
-					return strArray[number - 1] + " ";
-				}
+        public static string getInteger(decimal number)
+        {
+            try
+            {
+                number = (int)number;
 
-				if (number >= 20 && number <= 99)
-				{
-					string[] strArray = { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" };
-
-					if ((number % 10) == 0)
-					{
-						return strArray[number / 10 - 2]; // + " ";
-					}
-					else
-					{
-						return strArray[number / 10 - 2] + " e " + getDecimal(Convert.ToByte(number % 10)); // + " ";
-					}
-				}
-
-				else
-				{
-					return "";
-				}
-			}
-
-			catch
-			{
-				return "";
-			}
-		}
-
-
-		public static string getInteger(decimal number)
-		{
-
-			try
-			{
-				number = (int)number;
-
-				if (number < 0)
-				{
-					return "-" + getInteger(-number);
-				}
-
-				if (number == 0)
-				{
-					return "";
-				}
-
-				if (number >= 1 && number <= 19)
-				{
-					string[] strArray = { "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
-			"Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezasseis", "Dezassete", "Dezoito", "Dezanove" };
-
-					return strArray[Convert.ToInt32(number) - 1] + " ";
-				}
-
-				if (number >= 20 && number <= 99)
-				{
-					string[] strArray = { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" };
-
-					if ((number % 10) == 0)
-					{
-						return strArray[Convert.ToInt32(number) / 10 - 2] + " ";
-					}
-					else
-					{
-						return strArray[Convert.ToInt32(number) / 10 - 2] + " e " + getInteger(number % 10); // + " ";
-					}
-				}
-
-				if (number == 100)
-				{
-					return "Cem ";
-				}
-
-				if (number >= 101 && number <= 999)
-				{
-					string[] strArray = { "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos" };
-
-					if ((number % 100) == 0)
-					{
-						return strArray[Convert.ToInt32(number) / 100 - 1]; // + " ";
-					}
-					else
-					{
-						return strArray[Convert.ToInt32(number) / 100 - 1] + " e " + getInteger(number % 100); // + " ";
-					}
-				}
-
-				if (number >= 1000 && number <= 1999)
-				{
-					int resto = Convert.ToInt32(number) % 1000;
-
-					if (resto == 0)
-					{
-						return "Mil ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return "Mil e " + getInteger(number % 1000);
-						}
-
-						else
-						{
-							return "Mil, " + getInteger(number % 1000);
-						}
-					}
-				}
-
-
-				if (number >= 2000 && number <= 999999)
-				{
-					int resto = Convert.ToInt32(number) % 1000;
-
-					if (resto == 0)
-					{
-						return getInteger(number / 1000) + "Mil ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return getInteger(number / 1000) + "Mil e " + getInteger(number % 1000);
-						}
-
-						else
-						{
-							return getInteger(number / 1000) + "Mil, " + getInteger(number % 1000);
-						}
-					}
-				}
-
-
-				if (number >= 1000000 && number <= 1999999)
-				{
-					int resto = Convert.ToInt32(number) % 1000000;
-
-					if (resto == 0)
-					{
-						return "Um Milhão ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return getInteger(number / 1000000) + "Milhão e " + getInteger(number % 1000000);
-						}
-
-						else
-						{
-							return getInteger(number / 1000000) + "Milhão, " + getInteger(number % 1000000);
-						}
-					}
-				}
-
-
-				if (number >= 2000000 && number <= 999999999)
-				{
-					int resto = Convert.ToInt32(number) % 1000000;
-
-					if (resto == 0)
-					{
-						return getInteger(number / 1000000) + " Milhões ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return getInteger(number / 1000000) + "Milhões e " + getInteger(number % 1000000);
-						}
-
-						else
-						{
-							return getInteger(number / 1000000) + "Milhões, " + getInteger(number % 1000000);
-						}
-					}
-				}
-
-				if (number >= 1000000000 && number <= 1999999999)
-				{
-					int resto = Convert.ToInt32(number) % 1000000000;
-
-					if (resto == 0)
-					{
-						return "Um Bilião ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return getInteger(number / 1000000000) + "Bilião e " + getInteger(number % 1000000000);
-						}
-
-						else
-						{
-							return getInteger(number / 1000000000) + "Bilião, " + getInteger(number % 1000000000);
-						}
-					}
-				}
-
-
-				else
-				{
-					int resto = Convert.ToInt32(number) % 1000000000;
-
-					if (resto == 0)
-					{
-						return getInteger(number / 1000000000) + " Biliões ";
-					}
-					else
-					{
-						if (resto <= 100)
-						{
-							return getInteger(number / 1000000000) + "Biliões e " + getInteger(number % 1000000000);
-						}
-
-						else
-						{
-							return getInteger(number / 1000000000) + "Biliões, " + getInteger(number % 1000000000);
-						}
-					}
-				}
-
-			}
-
-			catch
-			{
-				return "";
-			}
-		}
-	}
+                return number switch
+                {
+                    < 0 => $"-{getInteger(-number)}",
+                    0 => "",
+                    >= 1 and <= 19 => new[]
+                    {
+                "Um", "Dois", "Três", "Quatro", "Cinco", "Seis", "Sete", "Oito", "Nove", "Dez",
+                "Onze", "Doze", "Treze", "Quatorze", "Quinze", "Dezasseis", "Dezassete", "Dezoito", "Dezanove"
+            }[Convert.ToInt32(number) - 1] + " ",
+                    >= 20 and <= 99 when (number % 10) == 0 => new[] { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" }[Convert.ToInt32(number) / 10 - 2] + " ",
+                    >= 20 and <= 99 => $"{new[] { "Vinte", "Trinta", "Quarenta", "Cinquenta", "Sessenta", "Setenta", "Oitenta", "Noventa" }[Convert.ToInt32(number) / 10 - 2]} e {getInteger(number % 10)}",
+                    100 => "Cem ",
+                    >= 101 and <= 999 when (number % 100) == 0 => new[] { "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos" }[Convert.ToInt32(number) / 100 - 1],
+                    >= 101 and <= 999 => $"{new[] { "Cento", "Duzentos", "Trezentos", "Quatrocentos", "Quinhentos", "Seiscentos", "Setecentos", "Oitocentos", "Novecentos" }[Convert.ToInt32(number) / 100 - 1]} e {getInteger(number % 100)}",
+                    >= 1000 and <= 1999 when (number % 1000 == 0) => "Mil ",
+                    >= 1000 and <= 1999 => number % 100 <= 100 ? "Mil e " + getInteger(number % 1000) : "Mil, " + getInteger(number % 1000),
+                    >= 2000 and <= 999999 when (number % 1000 == 0) => getInteger(number / 1000) + "Mil ",
+                    >= 2000 and <= 999999 => number % 100 <= 100 ? getInteger(number / 1000) + "Mil e " + getInteger(number % 1000) : getInteger(number / 1000) + "Mil, " + getInteger(number % 1000),
+                    >= 1000000 and <= 1999999 when (number % 1000000 == 0) => "Um Milhão ",
+                    >= 1000000 and <= 1999999 => number % 100 <= 100 ? getInteger(number / 1000000) + "Milhão e " + getInteger(number % 1000000) : getInteger(number / 1000000) + "Milhão, " + getInteger(number % 1000000),
+                    >= 2000000 and <= 999999999 when (number % 1000000 == 0) => getInteger(number / 1000000) + " Milhões ",
+                    >= 2000000 and <= 999999999 => number % 100 <= 100 ? getInteger(number / 1000000) + "Milhões e " + getInteger(number % 1000000) : getInteger(number / 1000000) + "Milhões, " + getInteger(number % 1000000),
+                    >= 1000000000 and <= 1999999999 when (number % 1000000000 == 0) => "Um Bilião ",
+                    >= 1000000000 and <= 1999999999 => number % 100 <= 100 ? getInteger(number / 1000000000) + "Bilião e " + getInteger(number % 1000000000) : getInteger(number / 1000000000) + "Bilião, " + getInteger(number % 1000000000),
+                    _ => getInteger(number / 1000000000) + " Biliões ",
+                };
+            }
+            catch
+            {
+                return "";
+            }
+        }
+    }
 
 }

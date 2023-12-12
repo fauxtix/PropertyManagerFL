@@ -86,7 +86,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         }
 
 
-        public IEnumerable<Proprietario> Query(string where = null)
+        public IEnumerable<Proprietario> Query(string where = "")
         {
             throw new NotImplementedException();
         }

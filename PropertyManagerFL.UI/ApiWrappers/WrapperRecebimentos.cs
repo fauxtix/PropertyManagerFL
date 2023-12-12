@@ -80,7 +80,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         }
 
 
-        public IEnumerable<Recebimento> Query(string where = null)
+        public IEnumerable<Recebimento> Query(string where = "")
         {
             throw new NotImplementedException();
         }

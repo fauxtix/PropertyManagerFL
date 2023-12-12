@@ -9,7 +9,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> Update(int id, ProprietarioVM entity);
         Task<bool> Delete(int id);
         Task<int> GetFirstId();
-        IEnumerable<Proprietario> Query(string where = null);
+        IEnumerable<Proprietario> Query(string where = "");
         Task<Proprietario> Query_ById(int Id);
         string RegistoComErros(Proprietario proprietario);
         Task<bool> TableHasData();

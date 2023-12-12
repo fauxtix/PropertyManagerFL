@@ -14,7 +14,7 @@ namespace PropertyManagerFL.Application.Extensions
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.Preserve
             });
-            return responseObject;
+            return responseObject ?? new Result<T>();
         }
 
         internal static async Task<IResult> ToResult(this HttpResponseMessage response)
@@ -25,7 +25,7 @@ namespace PropertyManagerFL.Application.Extensions
                 PropertyNameCaseInsensitive = true,
                 ReferenceHandler = ReferenceHandler.Preserve
             });
-            return responseObject;
+            return responseObject ?? new Result();
         }
 
         internal static async Task<PaginatedResult<T>> ToPaginatedResult<T>(this HttpResponseMessage response)

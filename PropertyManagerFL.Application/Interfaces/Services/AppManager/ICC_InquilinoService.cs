@@ -10,7 +10,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         void Delete(CC_InquilinoVM entity);
 		int GetFirstId();
 		CC_InquilinoVM Query_ById(int id);
-        IEnumerable<CC_InquilinoVM> Query(string where = null);
+        IEnumerable<CC_InquilinoVM> Query(string where = "");
         bool TableHasData();
         Task<IEnumerable<CC_InquilinoVM>> GetTenantCheckingAcount();
     }

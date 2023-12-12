@@ -20,7 +20,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             throw new NotImplementedException();
         }
 
-        public IEnumerable<TipoContacto> Query(string where = null)
+        public IEnumerable<TipoContacto> Query(string where = "")
         {
             throw new NotImplementedException();
         }

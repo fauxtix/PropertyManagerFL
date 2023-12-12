@@ -7,7 +7,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         void Delete(CategoriaDespesa entity);
         int GetFirstId();
         long Insert(CategoriaDespesa entity);
-        IEnumerable<CategoriaDespesa> Query(string where = null);
+        IEnumerable<CategoriaDespesa> Query(string where = "");
         CategoriaDespesa Query_ById(int id);
         string RegistoComErros(CategoriaDespesa categoriasDespesas);
         bool TableHasData();

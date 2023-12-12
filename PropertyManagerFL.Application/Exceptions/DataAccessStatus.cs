@@ -24,13 +24,13 @@ namespace PropertyManagerFLApplication.Exceptions
 
       public void setValues(string status, bool operationSucceeded, string exceptionMessage, string customMessage, string helpLink, int errorCode, string stackTrace)
     {
-      Status = status ?? string.Copy("");
+      Status = status ?? string.Empty;
       OperationSucceeded = operationSucceeded;
-      ExceptionMessage = exceptionMessage ?? string.Copy("");
-      CustomMessage = customMessage ?? string.Copy("");
-      HelpLink = helpLink ?? string.Copy("");
+      ExceptionMessage = exceptionMessage ?? string.Empty;
+      CustomMessage = customMessage ?? string.Empty;
+      HelpLink = helpLink ?? string.Empty;
       ErrorCode = errorCode;
-      StackTrace = stackTrace ?? string.Copy("");
+      StackTrace = stackTrace ?? string.Empty;
     }
     public string getFormattedValues()
     {

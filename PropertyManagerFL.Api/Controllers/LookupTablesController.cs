@@ -229,7 +229,7 @@ namespace PropertyManagerFL.Api.Controllers
             var location = GetControllerActionNames();
             try
             {
-                if (record is null)
+                if (record is null || record.Tabela is null)
                 {
                     return BadRequest();
                 }

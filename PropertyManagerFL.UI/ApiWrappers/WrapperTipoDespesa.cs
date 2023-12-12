@@ -123,7 +123,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         }
 
 
-        public Task<IEnumerable<TipoDespesaVM>> Query(string where = null)
+        public Task<IEnumerable<TipoDespesaVM>> Query(string where = "")
         {
             throw new NotImplementedException();
         }

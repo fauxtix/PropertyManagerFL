@@ -122,7 +122,7 @@ namespace PropertyManagerFL.Application.Constants.Permission
             {
                 var propertyValue = prop.GetValue(null);
                 if (propertyValue is not null)
-                    permssions.Add(propertyValue.ToString());
+                    permssions.Add(item: propertyValue.ToString());
             }
             return permssions;
         }

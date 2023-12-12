@@ -7,7 +7,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         void Delete(TipoRecebimento entity);
         int GetFirstId();
         long Insert(TipoRecebimento entity);
-        IEnumerable<TipoRecebimento> Query(string where = null);
+        IEnumerable<TipoRecebimento> Query(string where = "");
         TipoRecebimento Query_ById(int id);
         string RegistoComErros(TipoRecebimento tipoRecebimento);
         bool TableHasData();

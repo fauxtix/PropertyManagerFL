@@ -10,7 +10,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 		UserVM GetData_ID(int Id);
 		int GetFistId();
 		long Insert(User_Info entity);
-		IEnumerable<User_Info> Query(string where = null);
+		IEnumerable<User_Info> Query(string where = "");
 		User_Info Query_ById(int Id);
 		string RegistoComErros(UserWithConfirmPwd user);
 		bool TableHasData();

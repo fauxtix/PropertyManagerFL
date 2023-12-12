@@ -31,7 +31,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             throw new NotImplementedException();
         }
 
-        public IEnumerable<User_Info> Query(string where = null)
+        public IEnumerable<User_Info> Query(string where = "")
         {
             throw new NotImplementedException();
         }

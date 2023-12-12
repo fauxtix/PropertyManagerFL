@@ -203,7 +203,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Fiador> Query(string where = null)
+        public IEnumerable<Fiador> Query(string where = "")
         {
             throw new NotImplementedException();
         }

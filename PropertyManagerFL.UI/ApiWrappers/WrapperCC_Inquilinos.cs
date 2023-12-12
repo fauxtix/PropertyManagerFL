@@ -25,7 +25,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         }
 
 
-        public IEnumerable<CC_InquilinoVM> Query(string where = null)
+        public IEnumerable<CC_InquilinoVM> Query(string where = "")
         {
             throw new NotImplementedException();
         }
