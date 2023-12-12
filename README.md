@@ -47,7 +47,7 @@ O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma v
 4. Termine o processo guardando os documentos actualizados (substituindo os existentes).
 
 # Base de dados
-Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) no projeto PropertyManagerFL.Infrastructure/Database
+Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) na [pasta de scripts da base de dados]()
 #
 
 **Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
