@@ -46,7 +46,7 @@ It's a simple process to carry out:
 4. Finish the process by saving the updated documents (overwriting the existing ones).
 
 # Database
-For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database script folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) 
+For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) 
 #
 
 **Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 6).
