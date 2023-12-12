@@ -1,5 +1,4 @@
-﻿using System;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
@@ -10,7 +9,7 @@ namespace PropertyManagerFL.Application.Validator
         private readonly static char[] separators = new[] { '.', '[' };
         private TValidator? validator;
 
-        [CascadingParameter] private EditContext EditContext { get; set; }
+        [CascadingParameter] private EditContext? EditContext { get; set; }
 
         protected override void OnInitialized()
         {
