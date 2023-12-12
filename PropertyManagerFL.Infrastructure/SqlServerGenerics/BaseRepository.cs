@@ -17,7 +17,7 @@ namespace PropertyManagerFL.Infrastructure.SqlServerGenerics
 		public async Task<long> Insert_Async(T entity)
 		{
 			var spInsert = $"usp_{typeof(T).Name}_Insert";
-			long RecordInserted = 0;
+			long recordInserted = 0;
 			try
 			{
 				using (var connection = _dapperContext.CreateConnection())
@@ -30,7 +30,7 @@ namespace PropertyManagerFL.Infrastructure.SqlServerGenerics
 				throw;
 			}
 
-			return RecordInserted;
+			return recordInserted;
 		}
 
 		public async Task Update_Async(T entity)

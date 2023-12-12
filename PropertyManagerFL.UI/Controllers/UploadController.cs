@@ -7,65 +7,87 @@ namespace PropertyManagerFL.UI.Controllers
     [Route("api/[controller]")]
     public class UploadController : Controller
     {
-        public IWebHostEnvironment HostingEnvironment { get; set; }
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
         public UploadController(IWebHostEnvironment hostingEnvironment)
         {
-            HostingEnvironment = hostingEnvironment;
+            _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
 
         [HttpPost("[action]/{folder}")]
-        public void Save(IList<IFormFile> UploadFiles, string folder)
+        public void Save(List<IFormFile> uploadFiles, string folder)
         {
             long size = 0;
             try
             {
-                foreach (var file in UploadFiles)
+                foreach (var file in uploadFiles)
                 {
-                    var filename = ContentDispositionHeaderValue
-                            .Parse(file.ContentDisposition)
-                            .FileName
-                            .Trim('"');
-                    var filenameToCopy = Path.Combine(HostingEnvironment.WebRootPath, "uploads", folder, filename);
-                    size += (int)file.Length;
-                    if (!System.IO.File.Exists(filename))
+                    var contentDisposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
+
+                    if (contentDisposition != null)
                     {
-                        using (FileStream fs = System.IO.File.Create(filenameToCopy))
+                        var fileName = contentDisposition.FileName;
+                        if (!string.IsNullOrEmpty(fileName))
                         {
-                            file.CopyTo(fs);
-                            fs.Flush();
+                            var filename = fileName.Trim('"');
+                            var filenameToCopy = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", folder, filename);
+                            size += file.Length;
+
+                            if (!System.IO.File.Exists(filenameToCopy))
+                            {
+                                using (var fs = System.IO.File.Create(filenameToCopy))
+                                {
+                                    file.CopyTo(fs);
+                                    fs.Flush();
+                                }
+                            }
                         }
                     }
                 }
             }
             catch (Exception e)
             {
-                Response.Clear();
-                Response.StatusCode = 204;
-                Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "File failed to upload";
-                Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = e.Message;
+                HandleException(e, "File failed to upload");
             }
         }
 
         [HttpPost("[action]")]
-        public void Remove(IList<IFormFile> UploadFiles)
+        public void Remove(List<IFormFile> uploadFiles)
         {
             try
             {
-                var filename = HostingEnvironment.ContentRootPath + $@"\{UploadFiles[0].FileName}";
-                if (System.IO.File.Exists(filename))
+                if (uploadFiles.Count > 0)
                 {
-                    System.IO.File.Delete(filename);
+                    var fileName = uploadFiles[0].FileName;
+
+                    if (!string.IsNullOrEmpty(fileName))
+                    {
+                        var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, fileName);
+
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
                 }
             }
             catch (Exception e)
             {
-                Response.Clear();
-                Response.StatusCode = 200;
-                Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = "File removed successfully";
-                Response.HttpContext.Features.Get<IHttpResponseFeature>().ReasonPhrase = e.Message;
+                HandleException(e, "File removed failed");
             }
         }
 
+        private void HandleException(Exception exception, string reasonPhrase)
+        {
+            Response.Clear();
+            Response.StatusCode = 204;
+
+            var httpResponseFeature = Response.HttpContext.Features.Get<IHttpResponseFeature>();
+            if (httpResponseFeature != null)
+            {
+                httpResponseFeature.ReasonPhrase = reasonPhrase;
+                httpResponseFeature.ReasonPhrase = exception.Message;
+            }
+        }
     }
 }
