@@ -1,7 +1,6 @@
 # PropertyManagerFL
 
-[English](https://github.com/fauxtix/PropertyManagerFL/blob/master/README-EN.md) | [Potuguês](https://github.com/fauxtix/PropertyManagerFL/blob/master/README.md)
-(For the English version of this README file, see README-EN).
+[English](https://github.com/fauxtix/PropertyManagerFL/blob/master/README-EN.md) 
 
 Aplicação concebida para ajudar os senhorios na gestão das suas propriedades e alugueres. Com uma interface de fácil utilização e uma série de funcionalidades úteis, o PropertManagerFL (PMFL) funciona como uma plataforma centralizada para os senhorios, para agilizar as suas tarefas de gestão de propriedades.
 
