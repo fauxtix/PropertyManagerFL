@@ -141,7 +141,7 @@ Crie um branch para a sua modificação (git checkout -b fauxtix/PropertyManager
 
 Commit (git commit -am 'added a new feature - some files changed')
 
-Fazer push_ (git push origin fauxtix/PropertyManagerFL)
+Push (git push origin fauxtix/PropertyManagerFL)
 
 Criar um novo Pull Request
 
