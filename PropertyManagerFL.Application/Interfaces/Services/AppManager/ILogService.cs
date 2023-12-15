@@ -1,5 +1,4 @@
 ﻿using PropertyManagerFL.Application.ViewModels.Logs;
-using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 {

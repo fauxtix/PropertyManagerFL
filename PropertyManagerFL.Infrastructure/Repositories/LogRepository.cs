@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application;
+using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Logins;
 using PropertyManagerFL.Application.ViewModels.Logs;
@@ -13,10 +14,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 {
     public class LogRepository : ILogRepository
     {
-        private readonly DapperContext _context;
+        private readonly IDapperContext _context;
         private readonly ILogger<LogRepository> _logger;
 
-        public LogRepository(DapperContext context, ILogger<LogRepository> logger)
+        public LogRepository(IDapperContext context, ILogger<LogRepository> logger)
         {
             _context = context;
             _logger = logger;

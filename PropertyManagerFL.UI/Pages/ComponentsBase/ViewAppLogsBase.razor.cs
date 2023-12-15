@@ -12,7 +12,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
     {
         [Inject] public ILogService? logService { get; set; }
         [Inject] public ILogger<ViewAppLogsBase>? logger { get; set; }
-        protected AppLogDto SelectedAppLog { get; set; }
+        protected AppLogDto? SelectedAppLog { get; set; }
         protected List<AppLogDto>? Logs { get; set; }
         protected int LogId { get; set; }
         protected bool ViewLogVisibility { get; set; }
