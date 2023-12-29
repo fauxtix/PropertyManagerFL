@@ -26,6 +26,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _environment;
+
 
         readonly IProprietarioService _svcProprietarios;
         readonly IInquilinoService _svcInquilinos;
@@ -50,6 +52,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="svcFracoes"></param>
         /// <param name="mailMergeSvc"></param>
         /// <param name="svcRecebimentos"></param>
+        /// <param name="environment"></param>
         public WrapperArrendamentos(IConfiguration env,
                                     ILogger<WrapperArrendamentos> logger,
                                     HttpClient httpClient,
@@ -59,7 +62,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                     IImovelService svcImoveis,
                                     IFracaoService svcFracoes,
                                     IMailMergeService mailMergeSvc,
-                                    IRecebimentoService svcRecebimentos)
+                                    IRecebimentoService svcRecebimentos,
+                                    IWebHostEnvironment environment)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Arrendamentos";
@@ -79,6 +83,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _svcFracoes = svcFracoes;
             _MailMergeSvc = mailMergeSvc;
             _svcRecebimentos = svcRecebimentos;
+            _environment = environment;
         }
 
         /// <summary>
@@ -377,12 +382,23 @@ namespace PropertyManagerFL.UI.ApiWrappers
         {
             try
             {
+                //string fullPath = Path.Combine(_environment.ContentRootPath, "Reports", "Docs", "Contratos", filename!);
+                //var fileName = fullPath.Replace("docx", "pdf");
+                //if(File.Exists(fileName))
+                //{
+                //    return fileName;
+                //}
+
                 var response = await _httpClient.GetAsync($"{_uri}/GetPdfFilename/{filename}");
                 if (response.IsSuccessStatusCode)
                 {
-                    var fileName = await response.Content.ReadAsStringAsync();
-                    if (string.IsNullOrEmpty(fileName) == false)
-                        return fileName;
+                    var resultString = await response.Content.ReadAsStringAsync();
+                    if (string.IsNullOrEmpty(resultString) == false)
+                    {
+                        resultString = resultString.Replace("\"", "").Replace("\\\\", "\\");
+
+                    }
+                    return resultString;
                 }
 
                 return "";

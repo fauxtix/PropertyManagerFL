@@ -23,8 +23,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync<MailMergeModel>($"{_uri}/MailMergeDocument", model);
+                var response = await _httpClient.PostAsJsonAsync($"{_uri}/MailMergeDocument", model);
                 var resultString = await response.Content.ReadAsStringAsync();
+                resultString = resultString.Replace("\"", "").Replace("\\\\", "\\");
                 return resultString;
 
             }

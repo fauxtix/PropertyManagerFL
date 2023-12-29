@@ -10,7 +10,7 @@
 
 @inherits AddEditArrendamentoBase
 
-@if (ApplicableLaws is null)
+@if (ApplicableLaws is null && SelectedLease is null)
 {
     <LoadingData />
 }
@@ -27,7 +27,7 @@ else
                 <div class="col-md-6 col-sm-12">
                     @if (EditMode == OpcoesRegisto.Gravar)
                     {
-                        var _prazo = SelectedLease.Prazo.ToString() + " anos";
+                        var _prazo = SelectedLease?.Prazo.ToString() + " anos";
 
                         <div class="group-ckeckbox">
                             <SfCheckBox Label="@L["chkActive"]" Disabled="true" TChecked="bool" @bind-Checked=@SelectedLease!.Ativo
@@ -40,6 +40,7 @@ else
                                FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloUltimoPagamento"]" />
                             <SfTextBox Readonly="true" Value="@_prazo"
                                CssClass="custom-class" FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDuracao"]" />
+                               <span> (em anos)</span>
                         </div>
                     }
                     else

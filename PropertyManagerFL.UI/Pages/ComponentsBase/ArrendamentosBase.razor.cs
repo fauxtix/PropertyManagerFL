@@ -184,8 +184,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
-                return null;
+                _logger?.LogError(ex.Message, ex);
+                return new List<ArrendamentoVM>();
 
             }
         }
@@ -344,7 +344,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     LeaseTermVisibility = true;
                     break;
                 case "ViewLeaseContract": // Visualizar Pdf do contrato de arrendamento
-                    await ViewLeaseContarct();
+                    await ViewLeaseContract();
                     break;
                 default:
                     break;
@@ -1051,24 +1051,28 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         }
 
-        private async Task ViewLeaseContarct()
+        private async Task ViewLeaseContract()
         {
-            var agreementIssued = SelectedLease.ContratoEmitido;
+            var agreementIssued = SelectedLease?.ContratoEmitido;
             RecordMode = OpcoesRegisto.Info;
-            if (agreementIssued)
+            if (agreementIssued is not null)
             {
-                var fileName = SelectedLease.DocumentoGerado;
-                PdfFilePath = await arrendamentosService.GetPdfFilename(fileName);
+                var docxFile = SelectedLease?.DocumentoGerado;
+
+                PdfFilePath = await arrendamentosService!.GetPdfFilename(docxFile);
                 if (string.IsNullOrEmpty(PdfFilePath))
                 {
                     ShowPdfVisibility = false;
 
                     ToastTitle = "Leitura de pdf";
-                    ToastMessage = "Ficheiro não existe no local indicado!";
+                    ToastMessage = $"Ficheiro {PdfFilePath} não existe no local indicado!";
                     ToastCss = "e-toast-danger";
-                    ShowPdfVisibility = false;
+                    alertMessageType = AlertMessageType.Warning;
+                    WarningMessage = $"Ficheiro não existe no local previsto";
+                    alertTitle = "Erro ao abrir contrato para visualização";
+                    AlertVisibility = true;
 
-                    await ShowToastMessage();
+                    //await ShowToastMessage();
                 }
                 else
                 {
@@ -1106,8 +1110,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected async Task<bool> TenantHasUnpaidRents()
         {
             // Verificar se inquilino tem rendas em atraso
-            var _payments = await recebimentosService.GetAll();
-            var _tenantId = SelectedLease.ID_Inquilino;
+            var _payments = await recebimentosService!.GetAll();
+            var _tenantId = SelectedLease?.ID_Inquilino;
             var tenantHaveOwedPayments = _payments.Where(p => p.Estado == 3 && p.ID_Inquilino == _tenantId).ToList();
             return tenantHaveOwedPayments.Any();
         }

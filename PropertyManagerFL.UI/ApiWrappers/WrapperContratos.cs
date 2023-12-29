@@ -54,6 +54,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<string> EmiteContrato(Contrato? contrato)
         {
+
             // TODO falta acrescentar restantes campos do contrato - Modelo 1
 
             //string[] aCampos = new string[] {
@@ -151,12 +152,13 @@ namespace PropertyManagerFL.UI.ApiWrappers
                         Referral = true
                     };
 
-                    string docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
+                    var result = await _MailMergeSvc.MailMergeLetter(mergeModel); // devolve nome do ficheiro gerado (docx)
+
 
                     //esta opção abaixo deixa de ser necessária, ao criar registo de 'Arrendamento', situação é logo alterada (??) - onde?
                     //AtualizaSituacaoFracao(contrato.IdFracao);
 
-                    return docGerado;
+                    return result; ;
                 }
                 else
                 {
@@ -185,8 +187,12 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
             FiadorVM DadosFiador = await _svcFiadores.GetFiador_ById(_arrendamento.ID_Fiador);
 
-            string sTipologia = await _svcLookupTable.GetDescription(DadosFracao.Tipologia, "TipologiaFracao");
-            string sQuartos = sTipologia.Substring(1); // T1, T2, ...
+            string tipologia = await NormalizeLookupDescription(DadosFracao.Tipologia, "TipologiaFracao"); 
+            string estadoCivilProprietario = await NormalizeLookupDescription(DadosProprietario.ID_EstadoCivil, "EstadoCivil");
+            string estadoCivilInquilino = await NormalizeLookupDescription(DadosInquilino.ID_EstadoCivil, "EstadoCivil"); 
+            string estadoCivilFiador = await NormalizeLookupDescription(DadosFiador.ID_EstadoCivil, "EstadoCivil"); 
+
+            string quartos = tipologia.Substring(1); // T1, T2, ...
 
             Contrato contrato = new Contrato()
             {
@@ -196,7 +202,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     DataNascimento = DadosProprietario.DataNascimento,
                     Morada = DadosProprietario.Morada,
                     Naturalidade = DadosProprietario.Naturalidade,
-                    EstadoCivil = await _svcLookupTable.GetDescription(DadosProprietario.ID_EstadoCivil, "EstadoCivil"),
+                    EstadoCivil = estadoCivilProprietario,
                     Identificação = DadosProprietario.Identificacao,
                     Validade_CC = DadosProprietario.ValidadeCC,
                     NIF = DadosProprietario.NIF
@@ -207,7 +213,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     DataNascimento = DadosInquilino.DataNascimento,
                     Morada = DadosInquilino.Morada,
                     Naturalidade = DadosInquilino.Naturalidade,
-                    EstadoCivil = await _svcLookupTable.GetDescription(DadosInquilino.ID_EstadoCivil, "EstadoCivil"),
+                    EstadoCivil = estadoCivilInquilino,
                     Identificação = DadosInquilino.Identificacao,
                     Validade_CC = DadosInquilino.ValidadeCC,
                     NIF = DadosInquilino.NIF
@@ -216,7 +222,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 {
                     Nome = DadosFiador.Nome,
                     Morada = DadosFiador.Morada,
-                    EstadoCivil = await _svcLookupTable.GetDescription(DadosFiador.ID_EstadoCivil, "EstadoCivil"),
+                    EstadoCivil = estadoCivilFiador,
                     Identificação = DadosFiador.Identificacao,
                     Validade_CC = DadosFiador.ValidadeCC,
                     NIF = DadosFiador.NIF
@@ -235,7 +241,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 ValidadeEmissaoCertificadoEnergetico = DateTime.UtcNow.ToShortDateString(),  // TODO - não existe esta informação, adaptar bd e front-end
                 Artigo = DadosFracao.Matriz, // TODO alterar bd, criar entrada para recolha desta informação                
                 MatrizPredial = DadosFracao.Matriz,
-                Quartos = sQuartos,
+                Quartos = quartos,
                 LicencaHabitacao = DadosFracao.LicencaHabitacao,
                 DataEmissaoLicencaHabitacao = DadosFracao.DataEmissaoLicencaHabitacao,
                 Prazo = DadosArrendamento.Prazo_Meses,
@@ -251,5 +257,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
             return contrato;
         }
 
+        private async Task<string> NormalizeLookupDescription(int fkId, string tableToSearch)
+        {
+            var normalizedString = await _svcLookupTable.GetDescription(fkId, tableToSearch);
+            normalizedString = normalizedString.Replace("\"", "").Replace("\\\\", "\\");
+            return normalizedString;
+        }
     }
 }
