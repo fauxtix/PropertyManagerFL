@@ -1,8 +1,8 @@
 # PropertyManagerFL
 
-(For the English version of this README file, see README-EN).
+[English](https://github.com/fauxtix/PropertyManagerFL/blob/master/README-EN.md) 
 
-Aplicação concebida para ajudar os senhorios na gestão das suas propriedades e alugueres. Com uma interface de fácil utilização e uma série de funcionalidades úteis, o PropertManagerFL (PMFL) funciona como uma plataforma centralizada para os senhorios, para agilizar as suas tarefas de gestão de propriedades.
+Aplicação concebida para ajudar os senhorios na gestão das suas propriedades e alugueres. Com uma interface de fácil utilização e uma série de funcionalidades úteis, o PropertyManagerFL (PMFL) funciona como uma plataforma centralizada para os senhorios, para agilizar as suas tarefas de gestão de propriedades.
 
 # Principais características
 
@@ -41,13 +41,13 @@ Algumas das tabelas utilizadas na aplicação (principalmente as de **lookup**) 
 
 O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma vez que cada país pode ter diferentes modelos/regras a aplicar, que terão de ser adaptados em conformidade. É um processo simples de efetuar:
 
-1. Utilize o Winword para abrir cada documento modelo utilizado na aplicação (templates / dotx), armazenado em https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs;
+1. Utilize o Winword para abrir cada documento modelo utilizado na aplicação (templates / dotx), armazenado na [pasta dos documentos](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Api/Reports/Docs);
 2. Copie o seu texto e utilize um tradutor (Google, DeepL, ...) para o adaptar às suas necessidades;
 3. Copie o texto traduzido e substitua o texto da carta (salvaguardando os placeholders dos campos variáveis);
 4. Termine o processo guardando os documentos actualizados (substituindo os existentes).
 
 # Base de dados
-Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) no projeto PropertyManagerFL.Infrastructure/Database
+Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) na [pasta de scripts da base de dados](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database).
 #
 
 **Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
@@ -141,7 +141,7 @@ Crie um branch para a sua modificação (git checkout -b fauxtix/PropertyManager
 
 Commit (git commit -am 'added a new feature - some files changed')
 
-Fazer push_ (git push origin fauxtix/PropertyManagerFL)
+Push (git push origin fauxtix/PropertyManagerFL)
 
 Criar um novo Pull Request
 
