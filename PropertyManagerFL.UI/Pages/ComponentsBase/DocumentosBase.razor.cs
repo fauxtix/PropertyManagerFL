@@ -4,6 +4,7 @@ using Microsoft.JSInterop;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Documentos;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
@@ -27,7 +28,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] protected IValidationService? validatorService { get; set; }
         [Inject] protected IStringLocalizer<App>? L { get; set; }
         [Inject] protected NavigationManager? NavigationManager { get; set; }
-        [Inject]  protected IJSRuntime? JSRuntime { get; set; }
+        [Inject] protected IJSRuntime? JSRuntime { get; set; }
 
 
         /// <summary>
@@ -70,6 +71,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool localUpload = true;
         protected string DeleteMsg { get; set; } = string.Empty;
         protected string DirtyMsg { get; set; } = string.Empty;
+
+        protected double primaryIndex;
 
         /// <summary>
         /// Documentos
@@ -116,7 +119,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             return DocumentsList;
         }
 
-
+        public async void OnRowSelected(RowSelectEventArgs<DocumentoVM> args)
+        {
+            SelectedDocument = args.Data;
+            primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(SelectedDocument.Id);
+        }
         protected async Task OnDocumentDoubleClickHandler(RecordDoubleClickEventArgs<DocumentoVM> args)
         {
             DocumentId = args.RowData.Id;
@@ -126,6 +133,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             RecordMode = OpcoesRegisto.Gravar;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
             OriginalDocumentData = await DocumentsService.GetDocument_ById(DocumentId); // TODO should use 'Clone/MemberWise'
+
+            primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(SelectedDocument.Id);
+            if (primaryIndex >= 0)
+            {
+                await DocumentsGridObj.SelectRowAsync(primaryIndex);
+            }
         }
 
         /// <summary>
@@ -135,10 +148,20 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task OnDocumentCommandClicked(CommandClickEventArgs<DocumentoVM> args)
         {
+            var data = args.RowData;
+
             DocumentId = args.RowData.Id;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
 
             DeleteCaption = SelectedDocument?.Title;
+
+            primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(data.Id);
+
+            if (primaryIndex >= 0)
+            {
+                await DocumentsGridObj.SelectRowAsync(primaryIndex);
+            }
+
 
             OriginalDocumentData = await DocumentsService.GetDocument_ById(DocumentId); // TODO should use 'Clone/MemberWise'
             if (args.CommandColumn.Type == CommandButtonType.Edit)
@@ -415,19 +438,19 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             IsDirty = false;
 
-            var comparer = new ObjectsComparer.Comparer<DocumentoVM>();
-            var currentData = SelectedDocument;
-            var originalData = OriginalDocumentData;
-            IEnumerable<Difference> differences;
-            var isEqual_P = comparer.Compare(currentData!, originalData!, out differences);
-            if (!isEqual_P)
-            {
-                IsDirty = true;
-            }
-            else
-            {
+            //var comparer = new ObjectsComparer.Comparer<DocumentoVM>();
+            //var currentData = SelectedDocument;
+            //var originalData = OriginalDocumentData;
+            //IEnumerable<Difference> differences;
+            //var isEqual_P = comparer.Compare(currentData!, originalData!, out differences);
+            //if (!isEqual_P)
+            //{
+            //    IsDirty = true;
+            //}
+            //else
+            //{
                 AddEditVisibility = false;
-            }
+            //}
         }
 
         protected void ContinueEdit()

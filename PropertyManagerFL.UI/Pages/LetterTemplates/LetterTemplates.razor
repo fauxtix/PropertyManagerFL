@@ -1,0 +1,134 @@
+﻿@page "/LetterTemplates"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using Syncfusion.Blazor.DocumentEditor
+@using Syncfusion.Blazor.Inputs
+@using System.IO
+@using System.Text.Json
+
+<div class="container-fluid">
+    <div class="control-section">
+        <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
+            <UploaderEvents 
+                OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure"
+                OnUploadStart="OnSuccess"></UploaderEvents>
+            <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
+        </SfUploader>
+    </div>
+    <div class="control-section">
+        <SfDocumentEditorContainer @ref="container" EnableToolbar=false Height="60%" />
+    </div>
+    <div class="mt-3">
+        <SfButton @ref="saveButton" OnClick="OnSave" CssClass="e-btn e-round-corner e-primary p-1" IconCss="fa fa-save">Save</SfButton>
+    </div>
+
+    @*     <div hidden="@(HideErrroMessage)">
+    <SfMessage @ref="message"
+    Variant="MessageVariant.Text"
+    Severity="MessageSeverity.Error">Ficheiro não é válido</SfMessage>
+    </div>
+    *@
+</div>
+
+@code {
+    [Inject] ILetterTemplatesService? documentsSevice { get; set; }
+    SfDocumentEditorContainer container;
+    SfUploader uploader;
+    SfMessage message = new SfMessage();
+    SfButton? saveButton = new SfButton();
+    string fileName = string.Empty;
+    string filePath = string.Empty;
+    string ext;
+    bool HideErrroMessage = true;
+    ImportFormatType formatType;
+
+#pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
+
+    protected override void OnInitialized()
+    {
+        HideErrroMessage = true;
+        saveButton.Disabled = false;
+        formatType = ImportFormatType.Docx;
+    }
+    public async void OnSuccess(UploadingEventArgs action)
+    {
+        string? base64 = action.FileData.RawFile.ToString();
+        fileName = action.FileData.Name;
+        filePath = await documentsSevice.GetTemplateFromServer(fileName);
+        ext = Path.GetExtension(fileName);
+        if(ext.ToLower() == ".doc")
+        {
+            formatType = ImportFormatType.Doc;
+        }
+        string? data = base64.Split(',')[1];
+        byte[] bytes = Convert.FromBase64String(data);
+        using (Stream stream = new MemoryStream(bytes))
+        {
+            WordDocument document = WordDocument.Load(stream, formatType);
+            string sfdtString = JsonSerializer.Serialize(document);
+            document.Dispose();
+            //To observe the memory go down, null out the reference of document variable.
+            document = null;
+            SfDocumentEditor editor = container.DocumentEditor;
+            await editor.OpenAsync(sfdtString);
+            //To observe the memory go down, null out the reference of sfdtString variable.
+            sfdtString = null;
+        }
+        action.Cancel = true;
+    }
+
+    public async void OnSave()
+    {
+        SfDocumentEditor editor = container.DocumentEditor;
+        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+        byte[] data = Convert.FromBase64String(base64Data);
+        //To observe the memory go down, null out the reference of base64Data variable.
+        base64Data = null;
+        //Word document file stream
+        Stream stream = new MemoryStream(data);
+        //To observe the memory go down, null out the reference of data variable.
+        data = null;
+        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        {
+            //Saving the new file in root path of application
+            stream.CopyTo(fileStream);
+            fileStream.Close();
+        }
+        stream.Close();
+        //To observe the memory go down, null out the reference of stream variable.
+        stream = null;
+    }
+
+    private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
+    {
+        if (string.IsNullOrEmpty(filePath))
+        {
+            // HideErrroMessage = false;
+            saveButton.Disabled = true;
+        }
+        else
+        {
+            // HideErrroMessage = true;
+            saveButton.Disabled = false;
+        }
+        uploader.ClearAllAsync();
+    }
+    private void OnClearHandler(ClearingEventArgs args)
+    {
+        args.FilesData.Clear();
+    }
+
+    private void OnFailure(Syncfusion.Blazor.Inputs.FailureEventArgs args)
+    {
+        var x = args;
+    }
+}
+<style type="text/css" scoped>
+    /* To specify font size and color upload button */
+    .e-upload .e-file-select-wrap .e-btn, .e-upload .e-upload-actions .e-btn, .e-bigger.e-small .e-upload .e-file-select-wrap .e-btn, .e-bigger.e-small .e-upload .e-upload-actions .e-btn {
+        font-family: cursive;
+        height: 40px;
+        background-color: aquamarine;
+        color: coral;
+    }
+</style>

@@ -29,12 +29,20 @@
     .e-round-corner {
         border-radius: 10px;
     }
+
+    .e-attr {
+        font-weight: bolder;
+    }
+
+    .e-grid .e-rowcell.e-selectionbackground {
+        background-color: lavender !important;
+    }
 </style>
 
 <PageTitle>@L["TituloDocumentacao"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloDocumentacao"]"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloDocumentacao"]"></PageTitleComponent>
 
-@if (Documents is null)
+    @if (Documents is null)
 {
     <LoadingData />
 }
@@ -43,51 +51,66 @@ else
     <div class="col-lg-12 control-section">
         <div class="source-options">
             <SfButton CssClass="e-success e-round-corner mx-3 pull-left" IconCss="fa fa-plus" Content="@L["NewMsg"]"
-                  @onclick="@onAddDocument" IsPrimary="true">
+                      @onclick="@onAddDocument" IsPrimary="true">
             </SfButton>
         </div>
         <hr class="divider" />
         <div class="table table-stripped table-hover">
-            <SfGrid ID="C_Grid" Width="100%"
-                Toolbar=@Tool
-                Height="100%" @ref="DocumentsGridObj"
-                EnableStickyHeader="true"
-                EnableAltRow="true"
-                EnableHover="true"
-                DataSource="@Documents"
-                AllowFiltering="false"
-                AllowGrouping="false"
-                AllowPaging="true"
-                AllowSorting="true"
-                AllowPdfExport="true"
-                RowHeight="32"
-                AllowTextWrap="true">
+            <SfGrid ID="C_Grid" Width="100%" style="min-height:600px;"
+                    Toolbar=@Tool
+                    Height="auto" @ref="DocumentsGridObj"
+                    EnableStickyHeader="true"
+                    EnableAltRow="true"
+                    EnableHover="true"
+                    DataSource="@Documents"
+                    AllowFiltering="false"
+                    AllowGrouping="false"
+                    AllowPaging="true"
+                    AllowSorting="true"
+                    AllowPdfExport="true"
+                    AllowSelection="true"
+                    RowHeight="32"
+                    AllowTextWrap="true">
                 <GridPageSettings PageSize="12" PageCount="12" PageSizes="true"></GridPageSettings>
+                <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"
+                                       Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
+                                       PersistSelection="true" />
                 <GridEvents OnToolbarClick="ToolbarClickHandler" OnRecordDoubleClick="OnDocumentDoubleClickHandler"
-                        CommandClicked="OnDocumentCommandClicked" TValue="DocumentoVM" />
+                            CommandClicked="OnDocumentCommandClicked"
+                            RowSelected="OnRowSelected"
+                            TValue="DocumentoVM" />
                 <GridColumns>
-                    <GridColumn Field=@nameof(DocumentoVM.CreatedOn) TextAlign="TextAlign.Center" HeaderText="@L["TituloData"]" Width="100" Format="d"></GridColumn>
-                    <GridColumn Field=@nameof(DocumentoVM.Title) HeaderText="@L["lblTitulo"]" Width="300"></GridColumn>
-                    <GridColumn Field=@nameof(DocumentoVM.Description) HeaderText="@L["lblSinopse"]" HideAtMedia="(min-width: 900px)" Width="350"></GridColumn>
-                    <GridColumn Field=@nameof(DocumentoVM.DocumentType) HeaderText="@L["TituloTipo"]" Width="260"></GridColumn>
+                    <GridColumn Field=@nameof(DocumentoVM.Id) IsPrimaryKey="true"
+                                TextAlign="TextAlign.Center"
+                                HeaderText="ID#" Visible="false" />
+                    <GridColumn Field=@nameof(DocumentoVM.CreatedOn) TextAlign="TextAlign.Center"
+                                HideAtMedia="(min-width: 900px)" HeaderText="@L["TituloData"]" 
+                                Width="100" Format="d"></GridColumn>
+                    <GridColumn Field=@nameof(DocumentoVM.Title)
+                                CustomAttributes="@(new Dictionary<string, object>(){ { "class", "e-attr" }})"
+                                HeaderText="@L["lblTitulo"]" Width="360"></GridColumn>
+                    <GridColumn Field=@nameof(DocumentoVM.Description) HeaderText="@L["lblSinopse"]"
+                                HideAtMedia="(min-width: 1280px)" Width="350"></GridColumn>
+                    <GridColumn Field=@nameof(DocumentoVM.DocumentType) HeaderText="@L["TituloTipo"]"
+                                HideAtMedia="(min-width: 1400px)" Width="200"></GridColumn>
                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="140">
                         <GridCommandColumns>
                             <GridCommandColumn Type=CommandButtonType.Edit
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-primary e-round",
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                             </GridCommandColumn>
                             <GridCommandColumn Type=CommandButtonType.Delete
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
                                                                        })">
                             </GridCommandColumn>
                             <GridCommandColumn Type=CommandButtonType.None
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-success e-round",
                                                                            IconCss = "fas fa-file-pdf"
@@ -101,25 +124,26 @@ else
         </div>
     </div>
 
-    <SfDialog Width="25%"
-          Height="auto"
-          IsModal="true"
-          ShowCloseIcon="false"
-          CloseOnEscape="false"
-          @bind-Visible="AddEditVisibility">
+    <SfDialog Width="45%"
+              Height="auto"
+              MinHeight="400px"
+              IsModal="true"
+              ShowCloseIcon="false"
+              CloseOnEscape="false"
+              @bind-Visible="AddEditVisibility">
         <DialogTemplates>
             <Content>
                 <AddEditDocumento Document="@SelectedDocument"
-                              EditMode="@RecordMode"
-                              HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+                                  EditMode="@RecordMode"
+                                  HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
             </Content>
             <FooterTemplate>
                 <div>
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                          @onclick="SaveDocumentData" Content="@L["btnSalvar"]">
+                              @onclick="SaveDocumentData" Content="@L["btnSalvar"]">
                     </SfButton>
                     <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                          @onclick="CloseEditDialog" Content="@L["BtnSalir"]">
+                              @onclick="CloseEditDialog" Content="@L["BtnSalir"]">
                     </SfButton>
                 </div>
             </FooterTemplate>
@@ -127,13 +151,14 @@ else
         <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
     </SfDialog>
 
-    <SfDialog Target="#target"
-          Width="50%"
-          Height="85%"
-          IsModal="true"
-          ShowCloseIcon="false"
-          CloseOnEscape="true"
-          @bind-Visible="ShowPdfVisibility">
+    <SfDialog 
+              Width="60%" style="min-width:600px"
+              Height="auto"
+              IsModal="true"
+              MinHeight="400px"
+              ShowCloseIcon="false"
+              CloseOnEscape="true"
+              @bind-Visible="ShowPdfVisibility">
         <DialogTemplates>
             <Header>
                 <span>
@@ -147,10 +172,10 @@ else
                 }
             </Content>
             <FooterTemplate>
-                <div>
+                <div class="d-flex justify-content-end align-content-end">
                     <SfButton CssClass="e-outline e-round-corner"
-                          IconCss="fas fa-times"
-                          @onclick="(()=>ShowPdfVisibility = false)">
+                              IconCss="fas fa-times"
+                              @onclick="(()=>ShowPdfVisibility = false)">
                         Voltar
                     </SfButton>
                 </div>
@@ -162,25 +187,25 @@ else
 
     @*User exited insert/edit action with data changed.*@
     <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
-                   DialogTitle="@DirtyMsg"
-                   Message="@SelectedDocument?.Description"
-                   Visible="@IsDirty"
-                   AlertMessage=""
-                   OnConfirmationYes="IgnoreChangesAlert"
-                   OnConfirmationNo="ContinueEdit" />
+                       DialogTitle="@DirtyMsg"
+                       Message="@SelectedDocument?.Description"
+                       Visible="@IsDirty"
+                       AlertMessage=""
+                       OnConfirmationYes="IgnoreChangesAlert"
+                       OnConfirmationNo="ContinueEdit" />
 
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                        DialogTitle="@DeleteMsg"
-                        Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
-                        Visible="@DeleteVisibility"
-                        DialogWidth="20%"
-                        DialogHeight="auto"
-                        OnConfirmationYes="ConfirmDeleteYes"
-                        OnConfirmationNo="ConfirmDeleteNo" />
+                            DialogTitle="@DeleteMsg"
+                            Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                            Visible="@DeleteVisibility"
+                            DialogWidth="20%"
+                            DialogHeight="auto"
+                            OnConfirmationYes="ConfirmDeleteYes"
+                            OnConfirmationNo="ConfirmDeleteNo" />
 
     <ValidateErrorComponent Visible="@ErrorVisibility"
-                        ValidationMessages="@ValidationMessages"
-                        OnCloseDialog="CloseValidationErrorBox" />
+                            ValidationMessages="@ValidationMessages"
+                            OnCloseDialog="CloseValidationErrorBox" />
 
 }
 
@@ -202,7 +227,7 @@ else
 <SfMessage Severity="MessageSeverity.Warning"
            Visible=@WarningVisibility>@WarningMessage</SfMessage>
 
-<SfSpinner @ref="SpinnerObj"
-           Label="@L["MSG_PreparandoDados"]" Size="50"
-           Type="SpinnerType.Bootstrap5"
-           CssClass="e-spin-overlay" />
+    <SfSpinner @ref="SpinnerObj"
+               Label="@L["MSG_PreparandoDados"]" Size="50"
+               Type="SpinnerType.Bootstrap5"
+               CssClass="e-spin-overlay" />

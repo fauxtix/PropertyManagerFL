@@ -44,12 +44,24 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         {
             updateDocument.LastModifiedBy = "Fausto";
             updateDocument.LastModifiedOn = DateTime.Now;
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", updateDocument.Id);
+            parameters.Add("@Title", updateDocument.Title);
+            parameters.Add("@Description", updateDocument.Description);
+            parameters.Add("@URL", updateDocument.URL);
+            parameters.Add("@LocalUpload", updateDocument.LocalUpload);
+            parameters.Add("@IsPublic", updateDocument.IsPublic );
+            parameters.Add("@LastModifiedBy", updateDocument.LastModifiedBy);
+            parameters.Add("@LastModifiedOn", updateDocument.LastModifiedOn);
+
             try
             {
                 using (var connection = _context.CreateConnection())
                 {
                     var document = await connection.QueryFirstAsync<DocumentoVM>("usp_Documents_Update",
-                         param: updateDocument, commandType: CommandType.StoredProcedure);
+                         param: parameters, 
+                         commandType: CommandType.StoredProcedure);
 
                     return document;
                 }

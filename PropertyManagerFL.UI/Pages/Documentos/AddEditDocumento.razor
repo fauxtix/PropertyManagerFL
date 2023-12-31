@@ -19,7 +19,7 @@
                            Placeholder="@L["lblTitulo"]"
                            CssClass="e-field  e-corner"
                            FloatLabelType="@FloatLabelType.Auto"
-                @bind-Value="@Document!.Title">
+                           @bind-Value="@Document!.Title">
                 </SfTextBox>
             </div>
             <div class="form-group my-2">
@@ -28,7 +28,7 @@
                            HtmlAttributes="@NotesAttribute"
                            CssClass="e-field  e-corner"
                            FloatLabelType="FloatLabelType.Auto"
-                @bind-Value="@Document!.Description">
+                           @bind-Value="@Document!.Description">
                 </SfTextBox>
             </div>
             @if (EditMode == OpcoesRegisto.Inserir)
@@ -60,8 +60,17 @@
             }
             else
             {
-                <div class="form-group my-2 ml-2 mr-4">
-                    <SfMessage Severity="MessageSeverity.Success" ShowIcon="false" Variant="MessageVariant.Text">@documentCategory.</SfMessage>
+                <div class="d-flex justify-content-md-around gap-2 align-items-center">
+                    <SfTextBox Placeholder="Categoria" Enabled="false"
+                               CssClass="e-field  e-round-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               @bind-Value="@documentCategoryCaption">
+                    </SfTextBox>
+                    <SfTextBox Placeholder="Tipo" Enabled="false"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               @bind-Value="@documentTypeCaption">
+                    </SfTextBox>
                 </div>
             }
         </div>
@@ -75,24 +84,24 @@
                 <UploaderEvents OnActionComplete="@OnActionCompleteHandler" />
             </SfUploader>
         </div>
-        <div class="form-group my-2 mx-2">
+        <div class="form-group my-2">
             @if (EditMode == OpcoesRegisto.Gravar)
             {
-                <div class="form-group my-2">
-                    <SfMessage Severity="MessageSeverity.Success" ShowIcon="false" Variant="MessageVariant.Text">@uploadedFile</SfMessage>
-                </div>
+                <SfTextBox Enabled="@(string.IsNullOrEmpty(Document!.URL))" Multiline="true"
+                           Placeholder="File"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="@FloatLabelType.Auto"
+                           @bind-Value="@uploadedFile">
+                </SfTextBox>
             }
             else
             {
-                <div class="form-group">
-                    <SfTextBox Enabled="true"
-                               Placeholder="URL"
-                               CssClass="e-field  e-corner"
-                               FloatLabelType="@FloatLabelType.Auto"
-                    @bind-Value="@Document!.URL">
-                    </SfTextBox>
-                </div>
-
+                <SfTextBox Enabled="@(string.IsNullOrEmpty(uploadedFile))" Multiline="true"
+                           Placeholder="URL"
+                           CssClass="e-field  e-corner"
+                           FloatLabelType="@FloatLabelType.Auto"
+                           @bind-Value="@Document!.URL">
+                </SfTextBox>
             }
         </div>
 
@@ -118,9 +127,9 @@
 
     protected bool ShowTipoDocumento;
 
-    protected string? DocumentCategoryCaption;
+    protected string? documentCategoryCaption;
     protected string? uploadedFile;
-    protected string? documentCategory;
+    protected string? documentTypeCaption;
 
     public IEnumerable<LookupTableVM>? DocumentCategories { get; set; }
     public IEnumerable<DocumentType>? DocumentTypes { get; set; }
@@ -134,7 +143,7 @@
 
     protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
 {
-            {"rows", "4" }
+            {"rows", "3" }
     };
 
     protected override async Task OnParametersSetAsync()
@@ -147,8 +156,10 @@
         {
 
             idxTipoCategoriaDocumento = Document!.DocumentTypeId;
+
             idxTipoDocumento = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).TypeCategoryId;
-            documentCategory = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).Name;
+            documentTypeCaption = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).Name;
+            documentCategoryCaption = DocumentCategories.FirstOrDefault(c => c.Id == idxTipoCategoriaDocumento).Descricao;
             HideUploader = true;
             uploadedFile = Document.URL;
         }

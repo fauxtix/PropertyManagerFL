@@ -34,8 +34,7 @@
                 RowHeight="24">
             <GridPageSettings PageSize="20" PageSizes="false"></GridPageSettings>
             <GridEditSettings AllowAdding="false" AllowEditing="true" ShowConfirmDialog="true" Mode="EditMode.Batch"></GridEditSettings>
-            <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
-            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell"></GridSelectionSettings>
+            <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" PersistSelection="true"></GridSelectionSettings>
             <GridEditSettings AllowEditing="true" Mode="EditMode.Batch" ShowConfirmDialog="false"></GridEditSettings>
             <GridEvents CellSaved="CellSavedHandler" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
                         OnToolbarClick="ToolbarClickHandler" TValue="RecebimentoVM" />
