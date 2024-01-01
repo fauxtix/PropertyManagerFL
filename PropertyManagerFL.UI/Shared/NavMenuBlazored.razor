@@ -82,34 +82,6 @@
                 }
             }
 
-@*            <BlazoredSubMenu Header="@L["TituloMenuArrendamentos"]">
-                <HeaderTemplate>
-                    <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuArrendamentos"]
-                </HeaderTemplate>
-                <MenuTemplate>
-                    <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="arrendamentos">
-                            <i class="fa fa-file-contract" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
-                        </NavLink>
-                    </BlazoredMenuItem>
-                    @{
-                        var rentAdjustmentsetting = Config.GetSection("AppSettings:AutomaticRentAdjustment").Value;
-                        if (!string.IsNullOrEmpty(rentAdjustmentsetting))
-                        {
-                            var automaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
-                            if (automaticRentAdjustment)
-                            {
-                                <BlazoredMenuItem Css="nav-item px-3">
-                                    <NavLink href="updaterentsletter">
-                                        <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
-                                    </NavLink>
-                                </BlazoredMenuItem>
-                            }
-                        }
-                    }
-                </MenuTemplate>
-            </BlazoredSubMenu>
-*@
             <BlazoredMenuItem>
                 <div>
                     <p class="dropdown-divider m-0" />
@@ -203,6 +175,16 @@
                     <i class="fas fa-calendar" aria-hidden="true" />&nbsp;&nbsp;Scheduler
                 </NavLink>
             </BlazoredMenuItem>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredMenuItem Css="nav-item px-3">
+                <NavLink href="/lettertemplates">
+                    <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;Templates
+                </NavLink>
+            </BlazoredMenuItem>
 
             <BlazoredMenuItem>
                 <div>
@@ -242,6 +224,11 @@
                     <BlazoredMenuItem Css="nav-item px-3">
                         <NavLink href="/admin/viewapplogs">
                             <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;View logs
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/backupuploads/1">
+                            <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;@L["MSG_Ficheiro"]s
                         </NavLink>
                     </BlazoredMenuItem>
                 </MenuTemplate>
