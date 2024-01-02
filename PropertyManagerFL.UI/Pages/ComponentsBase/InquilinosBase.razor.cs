@@ -352,6 +352,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
 
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
+                    Lease = (await arrendamentosService!
+                        .GetAll())
+                        .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
                     SendLetterDialogVisibility = true;
                     break;
 
@@ -391,6 +395,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     break;
 
                 case "ContractOpposition": // carta de oposição à renovação do contrato
+                    Lease = (await arrendamentosService!.GetAll())
+                        .FirstOrDefault(l => l.ID_Inquilino == TenantId);
+
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
                     SendLetterDialogVisibility = true;
                     break;
@@ -475,7 +482,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else
                 {
-                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!,   fileName!);
+                    documentFilePath = Path.Combine(_env.WebRootPath, "uploads", folderName!, fileName!);
                 }
 
                 if (fileExtension!.ToLower() == ".pdf")
@@ -857,7 +864,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 switch (modulo)
                 {
                     case Modules.Inquilinos:
-                        ToastTitle = L["DeleteMsg"] + " " +  L["TituloInquilino"]; ;
+                        ToastTitle = L["DeleteMsg"] + " " + L["TituloInquilino"]; ;
                         alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
                         resultOk = await inquilinoService!.ApagaInquilino(SelectedTenant!.Id);
                         DeleteTenantVisibility = false;
@@ -1366,7 +1373,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var leaseId = Lease.Id;
                 var allrentUpdates = await inquilinoService.GetAllRentUpdates();
 
-                if(allrentUpdates == null)
+                if (allrentUpdates == null)
                 {
                     AlertVisibility = true;
                     WarningMessage = "Não foi feito qualquer aumento de renda";
@@ -1374,7 +1381,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
 
                 var tenantRentUpdates = await inquilinoService.GetRentUpdates_ByTenantId(TenantId);
-                if(tenantRentUpdates is null)
+                if (tenantRentUpdates is null)
                 {
                     AlertVisibility = true;
                     WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
