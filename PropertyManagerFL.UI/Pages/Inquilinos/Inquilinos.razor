@@ -343,7 +343,9 @@ else
                 <GridColumns>
                     <GridColumn Field=@nameof(InquilinoVM.Id) HeaderText="#" IsIdentity=true IsPrimaryKey=true
                                 Width="80"></GridColumn>
-                    <GridColumn Field=@nameof(InquilinoVM.Nome) HeaderText="@L["TituloNome"]" Width="250"></GridColumn>
+                    <GridColumn Field=@nameof(InquilinoVM.Nome)
+                                HeaderText="@L["TituloNome"]" Width="250"
+                                CustomAttributes="@(new Dictionary<string, object>(){ { "class", "e-attr" }})"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.Ativo) HeaderText="@L["chkActive"]" HideAtMedia="(min-width: 900px)"
                                 Width="100" DisplayAsCheckBox=true TextAlign="TextAlign.Center"></GridColumn>
                     <GridColumn Field=@nameof(InquilinoVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
@@ -355,7 +357,7 @@ else
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
-                                var SaldoPrevisto = inquilino.SaldoPrevisto;
+                                var SaldoPrevisto = inquilino?.SaldoPrevisto;
                                 <span>@inquilino!.SaldoPrevisto.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
@@ -365,9 +367,9 @@ else
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
-                                var saldoCorrente = inquilino.SaldoCorrente;
+                                var saldoCorrente = inquilino?.SaldoCorrente;
                                 var color = saldoCorrente < 0 ? "color:red" : "color:black";
-                                <span style="@color">@inquilino.SaldoCorrente.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
+                                <span style="@color">@inquilino?.SaldoCorrente.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
                     </GridColumn>
@@ -376,8 +378,8 @@ else
                         <Template>
                             @{
                                 var inquilino = (context as InquilinoVM);
-                                var saldoCorrente = inquilino.SaldoCorrente;
-                                var diferenca = inquilino!.SaldoPrevisto > 0 ? inquilino!.SaldoPrevisto - inquilino.SaldoCorrente : 0;
+                                var saldoCorrente = inquilino?.SaldoCorrente;
+                                var diferenca = inquilino!.SaldoPrevisto > 0 ? inquilino.SaldoPrevisto - inquilino.SaldoCorrente : 0;
                                 var color = diferenca > 0 ? "color:red" : "color:black";
                                 <span style="@color">@diferenca.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
@@ -702,5 +704,11 @@ else
     .e-collapse::before {
         content: '\e80f';
     }
+
+    .e-attr {
+        font-weight: bolder;
+        font-size: 24px;
+    }
+
 
 </style>

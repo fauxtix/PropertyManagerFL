@@ -303,11 +303,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 return;
             }
 
-            if (args.Item.Text == "Expand all")
+            if (args.Item.Text == L["TituloExpandir"])
             {
                 await tenantsGridObj.ExpandAllDetailRowAsync();
             }
-            else if (args.Item.Text == "Collapse all")
+            if (args.Item.Text == L["TituloRecolher"])
             {
                 await tenantsGridObj.CollapseAllDetailRowAsync();
             }

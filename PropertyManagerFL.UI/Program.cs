@@ -93,15 +93,6 @@ builder.Services.AddSingleton(emailConfig);
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<TokenProvider>();
 
-try
-{
-    Log.Information("Iniciando a aplicação");
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Erro catastrófico.");
-    throw;
-}
 
 var app = builder.Build();
 

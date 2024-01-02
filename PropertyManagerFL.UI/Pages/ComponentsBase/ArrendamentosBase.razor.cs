@@ -258,7 +258,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (await arrendamentosService!.ArrendamentoExiste(SelectedLease!.ID_Fracao))
                     {
                         ErrorVisibility = true;
-                        ValidationMessages = new List<string> { "Já existe arrendamento ativo para essa fração\", \"Verifique, p.f." };
+                        ValidationMessages = new List<string> { "Já existe arrendamento ativo para essa fração", "Verifique, p.f." };
+                        _logger?.LogWarning("Criar arrendamento - Já existe arrendamento ativo para fração");
                     }
                     else
                     {
@@ -266,6 +267,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         if (insertOk == false)
                         {
                             ErrorVisibility = true;
+                            _logger?.LogError("Criação de arrendamento - Erro no API");
                             ValidationMessages = new List<string> { "Erro na criação de Arrendamento" };
                         }
                         else
@@ -557,7 +559,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private async Task UpdateUnitSituation(int id)
         {
-            await contratosService.AtualizaSituacaoFracao(id); // fração
+            await contratosService!.AtualizaSituacaoFracao(id); // fração
         }
 
         private async Task UpdateTenantBalance(int IdInquilino, decimal decSaldoCorrente)

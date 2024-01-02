@@ -78,6 +78,7 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="wwwroot\images\Properties\" />
+    <Folder Include="wwwroot\uploads\Logs\" />
     <Folder Include="wwwroot\uploads\properties\" />
     <Folder Include="wwwroot\uploads\Tenants\" />
     <Folder Include="wwwroot\uploads\unit_images\" />

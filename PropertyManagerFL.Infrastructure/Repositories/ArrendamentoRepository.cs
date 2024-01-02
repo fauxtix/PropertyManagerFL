@@ -178,7 +178,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                  commandType: CommandType.StoredProcedure, transaction: tran);
 
 
-                            // Cria registo na CC Inquilino (Id devolvido serve para efeitos de debug)
+                            // Cria registo na CC Inquilino e atualiza saldo corrente = valor das 2 rendas pagas (Id devolvido (IdCreated_CC) serve para efeitos de debug)
                             if (arrendamento.ArrendamentoNovo)
                             {
                                 CC_InquilinoNovo transaction = new()
@@ -192,6 +192,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 };
                                 var IdCreated_CC = await connection.QueryFirstAsync<int>("usp_CC_Inquilinos_Insert",
                                     param: transaction,
+                                    commandType: CommandType.StoredProcedure,
+                                    transaction: tran);
+
+                                var updateTenantBalanceParameters = new DynamicParameters();
+                                updateTenantBalanceParameters.Add("@TenantId", tenantId);
+                                updateTenantBalanceParameters.Add("@NovoSaldoCorrente", valorRecebido * 2, dbType: DbType.Decimal);
+                                await connection.ExecuteScalarAsync("usp_Inquilinos_UpdateSaldoCorrente",
+                                    param: updateTenantBalanceParameters,
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
                             }

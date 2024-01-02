@@ -49,19 +49,6 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         .CreateLogger();
 }).UseSerilog();
 
-try
-{
-    Log.Information("Iniciando o WebApi");
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Erro catastrófico.");
-    throw;
-}
-//finally
-//{
-//    Log.CloseAndFlush();
-//}
 
 var app = builder.Build();
 

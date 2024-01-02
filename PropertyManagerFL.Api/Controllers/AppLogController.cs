@@ -40,6 +40,7 @@ namespace PropertyManagerFL.Api.Controllers
                 }
                 else
                 {
+                    _logger.LogWarning("Api / Logs - Sem registos para apresentar");
                     return NotFound();
                 }
 

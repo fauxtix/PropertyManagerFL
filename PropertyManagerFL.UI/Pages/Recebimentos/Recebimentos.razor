@@ -64,7 +64,7 @@ else
                         AllowExcelExport="true"
                         RowHeight="24"
                         AllowTextWrap="true">
-                    <GridPageSettings PageSize="@LeasesCount" PageSizes="true" />
+                    <GridPageSettings PageSize="@TransactionsCount" PageSizes="true" />
                     <GridSelectionSettings CheckboxMode="CheckboxSelectionType.ResetOnRowClick"
                                            Type="Syncfusion.Blazor.Grids.SelectionType.Single" />
                     <GridFilterSettings Mode="FilterBarMode.Immediate" Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
@@ -88,7 +88,9 @@ else
                             <Template Context="IsRent">
                                 @{
                                     var currentTransactionRecord = (IsRent as RecebimentoVM);
-                                    <span>@(currentTransactionRecord!.Renda ? L["TituloRenda"] : currentTransactionRecord.TipoRecebimento)</span>
+                                    <span>@(currentTransactionRecord.Renda ? 
+                                        L["TituloRenda"] : 
+                                        currentTransactionRecord.TipoRecebimento)</span>
                                 }
                             </Template>
                         </GridColumn>

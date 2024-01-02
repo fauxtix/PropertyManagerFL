@@ -10,11 +10,79 @@
 
 @inherits ViewAppLogsBase
 @{
-    var Tool = (new List<object>() { "Search" });
+    var Tool = (new List<object>() {
+        "Search", "ExcelExport",
+            new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-info",
+        CssClass = "e-inherit",
+        Text = "Info",
+        Id = "InfoLogs",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true
+    },
+        new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-triangle-exclamation",
+        CssClass = "e-inherit",
+        Text = "Warnings",
+        Id = "WarningLogs",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+    },
+            new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-exclamation",
+        CssClass = "e-inherit",
+        Text = "Errors",
+        Id = "ErrorLogs",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+    },
+    new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-key",
+        CssClass = "e-inherit",
+        Text = "Logins",
+        Id = "LoginLogs",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+    },
+
+         new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-border-all",
+        CssClass = "e-inherit",
+        Text = "Todos os registos",
+        Id = "AllLogs",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+    },
+    });
 }
 
 <PageTitle>Log Viewer</PageTitle>
-<PageTitleComponent PageTitle="Log Viewer" WithBadge="false"></PageTitleComponent>
+<PageTitleComponent PageTitle="Log Viewer" WithBadge="true" PageSubTitle="@pageBadgeCaption" />
 
 @if (Logs is null)
 {
@@ -23,14 +91,9 @@
 else
 {
     <div class="source-options">
-        <SfButton CssClass="e-danger e-round-corner mx-3 pull-left" IconCss="fa fa-trash" Content="@L["DeleteMsg"]"
-              @onclick="@onDeleteLogs">
-        </SfButton>
-        <SfButton CssClass="e-success e-round-corner mx-3 pull-left" IconCss="fa fa-eye" Content="Ver Logins"
-              @onclick="onViewLogins">
-        </SfButton>
-        <SfButton CssClass="e-primary e-round-corner mx-3 pull-left" IconCss="fa fa-table" Content="Todos os registos"
-              @onclick="onGetAll">
+        <SfButton CssClass="e-danger e-round-corner mx-3" 
+                  IconCss="fa fa-trash" Content="@L["DeleteMsg"]"
+                  @onclick="@onDeleteLogs">
         </SfButton>
     </div>
     <hr class="divider" />
@@ -39,52 +102,54 @@ else
         <hr />
         <div class="table table-striped table-responsive-sm">
             <SfGrid DataSource="@Logs"
-                @ref="LogGrid"
-                AllowPaging="true"
-                AllowSelection="true"
-                AllowSorting="true"
-                AllowFiltering="true"
-                RowHeight="32"
-                Toolbar="@Tool"
-                Width="70%"
-                TValue="AppLogDto"
-                AllowTextWrap="true">
-                <GridPageSettings PageSize="15" PageSizes="@(new int[] { 15, 20, 50, 100, 200 })"></GridPageSettings>
+                    @ref="LogGrid"
+                    AllowPaging="true"
+                    AllowExcelExport="true"
+                    AllowSelection="true"
+                    AllowSorting="true"
+                    AllowFiltering="true"
+                    RowHeight="32"
+                    Toolbar="@Tool"
+                    Width="90%"
+                    TValue="AppLogDto"
+                    AllowTextWrap="true">
+                <GridPageSettings PageSize="12" PageSizes="@(new int[] { 5, 12, 20 })"></GridPageSettings>
                 <GridFilterSettings Type="Syncfusion.Blazor.Grids.FilterType.Menu"></GridFilterSettings>
                 <GridEvents OnActionBegin="OnActionBegin" OnRecordDoubleClick="OnAppLogDoubleClickHandler"
-                        CommandClicked="OnAppLogCommandClicked"
-                        TValue="AppLogDto" />
+                            CommandClicked="OnAppLogCommandClicked"
+                            OnToolbarClick="ToolbarClickHandler"
+                            TValue="AppLogDto" />
                 <GridColumns>
                     <GridColumn Field=@nameof(AppLogDto.Id) Width="80" TextAlign=TextAlign.Center
-                            HeaderText="ID#" AllowSorting="true">
+                                HeaderText="ID#" AllowSorting="true">
                     </GridColumn>
                     <GridColumn Field=@nameof(AppLogDto.Message) Width="350"
-                            HeaderText="@L["TituloMensagem"]" AllowSorting="true">
+                                HeaderText="@L["TituloMensagem"]" AllowSorting="true">
                     </GridColumn>
 
                     <GridColumn Field=@nameof(AppLogDto.Level) Width="100"
-                            HeaderText="Level" AllowSorting="true">
+                                HeaderText="Level" AllowSorting="true">
                         <Template>
                             @{
                                 var currentEntry = (context as AppLogDto);
-                                var level = currentEntry.Level.ToLower();
-                                var chipStyle = level == "information" ? "e-primary" : level == "warning" ? "e-warning" : "e-danger";
+                                var level = currentEntry?.Level.ToLower();
+                                var chipStyle = level == "information" ? "e-primary p-1" : level == "warning" ? "e-warning p-1" : "e-danger p-1";
                                 <SfChip>
                                     <ChipItems>
-                                        <ChipItem CssClass="@chipStyle" Text="@currentEntry.Level" />
+                                        <ChipItem CssClass="@chipStyle" Text="@currentEntry?.Level" />
                                     </ChipItems>
                                 </SfChip>
                             }
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(AppLogDto.TimeStamp) Width="130"
-                            TextAlign="TextAlign.Center"
-                            HeaderText="@L["TituloData"]" AllowSorting="true">
+                                TextAlign="TextAlign.Center"
+                                HeaderText="@L["TituloData"]" AllowSorting="true">
 
                         <FilterTemplate>
                             @{
                                 <SfDateRangePicker Placeholder="@L["TituloSelecao"]" Width="500" @bind-StartDate="StartDate" @bind-EndDate="EndDate"
-                                           TValue="DateTime">
+                                                   TValue="DateTime">
                                     <DateRangePickerEvents TValue="DateTime" ValueChange="LogDateChangeHandler"></DateRangePickerEvents>
                                 </SfDateRangePicker>
                             }
@@ -94,14 +159,14 @@ else
                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
                         <GridCommandColumns>
                             <GridCommandColumn Type=CommandButtonType.Edit
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-success e-round",
                                                                            IconCss = "fa fa-eye"
                                                                        })">
                             </GridCommandColumn>
                             <GridCommandColumn Type=CommandButtonType.Delete
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
@@ -170,7 +235,7 @@ else
 
 
 
-<style>
+<style type="text/css" scoped>
     .e-grid .e-gridheader {
         position: -webkit-sticky;
         position: sticky;

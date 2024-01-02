@@ -1,8 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Core.Entities;
-using PropertyManagerFL.Infrastructure.Repositories;
 
 namespace PropertyManagerFL.Api.Controllers;
 [Route("api/[controller]")]
@@ -11,11 +9,14 @@ public class TemplatesController : ControllerBase
 {
     private readonly ILetterTemplatesRepository _templateRepository;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly ILogger<TemplatesController> _logger;
 
-    public TemplatesController(ILetterTemplatesRepository templateRepository, IWebHostEnvironment webHostEnvironment)
+
+    public TemplatesController(ILetterTemplatesRepository templateRepository, IWebHostEnvironment webHostEnvironment, ILogger<TemplatesController> logger)
     {
         _templateRepository = templateRepository;
         _webHostEnvironment = webHostEnvironment;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -28,7 +29,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it appropriately
+            _logger.LogError(ex.Message);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -42,6 +43,7 @@ public class TemplatesController : ControllerBase
 
             if (template == null)
             {
+                _logger.LogWarning($"Templates Api - template com o Id {id} não encontrado)");
                 return NotFound();
             }
 
@@ -49,7 +51,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it appropriately
+            _logger.LogError(ex.Message);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -63,6 +65,7 @@ public class TemplatesController : ControllerBase
             var fileLocation = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs", templateName);
             if (!System.IO.File.Exists(fileLocation))
             {
+                _logger.LogWarning($"Templates Api - ficheiro ({templateName}) não encontrado)");
                 return "";
             }
 
@@ -75,7 +78,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it appropriately
+            _logger.LogError(ex.Message);
             return "";
         }
     }
@@ -91,7 +94,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it appropriately
+            _logger.LogError(ex.Message);
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -103,6 +106,7 @@ public class TemplatesController : ControllerBase
         {
             if (id != template.Id)
             {
+                _logger.LogWarning("Templates API - Mismatched IDs");
                 return BadRequest("Mismatched IDs");
             }
 
@@ -114,12 +118,14 @@ public class TemplatesController : ControllerBase
             }
             else
             {
+                _logger.LogWarning("Templates API - Erro ao atualizar template. Verifique, p.f.");
+
                 return NotFound();
             }
         }
         catch (Exception ex)
         {
-            // Log the exception or handle it appropriately
+            _logger.LogError(ex.Message);
             return StatusCode(500, "Internal Server Error");
         }
     }

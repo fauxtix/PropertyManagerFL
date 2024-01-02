@@ -15,7 +15,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         {
             _env = env;
             _logger = logger;
-            _appLogUri = $"{_env["BaseUrl"]}/Templates";
+            _appLogUri = $"{_env["BaseUrl"]}/AppLog";
             _httpClient = httpClient;
         }
 

@@ -12,6 +12,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
     {
         [Inject] public ILogService? logService { get; set; }
         [Inject] public ILogger<ViewAppLogsBase>? logger { get; set; }
+        [Inject] public IWebHostEnvironment? hostEnvironment { get; set; }
         protected AppLogDto? SelectedAppLog { get; set; }
         protected List<AppLogDto>? Logs { get; set; }
         protected int LogId { get; set; }
@@ -34,10 +35,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool AlertVisibility { get; set; }
         protected string? WarningMessage { get; set; }
 
+        protected string? pageBadgeCaption;
 
 
         protected async override Task OnInitializedAsync()
         {
+            pageBadgeCaption = "Todos os registos";
             await GetAllLogs();
         }
 
@@ -56,7 +59,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
 
             LogId = args.Data.Id;
-            SelectedAppLog = await logService.GetLog_ById(LogId);
+            SelectedAppLog = await logService!.GetLog_ById(LogId);
             ViewLogVisibility = true;
             ViewLogCaption = "Visualizar Log";
             StateHasChanged();
@@ -89,17 +92,21 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             FilteredRecords = JsonConvert.DeserializeObject<List<AppLogDto>>(JsonConvert.SerializeObject(filteredData));
 
             var result = FilteredRecords?.ToList();
-            if ( result is not null && result.Any())
+            if (result is not null && result.Any())
             {
                 alertTitle = "Log Viewer";
-                DeleteLogEntryCaption = $"Marcou {FilteredRecords.Count()} registos para apagar. Não tem reversão! Backup recomendado antes de continuar";
+                DeleteLogEntryCaption = $"Marcou {FilteredRecords?.Count()} registos para apagar. Não tem reversão! Backup recomendado antes de continuar";
                 DeleteLogsDialogVisibility = true;
+                logger?.LogWarning($"Utilizador apagou {FilteredRecords?.Count()} registos ");
                 StateHasChanged();
             }
             else
             {
                 AlertVisibility = true;
+                pageBadgeCaption = "Todos os registos";
                 WarningMessage = "Não há registos para apagar... Verifique, p.f.";
+                logger?.LogWarning($"Utilizador tentou apagar registos com tabela vazia... ");
+
                 return;
             }
 
@@ -162,6 +169,77 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             args.PreventFocus = true;
         }
+
+        public async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
+        {
+            await GetAllLogs();
+
+            if (args.Item.Id.ToLower().Contains("excelexport"))
+            {
+                var logFile = $"Log{DateTime.Now.ToShortDateString()}.xlsx";
+                logFile = logFile.Replace("/", "_");
+                var fullExcelFilePath = logFile;
+                try
+                {
+                    ExcelExportProperties excelExportProperties = new ExcelExportProperties
+                    {
+                        IncludeTemplateColumn = true,
+                        IncludeHeaderRow = true,
+                        FileName = fullExcelFilePath
+                    };
+                    await LogGrid!.ExportToExcelAsync(excelExportProperties);
+                    logger?.LogInformation($"Exportado ficheiro excel ({excelExportProperties.FileName})");
+                    await GetAllLogs();
+                }
+                catch (Exception ex)
+                {
+                    logger?.LogInformation(ex.Message, ex);
+                }
+            }
+            else if (args.Item.Id.ToLower() == "warninglogs")
+            {
+                var warnings = from record in Logs
+                               where record.Level.ToLower() == "warning"
+                               select record;
+                pageBadgeCaption = "Warnings";
+                Logs = warnings.ToList();
+
+            }
+            else if (args.Item.Id.ToLower() == "errorlogs")
+            {
+                var errors = from record in Logs
+                             where record.Level.ToLower() == "error"
+                             select record;
+                pageBadgeCaption = "Errors";
+                Logs = errors.ToList();
+            }
+            else if (args.Item.Id.ToLower() == "infologs")
+            {
+                var infos = from record in Logs
+                            where record.Level.ToLower() == "information"
+                            select record;
+                pageBadgeCaption = "Info";
+                Logs = infos.ToList();
+            }
+            else if (args.Item.Id.ToLower() == "loginlogs")
+            {
+                pageBadgeCaption = "Logins";
+
+                Logs = (await logService!.ViewLogins()).ToList();
+            }
+            else if (args.Item.Id.ToLower() == "deletelogs")
+            {
+                pageBadgeCaption = "Apagar";
+
+                await onDeleteLogs();
+            }
+            else // All Logs
+            {
+                await GetAllLogs();
+                pageBadgeCaption = "Todos os registos";
+            }
+        }
+
 
         protected void LogDateChangeHandler(RangePickerEventArgs<DateTime> args)
         {

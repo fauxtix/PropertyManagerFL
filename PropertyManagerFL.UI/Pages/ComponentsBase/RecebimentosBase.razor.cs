@@ -76,7 +76,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? EditCaption { get; set; }
         protected string? DeleteCaption;
 
-        protected int LeasesCount { get; set; }
+        protected int TransactionsCount { get; set; }
         protected string? pageBadgeCaption;
 
         protected string[] GroupedColumns = new string[] { "Imovel" };
@@ -101,10 +101,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningCaption = "";
             WarningTitle = "";
 
-            var leases = await leasesService.GetAll();
-            LeasesCount = leases.Count() == 6 ? 12 : leases.Count();
 
             await GetTransactions();
+            TransactionsCount = Transactions?.Count() == 6 ? 12 : Transactions.Count();
+
         }
 
         protected async Task GetTransactions()
