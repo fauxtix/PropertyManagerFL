@@ -19,11 +19,7 @@
             <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
         </SfUploader>
     </div>
-
-@*     <div class="mt-3">
-        <SfButton @ref="saveButton" OnClick="OnSave" CssClass="e-btn e-round-corner e-primary p-1" IconCss="fa fa-save">Save</SfButton>
-    </div>
- *@
+  
     <AlertUserComponent AlertMessageType="@AlertMessageType"
                         Title="@AlertTitle"
                         OperationType="@OpcoesRegisto"
@@ -36,8 +32,6 @@
     [Inject] ILetterTemplatesService? documentsSevice { get; set; }
     SfDocumentEditorContainer container;
     SfUploader uploader;
-    SfMessage message = new SfMessage();
-    SfButton? saveButton = new SfButton();
     string fileName = string.Empty;
     string filePath = string.Empty;
     string ext;
@@ -58,8 +52,6 @@
 
     protected override void OnInitialized()
     {
-        HideErrroMessage = true;
-        saveButton.Disabled = false;
         formatType = ImportFormatType.Docx;
 
         AlertVisibility = false;
@@ -93,42 +85,19 @@
         action.Cancel = true;
     }
 
-    public async void OnSave()
-    {
-        SfDocumentEditor editor = container.DocumentEditor;
-        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
-        byte[] data = Convert.FromBase64String(base64Data);
-        //To observe the memory go down, null out the reference of base64Data variable.
-        base64Data = null;
-        //Word document file stream
-        Stream stream = new MemoryStream(data);
-        //To observe the memory go down, null out the reference of data variable.
-        data = null;
-        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-        {
-            //Saving the new file in root path of application
-            stream.CopyTo(fileStream);
-            fileStream.Close();
-        }
-        stream.Close();
-        //To observe the memory go down, null out the reference of stream variable.
-        stream = null;
-    }
-
     private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
     {
         if (string.IsNullOrEmpty(filePath))
         {
             // HideErrroMessage = false;
-            saveButton.Disabled = true;
             AlertTitle = "Modelo de cartas";
             AlertVisibility = true;
             WarningMessage = "Ficheiro não foi carregado a partir do diretório esperado Verifique, p.f";
+            OpcoesRegisto = OpcoesRegisto.Warning;
         }
         else
         {
             // HideErrroMessage = true;
-            saveButton.Disabled = false;
             AlertVisibility = false;
             AlertTitle = "";
             WarningMessage = "";
@@ -182,22 +151,35 @@
             case "save":
                 if (!string.IsNullOrEmpty(filePath))
                 {
-                    SfDocumentEditor editor = container.DocumentEditor;
-                    string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
-                    byte[] data = Convert.FromBase64String(base64Data);
-                    using (MemoryStream stream = new MemoryStream(data))
+                    try
                     {
-                        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                        SfDocumentEditor editor = container.DocumentEditor;
+                        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+                        byte[] data = Convert.FromBase64String(base64Data);
+                        using (MemoryStream stream = new MemoryStream(data))
                         {
-                            stream.CopyTo(fileStream);
+                            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+                            {
+                                stream.CopyTo(fileStream);
+                            }
                         }
+                        WarningMessage = $"Operação terminou com sucesso.";
+                        AlertTitle = $"Gravação de documento  ({Path.GetFileName(filePath)})";
+                        AlertMessageType = AlertMessageType.Info;
+                        OpcoesRegisto = OpcoesRegisto.Gravar;
+                        AlertVisibility = true;
+                        StateHasChanged();
+
                     }
-                    WarningMessage = $"Operação terminou com sucesso.";
-                    AlertTitle = $"Gravação de documento  ({Path.GetFileName(filePath)})";
-                    AlertMessageType = AlertMessageType.Info;
-                    OpcoesRegisto = OpcoesRegisto.Gravar;
-                    AlertVisibility = true;
-                    StateHasChanged();
+                    catch (Exception ex)
+                    {
+                        WarningMessage = $"Operação terminou con erro ({ex.Message}).";
+                        AlertTitle = $"Gravação de documento  ({Path.GetFileName(filePath)})";
+                        AlertMessageType = AlertMessageType.Error;
+                        OpcoesRegisto = OpcoesRegisto.Error;
+                        AlertVisibility = true;
+                        StateHasChanged();
+                    }
 
                 }
 
