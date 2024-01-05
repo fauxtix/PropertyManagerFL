@@ -93,7 +93,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return null;
+                return Enumerable.Empty<ImovelVM>();
             }
         }
 
@@ -112,7 +112,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return null;
+                return Enumerable.Empty<LookupTableVM>();
             }
         }
 
@@ -133,7 +133,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex.ToString());
-                return null;
+                return new ImovelVM();
             }
         }
 

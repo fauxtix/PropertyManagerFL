@@ -32,31 +32,40 @@
             <div class="row mx-2 mb-2">
                 <div class="col-9">
                     <div>
-                        <SfMessage Severity=MessageSeverityType ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
+                        @if (!string.IsNullOrEmpty(WarningMessage))
+                        {
+                            <SfMessage Variant="MessageVariant.Filled" CssClass="mb-1"
+                                       Severity=MessageSeverity.Error ShowIcon=false
+                                       ShowCloseIcon="false">@WarningMessage</SfMessage>
+                        }
+                        <hr style="color:black" />
+
+                        <SfMessage Severity=@MessageSeverityType ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
+
+                        </div>
                     </div>
+                    <RightSideImageComponent Operation="@IconType" />
                 </div>
-                <RightSideImageComponent Operation="@IconType" />
-            </div>
-        </Content>
-        <FooterTemplate>
-            <hr />
-            <div>
-                <SfButton CssClass="@OkButtonColor" IconCss="fas fa-warning"
-                          @onclick="OnConfirmYes" Content="@L["Sim"]">
-                </SfButton>
-                <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                          @onclick="OnConfirmNo" Content="@L["Nao"]">
-                </SfButton>
-            </div>
-        </FooterTemplate>
-    </DialogTemplates>
-    <DialogPositionData X="center" Y="center"></DialogPositionData>
-    <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
-</SfDialog>
+            </Content>
+            <FooterTemplate>
+                <hr />
+                <div>
+                    <SfButton CssClass="@OkButtonColor" IconCss="fas fa-warning"
+                              @onclick="OnConfirmYes" Content="@L["Sim"]">
+                    </SfButton>
+                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                              @onclick="OnConfirmNo" Content="@L["Nao"]">
+                    </SfButton>
+                </div>
+            </FooterTemplate>
+        </DialogTemplates>
+        <DialogPositionData X="center" Y="center"></DialogPositionData>
+        <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
+    </SfDialog>
 
 
 
-@code {
+    @code {
     [Parameter] public string? DialogTitle { get; set; }
     [Parameter] public string? TenantName { get; set; } = string.Empty;
     [Parameter] public ArrendamentoVM? Lease { get; set; }
@@ -71,6 +80,8 @@
     [Parameter] public MessageSeverity MessageSeverityType { get; set; } = MessageSeverity.Warning;
     [Parameter] public DocumentoEmitido LetterType { get; set; }
 
+    protected string SubTitle { get; set; } = string.Empty;
+    protected string WarningMessage { get; set; } = string.Empty;
 
     private string? TitleColor { get; set; } = "cornflowerblue";
     private string? OkButtonColor { get; set; } = "e-danger e-round-corner";
@@ -92,6 +103,8 @@
     protected override async Task OnParametersSetAsync()
     {
         string? alertMsg = "";
+        SubTitle = "";
+        WarningMessage = "";
         switch (AlertMessageType)
         {
             case AppDefinitions.AlertMessageType.Error:
@@ -132,6 +145,7 @@
                 if (Lease is null) return;
 
                 alertMsg = "carta de oposição de renovação do contrato?";
+                SubTitle = "Oposição de renovação do contrato";
 
                 var monthsToEnd = GetMonthDifference(DateTime.Now, Lease!.Data_Fim);
                 var tenantId = Lease.ID_Inquilino;
@@ -142,22 +156,21 @@
 
                 if (monthsToEnd < 4 && hasDeletedPayments == false)
                 {
-                    alertMsg += $" (ainda faltam {monthsToEnd} meses para terminar o contrato)";
+                    WarningMessage += $"Ainda faltam {monthsToEnd} meses para terminar o contrato ";
                 }
-                else if (monthsToEnd > 4 && hasDeletedPayments)
+                if (monthsToEnd > 4 && hasDeletedPayments)
                 {
-                    alertMsg += $" (há indicação de rendas não pagas, mas ainda faltam  {monthsToEnd} meses para terminar o contrato!)";
+                    WarningMessage += $" Há indicação de rendas não pagas, mas ainda faltam  {monthsToEnd} meses para terminar o contrato!) ";
                 }
-                else if (hasDeletedPayments == false)
+                if (hasDeletedPayments == false)
                 {
-                    alertMsg += " (não há indicação de rendas por pagar)";
+                    WarningMessage += "Não há indicação de rendas por pagar ";
                 }
-                else if (hasDeletedPayments)
+                if (hasDeletedPayments)
                 {
-                    string dummyText = tenantPayments.Count() == 1 ? "renda não paga" : "rendas não pagas";
-                    alertMsg += $" (há indicação de {tenantPayments.Count()} {dummyText})";
+                    string dummyText = tenantPayments.Count() == 1 ? "renda não paga " : "rendas não pagas ";
+                    WarningMessage += $"Há indicação de {tenantPayments.Count()} {dummyText})";
                 }
-
                 break;
         }
 

@@ -587,7 +587,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             return true;
 
                         }
-                        catch (Exception ex)
+                        catch
                         {
                             tran.Rollback();
                             return false;

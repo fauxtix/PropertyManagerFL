@@ -47,9 +47,10 @@
         </SfDialog>
     </div>
 
-    @code {
+@code {
     [Parameter] public bool Visibility { get; set; } = false;
     [Parameter] public string Title { get; set; } = "";
+    [Parameter] public string SubTitle { get; set; } = "";
     [Parameter] public string Message { get; set; } = "";
     [Parameter] public string MessageNote { get; set; } = "";
     [Parameter] public string DialogWidth { get; set; } = "25%";

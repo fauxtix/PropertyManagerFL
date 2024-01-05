@@ -9,7 +9,10 @@
 @using PropertyManagerFL.Application.ViewModels.LookupTables;
 @using PropertyManagerFL.UI.ApiWrappers;
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+@using PropertyManagerFL.UI.Pages.ComponentsBase
 @using PropertyManagerFL.UI.Pages.GoogleMaps
+
+@inherits AddEditImovelBase
 
 <div>
     <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="property48"></HeaderDialogComponent>
@@ -87,7 +90,7 @@
                                         </SfTextBox>
                                     </div>
                                 </div>
-
+                                <hr/>
                                 <div>
                                     <SfMessage Variant="MessageVariant.Text" ShowIcon=false Severity="MessageSeverity.Info">Gás</SfMessage>
                                 </div>
@@ -165,7 +168,7 @@
                     </div>
                     <div class="image-container">
                         <div class="item">
-                            <img src="/uploads/properties/@Property?.Foto" alt="Imagem da propriedade">
+                            <img  src="/uploads/properties/@Property?.Foto" alt="Imagem da propriedade">
                         </div>
                     </div>
                     <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
@@ -195,7 +198,7 @@
 </div>
 
 
-@code {
+@* @code {
 
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
     [Inject] public IImovelService? imovelService { get; set; }
@@ -479,7 +482,7 @@
         return $"{yearToShow} {yearLabel} {_em} {monthToShow} {monthLabel}";
     }
 }
-
+ *@
 <style type="text/css" scoped>
     .custom-class.e-control-wrapper .e-textbox {
         padding: 0;
@@ -507,7 +510,7 @@
 
     .item {
         border: 1px solid pink;
-        width: 260px;
+        width:260px;
         float: inherit;
         margin: 3px;
         padding: 3px;

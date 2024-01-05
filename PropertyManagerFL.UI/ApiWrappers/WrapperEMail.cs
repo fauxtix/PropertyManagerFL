@@ -19,7 +19,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _uri = $"{_env["BaseUrl"]}/EmailMessages";
         }
 
-        public async Task<bool> IsValidEmail(string EmailName)
+        public bool IsValidEmail(string EmailName)
         {
             return new EmailAddressAttribute().IsValid(EmailName);
         }

@@ -83,13 +83,13 @@
 
     public class CountryModel
     {
-        public string ID { get; set; }
-        public string Text { get; set; }
-        public string Pic { get; set; }
+        public string ID { get; set; } = string.Empty;
+        public string? Text { get; set; }
+        public string? Pic { get; set; }
     }
 }
 
-<style>
+<style type="text/css" scope>
     .control-wrapper {
         margin: 0 auto;
         width: 300px;

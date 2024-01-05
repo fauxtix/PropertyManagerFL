@@ -398,11 +398,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Lease = (await arrendamentosService!.GetAll())
                         .FirstOrDefault(l => l.ID_Inquilino == TenantId);
 
+                    alertTitle = "Envio de carta de oposição de renovação";
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
                     SendLetterDialogVisibility = true;
                     break;
                 case "ManualRentUpdate": // carta de atualização de rendas (do inquilino
-                    alertTitle = "Envio de cartas ao inquilino";
+                    alertTitle = "Envio de carta de atualização de renda";
                     var tenantRentUpdates = await inquilinoService.GetRentUpdates_ByTenantId(TenantId);
                     if (tenantRentUpdates is null)
                     {
@@ -410,6 +411,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
                         return;
                     }
+
+                    // TODO verificar se carta já fo enviada - alerta apenas como informação
+
                     var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
                     if (currentYearUpdateValues is null)
                     {
@@ -432,7 +436,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         if (updateAlreadyMade)
                         {
                             alertTitle = "Atualizar valor de renda";
-                            WarningMessage = "Já foi efetuado um aumento de renda para este inquilino. Verifique histórico, p.f.";
+                            WarningMessage = "Já foi efetuado o aumento de renda para este inquilino. Verifique histórico, p.f.";
                             AlertVisibility = true;
                             return;
                         }
@@ -470,8 +474,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             else if (args.CommandColumn.Type == CommandButtonType.None)
             {
                 RecordMode = OpcoesRegisto.Info;
-                var fileName = args.RowData.DocumentPath;
-                string? fileExtension = Path.GetExtension(fileName);
+                string? fileName = args.RowData.DocumentPath = string.Empty;
+                string? fileExtension = Path.GetExtension(fileName) ;
                 string? folderName = args.RowData.StorageFolder;
                 char? storageType = args.RowData.StorageType;
 

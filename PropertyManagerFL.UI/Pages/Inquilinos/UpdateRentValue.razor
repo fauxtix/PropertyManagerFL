@@ -1,5 +1,6 @@
 ﻿@page "/updaterentvalue/{Id:int}"
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Core.Entities
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 <div>
@@ -11,62 +12,62 @@
     <div class="my-2">
         <SfMessage Severity="MessageSeverity.Info">@TenantName.Trim('"')</SfMessage>
 
-        @*        <SfTextBox CssClass="custom-class" Readonly=true Placeholder="@L["TituloInquilino"]" FloatLabelType=FloatLabelType.Always
+            @*        <SfTextBox CssClass="custom-class" Readonly=true Placeholder="@L["TituloInquilino"]" FloatLabelType=FloatLabelType.Always
         Value=@TenantName></SfTextBox>
         *@
-    </div>
-
-    <div class="e-amounts">
-        <div class="form-group mt-2">
-                <SfNumericTextBox Placeholder="@L["TituloValorCorrente"]" @bind-Value="@CurrentRentValue"
-                              Format="C2" FloatLabelType="FloatLabelType.Always"
-                              TValue="decimal"
-                              Readonly="true"
-                              ShowSpinButton=false
-                              Width="100px"
-                              Currency="EUR">
-            </SfNumericTextBox>
         </div>
-        <div class="form-group mt-2 mb-4">
+        <hr style="color:black;" />
+        <div class="d-flex justify-content-between align-items-md-center gap-2">
+            <SfMessage Severity="MessageSeverity.Normal" Variant="MessageVariant.Outlined" ShowIcon="false">Valor corrente @CurrentRentValue.ToString("C")</SfMessage>
+            <SfMessage Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="false">Coeficiente @DateTime.Now.Year.ToString() @coefficient%</SfMessage>
+            <SfMessage Severity="MessageSeverity.Success" Variant="MessageVariant.Outlined" ShowIcon="false">Valor esperado @expecteRentValueAfterIncrease.ToString("C")</SfMessage>
+            <SfMessage Severity="MessageSeverity.Warning" Variant="MessageVariant.Filled" ShowIcon="false">Aumento @((NewRentValue - CurrentRentValue).ToString("C"))</SfMessage>
+        </div>
+        <hr style="color:black;" />
+
+        <div class="e-amounts">
+            <div class="form-group mt-2 mb-4 fs-5">
                 <SfNumericTextBox Placeholder="@L["TituloNovoValor"]" @bind-Value="@NewRentValue"
-                              Format="C2" FloatLabelType="FloatLabelType.Always"
-                              TValue="decimal"
-                              Width="130px"
-                              Decimals="2" Step="1"
-                              ShowSpinButton=true
-                              Currency="EUR">
-                <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
-            </SfNumericTextBox>
+                                  Format="C2" FloatLabelType="FloatLabelType.Always"
+                                  TValue="decimal"
+                                  Width="130px"
+                                  Decimals="2" Step="1"
+                                  ShowSpinButton=true
+                                  Currency="EUR">
+                    <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
+                </SfNumericTextBox>
+            </div>
+
+        </div>
+        <hr class="my-2" style="color:black" />
+        <div class="flex-buttons-right">
+            <SfButton Disabled="@disableSaveButton" CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                      @onclick="InvokeSave" Content="@L["btnSalvar"]">
+            </SfButton>
+            <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                      @onclick="InvokeCancel" Content="@L["BtnSalir"]">
+            </SfButton>
         </div>
 
     </div>
-    <hr class="my-2" style="color:black" />
-    <div class="flex-buttons-right">
-        <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                  @onclick="InvokeSave" Content="@L["btnSalvar"]">
-        </SfButton>
-        <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                  @onclick="InvokeCancel" Content="@L["BtnSalir"]">
-        </SfButton>
-    </div>
 
-</div>
+    <AlertUserComponent AlertMessageType="AlertMessageType.Warning"
+                        Title="@AlertTitle"
+                        OperationType="OpcoesRegisto.Warning"
+                        Visibility="@AlertVisibility"
+                        Message="@WarningMessage"
+                        OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
 
-<AlertUserComponent AlertMessageType="AlertMessageType.Warning"
-                    Title="@AlertTitle"
-                    OperationType="OpcoesRegisto.Warning"
-                    Visibility="@AlertVisibility"
-                    Message="@WarningMessage"
-                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+    @code {
 
-@code {
+    [Inject] public IInquilinoService? InquilinoService { get; set; }
+    [Inject] public IArrendamentoService? ArrendamentoService { get; set; }
+    [Inject] public IConfiguration _env { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
+
     [Parameter] public int Id { get; set; }
     [Parameter] public EventCallback<decimal> OnTenantRentChange { get; set; }
-
-
-    [Inject] public IInquilinoService InquilinoService { get; set; }
-    [Inject] public IConfiguration _env { get; set; }
-    [Inject] public IStringLocalizer<App> L { get; set; }
 
     protected decimal CurrentRentValue { get; set; }
     protected decimal NewRentValue { get; set; }
@@ -80,13 +81,52 @@
     protected string? WarningMessage { get; set; }
 
     decimal InputAmount = 0;
-
+    protected float? coefficient;
+    protected decimal expecteRentValueAfterIncrease;
+    protected bool disableSaveButton = true;
 
     protected override async Task OnParametersSetAsync()
     {
+        AlertVisibility = false;
+        WarningMessage = "";
+
         TenantName = await InquilinoService.GetNomeInquilino(Id);
         CurrentRentValue = await InquilinoService.GetTenantRent(Id);
         NewRentValue = CurrentRentValue;
+        coefficient = await GetRentncreasingCoefficient();
+        if (coefficient == -1)
+        {
+            AlertTitle = "Aumento de renda";
+            WarningMessage = "Coeficiente para o ano corrente não foi indicado. Verifique, por favor";
+            AlertVisibility = true;
+            disableSaveButton = true;
+        }
+        else
+        {
+            expecteRentValueAfterIncrease = Math.Round(decimal.Multiply(CurrentRentValue, (decimal)coefficient.Value), 2);
+            NewRentValue = Math.Floor(expecteRentValueAfterIncrease);
+            InputAmount = NewRentValue;
+            disableSaveButton = false;
+        }
+    }
+
+    private async Task<float?> GetRentncreasingCoefficient()
+    {
+        IEnumerable<CoeficienteAtualizacaoRendas> listOfCoefficients = (await ArrendamentoService!.GetRentUpdatingCoefficients()).ToList();
+        var currentCoefficientForThisYearExist = listOfCoefficients?
+            .Any(p => int.Parse(p.Ano) == DateTime.Now.Year);
+        if (currentCoefficientForThisYearExist.HasValue)
+        {
+            var currentYearCoefficient = listOfCoefficients
+                .SingleOrDefault(p => int.Parse(p.Ano) == DateTime.Now.Year).Coeficiente;
+            return currentYearCoefficient;
+        }
+        else
+        {
+            return -1;
+        }
+
+
     }
 
     private async Task InvokeSave()
