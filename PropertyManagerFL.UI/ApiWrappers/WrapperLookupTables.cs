@@ -124,7 +124,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             List<LookupTableVM>? lookupData = _memoryCache.Get<List<LookupTableVM>>(tableName);
             if (lookupData is not null)
             {
-                description =  lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
+                description = lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
             }
             else
             {
@@ -165,14 +165,21 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<bool> CheckIfRecordExist(string description, string tableName)
         {
+            bool descriptionExistInDb = false; ;
             try
             {
-                var existInDb = await _httpClient.GetFromJsonAsync<bool>($"{_uri}/CheckRecordExist/{description}/{tableName}");
-                return existInDb;
+                var data = (await GetLookupTableData(tableName)).ToList();
+
+                descriptionExistInDb = data.Any( d=> d.Descricao == description);
+
+                if (descriptionExistInDb == false)
+                    descriptionExistInDb = await _httpClient.GetFromJsonAsync<bool>($"{_uri}/CheckRecordExist/{description}/{tableName}");
+
+                return descriptionExistInDb;
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError($"Erro ao pesquisar Descrição ({tableName} - {exc.Message})");
                 return false;
             }
         }
@@ -211,7 +218,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
         }
 
         /// <summary>
-        /// CheckFKInUse
+        /// Check if the lookup table foreign key is in use
+        /// to see if the table 'tableToCheck' record can be deleted
+        /// TODO - implement cache functionality. See 'how-to' in this source file
         /// </summary>
         /// <param name="IdFK"></param>
         /// <param name="fieldToCheck"></param>

@@ -429,7 +429,9 @@
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables.CheckFKInUse(System.Int32,System.String,System.String)">
             <summary>
-            CheckFKInUse
+            Check if the lookup table foreign key is in use
+            to see if the table 'tableToCheck' record can be deleted
+            TODO - implement cache functionality. See 'how-to' in this source file
             </summary>
             <param name="IdFK"></param>
             <param name="fieldToCheck"></param>
