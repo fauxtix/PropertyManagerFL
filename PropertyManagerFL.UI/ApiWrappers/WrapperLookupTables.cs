@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Crypto.Operators;
+using Org.BouncyCastle.Math.EC;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 
@@ -12,6 +15,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _memoryCache;
+
 
         /// <summary>
         /// Generic wrapper for lookup tables
@@ -20,17 +25,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
         /// <param name="mapper"></param>
+        /// <param name="memoryCache"></param>
         public WrapperLookupTables(IConfiguration env,
                                    ILogger<WrapperLookupTables> logger,
                                    HttpClient httpClient,
-                                   IMapper mapper)
+                                   IMapper mapper,
+                                   IMemoryCache memoryCache)
         {
             _env = env;
             _logger = logger;
             _httpClient = httpClient;
             _mapper = mapper;
             _uri = $"{_env["BaseUrl"]}/LookupTables";
-
+            _memoryCache = memoryCache;
         }
 
         /// <summary>
@@ -53,6 +60,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 };
 
                 var retCode = await _httpClient.PostAsJsonAsync($"{_uri}/InsertRecord", lookupTable);
+                RefreshCache(tabela);
                 return retCode.IsSuccessStatusCode;
             }
             catch (Exception exc)
@@ -81,6 +89,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 };
 
                 var retCode = await _httpClient.PutAsJsonAsync($"{_uri}/UpdateLookupTable/{codigo}", lookupTable);
+                RefreshCache(tabela);
+
                 return retCode.IsSuccessStatusCode;
             }
             catch (Exception exc)
@@ -96,6 +106,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             try
             {
                 var retCode = await _httpClient.DeleteAsync($"{_uri}/DeleteLookupRecord/{id}/{tableName}");
+                RefreshCache(tableName);
+
                 return retCode.IsSuccessStatusCode;
             }
             catch (Exception exc)
@@ -108,16 +120,40 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<string> GetDescription(int id, string tableName)
         {
-            var descriprion = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
-            return descriprion;
+            string? description = string.Empty;
+            List<LookupTableVM>? lookupData = _memoryCache.Get<List<LookupTableVM>>(tableName);
+            if (lookupData is not null)
+            {
+                description =  lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
+            }
+            else
+            {
+                description = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
+            }
+
+            return description ?? "";
         }
 
         public async Task<IEnumerable<LookupTableVM>> GetLookupTableData(string tableName)
         {
             try
             {
-                var tableData = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetAllRecords/{tableName}");
-                return tableData!.ToList();
+
+                IEnumerable<LookupTableVM>? lookupTableData;
+                lookupTableData = _memoryCache.Get<List<LookupTableVM>>(tableName);
+                if (lookupTableData is null)
+                {
+                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddHours(1),
+                        Priority = CacheItemPriority.High,
+                        SlidingExpiration = TimeSpan.FromMinutes(30)
+                    };
+
+                    lookupTableData = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetAllRecords/{tableName}");
+                    _memoryCache.Set(tableName, lookupTableData, cacheExpiryOptions);
+                }
+                return lookupTableData!.ToList();
             }
             catch (Exception exc)
             {
@@ -233,5 +269,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return -1;
             }
         }
+
+        private void RefreshCache(string lookupTable)
+        {
+            _memoryCache.Remove(lookupTable);
+            var cacheExpiryOptions = new MemoryCacheEntryOptions
+            {
+                AbsoluteExpiration = DateTime.Now.AddHours(1),
+                Priority = CacheItemPriority.High,
+                SlidingExpiration = TimeSpan.FromMinutes(30)
+            };
+            var lookupTableData = GetLookupTableData(lookupTable); // _repoAppConfigTables.GenericGetAll(lookupTable);
+            _memoryCache.Set(lookupTable, lookupTableData, cacheExpiryOptions);
+        }
+
     }
 }

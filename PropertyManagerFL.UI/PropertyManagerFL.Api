@@ -400,7 +400,7 @@
             <param name="ID_Inquilino"></param>
             <returns></returns>
         </member>
-        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables},System.Net.Http.HttpClient,AutoMapper.IMapper)">
+        <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables.#ctor(Microsoft.Extensions.Configuration.IConfiguration,Microsoft.Extensions.Logging.ILogger{PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables},System.Net.Http.HttpClient,AutoMapper.IMapper,Microsoft.Extensions.Caching.Memory.IMemoryCache)">
             <summary>
             Generic wrapper for lookup tables
             </summary>
@@ -408,6 +408,7 @@
             <param name="logger"></param>
             <param name="httpClient"></param>
             <param name="mapper"></param>
+            <param name="memoryCache"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperLookupTables.CriaNovoRegisto(System.String,System.String)">
             <summary>

@@ -36,6 +36,18 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         .CreateLogger();
 }).UseSerilog();
 
+builder.Services.AddMemoryCache(options =>
+{
+    // Set cache size limit (in bytes)
+    options.SizeLimit = 1024 * 1024 * 100; // 100 MB
+
+    // Set cache compaction percentage
+    options.CompactionPercentage = 0.25; // 25%
+
+    // Set cache expiration scan frequency
+    options.ExpirationScanFrequency = TimeSpan.FromMinutes(5); // 5 minutes
+});
+
 builder.Services.AddCors();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
