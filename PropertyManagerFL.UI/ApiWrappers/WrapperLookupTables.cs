@@ -60,7 +60,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 };
 
                 var retCode = await _httpClient.PostAsJsonAsync($"{_uri}/InsertRecord", lookupTable);
-                RefreshCache(tabela);
+                //RefreshCache(tabela);
                 return retCode.IsSuccessStatusCode;
             }
             catch (Exception exc)
@@ -89,7 +89,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 };
 
                 var retCode = await _httpClient.PutAsJsonAsync($"{_uri}/UpdateLookupTable/{codigo}", lookupTable);
-                RefreshCache(tabela);
+                //RefreshCache(tabela);
 
                 return retCode.IsSuccessStatusCode;
             }
@@ -106,7 +106,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             try
             {
                 var retCode = await _httpClient.DeleteAsync($"{_uri}/DeleteLookupRecord/{id}/{tableName}");
-                RefreshCache(tableName);
+                //RefreshCache(tableName);
 
                 return retCode.IsSuccessStatusCode;
             }
@@ -121,15 +121,15 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public async Task<string> GetDescription(int id, string tableName)
         {
             string? description = string.Empty;
-            List<LookupTableVM>? lookupData = _memoryCache.Get<List<LookupTableVM>>(tableName);
-            if (lookupData is not null)
-            {
-                description = lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
-            }
-            else
-            {
-                description = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
-            }
+            //List<LookupTableVM>? lookupData = _memoryCache.Get<List<LookupTableVM>>(tableName);
+            //if (lookupData is not null)
+            //{
+            //    description = lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
+            //}
+            //else
+            //{
+            description = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
+            //}
 
             return description ?? "";
         }
@@ -140,19 +140,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
 
                 IEnumerable<LookupTableVM>? lookupTableData;
-                lookupTableData = _memoryCache.Get<List<LookupTableVM>>(tableName);
-                if (lookupTableData is null)
-                {
-                    var cacheExpiryOptions = new MemoryCacheEntryOptions
-                    {
-                        AbsoluteExpiration = DateTime.Now.AddHours(1),
-                        Priority = CacheItemPriority.High,
-                        SlidingExpiration = TimeSpan.FromMinutes(30)
-                    };
+                //lookupTableData = _memoryCache.Get<List<LookupTableVM>>(tableName);
+                //if (lookupTableData is null)
+                //{
+                //    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                //    {
+                //        AbsoluteExpiration = DateTime.Now.AddHours(1),
+                //        Priority = CacheItemPriority.High,
+                //        SlidingExpiration = TimeSpan.FromMinutes(30)
+                //    };
 
-                    lookupTableData = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetAllRecords/{tableName}");
-                    _memoryCache.Set(tableName, lookupTableData, cacheExpiryOptions);
-                }
+                lookupTableData = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetAllRecords/{tableName}");
+                //    _memoryCache.Set(tableName, lookupTableData, cacheExpiryOptions);
+                //}
                 return lookupTableData!.ToList();
             }
             catch (Exception exc)
@@ -168,11 +168,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
             bool descriptionExistInDb = false; ;
             try
             {
-                var data = (await GetLookupTableData(tableName)).ToList();
+                //var data = (await GetLookupTableData(tableName)).ToList();
 
-                descriptionExistInDb = data.Any( d=> d.Descricao == description);
+                //descriptionExistInDb = data.Any(d => d.Descricao == description);
 
-                if (descriptionExistInDb == false)
+                //if (descriptionExistInDb == false)
                     descriptionExistInDb = await _httpClient.GetFromJsonAsync<bool>($"{_uri}/CheckRecordExist/{description}/{tableName}");
 
                 return descriptionExistInDb;

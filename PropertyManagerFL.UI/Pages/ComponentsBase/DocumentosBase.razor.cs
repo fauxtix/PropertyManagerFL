@@ -4,7 +4,6 @@ using Microsoft.JSInterop;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
-using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Documentos;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
@@ -65,8 +64,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? ToastIcon;
 
         protected string? documentName;
+        protected string? documentCategory;
         protected string? documentDescription;
-        protected string? documentsFolder;
+        protected string? documentsFolder = string.Empty;
 
         protected bool localUpload = true;
         protected string DeleteMsg { get; set; } = string.Empty;
@@ -152,6 +152,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             DocumentId = args.RowData.Id;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
+            var documentCategoryId = SelectedDocument.DocumentCategoryId;
 
             DeleteCaption = SelectedDocument?.Title;
 
@@ -182,8 +183,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 documentName = SelectedDocument!.URL;
                 documentDescription = SelectedDocument!.Title;
+                //documentsFolder = SelectedDocument.DocumentCategory;
 
-                switch (SelectedDocument.DocumentTypeId)
+                switch (documentCategoryId)
                 {
                     case 1:
                         documentsFolder = "properties";
@@ -201,13 +203,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 RecordMode = OpcoesRegisto.Info;
                 var fileName = args.RowData.URL;
-                if (fileName.ToLower().StartsWith("http"))
+                if (fileName!.ToLower().StartsWith("http"))
                 {
                     await JSRuntime!.InvokeAsync<object>("open", fileName, "_blank");
                 }
                 else
                 {
-                    PdfFilePath = DocumentsService.GetPdfFilename(documentsFolder!, fileName!);
+                    PdfFilePath = DocumentsService.GetPdfFilename(documentsFolder!.Trim(), fileName!);
                     if (string.IsNullOrEmpty(PdfFilePath))
                     {
                         ShowPdfVisibility = false;
@@ -319,7 +321,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 new GridColumn(){ Field="Description", HeaderText="Descrição", Width="250"},
             };
 
-            await DocumentsGridObj.PdfExport(ExportProperties);
+            await DocumentsGridObj!.ExportToPdfAsync(ExportProperties);
 
         }
 

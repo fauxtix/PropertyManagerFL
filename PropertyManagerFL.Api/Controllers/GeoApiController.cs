@@ -168,6 +168,35 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("GetDistritos")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetDistritos()
+        {
+            var endpoint = $"{_apiUri}/distritos";
+            var location = GetControllerActionNames();
+            try
+            {
+                using var httpResponse = await _httpClient.GetAsync(endpoint);
+                if (!httpResponse.IsSuccessStatusCode)
+                    throw new Exception("Oops... Something went wrong");
+
+                var distritos = await httpResponse.Content.ReadFromJsonAsync<List<string>>();
+                if (distritos is not null)
+                    return Ok(distritos);
+                else
+                    return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
+            }
+        }
+
+
         private string GetControllerActionNames()
         {
             var controller = ControllerContext.ActionDescriptor.ControllerName;

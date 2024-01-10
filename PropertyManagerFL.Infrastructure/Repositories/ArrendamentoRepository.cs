@@ -765,7 +765,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         var lease = await GetArrendamento_ById(id);
                         var tenantId = lease.ID_Inquilino;
 
-                        _logger.LogInformation($"Marca carta de atraso de renda como emitida (tennatd Id:{tenantId})");
+                        _logger.LogInformation($"Marca carta de atraso de renda como emitida (tenant Id:{tenantId})");
 
                         var result = await connection.ExecuteAsync("usp_Arrendamentos_SetLateRentPaymentLetter_Issued",
                             param: new { Id = id, GeneratedDocument = docGerado },

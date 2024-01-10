@@ -55,6 +55,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<IClientEmailService, WrapperEMail>();
 
         services.AddTransient<ILetterTemplatesService, WrapperLetterTemplates>();
+        services.AddTransient<IDistritosConcelhosService, WrapperDistritosConcelhos>();
 
         services.AddScoped<IEmailSender, EmailSender>();
     }

@@ -74,8 +74,14 @@
                 </div>
             }
         </div>
-        <div hidden="@HideUploader" class="form-group my-3">
-            <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=false
+        <div class="form-group my-3">
+            @{
+                if (!string.IsNullOrEmpty(documentCategoryFolder))
+                {
+                    var caregoryParam = documentCategoryFolder;
+                }
+            }
+            <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
                         DropArea=".control-fluid"
                         AllowMultiple="false" AllowedExtensions=".pdf"
                         MaxFileSize="@MaxFileSize">
@@ -87,8 +93,8 @@
         <div class="form-group my-2">
             @if (EditMode == OpcoesRegisto.Gravar)
             {
-                <SfTextBox Enabled="@(string.IsNullOrEmpty(Document!.URL))" Multiline="true"
-                           Placeholder="File"
+                <SfTextBox Multiline="true"
+                           Placeholder="@PdfOrUrlCaption"
                            CssClass="e-field  e-corner"
                            FloatLabelType="@FloatLabelType.Auto"
                            @bind-Value="@uploadedFile">
@@ -96,7 +102,7 @@
             }
             else
             {
-                <SfTextBox Enabled="@(string.IsNullOrEmpty(uploadedFile))" Multiline="true"
+                <SfTextBox Multiline="true"
                            Placeholder="URL"
                            CssClass="e-field  e-corner"
                            FloatLabelType="@FloatLabelType.Auto"
@@ -106,6 +112,11 @@
         </div>
 
     </EditForm>
+
+    <ValidateErrorComponent Visible="@ErrorVisibility" DialogTitle="@L["TituloRecebimentos"]"
+                            ValidationMessages="@ValidationsMessages"
+                            OnCloseDialog="@(()=>ErrorVisibility = false)" />
+
 </div>
 
 @code {
@@ -128,6 +139,7 @@
     protected bool ShowTipoDocumento;
 
     protected string? documentCategoryCaption;
+    protected string? documentCategoryFolder;
     protected string? uploadedFile;
     protected string? documentTypeCaption;
 
@@ -139,6 +151,15 @@
 
     protected string controllerName_Save = "";
     protected string controllerName_Remove = "";
+    protected string uploaderUrl_Save = string.Empty;
+    protected string uploaderUrl_Remove = string.Empty;
+
+
+    protected string PdfOrUrlCaption = "";
+
+    protected bool ErrorVisibility { get; set; } = false;
+    protected List<string> ValidationsMessages = new();
+
 
 
     protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
@@ -152,14 +173,15 @@
         DocumentTypes = (await GetDocumentTypes());
         HideUploader = false;
 
+        PdfOrUrlCaption = Document.URL.ToLower().EndsWith("pdf") ? "Pdf" : "Url do site";
         if (EditMode == OpcoesRegisto.Gravar)
         {
 
             idxTipoCategoriaDocumento = Document!.DocumentTypeId;
 
             idxTipoDocumento = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).TypeCategoryId;
-            documentTypeCaption = DocumentTypes.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento).Name;
-            documentCategoryCaption = DocumentCategories.FirstOrDefault(c => c.Id == idxTipoCategoriaDocumento).Descricao;
+            documentTypeCaption = DocumentTypes?.FirstOrDefault(o => o.Id == idxTipoCategoriaDocumento)?.Name;
+            documentCategoryCaption = DocumentCategories?.FirstOrDefault(c => c.Id == idxTipoDocumento)?.Descricao?.Trim();
             HideUploader = true;
             uploadedFile = Document.URL;
         }
@@ -175,7 +197,8 @@
         idxTipoCategoriaDocumento = args.Value;
         Document!.DocumentCategoryId = idxTipoCategoriaDocumento;
 
-        DocumentTypes = DocumentTypes.Where(dt => dt.TypeCategoryId == idxTipoCategoriaDocumento);
+        DocumentTypes = DocumentTypes?.Where(dt => dt.TypeCategoryId == idxTipoCategoriaDocumento);
+        documentCategoryFolder = DocumentCategories?.SingleOrDefault(dc => args.Value == dc.Id).Descricao.Trim();
 
         StateHasChanged();
     }
@@ -190,6 +213,14 @@
             return;
 
         HideUploader = false;
+        // if (string.IsNullOrEmpty(documentCategoryFolder))
+        // {
+        //     documentCategoryFolder = DocumentCategories.SingleOrDefault(dc => args.Value == dc.Id).Descricao.Trim();
+        // }
+
+        // uploaderUrl_Save = $"api/Upload/SaveFile?folder={documentCategoryFolder}";
+        // uploaderUrl_Remove = $"api/Upload/RemoveFile?folder={documentCategoryFolder}";
+
 
         switch (idxTipoCategoriaDocumento)
         {
@@ -219,6 +250,16 @@
     private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
     {
         if (args.FileData.Count() == 0) return;
+
+        if (idxTipoCategoriaDocumento < 1 || idxTipoDocumento < 1)
+        {
+            ValidationsMessages = new List<string>
+            {  "Deve preencher Categoria e Tipo de documento"};
+            sfUploader?.ClearAllAsync();
+            ErrorVisibility = true;
+            return;
+        }
+
 
         uploadedFile = args.FileData.Select(p => p.Name).FirstOrDefault();
         HideUploadedFile = false;

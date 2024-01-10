@@ -22,7 +22,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
         /// <param name="mapper"></param>
-        public WrapperContactos(IConfiguration env, ILogger<WrapperContactos> logger, HttpClient httpClient, IMapper mapper)
+        public WrapperContactos(IConfiguration env,
+                                ILogger<WrapperContactos> logger,
+                                HttpClient httpClient,
+                                IMapper mapper)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Contactos";

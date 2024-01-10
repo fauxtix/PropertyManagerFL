@@ -55,6 +55,7 @@ public static class DependencyInjectionConfig
 
         services.AddScoped<IMessageRepository, MessageRepository>();
         services.AddScoped<ILetterTemplatesRepository, LetterTemplatesRepository>();
+        services.AddScoped<IDistritosConcelhosRepository, DistritosConcelhosRepository>();
 
         services.AddScoped<IEmailSender, EmailSender>();
 

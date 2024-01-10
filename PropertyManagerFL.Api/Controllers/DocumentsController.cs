@@ -27,101 +27,6 @@ namespace PropertyManagerFL.Api.Controllers
             _repoDocuments = repoDocuments;
         }
 
-        [HttpGet("GetDocuments")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<IActionResult> GetDocuments()
-        {
-            var location = GetControllerActionNames();
-            try
-            {
-                var documents = await _repoDocuments.GetAll();
-                if (documents.Any())
-                {
-                    return Ok(documents);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception e)
-            {
-                return InternalError($"{location}: {e.Message} - {e.InnerException}");
-            }
-        }
-
-        [HttpGet("GetDocumentTypes")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-
-        public async Task<IActionResult> GetDocumentTypes()
-        {
-            var location = GetControllerActionNames();
-            try
-            {
-                var documents = await _repoDocuments.GetAll_DocumentTypes();
-                if (documents is not null)
-                {
-                    return Ok(documents);
-                }
-                else
-                {
-                    return NotFound();
-                }
-            }
-            catch (Exception e)
-            {
-                return InternalError($"{location}: {e.Message} - {e.InnerException}");
-            }
-        }
-
-
-        /// <summary>
-        /// Pesquisa Documento por Id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-
-        [HttpGet("GetDocument_ById/{id:int}")]
-        public async Task<IActionResult> GetDocumentById(int id)
-        {
-            var location = GetControllerActionNames();
-            try
-            {
-                var document = await _repoDocuments.GetDocument_ById(id);
-                if (document is not null)
-                    return Ok(document);
-                else
-                    return NotFound();
-            }
-            catch (Exception e)
-            {
-                return InternalError($"{location}: {e.Message} - {e.InnerException}");
-            }
-        }
-
-        [HttpGet("GetDocumentType_ById/{id:int}")]
-        public async Task<IActionResult> GetDocumentType_ById(int id)
-        {
-            var location = GetControllerActionNames();
-            try
-            {
-                var document = await _repoDocuments.GetDocumentType_ById(id);
-                if (document is not null)
-                    return Ok(document);
-                else
-                    return NotFound();
-            }
-            catch (Exception e)
-            {
-                return InternalError($"{location}: {e.Message} - {e.InnerException}");
-            }
-        }
-
 
         /// <summary>
         /// Novo Documento
@@ -236,6 +141,103 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
+
+        [HttpGet("GetDocuments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetDocuments()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var documents = await _repoDocuments.GetAll();
+                if (documents.Any())
+                {
+                    return Ok(documents);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        [HttpGet("GetDocumentTypes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetDocumentTypes()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var documents = await _repoDocuments.GetAll_DocumentTypes();
+                if (documents is not null)
+                {
+                    return Ok(documents);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
+        /// <summary>
+        /// Pesquisa Documento por Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpGet("GetDocument_ById/{id:int}")]
+        public async Task<IActionResult> GetDocumentById(int id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var document = await _repoDocuments.GetDocument_ById(id);
+                if (document is not null)
+                    return Ok(document);
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        [HttpGet("GetDocumentType_ById/{id:int}")]
+        public async Task<IActionResult> GetDocumentType_ById(int id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var document = await _repoDocuments.GetDocumentType_ById(id);
+                if (document is not null)
+                    return Ok(document);
+                else
+                    return NotFound();
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
 
         private string GetControllerActionNames()
         {

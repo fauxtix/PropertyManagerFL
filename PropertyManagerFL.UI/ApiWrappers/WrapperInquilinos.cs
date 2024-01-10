@@ -307,7 +307,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
             try
             {
                 var ultimoMesPago = await _httpClient.GetStringAsync($"{_uri}/GetUltimoMesPago_Inquilino/{ID_Inquilino}");
-                return ultimoMesPago;
+                var result = ultimoMesPago.Substring(1, ultimoMesPago.Length - 1).Replace("\\\\", "\\");
+                result = result.Substring(0, result.Length - 1);
+
+                return result;
             }
             catch (Exception exc)
             {
