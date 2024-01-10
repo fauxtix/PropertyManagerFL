@@ -14,23 +14,24 @@
             <DocumentEditorContainerEvents Created="OnCreated" OnToolbarClick="onItemClick"></DocumentEditorContainerEvents>
         </SfDocumentEditorContainer>
     </div>
-    <div class="control-section">
-        <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                        ShowClearButton="true" Width="250px"
-                        FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                        Placeholder="Ficheiros" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
-            <DropDownListTemplates TItem="TemplateFileName">
-            </DropDownListTemplates>
-            <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
-            <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
-        </SfDropDownList>
-
-    </div>
-    <div class="control-section">
-        <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
-            <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
-            <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
-        </SfUploader>
+    <div class="row control-section mt-2">
+        <div class="col-md-4">
+            <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            ShowClearButton="true" Width="250px" Index="@idxFileSelected"
+                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="Ficheiros" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="TemplateFileName">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <div class="control-section col-md-8 mb-2">
+            <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
+                <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
+                <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
+            </SfUploader>
+        </div>
     </div>
 
     <AlertUserComponent AlertMessageType="@AlertMessageType"
@@ -201,7 +202,7 @@
         }
     }
 
-    protected  void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
+    protected void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
     {
         idxFileSelected = args.ItemData.Id;
         filePath = FileList![idxFileSelected];
