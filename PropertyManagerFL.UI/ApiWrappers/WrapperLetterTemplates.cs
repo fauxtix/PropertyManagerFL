@@ -98,4 +98,24 @@ public class WrapperLetterTemplates : ILetterTemplatesService
 
         return await response.Content.ReadFromJsonAsync<bool>();
     }
+
+    public async Task<IList<string>> GetTemplatesFilenamesFromServer()
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<IList<string>>($"{_templatesUri}/GetTemplatesFilenamesFromServer");
+            if (!response!.Any())
+            {
+                return new List<string>();
+            }
+
+            return response ?? new List<string>();
+        }
+        catch (Exception)
+        {
+            return new List<string>();
+        }
+
+
+    }
 }

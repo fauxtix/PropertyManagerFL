@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Core.Entities;
+using System.IO;
 
 namespace PropertyManagerFL.Api.Controllers;
 [Route("api/[controller]")]
@@ -82,6 +83,30 @@ public class TemplatesController : ControllerBase
             return "";
         }
     }
+
+    [HttpGet("GetTemplatesFilenamesFromServer")]
+    public List<string>  GetTemplatesFilenamesFromServer()
+    {
+        try
+        {
+
+            var templatesLocation = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs");
+            string[] files = Directory.GetFiles(templatesLocation, "*.dotx");
+            if (files.Length == 0)
+                return new List<string>();
+
+            List<string> result = new List<string>(); 
+            result.AddRange(files);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message);
+            return new List<string>();
+        }
+    }
+
 
 
     [HttpPost]

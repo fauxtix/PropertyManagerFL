@@ -1,6 +1,7 @@
 ﻿@page "/LetterTemplates"
 
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Core.Entities
 @using Syncfusion.Blazor.DocumentEditor
 @using Syncfusion.Blazor.Inputs
 @using System.IO
@@ -14,12 +15,24 @@
         </SfDocumentEditorContainer>
     </div>
     <div class="control-section">
+        <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                        ShowClearButton="true" Width="250px"
+                        FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                        Placeholder="Ficheiros" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
+            <DropDownListTemplates TItem="TemplateFileName">
+            </DropDownListTemplates>
+            <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
+            <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
+        </SfDropDownList>
+
+    </div>
+    <div class="control-section">
         <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
             <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
             <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
         </SfUploader>
     </div>
-  
+
     <AlertUserComponent AlertMessageType="@AlertMessageType"
                         Title="@AlertTitle"
                         OperationType="@OpcoesRegisto"
@@ -30,6 +43,10 @@
 
 @code {
     [Inject] ILetterTemplatesService? documentsSevice { get; set; }
+    [Inject] public IStringLocalizer<App> L { get; set; }
+
+    protected List<Template> Templates { get; set; } = new();
+
     SfDocumentEditorContainer container;
     SfUploader uploader;
     string fileName = string.Empty;
@@ -38,6 +55,9 @@
     bool HideErrroMessage = true;
     ImportFormatType formatType;
 
+    protected IList<string>? FileList { get; set; }
+    protected List<TemplateFileName>? FileNamesOnlyList { get; set; } = new();
+
     protected string? AlertTitle = "";
     protected bool AlertVisibility { get; set; } = false;
     protected string? WarningMessage { get; set; }
@@ -45,30 +65,42 @@
     AlertMessageType AlertMessageType = AlertMessageType.Warning;
     OpcoesRegisto OpcoesRegisto = OpcoesRegisto.Warning;
 
-    List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"}, "Undo", "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "TableOfContents", "Header",
+    protected int idxFileSelected;
+
+    protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"}, "Undo", "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "TableOfContents", "Header",
         "Footer", "PageSetup", "PageNumber", "Break", "Find", "LocalClipboard", "RestrictEditing"
         };
+
 #pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         formatType = ImportFormatType.Docx;
-
+        idxFileSelected = 0;
         AlertVisibility = false;
         AlertTitle = "";
         WarningMessage = "";
+        int counter = 0;
+        FileList = (await documentsSevice!.GetTemplatesFilenamesFromServer()).ToList();
+        foreach (var item in FileList)
+        {
+            var filename = Path.GetFileNameWithoutExtension(item);
+            FileNamesOnlyList?.Add(new TemplateFileName { Id = counter++, TemplateFile = filename });
+        }
     }
+
+
     public async void OnSuccess(UploadingEventArgs action)
     {
         string? base64 = action.FileData.RawFile.ToString();
         fileName = action.FileData.Name;
-        filePath = await documentsSevice.GetTemplateFromServer(fileName);
+        filePath = await documentsSevice!.GetTemplateFromServer(fileName);
         ext = Path.GetExtension(fileName);
         if (ext.ToLower() == ".doc")
         {
             formatType = ImportFormatType.Doc;
         }
-        string? data = base64.Split(',')[1];
+        string? data = base64?.Split(',')[1];
         byte[] bytes = Convert.FromBase64String(data);
         using (Stream stream = new MemoryStream(bytes))
         {
@@ -125,23 +157,6 @@
                 document.Dispose();
             }
         }
-
-        //CloudFileShare cloudFileShare = CloudStorageAccount.Parse(connectionString).CreateCloudFileClient().GetShareReference(shareReference);
-        //if (cloudFileShare.Exists())
-        //{
-        //    CloudFileDirectory dir = cloudFileShare.GetRootDirectoryReference();
-        //    if (dir.Exists())
-        //    {
-        //        CloudFile file = dir.GetFileReference(fileReference);
-        //        using (MemoryStream memoryStream = new MemoryStream())
-        //        {
-        //            file.DownloadToStream(memoryStream);
-        //            WordDocument document = WordDocument.Load(memoryStream, ImportFormatType.Docx);
-        //            container.GetDocumentEditor().Open(JsonConvert.SerializeObject(document));
-        //            document.Dispose();
-        //        }
-        //    }
-        //}
     }
 
     public async void onItemClick(Syncfusion.Blazor.DocumentEditor.ClickEventArgs args)
@@ -182,22 +197,23 @@
                     }
 
                 }
-
-                //DocumentEditorModule editor = container.GetDocumentEditor();
-                //object base64Data = await editor.SaveAsBlob(FormatType.Docx);
-                //Dictionary<string, string> documentContent = JsonConvert.DeserializeObject<Dictionary<string, string>>(base64Data.ToString());
-                //byte[] data = Convert.FromBase64String(documentContent["data"]);
-
-                //CloudFileShare cloudFileShare = CloudStorageAccount.Parse(connectionString).CreateCloudFileClient().GetShareReference(shareReference);
-                //if (cloudFileShare.Exists())
-                //{
-                //    using (MemoryStream stream = new MemoryStream(data))
-                //    {
-                //        cloudFileShare.GetRootDirectoryReference().GetFileReference(fileReference).UploadFromStream(stream);
-                //    }
-                //}
                 break;
         }
+    }
+
+    protected  void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
+    {
+        idxFileSelected = args.ItemData.Id;
+        filePath = FileList![idxFileSelected];
+        OnCreated();
+
+        StateHasChanged();
+    }
+
+    protected class TemplateFileName
+    {
+        public int Id { get; set; }
+        public string? TemplateFile { get; set; }
     }
 }
 <style type="text/css" scoped>
