@@ -2513,4 +2513,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloTipoDocumento" xml:space="preserve">
     <value>Type de document</value>
   </data>
+  <data name="TituloCodigoPostal" xml:space="preserve">
+    <value>Code postal</value>
+  </data>
 </root>

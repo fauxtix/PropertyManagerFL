@@ -2505,4 +2505,7 @@
   <data name="TituloTipoDocumento" xml:space="preserve">
     <value>Document type</value>
   </data>
+  <data name="TituloCodigoPostal" xml:space="preserve">
+    <value>Postcode</value>
+  </data>
 </root>

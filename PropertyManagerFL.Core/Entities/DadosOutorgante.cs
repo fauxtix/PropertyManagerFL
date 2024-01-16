@@ -11,7 +11,8 @@
 		public string? NIF { get; set; }
 		public string? Naturalidade { get; set; }
 		public string? Morada { get; set; }
-		public int Freguesia { get; set; }
+        public string? CodigoPostal { get; set; }
+        public int Freguesia { get; set; }
 		public int Concelho { get; set; }
 	}
 }

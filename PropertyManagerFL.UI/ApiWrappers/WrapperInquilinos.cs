@@ -45,6 +45,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="svcImoveis"></param>
         /// <param name="svcFracoes"></param>
         /// <param name="mailMergeSvc"></param>
+        /// <param name="svcInquilinos"></param>
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,
@@ -760,7 +761,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
         }
 
-        public async Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento)
+        public async Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento, CoeficienteAtualizacaoRendas coefficientData)
         {
             _arrendamento = DadosArrendamento;
 
@@ -768,19 +769,18 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
                 int IdProprietario = await _svcProprietarios.GetFirstId(); // nesta versão da aplicação, só existe um proprietário...
                 ProprietarioVM DadosProprietario = await _svcProprietarios.GetProprietario_ById(IdProprietario);
-
-
+                InquilinoVM DadosInquilino = await GetInquilino_ById(DadosArrendamento.ID_Inquilino);
                 FracaoVM DadosFracao = await _svcFracoes.GetFracao_ById(DadosArrendamento.ID_Fracao);
                 ImovelVM DadosImovel = await _svcImoveis.GetImovel_ById(DadosFracao.Id_Imovel);
 
                 var moradaImovel = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado} {DadosImovel.CodPst} {DadosImovel.CodPstEx} {DadosImovel.FreguesiaImovel}";
                 var moradaFracao = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado}";
-
+                var moradaInquilino = DadosInquilino.Morada;
                 var DiaAPartirDe = "01";
-                var MesAPartirDe = DadosArrendamento.Data_Inicio.ToString("MMMM").ToTitleCase();
+                var MesAPartirDe = DadosArrendamento.Data_Inicio.AddMonths(1).ToString("MMMM").ToTitleCase();
                 var AnoAtualizacao = DateTime.Now.Year.ToString();
-
-
+                var diplomaLegal = coefficientData?.DiplomaLegal?.Trim();
+                var percAumento = $"{coefficientData?.Coeficiente * 100 - 100:F2}%";
                 CartaAtualizacao dadosAtualizacaoRenda = new CartaAtualizacao()
                 {
                     Id = DadosArrendamento.Id,
@@ -790,14 +790,16 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     MesAPartirDe = MesAPartirDe,
                     DiaAPartirDe = DiaAPartirDe,
                     AnoAtualizacao = AnoAtualizacao,
-                    Coeficiente = "",
+                    Coeficiente = percAumento,
                     MatrizPredial = DadosFracao.Matriz,
-                    MoradaInquilino = moradaImovel,
+                    MoradaInquilino =moradaInquilino, // moradaImovel,                   
+                    Naturalidade = DadosInquilino.Naturalidade,
                     MoradaFracao = moradaFracao,
                     Nome = DadosProprietario.Nome,
                     Morada = DadosProprietario.Morada,
-                    Lei = "",
-                    DataPublicacao = null
+                    CodigoPostal = DadosProprietario.CodPostal,
+                    Lei = diplomaLegal,
+                    DataPublicacao = coefficientData?.DataPublicacao
 
                 };
 
@@ -814,13 +816,15 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public async Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao)
         {
             string[] aCampos = new string[] {
-                "LocalEmissao", "DataEmissao", "NomeSenhorio", "MoradaSenhorio",
-                "NomeInquilino", "MoradaInquilino",
+                "LocalEmissao", "DataEmissao", 
+                "NomeSenhorio", "MoradaSenhorio", "CodigoPostalSenhorio",
+                "NomeInquilino", "MoradaInquilino", "CodigoPostalInquilino",
                 "MoradaFracao",
                 "Coeficiente", "Lei", "DataPublicacao",
                 "MatrizPredial",
-                "ValorRenda", "NovoValorRenda",
+                "ValorRenda", "NovoValorRenda", "ExtensoNovoValor",
                 "DiaAPartirDe", "MesAPartirDe",  "AnoAtualizacao",
+                "AnoPublicacao"
             };
 
             string[] aDados = new string[]
@@ -829,8 +833,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 DadosAtualizacao.DataEmissao.ToLongDateString().ToTitleCase(),
                 DadosAtualizacao.Nome,
                 DadosAtualizacao.Morada,
+                DadosAtualizacao.CodigoPostal,
                 DadosAtualizacao.NomeInquilino,
                 DadosAtualizacao.MoradaInquilino,
+                DadosAtualizacao.Naturalidade, // Código postal inquilino
                 DadosAtualizacao.MoradaFracao,
                 DadosAtualizacao.Coeficiente,
                 DadosAtualizacao.Lei,
@@ -838,9 +844,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 DadosAtualizacao.MatrizPredial,
                 DadosAtualizacao.ValorRenda.ToString("C2"),
                 DadosAtualizacao.NovoValorRenda.ToString("C2"),
+                DadosAtualizacao.NovoValorExtenso = Utilitarios.ValorPorExtenso(DadosAtualizacao.NovoValorRenda),
                 DadosAtualizacao.DiaAPartirDe,
                 DadosAtualizacao.MesAPartirDe,
-                DadosAtualizacao.AnoAPartirDe
+                DadosAtualizacao.AnoAPartirDe,
+                DateTime.Now.Year.ToString()
             };
 
             var mergeModel = new MailMergeModel()
@@ -855,8 +863,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 Referral = true
             };
 
-            string docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
-
+            var docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
+            docGerado = Path.GetFileName(docGerado).Replace("/", "");
 
             return docGerado;
 
@@ -864,8 +872,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado)
         {
-            var docFileNormalized = docGerado.Replace("\\\\", "\\");
-            var endpoint = $"{_uri}/CreateUpdateLetterDocument/{tenantId}?docGerado=/{docFileNormalized}";
+            var endpoint = $"{_uri}/CreateUpdateLetterDocument/{tenantId}?docGerado={docGerado}";
             try
             {
                 using (HttpResponseMessage response = await _httpClient.GetAsync(endpoint))

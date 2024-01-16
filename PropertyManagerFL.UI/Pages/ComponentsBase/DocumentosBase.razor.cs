@@ -33,7 +33,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <summary>
         /// list of Documents
         /// </summary>
-        protected IEnumerable<DocumentoVM> Documents { get; set; }
+        protected IEnumerable<DocumentoVM>? Documents { get; set; }
         public DocumentoVM? SelectedDocument { get; set; }
         protected DocumentoVM? OriginalDocumentData { get; set; }
         protected OpcoesRegisto RecordMode { get; set; }

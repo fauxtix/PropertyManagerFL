@@ -10,12 +10,12 @@
 
 <div class="container-fluid">
     <div class="control-section">
-        <SfDocumentEditorContainer @ref="container" Height="60%" ToolbarItems="Items">
+        <SfDocumentEditorContainer @ref="container" Height="80%" ToolbarItems="Items">
             <DocumentEditorContainerEvents Created="OnCreated" OnToolbarClick="onItemClick"></DocumentEditorContainerEvents>
         </SfDocumentEditorContainer>
     </div>
     <div class="row control-section mt-2">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                             ShowClearButton="true" Width="250px" Index="@idxFileSelected"
                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
@@ -26,13 +26,29 @@
                 <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
             </SfDropDownList>
         </div>
-        <div class="control-section col-md-8 mb-2">
+        <div class="control-section col-md-7 mb-2">
             <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
                 <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
                 <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save" RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove"></UploaderAsyncSettings>
             </SfUploader>
         </div>
     </div>
+
+    <SfDialog Id="dialog" Width="260px" Height="auto"
+        Target="#target" Header="Merge Field" @bind-Visible="@isDialogVisible" ShowCloseIcon="true">
+        <DialogTemplates>
+            <Content>
+                <div>
+                    <SfTextBox ID="InVal" class="form-control" Placeholder="Type a field to insert" @bind-Value=@fieldName />
+                </div>
+            </Content>
+            <FooterTemplate>
+                <SfButton IconCss="fa fa-check" CssClass="e-btn e-success p-2 e-round-corner" Content="OK" OnClick="AddField" />
+                <SfButton IconCss="fa fa-times" CssClass="e-btn e-ouline p-2 e-round-corner" Content="Cancel" OnClick="CancelDialog" />
+            </FooterTemplate>
+
+        </DialogTemplates>
+    </SfDialog>
 
     <AlertUserComponent AlertMessageType="@AlertMessageType"
                         Title="@AlertTitle"
@@ -63,13 +79,19 @@
     protected bool AlertVisibility { get; set; } = false;
     protected string? WarningMessage { get; set; }
 
+    bool isDialogVisible = false;
+
+
+    string fieldName = "";
     AlertMessageType AlertMessageType = AlertMessageType.Warning;
     OpcoesRegisto OpcoesRegisto = OpcoesRegisto.Warning;
 
     protected int idxFileSelected;
 
-    protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"}, "Undo", "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "TableOfContents", "Header",
-        "Footer", "PageSetup", "PageNumber", "Break", "Find", "LocalClipboard", "RestrictEditing"
+    protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"},  "Undo",
+    new CustomToolbarItemModel(){ Id="insertfield", Text="Insert Field", PrefixIcon="fa fa-user fa-lg"},
+    "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "Header",
+        "Footer", "PageSetup", "PageNumber", "Find", "LocalClipboard", "RestrictEditing"
         };
 
 #pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
@@ -88,6 +110,10 @@
             var filename = Path.GetFileNameWithoutExtension(item);
             FileNamesOnlyList?.Add(new TemplateFileName { Id = counter++, TemplateFile = filename });
         }
+
+        idxFileSelected = 0;
+        filePath = FileList[0];
+        StateHasChanged();
     }
 
 
@@ -122,15 +148,10 @@
     {
         if (string.IsNullOrEmpty(filePath))
         {
-            // HideErrroMessage = false;
-            AlertTitle = "Modelo de cartas";
-            AlertVisibility = true;
-            WarningMessage = "Ficheiro não foi carregado a partir do diretório esperado Verifique, p.f";
-            OpcoesRegisto = OpcoesRegisto.Warning;
+            DisplayResult("Letter templates", "File was not loaded from the expected location.", AlertMessageType.Warning);
         }
         else
         {
-            // HideErrroMessage = true;
             AlertVisibility = false;
             AlertTitle = "";
             WarningMessage = "";
@@ -144,19 +165,27 @@
 
     private void OnFailure(Syncfusion.Blazor.Inputs.FailureEventArgs args)
     {
-        var x = args;
+        DisplayResult("Error uploading file", args.Response.StatusText, AlertMessageType.Error);
     }
 
     private async void OnCreated()
     {
         if (!string.IsNullOrEmpty(filePath))
         {
-            using (System.IO.FileStream fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            try
             {
-                WordDocument document = WordDocument.Load(fileStream, ImportFormatType.Docx);
-                await container.DocumentEditor.OpenAsync(System.Text.Json.JsonSerializer.Serialize(document));
-                document.Dispose();
+                using (System.IO.FileStream fileStream = new System.IO.FileStream(filePath, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+                {
+                    WordDocument document = WordDocument.Load(fileStream, ImportFormatType.Docx);
+                    await container.DocumentEditor.OpenAsync(System.Text.Json.JsonSerializer.Serialize(document));
+                    document.Dispose();
+                }
             }
+            catch (Exception ex)
+            {
+                DisplayResult($"Error loading file ({filePath}).", $"{ex.Message}");
+            }
+
         }
     }
 
@@ -169,38 +198,65 @@
                 {
                     try
                     {
-                        SfDocumentEditor editor = container.DocumentEditor;
-                        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
-                        byte[] data = Convert.FromBase64String(base64Data);
-                        using (MemoryStream stream = new MemoryStream(data))
-                        {
-                            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-                            {
-                                stream.CopyTo(fileStream);
-                            }
-                        }
-                        WarningMessage = $"Operação terminou com sucesso.";
-                        AlertTitle = $"Gravação de documento  ({Path.GetFileName(filePath)})";
-                        AlertMessageType = AlertMessageType.Info;
-                        OpcoesRegisto = OpcoesRegisto.Gravar;
-                        AlertVisibility = true;
-                        StateHasChanged();
-
+                        await SaveFile();
                     }
                     catch (Exception ex)
                     {
-                        WarningMessage = $"Operação terminou con erro ({ex.Message}).";
-                        AlertTitle = $"Gravação de documento  ({Path.GetFileName(filePath)})";
-                        AlertMessageType = AlertMessageType.Error;
-                        OpcoesRegisto = OpcoesRegisto.Error;
-                        AlertVisibility = true;
-                        StateHasChanged();
+                        DisplayResult("Save document", $"{ex.Message}");
                     }
-
+                }
+                break;
+            case "insertfield":
+                try
+                {
+                    ShowInsertFieldDialog();
+                }
+                catch (Exception ex)
+                {
+                    DisplayResult("Insert merge field", $"{ex.Message}");
                 }
                 break;
         }
     }
+
+    async Task SaveFile()
+    {
+        SfDocumentEditor editor = container!.DocumentEditor;
+        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+        byte[] data = Convert.FromBase64String(base64Data);
+        using (MemoryStream stream = new MemoryStream(data))
+        {
+            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                stream.CopyTo(fileStream);
+            }
+        }
+
+        DisplayResult("Save file", "File successfully saved", AlertMessageType.Info);
+    }
+
+
+
+    void ShowInsertFieldDialog()
+    {
+        isDialogVisible = true;
+    }
+
+    async void AddField()
+    {
+        if (!string.IsNullOrEmpty(fieldName))
+        {
+            await container!.DocumentEditor.Editor.InsertFieldAsync($"MERGEFIELD {fieldName} \\* MERGEFORMAT");
+        }
+
+        CancelDialog();
+    }
+
+    void CancelDialog()
+    {
+        isDialogVisible = false;
+    }
+
 
     protected void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
     {
@@ -210,6 +266,19 @@
 
         StateHasChanged();
     }
+    protected void DisplayResult(string titleCaption, string errorMessage, AlertMessageType alertMessageType = AlertMessageType.Error)
+    {
+        WarningMessage = errorMessage;
+        AlertTitle = titleCaption;
+
+        AlertMessageType = alertMessageType;
+        OpcoesRegisto = OpcoesRegisto.Info;
+        AlertVisibility = true;
+        StateHasChanged();
+
+    }
+
+
 
     protected class TemplateFileName
     {

@@ -2006,6 +2006,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Código postal.
+        /// </summary>
+        public static string TituloCodigoPostal {
+            get {
+                return ResourceManager.GetString("TituloCodigoPostal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Coeficiente.
         /// </summary>
         public static string TituloCoeficiente {

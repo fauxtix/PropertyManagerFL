@@ -12,6 +12,7 @@
         public string? MoradaFracao { get; set; }
         public decimal ValorRenda { get; set; }
         public decimal NovoValorRenda { get; set; }
+        public string? NovoValorExtenso { get; set; }
         public string? DiaAPartirDe { get; set; }
         public string? MesAPartirDe { get; set; }
         public string? AnoAPartirDe { get; set; }

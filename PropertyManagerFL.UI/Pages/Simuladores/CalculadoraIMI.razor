@@ -1,5 +1,6 @@
 ﻿@page "/CalculadoraIMI"
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Fracoes
 @using PropertyManagerFL.Application.ViewModels.LookupTables
 @using PropertyManagerFL.Core.Entities
 <h3>CalculadoraIMI</h3>
@@ -8,12 +9,36 @@
         <div class="card-header h4 text-center  mt-1">Preencha os campos abaixo para calcular o IMI</div>
         <div class="card-content">
             <div class="row mx-1">
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxProperty" ShowClearButton="true" Enabled="true"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeProperty"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Enabled="@ShowUnitsCombo"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnit"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+            </div>
+            <div class="row mx-1">
                 <div class="col-md-12 mx-1 w-50">
                     <SfTextBox CssClass="e-field text-align-right"
-                               Width="200px"
-                               Value="100000"
+                               Width="200px" Enabled="false"
+                               Value="@valorPatrimonio.ToString("C")"
                                FloatLabelType="FloatLabelType.Auto"
-                               Placeholder="Valor patrimonial tributável"/>
+                               Placeholder="Valor patrimonial tributável" />
                 </div>
                 <div class="col-md-6">
                     <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
@@ -57,7 +82,7 @@
                 <div class="col-md-6">
                     <SfTextBox CssClass="e-field"
                                Width="200px"
-                               FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="Nº filhos"/>
+                               FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="Nº filhos" />
                 </div>
             </div>
         </div>
@@ -97,8 +122,14 @@
 </div>
 
 @code {
+    [Inject] public IImovelService? imoveisService { get; set; }
+    [Inject] public IFracaoService? fracoesService { get; set; }
     [Inject] public IDistritosConcelhosService? service { get; set; }
     [Inject] public IStringLocalizer<App> L { get; set; }
+
+    protected IEnumerable<LookupTableVM>? PropertiesLookup { get; set; }
+    protected List<LookupTableVM>? UnitsLookup { get; set; } = new();
+    protected List<FracaoVM>? Units { get; set; } = new();
 
     protected IEnumerable<LookupTableVM>? Distritos { get; set; }
     protected IEnumerable<Concelho>? Concelhos { get; set; }
@@ -107,6 +138,13 @@
     protected int idxConcelho;
     protected int idxTipoImovel;
     protected float coeficiente;
+    protected decimal valorPatrimonio;
+
+    protected int idxProperty;
+    protected int idxUnit;
+    protected bool ShowUnitsCombo;
+
+
     protected List<LookupTableVM> TiposImovel { get; set; } = new List<LookupTableVM>()
     {
         new LookupTableVM{Id = 1, Descricao = "Urbano"},
@@ -115,11 +153,13 @@
     protected override async Task OnInitializedAsync()
     {
         idxDistrito = 0;
-        idxConcelho= 0;
+        idxConcelho = 0;
         idxTipoImovel = 0;
         coeficiente = 0;
         distritoSelected = false;
         Distritos = (await service!.GetDistritos()).ToList();
+        PropertiesLookup = await imoveisService!.GetPropertiesAsLookupTables();
+
     }
 
     protected async void onChangeDistrito(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
@@ -141,6 +181,27 @@
         idxTipoImovel = args.Value;
         StateHasChanged();
     }
+
+    protected async Task onChangeProperty(ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxProperty = args.Value;
+        UnitsLookup = new();
+        Units = (await fracoesService!.GetFracoes_Imovel(idxProperty)).ToList();
+        foreach (var unit in Units)
+        {
+            UnitsLookup!.Add(
+                 new LookupTableVM { Id = unit.Id, Descricao = unit.Descricao });
+        }
+        ShowUnitsCombo = true;
+    }
+    protected async Task onChangeUnit(ChangeEventArgs<int, LookupTableVM> args)
+    {
+        if (args.Value < 1) return;
+        var unit = await fracoesService.GetFracao_ById(args.Value);
+        valorPatrimonio = unit.ValorUltAvaliacao;
+
+    }
+
 }
 <style type="text/css" scoped>
     .card {

@@ -715,7 +715,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     NomeInquilino = DadosInquilino.Nome,
                     MoradaInquilino = moradaFracao,
                     Nome = DadosProprietario.Nome,
-                    Morada = DadosProprietario.Morada,
+                    Morada = DadosProprietario.Morada,                     
                     PrazoEmDias = "10", // TODO - adaptar pazo em dias para resolver situação de atraso no pagto. renda (appsettings?)
                     RendasEmAtraso = dueRentsAsString,
                     MontanteRendasAtraso = DadosFracao.ValorRenda * monthsDued

@@ -350,6 +350,7 @@
             <param name="svcImoveis"></param>
             <param name="svcFracoes"></param>
             <param name="mailMergeSvc"></param>
+            <param name="svcInquilinos"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.InsereInquilino(PropertyManagerFL.Application.ViewModels.Inquilinos.InquilinoVM)">
             <summary>
@@ -1925,6 +1926,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCincoUltimosMovimentos">
             <summary>
               Looks up a localized string similar to 5 últimos movimentos.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCodigoPostal">
+            <summary>
+              Looks up a localized string similar to Código postal.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCoeficiente">

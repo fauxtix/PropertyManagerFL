@@ -1,5 +1,6 @@
 ﻿using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
+using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -19,6 +20,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _logger = logger;
             _httpClient = httpClient;
         }
+
         public async Task<string> MailMergeLetter(MailMergeModel model)
         {
             try

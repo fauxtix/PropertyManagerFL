@@ -474,7 +474,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             else if (args.CommandColumn.Type == CommandButtonType.None)
             {
                 RecordMode = OpcoesRegisto.Info;
-                string? fileName = args.RowData.DocumentPath = string.Empty;
+                string? fileName = args.RowData.DocumentPath; // = string.Empty;
                 string? fileExtension = Path.GetExtension(fileName) ;
                 string? folderName = args.RowData.StorageFolder;
                 char? storageType = args.RowData.StorageType;
@@ -1403,13 +1403,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var currentYearAsString = DateTime.Now.Year.ToString();
                 var ValorRenda = currentYearUpdateValues!.PriorValue;
                 var NovoValorRenda = currentYearUpdateValues.UpdatedValue;
+                var rentUpdateCoefficientData = (await arrendamentoService!.GetRentUpdatingCoefficients()).ToList();
+                var currentYearRentUpdateCoefficientData = rentUpdateCoefficientData.FirstOrDefault(c=>c.Ano == DateTime.Now.Year.ToString());
 
-
-                var rentUpdateData = await inquilinoService!.GetDadosCartaAtualizacaoInquilino(Lease);
+                var rentUpdateData = await inquilinoService!.GetDadosCartaAtualizacaoInquilino(Lease, currentYearRentUpdateCoefficientData!);
                 if (rentUpdateData is not null)
                 {
                     rentUpdateData.ValorRenda = ValorRenda;
                     rentUpdateData.NomeInquilino = DadosInquilino.Nome;
+                    rentUpdateData.Naturalidade = DadosInquilino.Naturalidade;
                     rentUpdateData.NovoValorRenda = NovoValorRenda;
 
                     var docGerado = await inquilinoService.EmiteCartaAtualizacaoInquilino(rentUpdateData);

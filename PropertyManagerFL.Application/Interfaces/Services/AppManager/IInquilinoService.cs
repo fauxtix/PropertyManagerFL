@@ -45,7 +45,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<IEnumerable<HistoricoAtualizacaoRendasVM>> GetRentUpdates_ByTenantId(int tenantId);
         Task<IEnumerable<RentAdjustmentsVM>?> GetRentAdjustments();
         Task<IEnumerable<LatePaymentLettersVM>> GetLatePaymentLetters();
-        Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento);
+        Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento, CoeficienteAtualizacaoRendas coefficientData);
         Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao);
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
 
