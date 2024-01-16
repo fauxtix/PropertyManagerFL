@@ -893,5 +893,36 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return false;
             }
         }
+
+        public async Task<IEnumerable<LatePaymentLettersVM>> GetRentUpdateLetters()
+        {
+            // RentUpdateLetters
+            try
+            {
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/RentUpdateLetters"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var jsonData = await response.Content.ReadAsStringAsync();
+                        var rentUpdateLetters = JsonConvert.DeserializeObject<IEnumerable<LatePaymentLettersVM>>(jsonData);
+                        if (rentUpdateLetters != null)
+                        {
+                            return rentUpdateLetters;
+                        }
+                        else
+                        {
+                            return Enumerable.Empty<LatePaymentLettersVM>();
+                        }
+                    }
+                    else
+                        return Enumerable.Empty<LatePaymentLettersVM>();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, $"Erro ao pesquisar API (GetRentUpdateLetters) ({exc.Message})");
+                return Enumerable.Empty<LatePaymentLettersVM>();
+            }
+        }
     }
 }

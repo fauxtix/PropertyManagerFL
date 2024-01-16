@@ -593,7 +593,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="tenantId"></param>
         /// <returns>IEnumerable</returns>
         [HttpGet("RentUpdates/{tenantId}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
@@ -617,6 +617,37 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
+
+        /// <summary>
+        /// Devolve lista de cartas de atualização de rendas
+        /// </summary>
+        /// <returns>IEnumerable</returns>
+        [HttpGet("RentUpdateLetters")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> RentUpdateLetters()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var rentUpdateLetters = await _repoInquilinos.GetRentUpdateLetters();
+                if (rentUpdateLetters.Any())
+                {
+                    return Ok(rentUpdateLetters);
+                }
+                else
+                {
+                    return Ok(Enumerable.Empty<LatePaymentLettersVM>());
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
 
         /// <summary>
         /// Atualização/alteração de documento de um inquilino

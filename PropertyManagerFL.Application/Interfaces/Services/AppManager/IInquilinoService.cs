@@ -48,6 +48,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<CartaAtualizacao> GetDadosCartaAtualizacaoInquilino(ArrendamentoVM DadosArrendamento, CoeficienteAtualizacaoRendas coefficientData);
         Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao);
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
+        Task<IEnumerable<LatePaymentLettersVM>> GetRentUpdateLetters();
 
     }
 }

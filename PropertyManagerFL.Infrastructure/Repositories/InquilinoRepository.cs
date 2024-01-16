@@ -789,6 +789,24 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 return Enumerable.Empty<LatePaymentLettersVM>();
             }
         }
+        public async Task<IEnumerable<LatePaymentLettersVM>> GetRentUpdateLetters()
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var output = await connection.QueryAsync<LatePaymentLettersVM>("usp_Inquilinos_Stat_RentUpdateLetters",
+                        commandType: CommandType.StoredProcedure);
+                    return output.ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Enumerable.Empty<LatePaymentLettersVM>();
+            }
+        }
 
         /// <summary>
         /// Cria documento do inquilino, após geração de carta de atualização

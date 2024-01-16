@@ -404,7 +404,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     break;
                 case "ManualRentUpdate": // carta de atualização de rendas (do inquilino
                     alertTitle = "Envio de carta de atualização de renda";
-                    var tenantRentUpdates = await inquilinoService.GetRentUpdates_ByTenantId(TenantId);
+                    var tenantRentUpdates = await inquilinoService!.GetRentUpdates_ByTenantId(TenantId);
                     if (tenantRentUpdates is null)
                     {
                         AlertVisibility = true;
@@ -421,6 +421,16 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         WarningMessage = "Não foi feito qualquer aumento de renda para o ano corrente";
                         return;
                     }
+
+                    var response = (await inquilinoService.GetRentUpdateLetters()).ToList();
+                    var tenantLettersSentThisYear = response.Where(r=>r.Id == TenantId && r.CreationDate.Year == DateTime.Now.Year).ToList();
+                    if (tenantLettersSentThisYear.Any())
+                    {
+                        AlertVisibility = true;
+                        WarningMessage = "Já foi enviada carta de aumento para o ano corrente";
+                        return;
+                    }
+
 
                     SendingLetterType = DocumentoEmitido.AtualizacaoManualRenda;
                     SendLetterDialogVisibility = true;
