@@ -412,7 +412,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         return;
                     }
 
-                    // TODO verificar se carta já fo enviada - alerta apenas como informação
 
                     var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
                     if (currentYearUpdateValues is null)
@@ -427,7 +426,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (tenantLettersSentThisYear.Any())
                     {
                         AlertVisibility = true;
-                        WarningMessage = "Já foi enviada carta de aumento para o ano corrente";
+                        WarningMessage = "Já foi enviada carta de aumento para o ano corrente.  Verifique histórico, p.f.";
                         return;
                     }
 
@@ -626,7 +625,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (RecordMode == OpcoesRegisto.Gravar)
                 {
-                    ToastTitle = "Gravar dados do  Fiador ";
+                    ToastTitle = "Gravar dados do Fiador ";
 
                     var updateOk = await FiadorService.AtualizaFiador(SelectedGuarantor!.Id, SelectedGuarantor);
                     if (!updateOk)

@@ -3,6 +3,7 @@
 @using PropertyManagerFL.Application.Interfaces.Services.Stats
 @using PropertyManagerFL.Application.Shared.Enums
 @using PropertyManagerFL.Application.ViewModels.Despesas
+@using PropertyManagerFL.Application.ViewModels.Fracoes
 @using PropertyManagerFL.Core.Entities
 @using PropertyManagerFL.UI.Components.Cards
 
@@ -25,13 +26,13 @@ else
                 <div class="container col-lg-12 col-md-12 col-sm-12">
                     <div class="row card-box">
                         <DashboardStatCard ResultadoAnual="@ExpensesThisYear.ToString("C2")"
-                                       TituloAnual="@L["TituloDespesasEsteAno"]"
-                                       ResultadoMensal="@ExpensesThisMonth.ToString("C2")"
-                                       TituloMensal="@L["TituloDespesasEsteMes"]"
-                                       ResultadoSemanal="@ExpensesThisWeek.ToString("C2")"
-                                       TituloSemanal="@L["TituloDespesasEstaSemana"]"
-                                       ResultadoDiario="@ExpensesToday.ToString("C2")"
-                                       TituloDiario="@L["TituloDespesasHoje"]">
+                                           TituloAnual="@L["TituloDespesasEsteAno"]"
+                                           ResultadoMensal="@ExpensesThisMonth.ToString("C2")"
+                                           TituloMensal="@L["TituloDespesasEsteMes"]"
+                                           ResultadoSemanal="@ExpensesThisWeek.ToString("C2")"
+                                           TituloSemanal="@L["TituloDespesasEstaSemana"]"
+                                           ResultadoDiario="@ExpensesToday.ToString("C2")"
+                                           TituloDiario="@L["TituloDespesasHoje"]">
                         </DashboardStatCard>
                     </div>
                 </div>
@@ -39,12 +40,12 @@ else
             <div class="d-flex">
                 <div class="col-md-6 control-section sb-property-border">
                     <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
-                    @if (expensesList.Any())
+                        @if (expensesList.Any())
                     {
                         <ExpPieChart @ref="PieChartRef"
-                             TipoFiltro="C"
-                             Titulo="@L["TituloDespesasPorCategoria"]"
-                             Ano="@(DateTime.Today.Year)" />
+                                     TipoFiltro="C"
+                                     Titulo="@L["TituloDespesasPorCategoria"]"
+                                     Ano="@(DateTime.Today.Year)" />
                     }
                     else
                     {
@@ -53,13 +54,13 @@ else
                 </div>
                 <div class="col-md-6 control-section sb-property-border">
                     <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
-                    @if (expensesList.Any())
+                        @if (expensesList.Any())
                     {
 
-                    <ExpPieChart @ref="PieChartRef"
-                             TipoFiltro="C"
-                             Titulo="@L["TituloDespesasPorCategoria"]"
-                             Ano="@(DateTime.Today.Year - 1)" />
+                        <ExpPieChart @ref="PieChartRef"
+                                     TipoFiltro="C"
+                                     Titulo="@L["TituloDespesasPorCategoria"]"
+                                     Ano="@(DateTime.Today.Year - 1)" />
                     }
                     else
                     {
@@ -72,40 +73,86 @@ else
             <ExpLineChart year="@(DateTime.Today.Year)" />
         </div>
 
-        <div class="table table-striped w-50">
-            <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
-            <SfGrid DataSource="@last5Transactions"
-                RowHeight="28"
-                GridLines="GridLine.Horizontal">
-                <GridColumns>
-                    <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
-                            TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                    <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
-                            Width="200"></GridColumn>
-                    <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="C2"
-                            TextAlign="TextAlign.Right" Width="100"></GridColumn>
-                </GridColumns>
+        <div class="row card-box">
+            <div class="col-md-6">
+                <div class="table table-striped">
+                    <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
+                    <SfGrid DataSource="@last5Transactions"
+                            RowHeight="28"
+                            GridLines="GridLine.Horizontal">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                        TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                            <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
+                                        Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="C2"
+                                        TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="table table-striped">
+                    <AlertMessage Message="IMI Previsto" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
+                    <SfGrid DataSource="@IMIValues" TValue="IMIResults"
+                            RowHeight="28"
+                            GridLines="GridLine.Horizontal">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(IMIResults.Descricao) HeaderText="Descrição"
+                                        Width="250"></GridColumn>
+                            <GridColumn Field=@nameof(IMIResults.ValPatrimonio) HeaderText="Valor patrimonial"
+                                        Format="C2"
+                                       TextAlign="TextAlign.Right" Width="150"></GridColumn>
+                            <GridColumn Field=@nameof(IMIResults.ValorPagar) HeaderText="A pagar"
+                                        Format="C2"
+                                       TextAlign="TextAlign.Right" Width="150"></GridColumn>
+                        </GridColumns>
+                        <GridAggregates>
+                            <GridAggregate>
+                                <GridAggregateColumns>
+                                    <GridAggregateColumn Field=@nameof(IMIResults.ValPatrimonio) Type="AggregateType.Sum" Format="C2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate?.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                    <GridAggregateColumn Field=@nameof(IMIResults.ValorPagar) Type="AggregateType.Sum" Format="C2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate?.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                </GridAggregateColumns>
+                            </GridAggregate>
+                        </GridAggregates>
 
-            </SfGrid>
+                    </SfGrid>
+                </div>
+            </div>
+
         </div>
         <div class="row card-box">
             <div class="col-md-6">
                 <div class="table table-striped">
                     <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@TituloCategoriaEsteAno</SfMessage>
-                    <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Current"
-                        RowHeight="28"
-                        GridLines="GridLine.Horizontal">
-                        <GridColumns>
-                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
-                        </GridColumns>
-                        <GridAggregates>
-                            <GridAggregate>
-                                <GridAggregateColumns>
-                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
-                                        <FooterTemplate>
-                                            @{
+                        <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Current"
+                                RowHeight="28"
+                                GridLines="GridLine.Horizontal">
+                            <GridColumns>
+                                <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
+                                <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
+                                <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
+                            </GridColumns>
+                            <GridAggregates>
+                                <GridAggregate>
+                                    <GridAggregateColumns>
+                                        <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
+                                            <FooterTemplate>
+                                                @{
                                                 var aggregate = (context as AggregateTemplateContext);
                                                 <p class="my-1">@aggregate.Sum</p>
                                             }
@@ -120,20 +167,20 @@ else
             <div class="col-md-6">
                 <div class="table table-striped">
                     <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Info">@TituloCategoriaAnoAnterior</SfMessage>
-                    <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Prior"
-                        RowHeight="28"
-                        GridLines="GridLine.Horizontal">
-                        <GridColumns>
-                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
-                        </GridColumns>
-                        <GridAggregates>
-                            <GridAggregate>
-                                <GridAggregateColumns>
-                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
-                                        <FooterTemplate>
-                                            @{
+                        <SfGrid DataSource="@categoriesWithMoreSpendings_ByYear_Prior"
+                                RowHeight="28"
+                                GridLines="GridLine.Horizontal">
+                            <GridColumns>
+                                <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
+                                <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
+                                <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
+                            </GridColumns>
+                            <GridAggregates>
+                                <GridAggregate>
+                                    <GridAggregateColumns>
+                                        <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
+                                            <FooterTemplate>
+                                                @{
                                                 var aggregate = (context as AggregateTemplateContext);
                                                 <p class="my-1">@aggregate.Sum</p>
                                             }
@@ -150,6 +197,7 @@ else
 }
 
 @code {
+    [Inject] public IFracaoService? fracoesService { get; set; }
     [Inject] public IDespesaService? expensesService { get; set; }
     [Inject] public IStatsService? statsService { get; set; }
     [Inject] public IStringLocalizer<App> L { get; set; }
@@ -159,6 +207,10 @@ else
     protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpending { get; set; }
     protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpendings_ByYear_Current { get; set; }
     protected IEnumerable<ExpensesSummaryData>? categoriesWithMoreSpendings_ByYear_Prior { get; set; }
+
+    protected List<FracaoVM>? AllUnits { get; set; } = new();
+    protected List<IMIResults>? IMIValues { get; set; } = new();
+
     protected decimal ExpensesTotal;
     protected decimal ExpensesThisYear;
     protected decimal ExpensesThisMonth;
@@ -170,6 +222,14 @@ else
     protected string TituloSegundaCategoriaComMaisGastos = "";
     protected string? TituloCategoriaEsteAno;
     protected string? TituloCategoriaAnoAnterior;
+
+    protected class IMIResults
+    {
+        public decimal ValPatrimonio { get; set; }
+        public string? Descricao { get; set; }
+        public double Coeficiente { get; set; }
+        public decimal ValorPagar { get; set; }
+    }
 
     protected override async Task OnInitializedAsync()
     {
@@ -186,7 +246,19 @@ else
 
         try
         {
-            expensesList = await expensesService.GetAll();
+            AllUnits = (await fracoesService!.GetAll()).ToList();
+            foreach (var unit in AllUnits)
+            {
+                IMIValues?.Add(
+                    new IMIResults
+                        {
+                            Descricao = unit.Descricao,
+                            ValPatrimonio = unit.ValorUltAvaliacao,
+                            ValorPagar = Math.Round(unit.ValorUltAvaliacao * (decimal)0.0033, 2)
+                        });
+            }
+
+            expensesList = await expensesService!.GetAll();
             last5Transactions = expensesList.OrderByDescending(l => l.DataMovimento).ToList().Take(5);
             ExpensesTotal = expensesList.Sum(e => e.Valor_Pago);
             ExpensesThisYear = expensesList.Where(e => e.DataMovimento.Year == DateTime.Today.Year).Sum(f => f.Valor_Pago);
