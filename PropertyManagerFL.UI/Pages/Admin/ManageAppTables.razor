@@ -1,5 +1,7 @@
 ﻿@page "/admin/adminpanel"
 
+@implements IDisposable
+
 @inject NavigationManager NavManager
 
 @using System.Dynamic
@@ -10,34 +12,33 @@
 
 @*@attribute [Authorize]*@
 
-@implements IDisposable
 
 
-<AppConfiguration_Tables ChildTableToValidate="@sTableToValidateFk" 
+<AppConfiguration_Tables ChildTableToValidate="@tableToValidateFk" 
                          ItemsList="@GenericModelList"
-                         FkFieldNameToValidate="@sFieldToValidateFk"
-                         PageTitle="@sPageTitle"
-                         WorkTableName="@SelectedTableByAdmin"                         
+                         FkFieldNameToValidate="@fieldToValidateFk"
+                         PageTitle="@pageTitle"
+                         WorkTableName="@selectedTableByAdmin"                         
                          TModel="ExpandoObject">
 </AppConfiguration_Tables>
 
 @code {
 
-    string? SelectedTableByAdmin;
-    string? sPageTitle;
-    string? sTableToValidateFk;
-    string? sFieldToValidateFk;
+    string? selectedTableByAdmin;
+    string? pageTitle;
+    string? tableToValidateFk;
+    string? fieldToValidateFk;
 
 
     protected override async Task OnInitializedAsync()
     {
 
-        NavManager.TryGetQueryString<string>("DataTable", out SelectedTableByAdmin);
-        NavManager.TryGetQueryString<string>("PageTitle", out sPageTitle);
-        NavManager.TryGetQueryString<string>("TableToValidate", out sTableToValidateFk);
-        NavManager.TryGetQueryString<string>("FieldToValidate", out sFieldToValidateFk);
+        NavManager.TryGetQueryString<string>("DataTable", out selectedTableByAdmin);
+        NavManager.TryGetQueryString<string>("PageTitle", out pageTitle);
+        NavManager.TryGetQueryString<string>("TableToValidate", out tableToValidateFk);
+        NavManager.TryGetQueryString<string>("FieldToValidate", out fieldToValidateFk);
 
-        GenericModelList = (await GetDataGenerics<ExpandoObject>(SelectedTableByAdmin)).ToList();
+        GenericModelList = (await GetDataGenerics<ExpandoObject>(selectedTableByAdmin)).ToList();
     }
 
     void IDisposable.Dispose()

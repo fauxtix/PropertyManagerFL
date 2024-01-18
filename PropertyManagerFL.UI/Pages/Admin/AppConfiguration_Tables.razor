@@ -19,26 +19,31 @@
 @attribute [Authorize]
 
 <PageTitle>@L["TituloGestaoTabelas"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloGestaoTabelas"]" WithBadge="true" PageSubTitle="@PageTitle"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloGestaoTabelas"]" WithBadge="true" PageSubTitle="@PageTitle"></PageTitleComponent>
 
-<ConfigurationTablesView Items="@ItemsList"
-                         TItem="TModel"
-                         OnInsert="InsertRecord"
-                         OnUpdate="UpdateRecord"
-                         OnDelete="DeleteRecord"
-                         OnRefresh="HandleRefreshData"
-                         PageTitle="@PageTitle"
-                         ValidateDelete="IsDescriptionInUse"
-                         TextPropertyName="Descricao"
-                         ValuePropertyName="Codigo">
-</ConfigurationTablesView>
+    <ConfigurationTablesView Items="@ItemsList"
+                             TItem="TModel"
+                             OnInsert="InsertRecord"
+                             OnUpdate="UpdateRecord"
+                             OnDelete="DeleteRecord"
+                             OnRefresh="HandleRefreshData"
+                             PageTitle="@PageTitle"
+                             ValidateDelete="IsDescriptionInUse"
+                             TextPropertyName="Descricao"
+                             ValuePropertyName="Codigo">
+    </ConfigurationTablesView>
 
-<AlertMessage Message="@alertMessage" MessageType="@messageType"></AlertMessage>
+    <div class="mx-auto">
+        <SfButton OnClick="GoBack" Content="Voltar"
+                  IconCss="fa fa-arrow-left" CssClass="e-btn e-outline e-round-corner p-1" />
+    </div>
+
+    <AlertMessage Message="@alertMessage" MessageType="@messageType" />
 
 
-@code {
+    @code {
 
-    private int Id;
+    // private int Id;
     private string? Descricao;
 
     [CascadingParameter]
@@ -191,8 +196,8 @@
         {
             string IdField = GetFieldNames(Item)[0];
             return (int)Item.GetType()
-                .GetProperty(IdField)
-                .GetValue(Item, null);
+            .GetProperty(IdField)
+            .GetValue(Item, null);
         }
     }
 
@@ -207,13 +212,17 @@
         {
             string DescriptionField = GetFieldNames(Item)[1];
 
-            var output = Item.GetType()
-            .GetProperty(DescriptionField)
+            var output = Item?.GetType()?.GetProperty(DescriptionField)
             .GetValue(Item, null);
 
-            string sRet = output == null ? "" : output.ToString();
+            string sRet = output?.ToString() ?? ""; // == null ? "" : output.ToString();
             return sRet;
         }
+    }
+
+    private void GoBack()
+    {
+        NavManager.NavigateTo("/admin/configapptables");
     }
 }
 

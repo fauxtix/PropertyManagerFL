@@ -34,6 +34,17 @@
          TooltipText = "Collapse all",
          PrefixIcon = "e-collapse"
      },
+    new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+     new ItemModel()
+     { 
+         Id = "Resumo",
+         Text = "Resumo",
+         TooltipText = "Expand all",
+         PrefixIcon = "fa fa-eye"
+     },
     });
     var ContextMenuItems = (new List<Object>
         {
@@ -618,7 +629,7 @@ else
                         OnConfirmationNo="ConfirmDeleteDocumentNo" />
 
 <ConfirmSendingLetter AlertMessageType="AlertMessageType.Warning"
-                      DialogTitle="@L["TituloEnvioCartaInquilino"]" 
+                      DialogTitle="@L["TituloEnvioCartaInquilino"]"
                       Lease="@Lease"
                       TenantName="@SelectedTenant?.Nome"
                       LetterType="@SendingLetterType"
@@ -695,6 +706,5 @@ else
         font-weight: bolder;
         font-size: 24px;
     }
-
 
 </style>

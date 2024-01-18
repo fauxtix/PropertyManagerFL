@@ -358,7 +358,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                     SendLetterDialogVisibility = true;
                     break;
-
+                case "Resumo":
+                    nav.NavigateTo("/inquilinos/detalhe", true);
+                    break;
             }
 
 

@@ -4,167 +4,149 @@
 @using PropertyManagerFL.Application.ViewModels.LookupTables
 @using PropertyManagerFL.Core.Entities
 <h3>CalculadoraIMI</h3>
-<div class="container-fluid w-100">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card card-block w-75 h-100 my-3 mx-2">
-                <div class="card-header h4 text-center  mt-1">Preencha os campos abaixo para calcular o IMI</div>
-                <div class="card-content">
-                    <div class="row mx-1">
-                        <div class="col-md-6 mt-2">
-                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            Value="@idxProperty" ShowClearButton="true" Enabled="true"
-                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
-                                <DropDownListTemplates TItem="LookupTableVM">
-                                </DropDownListTemplates>
-                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeProperty"></DropDownListEvents>
-                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                            </SfDropDownList>
-                        </div>
-                        <div class="col-md-6 mt-2">
-                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            ShowClearButton="true" Enabled="@ShowUnitsCombo"
-                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
-                                <DropDownListTemplates TItem="LookupTableVM">
-                                </DropDownListTemplates>
-                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnit"></DropDownListEvents>
-                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                            </SfDropDownList>
-                        </div>
-                    </div>
-                    <div class="row mx-1">
-                        <div class="col-md-12 mx-1 w-50">
-                            <SfTextBox CssClass="e-field text-align-right"
-                                       Width="200px" Enabled="false"
-                                       Value="@valorPatrimonio.ToString("C")"
-                                       FloatLabelType="FloatLabelType.Auto"
-                                       Placeholder="Valor patrimonial tributável" />
-                        </div>
-                        <div class="col-md-6">
-                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            ShowClearButton="true" Width="250px"
-                                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
-                                <DropDownListTemplates TItem="LookupTableVM">
-                                </DropDownListTemplates>
-                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeDistrito"></DropDownListEvents>
-                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                            </SfDropDownList>
-                        </div>
-                        <div hidden="@(idxDistrito == 0)" class="col-md-6">
-                            <SfDropDownList TValue="int" TItem="Concelho" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            ShowClearButton="true" Width="250px"
-                                            Value="@idxDistrito"
-                                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Concelho" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
-                                <DropDownListTemplates TItem="Concelho">
-                                </DropDownListTemplates>
-                                <DropDownListEvents TValue="int" TItem="Concelho" ValueChange="onChangeConcelho"></DropDownListEvents>
-                                <DropDownListFieldSettings Value="IdDistrito" Text="Descricao"></DropDownListFieldSettings>
-                            </SfDropDownList>
-                        </div>
-                    </div>
-                    <div class="row mx-1 mb-2">
-                        <div class="col-md-6">
-                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            ShowClearButton="true" Width="250px"
-                                            Value="@idxTipoImovel"
-                                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Tipo de Imóvel" DataSource="@TiposImovel" FloatLabelType="FloatLabelType.Always">
-                                <DropDownListTemplates TItem="LookupTableVM">
-                                </DropDownListTemplates>
-                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoImovel"></DropDownListEvents>
-                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                            </SfDropDownList>
-
-                            @*                     <SfTextBox CssClass="e-field" FloatLabelType="FloatLabelType.Auto" Placeholder="Tipo de Imóvel">100000/></SfTextBox> *@
-                        </div>
-                        <div class="col-md-6">
-                            <SfTextBox CssClass="e-field"
-                                       Width="200px"
-                                       FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="Nº filhos" />
-                        </div>
-                    </div>
-                    <hr />
-                    <div class="d-flex justify-content-around align-items-end gap-2 my-2">
-                        <SfButton CssClass="e-btn e-success e-round-corner p-2" IconCss="fa fa-calculator" OnClick="Calculate" Content="Calcular" />
-                        <SfButton CssClass="e-btn e-outline e-round-corner p-2" IconCss="fa fa-remove" OnClick="Clear" Content="Limpar" />
-                    </div>
-                    <hr />
+<div class="container-fluid w-50 ">
+    <div class="card card-block w-75 h-100 my-3 mx-2 shadow">
+        <div class="card-header h4 text-center  mt-1">Preencha os campos abaixo para calcular o IMI</div>
+        <div class="card-content">
+            <div class="row mx-1">
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxProperty" ShowClearButton="true" Enabled="true"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeProperty"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Enabled="@ShowUnitsCombo"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnit"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
                 </div>
             </div>
-            <div hidden="@HideResults" class="card card-block w-75 h-100 my-3 mx-2">
-                <div class="card-header h4 text-center  mt-1">Resultado da simulação</div>
-                <div class="card-body">
-                    <div class="row mx-1">
-                        <div class="col-md-6">
-                            <SfMessage>Montante de IMI a pagar</SfMessage>
-                        </div>
-                        <div class="col-md-6">
-                            <SfMessage>@(valorIMI)€</SfMessage>
-                        </div>
-                    </div>
-                    <div class="row mx-1 my-1">
-                        <div class="col-md-6">
-                            <SfMessage>Coeficiente</SfMessage>
-                        </div>
-                        <div class="col-md-6">
-                            <SfMessage CssClass="text-right">@coeficiente</SfMessage>
-                            </div>
-                        </div>
-                        <div class="m-2">
-                            <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">Plano de Pagamentos</SfMessage>
-                        </div>
-                        <div class="row mx-1">
-                            <div class="col-md-6">
-                                <SfMessage>Maio</SfMessage>
-                            </div>
-                            <div class="col-md-6">
-                                <SfMessage>@(valorIMI / 2)€</SfMessage>
-                            </div>
-                        </div>
-                        <div class="row mx-1 my-1">
-                            <div class="col-md-6">
-                                <SfMessage>Novembro</SfMessage>
-                            </div>
-                            <div class="col-md-6">
-                                <SfMessage>@(valorIMI / 2)€</SfMessage>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card card-block w-75 h-100 my-3 mx-2">
-                    <div class="card-header h4 text-center  mt-1">IMI previsto</div>
-                    <div class="card-body">
-                        @foreach (var imiValue in IMIValues!)
+            <div class="row mx-1">
+                <div class="col-md-12 mx-1 w-50">
+                    @if (generalUse)
                     {
-                        <div class="row m-2">
-                            <div class="col-md-4">@imiValue.Descricao</div>
-                            <div class="col-md-4" style="text-align:end">@string.Format("{0,15:N0}", imiValue.ValPatrimonio)€</div>
-                            <div class="col-md-4" style="text-align:end">@string.Format("{0,15:N2}", imiValue.ValorPagar)€</div>
-                        </div>
+                        <SfTextBox CssClass="e-field text-align-right"
+                                   Width="200px" Enabled="false"
+                                   Value="@valorPatrimonio.ToString("C")"
+                                   FloatLabelType="FloatLabelType.Auto"
+                                   Placeholder="Valor patrimonial tributável" />
                     }
-                    <hr />
-                    <div class="row m-2">
-                        <div class="col-md-4"></div>
-                        <div class="col-md-4" style="text-align:end">@string.Format("{0,15:N0}", IMIValues.Sum(i => i.ValPatrimonio))€</div>
-                        <div class="col-md-4" style="text-align:end">@string.Format("{0,15:N2}", IMIValues.Sum(i => i.ValorPagar))€</div>
+                    else
+                    {
+                        <SfNumericTextBox CssClass="e-field"
+                                          ShowSpinButton="true" class="text-align-right"
+                                          Decimals="0"
+                                          Width="200px" @bind-Value="@valorPatrimonio"
+                                          FloatLabelType="FloatLabelType.Auto"
+                                          Placeholder="Valor patrimonial tributável" />
+
+                    }
+                </div>
+                <div class="col-md-6">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Width="250px"
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeDistrito"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div hidden="@(idxDistrito == 0)" class="col-md-6">
+                    <SfDropDownList TValue="int" TItem="Concelho" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Width="250px"
+                                    Value="@idxDistrito"
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Concelho" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="Concelho">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="Concelho" ValueChange="onChangeConcelho"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="IdDistrito" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+            </div>
+            <div class="row mx-1 mb-2">
+                <div class="col-md-6">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Width="250px"
+                                    Value="@idxTipoImovel"
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="Tipo de Imóvel" DataSource="@TiposImovel" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoImovel"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-6">
+                    <SfTextBox CssClass="e-field"
+                               Width="200px"
+                               FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="Nº filhos" />
+                </div>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-around align-items-end gap-2 my-2">
+                <SfButton CssClass="e-btn e-success e-round-corner p-2" IconCss="fa fa-calculator" OnClick="Calculate" Content="Calcular" />
+                <SfButton CssClass="e-btn e-outline e-round-corner p-2" IconCss="fa fa-remove" OnClick="Clear" Content="Limpar" />
+            </div>
+            <hr />
+        </div>
+    </div>
+    <div hidden="@HideResults" class="card card-block w-75 h-100 my-3 mx-2">
+        <div class="card-header h4 text-center  mt-1">Resultado da simulação</div>
+        <div class="card-body">
+            <div class="row mx-1">
+                <div class="col-md-6">
+                    <SfMessage>Montante de IMI a pagar</SfMessage>
+                </div>
+                <div class="col-md-6">
+                    <SfMessage Variant="MessageVariant.Outlined" Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@(valorIMI)€</SfMessage>
+                </div>
+            </div>
+            <div class="row mx-1 my-1">
+                <div class="col-md-6">
+                    <SfMessage>Coeficiente</SfMessage>
+                </div>
+                <div class="col-md-6">
+                    <SfMessage Variant="MessageVariant.Outlined" Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@coeficiente</SfMessage>
                     </div>
-                    <hr />
-                    <div class="row m-2">
-                        <div>3 prestações de <span class="fw-bold"> @string.Format("{0,15:N2}", (IMIValues.Sum(i => i.ValorPagar) / 3))</span>€ </div>
-                        <div>A pagar em Maio, Agosto e Novembro</div>
+                </div>
+                <div class="m-2">
+                    <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">Plano de Pagamentos</SfMessage>
+                </div>
+                <div class="row mx-1">
+                    <div class="col-md-6">
+                        <SfMessage>Maio</SfMessage>
+                    </div>
+                    <div class="col-md-6">
+                        <SfMessage Variant="MessageVariant.Outlined" Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@(valorIMI / 2)€</SfMessage>
+                    </div>
+                </div>
+                <div class="row mx-1 my-1">
+                    <div class="col-md-6">
+                        <SfMessage>Novembro</SfMessage>
+                    </div>
+                    <div class="col-md-6">
+                        <SfMessage Variant="MessageVariant.Outlined" Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@(valorIMI / 2)€</SfMessage>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-@code {
+
+    @code {
 
     /*
     * Se o valor do IMI for igual ou inferior a 100 euros, tem de ser pago na totalidade, em maio.
@@ -180,8 +162,6 @@
     protected IEnumerable<LookupTableVM>? PropertiesLookup { get; set; }
     protected List<LookupTableVM>? UnitsLookup { get; set; } = new();
     protected List<FracaoVM>? Units { get; set; } = new();
-    protected List<FracaoVM>? AllUnits { get; set; } = new();
-    protected List<IMIResults>? IMIValues { get; set; } = new();
 
     protected IEnumerable<LookupTableVM>? Distritos { get; set; }
     protected IEnumerable<Concelho>? Concelhos { get; set; }
@@ -193,6 +173,7 @@
     protected decimal valorPatrimonio;
     protected decimal valorIMI;
 
+    protected bool generalUse = false;
     protected int idxProperty;
     protected int idxUnit;
     protected bool ShowUnitsCombo;
@@ -207,26 +188,12 @@
     protected override async Task OnInitializedAsync()
     {
 
-        idxDistrito = 0;
-        idxConcelho = 0;
-        idxTipoImovel = 0;
+        idxTipoImovel = 1;
         coeficiente = 0;
         valorIMI = 0;
         distritoSelected = false;
         Distritos = (await service!.GetDistritos()).ToList();
         PropertiesLookup = await imoveisService!.GetPropertiesAsLookupTables();
-        AllUnits = (await fracoesService!.GetAll()).ToList();
-        foreach (var unit in AllUnits)
-        {
-            IMIValues?.Add(
-                new IMIResults
-                    {
-                        Descricao = unit.Descricao,
-                        ValPatrimonio = unit.ValorUltAvaliacao,
-                        ValorPagar = Math.Round(unit.ValorUltAvaliacao * (decimal)0.0033, 2)
-                    });
-        }
-
     }
 
     protected async void onChangeDistrito(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
@@ -303,7 +270,7 @@
     }
 
     .e-round-corner {
-        border-radius: 1rem;
+        border-radius: 12px;
     }
 
     .text-align-right. {

@@ -1,107 +1,185 @@
 ﻿@page "/Inquilinos/Detalhe"
 
+@implements IDisposable
+
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.ViewModels.Inquilinos;
 @using Syncfusion.Blazor.Data;
 
 @using Syncfusion.Blazor.DropDowns
 @using Syncfusion.Blazor.Navigations
-@using Syncfusion.Blazor.Buttons    
+@using Syncfusion.Blazor.Buttons
 
-<h3>Detalhe Inquilinos</h3>
-@if (Tenants is null)
-{
-    <LoadingData />
-}
-else
-{
-    <SfAccordion @ref="@accObj" ID="acc" ExpandMode="ExpandMode.Single">
-        <AccordionEvents  Expanded="OnExpanded"></AccordionEvents>
-        <AccordionItems>
-            @foreach (var Item in Tenants)
-            {
-                <AccordionItem >
-                    <HeaderTemplate>
-                        <div>@(Item.Nome)</div>
-                    </HeaderTemplate>                    
-                    <ContentTemplate>
-                        <div class="w-50">
-                            <SfMessage>Conta-corrente</SfMessage>
-                            <table class="table table-success table-responsive-md" border="1">
-                                <thead>
-                                    <tr>
-                                        <th width="5%" align="center">Valor Pago</th>
-                                        <th width="5%" align="center">Em dívida</th>
-                                        <th width="40%" align="center">Notas</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
-                                        foreach (var linha in TenantChekingAcount!)
-                                        {
-                                            <tr>
-                                                <td width="5%" align="right">@linha.ValorPago</td>
-                                                <td width="5%" align="right">@linha.ValorEmDivida</td>
-                                                <td width="40%">@linha.Notas</td>
-                                            </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="w-50">
-                            <SfMessage>Documentos</SfMessage>
-                            <table class="table table-success table-responsive-md" border="1">
-                                <thead>
-                                    <tr>
-                                        <th width="25%" align="center">Path</th>
-                                        <th width="20%" align="center">Descrição</th>
-                                        <th width="5%" align="center">Data</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
-                                        if (TenantDocuments is not null)
-                                        {
-                                            foreach (var linha in TenantDocuments!)
+<PageTitle>@L["TituloMenuInquilinos"]</PageTitle>
+    <PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]"></PageTitleComponent>
+
+    <div class="container-fluid mt-5">
+        @if (Tenants is null)
+    {
+        <LoadingData />
+    }
+    else
+    {
+        <SfAccordion @ref="@accObj" ID="acc" ExpandMode="ExpandMode.Single">
+            <AccordionEvents Expanded="OnExpanded"></AccordionEvents>
+            <AccordionItems>
+                @foreach (var Item in Tenants)
+                {
+                    <AccordionItem Expanded="@(Item == Tenants.First())">
+                        <HeaderTemplate>
+                            <div>@(Item.Nome)</div>
+                        </HeaderTemplate>
+                        <ContentTemplate>
+                            <div class="w-50">
+                                <SfMessage>Conta-corrente (10 ultºs movimentos)</SfMessage>
+                                <table class="table table-success table-responsive-md" border="1">
+                                    <thead>
+                                        <tr>
+                                            <th width="5%">Data</th>
+                                            <th width="8%" align="right">Valor Pago</th>
+                                            <th width="8%" align="right">Em dívida</th>
+                                            <th width="29%" align="center">Notas</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var linha in TenantChekingAcount!)
                                             {
                                                 <tr>
-                                                    <td width="25%" align="right">@linha.DocumentPath</td>
-                                                    <td width="25%" align="right">@linha.Descricao</td>
-                                                    <td width="5%">@linha.CreationDate</td>
+                                                    <td width="5%">@linha.DataMovimento.Date.ToShortDateString()</td>
+                                                    <td width="8%" align="right">@linha.ValorPago.ToString("C")</td>
+                                                    <td width="8%" align="right">@linha.ValorEmDivida.ToString("C")</td>
+                                                    <td width="29%">@linha.Notas</td>
                                                 </tr>
                                             }
                                         }
-                                        else
-                                        {
-                                        <SfMessage>Sem documentos para mostrar</SfMessage>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="w-50">
+                                <SfMessage>Documentos</SfMessage>
+                                <table class="table table-success table-responsive-md" border="1">
+                                    <thead>
+                                        <tr>
+                                            <th width="15%" align="center">Nome</th>
+                                            <th width="25%" align="center">Descrição</th>
+                                            <th width="10%" align="center">Data</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (TenantDocuments.Any())
+                                            {
+                                                foreach (var linha in TenantDocuments!)
+                                                {
+                                                    <tr>
+                                                        <td width="15%">@Path.GetFileNameWithoutExtension(linha.DocumentPath)</td>
+                                                        <td width="25%">@linha.Descricao</td>
+                                                        <td width="10%">@linha.CreationDate</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <SfMessage Variant="MessageVariant.Outlined"
+                                                                   Severity="MessageSeverity.Info"
+                                                                   ShowCloseIcon=false
+                                                                   ShowIcon=false>Sem documentos para mostrar</SfMessage>
+                                                    </td>
+                                                </tr>
+                                            }
                                         }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="w-50">
+                                <SfMessage>Aumentos de renda</SfMessage>
+                                <table class="table table-success table-responsive-md" border="1">
+                                    <thead>
+                                        <tr>
+                                            <th width="10%">Data</th>
+                                            <th width="30%">Fração</th>
+                                            <th width="5%" align="right">Antes</th>
+                                            <th width="5%" align="center">Depois</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            if (TenantRentAdjustments.Any())
+                                            {
+                                                foreach (var linha in TenantRentAdjustments!)
+                                                {
+                                                    <tr>
+                                                        <td width="10%">@linha.DateProcessed</td>
+                                                        <td width="30%">@linha.DescricaoFracao</td>
+                                                        <td width="5%" align="right">@linha.PriorValue.ToString("C")</td>
+                                                        <td width="5%" align="right">@linha.UpdatedValue.ToString("C")</td>
+                                                    </tr>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <SfMessage Variant="MessageVariant.Outlined"
+                                                                   Severity="MessageSeverity.Info"
+                                                                   ShowCloseIcon=false
+                                                                   ShowIcon=false>Sem dados para mostrar</SfMessage>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </ContentTemplate>
+                    </AccordionItem>
+                }
+            </AccordionItems>
+        </SfAccordion>
+        <div class="mt-3 d-flex justify-content-center">
+            <SfButton CssClass="e-btn e-primary e-round-corner p-2" IconCss="fa fa-window-close" OnClick="@(()=>nav?.NavigateTo("/inquilinos"))" Content="Voltar"/>
+        </div>
+        <SfSpinner @ref="SpinnerObj"
+                   Visible="@spinnerVisible"
+                   Label="@L["MSG_PreparandoDados"]" Size="50"
+                   Type="SpinnerType.Bootstrap5"
+                   CssClass="e-spin-overlay">
+        </SfSpinner>
+    }
+</div>
 
-                    </ContentTemplate>
-                </AccordionItem>
-            }
-        </AccordionItems>
-    </SfAccordion>
-}
 @code {
-    [Inject] IInquilinoService? TenantsService { get; set; }
+    [Inject] protected IInquilinoService? TenantsService { get; set; }
+    [Inject] protected IStringLocalizer<App> L { get; set; }
+    [Inject] protected NavigationManager? nav { get; set; }
 
-    public Query QueryData = new Query();
     bool IsExpanded = true;
-    protected SfAccordion accObj { get; set; }
+    bool spinnerVisible = false;
 
     protected IEnumerable<InquilinoVM>? Tenants { get; set; }
-    protected IEnumerable<DocumentoInquilinoVM>? TenantDocuments { get; set; }
-    protected IEnumerable<CC_InquilinoVM>? TenantChekingAcount { get; set; }
+    protected IEnumerable<DocumentoInquilinoVM>? TenantDocuments { get; set; } = Enumerable.Empty<DocumentoInquilinoVM>();
+    protected IEnumerable<CC_InquilinoVM>? TenantChekingAcount { get; set; } = Enumerable.Empty<CC_InquilinoVM>();
+    protected IEnumerable<HistoricoAtualizacaoRendasVM>? TenantRentAdjustments { get; set; } = Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
+
+    protected SfSpinner? SpinnerObj { get; set; }
+    protected SfAccordion? accObj { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
+        await Task.Delay(100);
+        spinnerVisible = true;
+
         await GetTenantsDetails();
-        await GetTenantCheckingAcount(1013);
+        var firstId = Tenants.FirstOrDefault(r => r.Id > 0).Id;
+        await GetTenantCheckingAcount(firstId);
+        await Task.Delay(100);
+
+        await GetTenantRentAdjustments(firstId);
+        spinnerVisible = false;        
+
     }
 
     private async Task GetTenantsDetails()
@@ -115,16 +193,24 @@ else
     }
     private async Task GetTenantCheckingAcount(int Id)
     {
-        TenantChekingAcount = (await TenantsService!.GetTenantPaymentsHistory(Id)).ToList();
+        TenantChekingAcount = (await TenantsService!.GetTenantPaymentsHistory(Id))
+        .ToList()
+        .Take(10);
+    }
+
+    private async Task GetTenantRentAdjustments(int Id)
+    {
+        TenantRentAdjustments = (await TenantsService!.GetRentUpdates_ByTenantId(Id)).ToList();
     }
 
 
     private async Task OnExpanded(ExpandedEventArgs args)
     {
         var idx = args.Index;
-        var key = Tenants.ElementAt(idx).Id;
+        var key = Tenants!.ElementAt(idx).Id;
         await GetTenantCheckingAcount(key);
         await GetTenantDocuments(key);
+        await GetTenantRentAdjustments(key);
     }
 
     private void ChangePanel()
@@ -132,5 +218,32 @@ else
         IsExpanded = !IsExpanded;
     }
 
+    public void Dispose()
+    {
+        accObj?.Dispose();
+        SpinnerObj?.Dispose();
+    }
 
 }
+
+@* <style>
+    .e-accordion#Acrdn .e-acrdn-item.Item1 .e-acrdn-header:hover {
+        background-color: #97DAF8 !important; /*To Apply the backgroud color while hovering accordion item based on CssClass*/
+    }
+
+    .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header {
+        background: none !important; /*To Remove selected item(expanded) backgroud color*/
+    }
+
+    .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header {
+        background: none !important; /*To Remove selected item(collapsed) background color*/
+    }
+
+        .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header .e-acrdn-header-content, .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header .e-acrdn-header-content {
+            color: blue !important; /* To Apply the font color to selected accordion header*/
+        }
+
+        .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header > .e-toggle-icon, .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header > .e-toggle-icon {
+            color: none !important; /* To Apply the color to navigation incon for selected accordion header*/
+        }
+</style> *@
