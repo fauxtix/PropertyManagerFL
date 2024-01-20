@@ -7,15 +7,15 @@ namespace PropertyManagerFL.UI.ApiWrappers
         Task<List<AddressVM>> GetAddresses(int codPst, int subCodPst);
     }
 
-    public class WapperCodigosPostais : ICodigosPostais
+    public class WrapperCodigosPostais : ICodigosPostais
     {
         private readonly IConfiguration _env;
-        private readonly ILogger<WapperCodigosPostais> _logger;
+        private readonly ILogger<WrapperCodigosPostais> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
 
-        public WapperCodigosPostais(IConfiguration env,
-                                    ILogger<WapperCodigosPostais> logger,
+        public WrapperCodigosPostais(IConfiguration env,
+                                    ILogger<WrapperCodigosPostais> logger,
                                     HttpClient httpClient)
         {
             _env = env;

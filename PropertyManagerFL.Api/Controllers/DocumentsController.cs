@@ -11,17 +11,14 @@ namespace PropertyManagerFL.Api.Controllers
     public class DocumentsController : ControllerBase
     {
         private readonly IDocumentsRepository _repoDocuments;
-        private readonly IMapper _mapper;
         private readonly ILogger<DocumentsController> _logger;
         private readonly IWebHostEnvironment _environment;
 
 
-        public DocumentsController(IMapper mapper,
-                                       ILogger<DocumentsController> logger,
+        public DocumentsController(ILogger<DocumentsController> logger,
                                        IWebHostEnvironment environment,
                                        IDocumentsRepository repoDocuments)
         {
-            _mapper = mapper;
             _logger = logger;
             _environment = environment;
             _repoDocuments = repoDocuments;

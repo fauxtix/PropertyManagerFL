@@ -6,6 +6,7 @@ using PropertyManagerFL.Application.Interfaces.Services.Email;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
+using PropertyManagerFL.Infrastructure.Services.CommonServices;
 using PropertyManagerFL.UI.ApiWrappers;
 
 namespace PropertyManagerFL.UI;
@@ -46,7 +47,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<iHelpManagerService, WrapperHelpManager>();
         services.AddTransient<ILogService, WrapperAppLogs>();
 
-        services.AddTransient<ICodigosPostais, WapperCodigosPostais>();
+        services.AddTransient<ICodigosPostais, WrapperCodigosPostais>();
 
         services.AddTransient<IMailMergeService, WrapperMailMerge>();
         services.AddTransient<IBackupDatabaseService, WrapperBackupDatabase>();
@@ -58,5 +59,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<IDistritosConcelhosService, WrapperDistritosConcelhos>();
 
         services.AddScoped<IEmailSender, EmailSender>();
+
+        services.AddScoped<IAppSettingsService, WrapperAppSettings>();
     }
 }

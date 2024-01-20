@@ -1,0 +1,145 @@
+﻿@page "/admin/appsettings"
+@using PropertyManagerFL.Application.Interfaces.Services.Common
+@using PropertyManagerFL.Application.ViewModels.AppSettings
+
+@using PropertyManagerFL.Core.Entities
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Buttons
+@using Microsoft.AspNetCore.Components.Forms
+@using System.Diagnostics
+
+@inject IAppSettingsService AppSettingsService
+
+<PageTitle>Configuração</PageTitle>
+<PageTitleComponent PageTitle="Configuração"></PageTitleComponent>
+@if (settings is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container">
+        <EditForm Model="@settings" OnValidSubmit="UpdateSettings">
+            <hr />
+            <div class="row" id="msg-custom-section">
+                <div class="col-md-6 my-2">
+                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook settings</SfMessage>
+                    <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.Username" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.Password" Placeholder="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                </div>
+                <div class="col-md-6 my-2">
+                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail Settings</SfMessage>
+                    <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.SmtpServer" Placeholder="SMTP Server" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfNumericTextBox @bind-Value="settings.EmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.EmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.EmailPassword" Placeholder="Password" FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 my-2">
+                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Hotmail Settings</SfMessage>
+                    <SfTextBox class="form-control" @bind-Value="settings.HotmailHostname" Placeholder="Hostname" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfNumericTextBox @bind-Value="settings.HotmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                    <label class="mt-2">Use Ssl</label>
+                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.UseSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                    <SfTextBox class="form-control" @bind-Value="settings.HotmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                    <SfTextBox class="form-control" @bind-Value="settings.HotmailPassword" Placeholder="Password"
+                               FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                </div>
+                <div class="col-md-6 my-2">
+                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>PaperCut</SfMessage>
+                    <SfTextBox class="form-control" @bind-Value="settings.PaperCutSmtpServer" Placeholder="SMTP Server"></SfTextBox>
+                    <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="Port"></SfNumericTextBox>
+                    <label class="mt-2">Enable Ssl</label>
+                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.EnableSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 my-2">
+                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
+                    <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
+                </div>
+            </div>
+            <hr />
+            <div class="d-flex justify-content-center align-items-md-center my-3">
+                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateSettings">Update Settings</SfButton>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    private ApplicationSettingsVM? settings;
+    private SfButton? ToggleBtnObj;
+    private string IconCss = "fa fa-play";
+    private string Content = "Ssl";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+          {
+              settings = await AppSettingsService.GetSettingsAsync();
+         }
+          catch (Exception ex)
+          {
+            settings = new();
+          }
+    }
+
+    public void OnToggleClick()
+    {
+        if (ToggleBtnObj?.Content == "Ssl")
+        {
+            settings!.EnableSSL = true; // Hotmail
+            this.Content = "No Ssl";
+            this.IconCss = "fa fa-pause";
+        }
+        else
+        {
+            settings!.EnableSSL = false;
+
+            this.Content = "Ssl";
+            this.IconCss = "fa fa-play";
+        }
+    }
+
+    private async Task UpdateSettings()
+    {
+        try
+        {
+            await AppSettingsService.UpdateSettingsAsync(settings!);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            throw;
+        }
+    }
+}
+
+<style type="text/css" scoped>
+    .e-message {
+        margin: 10px 0;
+        font-size: 2rem;
+    }
+
+        .e-message.rounded {
+            border-radius: 15px;
+        }
+
+    .e-round-corner {
+        border-radius: 10px;
+    }
+</style>
