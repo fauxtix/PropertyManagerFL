@@ -62,4 +62,40 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
 
     }
+
+    public async Task UpdateOtherSettingsAsync(ApplicationSettings settings)
+    {
+
+        var parameters = new DynamicParameters();
+
+        parameters.Add("@PrazoContratoEmAnos", settings.PrazoContratoEmAnos);
+        parameters.Add("@PrazoEnvioCartaAtraso", settings?.PrazoEnvioCartaAtraso);
+        parameters.Add("@PrazoEnvioCartaAumento", settings?.PrazoEnvioCartaAumento);
+        parameters.Add("@PrazoEnvioCartaRevogacao", settings?.PrazoEnvioCartaRevogacao);
+        parameters.Add("@PrazoRespostaCartaAtraso", settings?.PrazoRespostaCartaAtraso);
+        parameters.Add("@PrazoRespostaCartaAumento", settings?.PrazoRespostaCartaAumento);
+        parameters.Add("@PrazoRespostaCartaRevogacao", settings?.PrazoRespostaCartaRevogacao);
+
+        parameters.Add("@RenovacaoAutomatica", settings?.RenovacaoAutomatica);
+        parameters.Add("@ComprovativoIRS", settings?.ComprovativoIRS);
+        parameters.Add("@ComprovativoReciboVencimento", settings?.ComprovativoReciboVencimento);
+        parameters.Add("@CaucaoRequerida", settings?.CaucaoRequerida);
+
+        parameters.Add("@PrazoInspecaoGas", settings?.PrazoInspecaoGas);
+
+        parameters.Add("@PercentagemMultaPorAtrasoPagamento", settings?.PercentagemMultaPorAtrasoPagamento);
+
+        parameters.Add("@BackupBaseDados", settings?.BackupBaseDados);
+        parameters.Add("@BackupOutrosFicheiros", settings?.BackupOutrosFicheiros);
+
+        using (var connection = _context.CreateConnection())
+        {
+            string sp_Name = "usp_AppOtherSettings_Update";
+            var result = (await connection.ExecuteAsync(sp_Name, param: parameters, commandType: CommandType.StoredProcedure));
+            return;
+        }
+
+    }
+
 }
+

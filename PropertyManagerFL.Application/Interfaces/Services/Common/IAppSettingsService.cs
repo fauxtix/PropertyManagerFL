@@ -6,4 +6,5 @@ public interface IAppSettingsService
 {
     Task<ApplicationSettingsVM> GetSettingsAsync();
     Task UpdateSettingsAsync(ApplicationSettingsVM settings);
+    Task UpdateOtherSettingsAsync(ApplicationSettingsVM settings);
 }

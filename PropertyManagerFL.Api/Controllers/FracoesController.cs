@@ -332,7 +332,7 @@ namespace PropertyManagerFL.Api.Controllers
             try
             {
                 var unitsAvailable = await _repoFracoes.GetFracoes_WithDuePayments();
-                if(unitsAvailable is not null)
+                if (unitsAvailable is not null)
                 {
                     return Ok(unitsAvailable);
                 }

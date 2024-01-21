@@ -1,8 +1,6 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
-using PropertyManagerFL.Application.ViewModels.Logs;
-using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 public class WrapperAppSettings : IAppSettingsService
@@ -11,12 +9,14 @@ public class WrapperAppSettings : IAppSettingsService
     private readonly IConfiguration _env;
     private readonly ILogger<WrapperAppSettings> _logger;
     private readonly string? _url;
+    private readonly string? _otherSettingsUrl;
 
     public WrapperAppSettings(HttpClient httpClient, IConfiguration env,
                                     ILogger<WrapperAppSettings> logger)
     {
         _env = env;
-        _url = $"{_env["BaseUrl"]}/AppSettings";
+        _url = $"{_env["BaseUrl"]}/appsettings/emailsettings";
+        _otherSettingsUrl = $"{_env["BaseUrl"]}/appsettings/othersettings";
         _logger = logger;
 
         _httpClient = httpClient;
@@ -53,5 +53,9 @@ public class WrapperAppSettings : IAppSettingsService
     public async Task UpdateSettingsAsync(ApplicationSettingsVM settings)
     {
         await _httpClient.PutAsJsonAsync(_url, settings);
+    }
+    public async Task UpdateOtherSettingsAsync(ApplicationSettingsVM settings)
+    {
+        await _httpClient.PutAsJsonAsync(_otherSettingsUrl, settings);
     }
 }

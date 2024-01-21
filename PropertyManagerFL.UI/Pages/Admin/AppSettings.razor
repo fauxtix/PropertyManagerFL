@@ -19,68 +19,138 @@
 else
 {
     <div class="container">
-        <EditForm Model="@settings" OnValidSubmit="UpdateSettings">
-            <hr />
-            <div class="row" id="msg-custom-section">
-                <div class="col-md-6 my-2">
-                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook settings</SfMessage>
-                    <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.Username" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.Password" Placeholder="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                </div>
-                <div class="col-md-6 my-2">
-                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail Settings</SfMessage>
-                    <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.SmtpServer" Placeholder="SMTP Server" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfNumericTextBox @bind-Value="settings.EmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.EmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.EmailPassword" Placeholder="Password" FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
-                </div>
-            </div>
+        <SfTab>
+            <TabItems>
+                <TabItem>
+                    <HeaderTemplate>E-Mail</HeaderTemplate>
+                    <ContentTemplate>
+                        <EditForm Model="@settings" OnValidSubmit="UpdateSettings">
+                            <hr />
+                            <div class="row" id="msg-custom-section">
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook settings</SfMessage>
+                                    <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.Username" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.Password" Placeholder="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                </div>
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail Settings</SfMessage>
+                                    <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.SmtpServer" Placeholder="SMTP Server" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfNumericTextBox @bind-Value="settings.EmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.EmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.EmailPassword" Placeholder="Password" FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                </div>
+                            </div>
 
-            <div class="row">
-                <div class="col-md-6 my-2">
-                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Hotmail Settings</SfMessage>
-                    <SfTextBox class="form-control" @bind-Value="settings.HotmailHostname" Placeholder="Hostname" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfNumericTextBox @bind-Value="settings.HotmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                    <label class="mt-2">Use Ssl</label>
-                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.UseSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
-                    <SfTextBox class="form-control" @bind-Value="settings.HotmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                    <SfTextBox class="form-control" @bind-Value="settings.HotmailPassword" Placeholder="Password"
-                               FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
-                </div>
-                <div class="col-md-6 my-2">
-                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>PaperCut</SfMessage>
-                    <SfTextBox class="form-control" @bind-Value="settings.PaperCutSmtpServer" Placeholder="SMTP Server"></SfTextBox>
-                    <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="Port"></SfNumericTextBox>
-                    <label class="mt-2">Enable Ssl</label>
-                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.EnableSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                            <div class="row">
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Hotmail Settings</SfMessage>
+                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailHostname" Placeholder="Hostname" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfNumericTextBox @bind-Value="settings.HotmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <label class="mt-2">Use Ssl</label>
+                                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.UseSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailPassword" Placeholder="Password"
+                                               FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                </div>
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>PaperCut</SfMessage>
+                                    <SfTextBox class="form-control" @bind-Value="settings.PaperCutSmtpServer" Placeholder="SMTP Server"></SfTextBox>
+                                    <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="Port"></SfNumericTextBox>
+                                    <label class="mt-2">Enable Ssl</label>
+                                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.EnableSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
 
-                </div>
-            </div>
+                                </div>
+                            </div>
 
-            <div class="row">
-                <div class="col-md-6 my-2">
-                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
-                    <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
-                </div>
-            </div>
-            <hr />
-            <div class="d-flex justify-content-center align-items-md-center my-3">
-                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateSettings">Update Settings</SfButton>
-            </div>
-        </EditForm>
+                            <div class="row">
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
+                                    <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-center align-items-md-center my-3">
+                                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateSettings">Update</SfButton>
+                            </div>
+                        </EditForm>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>Other Settings</HeaderTemplate>
+                    <ContentTemplate>
+                        <EditForm Model="@settings" OnValidSubmit="UpdateOtherSettings">
+                            <hr />
+                            <div class="row" id="msg-custom-section">
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-1</SfMessage>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                </div>
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-2</SfMessage>
+                                    <div class="row">
+                                        <div class="col-md-9 my-2">
+                                            <div class="mt-2">Renovação automática do contrato</div>
+                                            <div class="mt-2">Comprovativo IRS</div>
+                                            <div class="mt-2">Comprovativo recibo vencimento</div>
+                                            <div class="mt-2">Caução requerida</div>
+                                        </div>
+                                        <div class="col-md-3 my-2">
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.RenovacaoAutomatica" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoIRS" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoReciboVencimento" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CaucaoRequerida" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoInspecaoGas" Placeholder="Prazo de inspeção do gás (anos)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+
+                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PercentagemMultaPorAtrasoPagamento" Placeholder="Multa por atraso pagamento renda (%)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+
+                                    <SfTextBox class="form-control" @bind-Value="settings.BackupBaseDados" Placeholder="Backup da base de dados" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.BackupOutrosFicheiros" Placeholder="Backup de outros ficheiros" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-center align-items-md-center my-3">
+                                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateOtherSettings">Update</SfButton>
+                            </div>
+                        </EditForm>
+
+                    </ContentTemplate>
+                </TabItem>
+            </TabItems>
+        </SfTab>
     </div>
 }
 
 @code {
+
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+
     private ApplicationSettingsVM? settings;
     private SfButton? ToggleBtnObj;
     private string IconCss = "fa fa-play";
@@ -89,13 +159,13 @@ else
     protected override async Task OnInitializedAsync()
     {
         try
-          {
-              settings = await AppSettingsService.GetSettingsAsync();
-         }
-          catch (Exception ex)
-          {
+        {
+            settings = await AppSettingsService.GetSettingsAsync();
+        }
+        catch (Exception ex)
+        {
             settings = new();
-          }
+        }
     }
 
     public void OnToggleClick()
@@ -120,6 +190,18 @@ else
         try
         {
             await AppSettingsService.UpdateSettingsAsync(settings!);
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex.Message);
+            throw;
+        }
+    }
+    private async Task UpdateOtherSettings()
+    {
+        try
+        {
+            await AppSettingsService.UpdateOtherSettingsAsync(settings!);
         }
         catch (Exception ex)
         {

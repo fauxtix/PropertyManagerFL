@@ -27,4 +27,20 @@ public class ApplicationSettingsVM
 
     public string? ApiKey { get; set; }
 
+    public byte PrazoContratoEmAnos { get; set; }
+    public byte PrazoEnvioCartaAtraso { get; set; }
+    public byte PrazoEnvioCartaAumento { get; set; }
+    public byte PrazoEnvioCartaRevogacao { get; set; }
+    public byte PrazoRespostaCartaAtraso { get; set; }
+    public byte PrazoRespostaCartaAumento { get; set; }
+    public byte PrazoRespostaCartaRevogacao { get; set; }
+    public bool RenovacaoAutomatica { get; set; }
+    public bool ComprovativoIRS { get; set; }
+    public bool ComprovativoReciboVencimento { get; set; }
+    public bool CaucaoRequerida { get; set; }
+
+    public byte PrazoInspecaoGas { get; set; }
+    public byte PercentagemMultaPorAtrasoPagamento { get; set; }
+    public string? BackupBaseDados { get; set; }
+    public string? BackupOutrosFicheiros { get; set; }
 }
