@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Logging;
+using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Repositories.Data_Operations;
 using PropertyManagerFL.Infrastructure.Context;
 using System.Text;
@@ -9,17 +10,19 @@ namespace PropertyManagerFL.Infrastructure.Repositories.Data_Operations
     public class BackupDBRepository : IBackupDBRepository
     {
         private readonly DapperContext _context;
+        private readonly IAppSettingsRepository _settings_Repo;
         private readonly ILogger<BackupDBRepository> _logger;
 
-        public BackupDBRepository(DapperContext context, ILogger<BackupDBRepository> logger)
+        public BackupDBRepository(DapperContext context, ILogger<BackupDBRepository> logger, IAppSettingsRepository settings_Repo)
         {
             _context = context;
             _logger = logger;
+            _settings_Repo = settings_Repo;
         }
 
         public async Task<bool> BackupDatabase()
         {
-            string backupDIR = @"E:\BackupPropertyDB";
+            string backupDIR = (await _settings_Repo?.GetSettingsAsync()).BackupBaseDados;
             if (!Directory.Exists(backupDIR))
             {
                 Directory.CreateDirectory(backupDIR);
@@ -35,6 +38,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories.Data_Operations
                 using (var connection = _context.CreateConnection())
                 {
                     await connection.ExecuteAsync(sb.ToString());
+                    _logger.LogWarning($"Backup efetuado ({DateTime.Now})");
+
                     return true;
                 }
 

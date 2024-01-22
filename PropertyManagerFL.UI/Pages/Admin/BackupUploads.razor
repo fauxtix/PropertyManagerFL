@@ -2,6 +2,7 @@
 
 @using System.Diagnostics
 @using ICSharpCode.SharpZipLib.Zip
+@using PropertyManagerFL.Application.Interfaces.Services.Common
 @using PropertyManagerFL.Application.Shared.Enums
 @using Syncfusion.Blazor.ProgressBar
 @using Microsoft.Extensions.Localization
@@ -13,45 +14,18 @@
 
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
-<div class="title">
-    Backup App resources
-</div>
-<div class="underline py-2"></div>
+<HeaderDialogComponent HeaderCaption="Backup App resources"
+                       ImageName="zip-icon.png" />
 <hr />
 
-<SfDialog @bind-Visible="@ConfirmBackupVisibility"
-          Width="450px" Height="auto"
-          ShowCloseIcon="false">
-    <DialogTemplates>
-        <Header>
-            <div class="text-wrap">
-                Backup (Zip)
-            </div>
-        </Header>
-        <Content>
-            <div class="row">
-                <div class="col-9">
-                    <AlertMessage Message="@localizerApp["MSG_ConfirmarOperacao"]" MessageType="AlertMessageType.Success"></AlertMessage>
-                </div>
-                <RightSideImageComponent Operation="@(AppDefinitions.OpcoesRegisto.Zip)" />
-            </div>
-        </Content>
-        <FooterTemplate>
-            <div>
-                <SfButton CssClass="e-btn e-primary e-round-corner"
-                          IconCss="fas fa-check"
-                          @onclick="ConfirmBackupYes">
-                    &nbsp;@(localizerApp["Sim"].Value)
-                </SfButton>
-                <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fas fa-times "
-                          @onclick="ConfirmBackupNo">
-                    &nbsp;@(localizerApp["Nao"])
-                </SfButton>
-            </div>
-        </FooterTemplate>
-    </DialogTemplates>
-    <DialogAnimationSettings Effect="@DialogEffect.FadeZoom" Duration=600></DialogAnimationSettings>
-</SfDialog>
+<ConfirmAppWarning AlertMessage="Confirma operação?"
+                   Message="Cria ficheiros Zip de documentos e imagens" 
+                   MessageSeverityType="MessageSeverity.Warning"
+                   OnConfirmationYes="ConfirmBackupYes"
+                   OnConfirmationNo="ConfirmBackupNo" 
+                   Visible="@ConfirmBackupVisibility"
+                   DialogTitle="Backup" />
+
 
 <SfDialog @bind-Visible="@BackupZipVisibility"
           Width="550px" Height="auto"
@@ -129,14 +103,11 @@
 @code {
     [Inject]
     public IWebHostEnvironment? _hostingEnvironment { get; set; }
-    [Inject]
-    public IConfiguration? config { get; set; }
-    [Inject]
-    public ILogger<BackupUploads>? logger { get; set; }
-    [Inject]
-    public IStringLocalizer<App>? localizerApp { get; set; }
-    [Inject]
-    public NavigationManager? Navigation { get; set; }
+    [Inject] public IConfiguration? config { get; set; }
+    [Inject] public ILogger<BackupUploads>? logger { get; set; }
+    [Inject] public IStringLocalizer<App>? localizerApp { get; set; }
+    [Inject] public NavigationManager? Navigation { get; set; }
+    [Inject] public IAppSettingsService? appSettingsService { get; set; }
 
     [Parameter]
     public int BackupOption { get; set; }
@@ -153,7 +124,6 @@
     protected string? UploadFolder_Units;
     protected string? ImagesFolder;
     protected string? BackupPath;
-    protected AlertMessage Alerta;
     protected string? ResultMessage;
     protected AlertMessageType AlertType;
 
@@ -161,7 +131,6 @@
     string ColorTrack = "#969696";
 
     public SfButton? ProcessBtn { get; set; }
-    protected string Content = "Progress";
 
     public bool ConfirmBackupVisibility { get; set; } = true;
     public bool BackupZipVisibility { get; set; } = false;
@@ -180,7 +149,7 @@
     }
 
     protected List<UploadFilesModel>? uploadsModel;
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         OptionMessage = "";
         UploadFolder_Properties = Path.Combine(_hostingEnvironment!.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsPropriedades"));
@@ -188,7 +157,7 @@
         UploadFolder_Units = Path.Combine(_hostingEnvironment.WebRootPath, config.GetValue<string>("AppSettings:PastaDownloadsUnits"));
 
         uploadFolders = new string[] { UploadFolder_Properties, UploadFolder_Tenants, UploadFolder_Units };
-        BackupPath = config.GetValue<string>("AppSettings:PastaBackupUploads");
+        BackupPath = (await appSettingsService!.GetSettingsAsync()).BackupOutrosFicheiros;
     }
 
     protected override void OnParametersSet()
@@ -198,20 +167,20 @@
             new UploadFilesModel()
             {
                  FolderName = UploadFolder_Properties!,
-                  FileName = "Properties",
-                   OptionCaption = localizerApp!["TituloMenuImoveis"]
+                 FileName = Path.Combine(BackupPath, "Properties"),
+                 OptionCaption = localizerApp!["TituloMenuImoveis"]
             },
             new UploadFilesModel()
             {
                  FolderName = UploadFolder_Tenants!,
-                  FileName = "Tenants",
-                   OptionCaption = localizerApp["TituloMenuInquilinos"]
+                 FileName = Path.Combine(BackupPath, "Tenants"),
+                 OptionCaption = localizerApp["TituloMenuInquilinos"]
             },
             new UploadFilesModel()
             {
                  FolderName = UploadFolder_Units!,
-                  FileName = "Units",
-                   OptionCaption = localizerApp["TituloMenuFracoes"]
+                 FileName = Path.Combine(BackupPath, "Units"),
+                 OptionCaption = localizerApp["TituloMenuFracoes"]
             }
         };
     }
@@ -249,9 +218,9 @@
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            foreach (var item in uploadsModel)
+            foreach (var item in uploadsModel!)
             {
-                await CreateZip(item.FileName, item.FolderName);
+                await CreateZip(item.FileName!, item.FolderName!);
             }
 
             stopWatch.Stop();
@@ -276,7 +245,8 @@
 
     public async Task<bool> CreateZip(string zipFileName, string folderToZip)
     {
-        string ZipFile = $"{BackupPath}\\{zipFileName}.zip";
+        string ZipFile = $"{zipFileName}.zip";
+        iValue = 0;
         logger?.LogInformation($"Compactando {ZipFile}");
         try
         {
