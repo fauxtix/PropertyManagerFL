@@ -16,27 +16,25 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _logger = logger;
             _httpClient = httpClient;
             _env = env;
-            _uri = $"{_env["BaseUrl"]}/Database";
+            _uri = $"{_env["BaseUrl"]}/Backup";
         }
 
-        public async Task<bool> BackupDatabase()
+        public async Task<bool?> BackupDatabase()
         {
             try
             {
                 var response = await _httpClient.GetAsync($"{_uri}/BackupDatabase");
                 if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadAsStringAsync();
-                    var databaseSuccess = JsonConvert.DeserializeObject<bool>(data);
-                    return databaseSuccess;
+                    return true;
                 }
 
-                return true;
+                return false;
 
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Backup BD)");
                 return true;
             }
         }

@@ -2,6 +2,6 @@
 {
     public interface IBackupDatabaseService
     {
-        Task<bool> BackupDatabase();
+        Task<bool?> BackupDatabase();
     }
 }

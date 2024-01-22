@@ -72,13 +72,13 @@
         spinnerVisibility = true;
         StateHasChanged();
         logger.LogInformation(L["mnuBackup"]);
-        bool BackupOk = await backupService.BackupDatabase();
+        bool? BackupOk = await backupService.BackupDatabase();
 
         await Task.Delay(200);
         spinnerVisibility = false;
         StateHasChanged();
 
-        if (BackupOk)
+        if (BackupOk == true)
         {
             ToastContent = L["TituloSucesso"];
             ToastCssClass = "e-toast-success";
