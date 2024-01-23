@@ -713,7 +713,7 @@
             Base class for tenants pages
             </summary>
         </member>
-        <member name="P:PropertyManagerFL.UI.Pages.ComponentsBase.InquilinosBase.inquilinoService">
+        <member name="P:PropertyManagerFL.UI.Pages.ComponentsBase.InquilinosBase.appSettingsService">
             <summary>
             tenants service
             </summary>

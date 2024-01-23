@@ -554,6 +554,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 parameters.Add("@DocumentPath", docGerado);
                 parameters.Add("@TenantId", tenantId);
                 parameters.Add("@DocumentType", 17);
+                parameters.Add("@ReferralDate", DateTime.Now);
                 parameters.Add("@StorageType", 'S');
                 parameters.Add("@StorageFolder", "OposicaoRenovacaoContrato");
 
@@ -779,6 +780,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         parameters.Add("@DocumentPath", docGerado);
                         parameters.Add("@TenantId", tenantId);
                         parameters.Add("@DocumentType", 18);
+                        parameters.Add("@ReferralDate", DateTime.Now);
                         parameters.Add("@StorageType", 'S');
                         parameters.Add("@StorageFolder", "AtrasoRendas");
 
@@ -838,6 +840,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         parameters.Add("@DocumentPath", docGerado);
                         parameters.Add("@TenantId", tenantId);
                         parameters.Add("@DocumentType", 16);
+                        parameters.Add("@ReferralDate", DateTime.Now);
                         parameters.Add("@StorageType", 'S');
                         parameters.Add("@StorageFolder", "AtualizacaoRendas");
 

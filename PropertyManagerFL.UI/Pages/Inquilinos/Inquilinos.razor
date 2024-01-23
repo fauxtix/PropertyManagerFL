@@ -48,14 +48,16 @@
     });
     var ContextMenuItems = (new List<Object>
         {
-            new ContextMenuItemModel { Text = L["TituloCartaAtrasoPagamento"], Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Text = L["TituloCartaAtrasoPagamento"], Target = ".e-content", Id = "DueRentLetter", IconCss = "fas fa-envelope-open-text" },
             new ContextMenuItemModel { Separator = true},
-            new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Text =  L["TituloCartaRevogacao"], Target = ".e-content", Id = "ContractOpposition", IconCss = "fas fa-envelope-open-text" },
             new ContextMenuItemModel { Separator = true},
-            new ContextMenuItemModel { Text =  L["TituloCartaAtualizacaoRendas"], Target = ".e-content", Id = "ManualRentUpdate", IconCss = "fas fa-envelope" },
+            new ContextMenuItemModel { Text =  L["TituloCartaAtualizacaoRendas"], Target = ".e-content", Id = "ManualRentUpdate", IconCss = "fas fa-envelope-open-text" },
 
             new ContextMenuItemModel { Separator = true},
             new ContextMenuItemModel { Text = L["TituloAtualizarValorRenda"], Target = ".e-content", Id = "RentIncrease", IconCss="fa fa-eur" },
+            new ContextMenuItemModel { Separator = true},
+            new ContextMenuItemModel { Text = L["TituloEstenderPrazoContrato"], Target = ".e-content", Id = "ExtendTermLease", IconCss="fa fa-calendar-plus" },
         });
 }
 
@@ -576,11 +578,20 @@ else
 @*User exited edition with data changed.*@
 <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
                    DialogTitle="@L["TituloDadosAlterados"]"
-                   Message="@(modulo == Modules.Inquilinos? SelectedTenant?.Nome : SelectedGuarantor.Nome)"
+                   Message="@(modulo == Modules.Inquilinos? SelectedTenant?.Nome : SelectedGuarantor?.Nome)"
                    Visible="@IsDirty"
                    AlertMessage="@L["MSG_ConfirmarOperacao"]"
                    OnConfirmationYes="(modulo == Modules.Inquilinos? IgnoreTenantChangesAlert: IgnoreGuarantorChangesAlert)"
                    OnConfirmationNo="(modulo == Modules.Inquilinos? ContinueEditTenant : ContinueEditGuarantor)" />
+
+<ConfirmAppWarning AlertMessageType="@alertMessageType"
+                   DialogTitle="@L["TituloEstenderPrazoContrato"]"
+                   Message="@(modulo == Modules.Inquilinos? SelectedTenant?.Nome : SelectedGuarantor?.Nome)"
+                   Visible="@LeaseTermVisibility"
+                   AlertMessageNote="@LeaseTermCaptionNote"
+                   AlertMessage="@LeaseTermCaption"
+                   OnConfirmationYes="@(async ()=>await ExtendLeaseTerm())"
+                   OnConfirmationNo="@(()=>LeaseTermVisibility = false)" />
 
 
 <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"

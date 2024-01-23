@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
@@ -24,6 +25,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <summary>
         /// tenants service
         /// </summary>
+        [Inject] public IAppSettingsService? appSettingsService { get; set; }
         [Inject] public IInquilinoService? inquilinoService { get; set; }
         [Inject] public IFracaoService? fracaoService { get; set; }
         [Inject] public IFiadorService? FiadorService { get; set; }
@@ -58,6 +60,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? NewCaption { get; set; }
         protected string? EditCaption { get; set; }
         protected string? DeleteCaption;
+        protected string? LeaseTermCaption { get; set; } = "";
+        protected string? LeaseTermCaptionNote { get; set; } = "";
+
         protected string? WarningMessage { get; set; }
 
         protected bool AddEditTenantVisibility { get; set; }
@@ -71,6 +76,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool AlertVisibility { get; set; } = false;
         protected bool ShowFileVisibility { get; set; }
         protected bool ShowWordDocumentVisibility { get; set; }
+        public bool LeaseTermVisibility { get; set; } = false;
+
         protected string? documentFilePath { get; set; }
         protected string? documentServiceUrl { get; set; } // Server pdfs
 
@@ -424,7 +431,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
 
                     var response = (await inquilinoService.GetRentUpdateLetters()).ToList();
-                    var tenantLettersSentThisYear = response.Where(r=>r.Id == TenantId && r.CreationDate.Year == DateTime.Now.Year).ToList();
+                    var tenantLettersSentThisYear = response.Where(r => r.Id == TenantId && r.CreationDate.Year == DateTime.Now.Year).ToList();
                     if (tenantLettersSentThisYear.Any())
                     {
                         AlertVisibility = true;
@@ -454,6 +461,28 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                         ConfirmManualUpdateRentDialogVisibility = true;
                     }
+                    break;
+                case "ExtendTermLease": // estender prazo do contrato
+                    LeaseTermCaption = "Confirma operação?";
+                    alertMessageType = AlertMessageType.Info;
+                    var leases = (await arrendamentoService!.GetAll()).ToList();
+                    DateTime? tenantLeaseEndtDate = leases.FirstOrDefault(l => l.ID_Inquilino == SelectedTenant.Id).Data_Fim;
+                    if (!tenantLeaseEndtDate.HasValue)
+                    {
+                        LeaseTermCaptionNote = $"Contrato do inquilino não foi encontrado!";
+                        alertMessageType = AlertMessageType.Warning;
+                        StateHasChanged();
+
+                    }
+                    var monthsToEnd = Utilitarios.GetMonthDifference(DateTime.Now, tenantLeaseEndtDate.Value);
+                    if (monthsToEnd > 0 && monthsToEnd != 1)
+                    {
+                        LeaseTermCaptionNote = $"Contrato do inquilino só termina dentro de {monthsToEnd} meses!";
+                        alertMessageType = AlertMessageType.Warning;
+                        StateHasChanged();
+                    }
+                    LeaseTermVisibility = true;
+
                     break;
             }
         }
@@ -486,7 +515,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 RecordMode = OpcoesRegisto.Info;
                 string? fileName = args.RowData.DocumentPath; // = string.Empty;
-                string? fileExtension = Path.GetExtension(fileName) ;
+                string? fileExtension = Path.GetExtension(fileName);
                 string? folderName = args.RowData.StorageFolder;
                 char? storageType = args.RowData.StorageType;
 
@@ -1141,7 +1170,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var dateSent = Lease.DataEnvioCartaRevogacao;
                 var answerDateExpected = dateSent.AddDays(10); // estão a ser assumidos 10 dias para prazo de resposta. Configurar?
 
-                // Verificar se carta enviada já foi respondida pelo inquilino
+                // Verificar se carta  de oposição enviada já foi respondida pelo inquilino
                 var letterAnswered = await arrendamentosService.VerificaSeExisteRespostaCartaRevogacao(Lease.Id);
                 if (letterAnswered)
                 {
@@ -1415,7 +1444,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var ValorRenda = currentYearUpdateValues!.PriorValue;
                 var NovoValorRenda = currentYearUpdateValues.UpdatedValue;
                 var rentUpdateCoefficientData = (await arrendamentoService!.GetRentUpdatingCoefficients()).ToList();
-                var currentYearRentUpdateCoefficientData = rentUpdateCoefficientData.FirstOrDefault(c=>c.Ano == DateTime.Now.Year.ToString());
+                var currentYearRentUpdateCoefficientData = rentUpdateCoefficientData.FirstOrDefault(c => c.Ano == DateTime.Now.Year.ToString());
 
                 var rentUpdateData = await inquilinoService!.GetDadosCartaAtualizacaoInquilino(Lease, currentYearRentUpdateCoefficientData!);
                 if (rentUpdateData is not null)
@@ -1542,6 +1571,34 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             StateHasChanged();
 
         }
+
+        protected async Task ExtendLeaseTerm()
+        {
+            var leases = (await arrendamentoService!.GetAll()).ToList(); ;
+            int? tenantId = leases.FirstOrDefault(l => l.ID_Inquilino == SelectedTenant.Id).ID_Inquilino;
+            if (!tenantId.HasValue)
+            {
+                alertTitle = "Estender prazo do contrato";
+                WarningMessage = "Não foi encontrado o contrato do Inquilino.";
+                alertMessageType = AlertMessageType.Error;
+            }
+
+            var resultOk = await arrendamentosService!.ExtendLeaseTerm(tenantId.Value);
+
+            if (resultOk)
+            {
+                LeaseTermVisibility = false;
+                ToastTitle = "Atualização do termo do contrato";
+                ToastMessage = L["RegistoGravadoSucesso"];
+                ToastCss = "e-toast-success";
+                await InvokeAsync(StateHasChanged);
+            }
+            else
+            {
+                ErrorVisibility = true;
+            }
+        }
+
         private void HideToolbar_LetterOptions()
         {
             ShowToolbarDueRentLetter = false;

@@ -17,12 +17,22 @@ namespace PropertyManagerFLApplication.Utilities
 			return Convert.ToInt32(iMeses);
 		}
 
-		/// <summary>
-		/// Verifica se email é valido
-		/// </summary>
-		/// <param name="strEmail"></param>
-		/// <returns></returns>
-		public bool IsEmailValid(string strEmail)
+		public static int GetMonthDifference(DateTime startDate, DateTime endDate)
+		{
+			if (endDate.Date < startDate.Date)
+			{
+				return 0;
+			}
+			int monthsApart = 12 * (startDate.Year - endDate.Year) + startDate.Month - endDate.Month;
+			return Math.Abs(monthsApart);
+		}
+
+            /// <summary>
+            /// Verifica se email é valido
+            /// </summary>
+            /// <param name="strEmail"></param>
+            /// <returns></returns>
+            public bool IsEmailValid(string strEmail)
 		{
 			string s1;
 			string s2;
