@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Spinner;
@@ -17,6 +20,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public IStringLocalizer<App>? L { get; set; }
         [Inject] protected IValidationService? validatorService { get; set; }
 
+        [Inject] public ILookupTableService? LookupTablesService { get; set; }
 
         protected OpcoesRegisto RecordMode { get; set; }
         protected string? HeaderCaption { get; set; }
@@ -35,6 +39,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected List<string> ValidationsMessages = new();
         protected bool ErrorVisibility { get; set; } = false;
 
+        protected int idxEstadoCivil;
+        protected IEnumerable<LookupTableVM>? MaritalStatus { get; set; }
+
+        protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+        {
+            {"rows", "3" }
+        };
+
+
         protected override async Task OnInitializedAsync()
         {
             ToastTitle = "";
@@ -42,15 +55,19 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             ToastCss = "";
             ToastIcon = "";
 
+            MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
+
             try
             {
-                var landlordCreated = await OwnerService.TableHasData();
+                var landlordCreated = await OwnerService!.TableHasData();
 
                 if (landlordCreated)
                 {
                     RecordMode = OpcoesRegisto.Gravar;
                     HeaderCaption = L["EditMsg"] + " " + L["TituloMenuProprietario"];
                     Owner = await OwnerService!.GetProprietario_ById(1);
+
+                    idxEstadoCivil = Owner!.ID_EstadoCivil;
                 }
                 else
                 {
@@ -79,6 +96,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 throw;
             }
         }
+
+        protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+        {
+            idxEstadoCivil = args.Value;
+            Owner!.ID_EstadoCivil = idxEstadoCivil;
+        }
+
 
         public async Task SaveLandlordData()
         {

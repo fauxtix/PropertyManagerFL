@@ -3,6 +3,8 @@
 @using PropertyManagerFL.Application.ViewModels.AppSettings
 
 @using PropertyManagerFL.Core.Entities
+@using PropertyManagerFL.UI.Pages.Arrendamentos
+@using PropertyManagerFL.UI.Pages.Proprietario
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Buttons
 @using Microsoft.AspNetCore.Components.Forms
@@ -27,7 +29,7 @@ else
                         <EditForm Model="@settings" OnValidSubmit="UpdateSettings">
                             <hr />
                             <div class="row" id="msg-custom-section">
-                                <div class="col-md-6 my-2">
+                                <div class="form-group col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook settings</SfMessage>
                                     <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
@@ -36,7 +38,7 @@ else
                                     <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
                                     <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
                                 </div>
-                                <div class="col-md-6 my-2">
+                                <div class="form-group col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail Settings</SfMessage>
                                     <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
@@ -85,7 +87,7 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>Other Settings</HeaderTemplate>
+                    <HeaderTemplate>App Settings</HeaderTemplate>
                     <ContentTemplate>
                         <EditForm Model="@settings" OnValidSubmit="UpdateOtherSettings">
                             <hr />
@@ -139,7 +141,24 @@ else
                                 <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateOtherSettings">Update</SfButton>
                             </div>
                         </EditForm>
-
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloMenuProprietario"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <ProprietarioPage/>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloMenuCoeficientesRendas"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <RentUpdatingCoefficients />
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["menu-admin-lookup-tables"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <ConfigAppTables />
                     </ContentTemplate>
                 </TabItem>
             </TabItems>
@@ -214,7 +233,7 @@ else
 <style type="text/css" scoped>
     .e-message {
         margin: 10px 0;
-        font-size: 2rem;
+        font-size: 3rem;
     }
 
         .e-message.rounded {

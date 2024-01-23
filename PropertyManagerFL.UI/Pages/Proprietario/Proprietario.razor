@@ -1,0 +1,156 @@
+﻿@page "/Proprietario"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.Common
+@using PropertyManagerFL.Application.ViewModels.LookupTables
+@using PropertyManagerFL.Application.ViewModels.Proprietarios
+@using PropertyManagerFL.UI.Pages.ComponentsBase
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+@inherits ProprietariosBase
+
+<div>
+    <PageTitle>@L["TituloMenuInquilinos"]</PageTitle>
+        <PageTitleComponent PageTitle="@HeaderCaption"></PageTitleComponent>
+    </div>
+    @if (Owner is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div hidden="@RecordMode == false">
+        <SfMessage Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=true Variant="MessageVariant.Text">Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento</SfMessage>
+    </div>
+    <div class="container-fluid">
+        <EditForm Model="@Owner" style="margin:auto;padding:5px; font-size:large">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloNome"]"
+                                   CssClass="form-control  e-corner fw-bold fs-900"
+                                   FloatLabelType="@FloatLabelType.Always"
+                                   @bind-Value="@Owner!.Nome">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group my-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloMorada"]"
+                                   CssClass="form-control  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.Morada">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group my-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloCodigoPostal"]"
+                                   CssClass="form-control  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.CodPostal">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group my-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloNaturalidade"]"
+                                   CssClass="form-control  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.Naturalidade">
+                        </SfTextBox>
+                    </div>
+                    <div class="group-box my-2">
+                        <SfDatePicker Enabled="true" Placeholder="@L["TituloDtNascimento"]" Width="160px"
+                                      CssClass="e-align-middle e-corner"
+                                      FloatLabelType="FloatLabelType.Always"
+                                      @bind-Value="@Owner.DataNascimento">
+                        </SfDatePicker>
+
+                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                        Width="150px" Value="@idxEstadoCivil" ShowClearButton="true"
+                                        FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                        Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
+                            <DropDownListTemplates TItem="LookupTableVM">
+                            </DropDownListTemplates>
+                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeEstadoCivil"></DropDownListEvents>
+                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                        </SfDropDownList>
+                    </div>
+                    <div class="group-box mt-2">
+                        <SfTextBox Placeholder="@L["TituloDocumentacao"]"
+                                   CssClass="form-control  e-corner custom-class" Width="150px"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.Identificacao">
+                        </SfTextBox>
+                        <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]" Width="150px"
+                                      CssClass="e-align-middle e-corner"
+                                      FloatLabelType="FloatLabelType.Always"
+                                      @bind-Value="@Owner.ValidadeCC">
+                            <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+                        </SfDatePicker>
+                        <SfTextBox Placeholder="NIF"
+                                   CssClass="form-control  e-corner custom-class" Width="150px"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.NIF">
+                        </SfTextBox>
+                    </div>
+                    <div class="group-box my-2">
+                        <SfTextBox Placeholder="@L["Site_Menu_Contactos"]" Width="150px"
+                                   CssClass="form-control  e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.Contacto">
+                        </SfTextBox>
+                        <SfTextBox Enabled="true"
+                                   Placeholder="e-mail"
+                                   CssClass="form-control e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner!.eMail">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group mt-2">
+                        <SfTextBox Multiline=true Placeholder="@L["TituloObservacoes"]"
+                                   HtmlAttributes="NotesAttribute"
+                                   CssClass="e-field e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Owner.Notas">
+                        </SfTextBox>
+                    </div>
+                </div>
+            </div>
+        </EditForm>
+        <hr />
+        <div class="d-flex justify-content-md-end align-items-end gap-2 w-50">
+            <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                      @onclick="SaveLandlordData" Content="@L["btnSalvar"]">
+            </SfButton>
+            <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                      @onclick="GotoIndex" Content="@L["BtnSalir"]">
+            </SfButton>
+        </div>
+    </div>
+
+    <SfSpinner @ref="SpinnerObj"
+               Label="@L["MSG_PreparandoDados"]"
+               Type="SpinnerType.Bootstrap5"
+               CssClass="e-spin-overlay">
+    </SfSpinner>
+
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+             Title="@ToastTitle" Icon="@ToastIcon"
+             Content="@ToastMessage"
+             CssClass="@ToastCss" Timeout="2000"
+             ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+}
+
+
+
+@code {
+}
