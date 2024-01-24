@@ -188,7 +188,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             // Modo 'Inserir', permite escolher as 3 opções, troca quando modo = 'Gravar'
             InibeDocsECaucao = false;
-
             InibeComprovativoIRS = false;
             InibeVencimento = false;
             InibeCaucao = false;

@@ -26,7 +26,7 @@ else
                 <TabItem>
                     <HeaderTemplate>E-Mail</HeaderTemplate>
                     <ContentTemplate>
-                        <EditForm Model="@settings" OnValidSubmit="UpdateSettings">
+                        <EditForm Model="@settings">
                             <hr />
                             <div class="row" id="msg-custom-section">
                                 <div class="form-group col-md-6 my-2">
@@ -89,19 +89,19 @@ else
                 <TabItem>
                     <HeaderTemplate>App Settings</HeaderTemplate>
                     <ContentTemplate>
-                        <EditForm Model="@settings" OnValidSubmit="UpdateOtherSettings">
+                        <EditForm Model="@settings">
                             <hr />
                             <div class="row" id="msg-custom-section">
                                 <div class="col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-1</SfMessage>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
                                 </div>
                                 <div class="col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
@@ -134,19 +134,45 @@ else
 
                                     <SfTextBox class="form-control" @bind-Value="settings.BackupBaseDados" Placeholder="Backup da base de dados" FloatLabelType="FloatLabelType.Always"></SfTextBox>
                                     <SfTextBox class="form-control" @bind-Value="settings.BackupOutrosFicheiros" Placeholder="Backup de outros ficheiros" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+
+                                    <div class="mt-2">
+                                        <SfDropDownList TValue="string" CssClass="template"
+                                                        TItem="CountryModel"
+                                                        Placeholder="@L["lblEscolhaLinguagem"]"
+                                                        DataSource="@CountryData" Value="@selectedCulture">
+                                            <DropDownListTemplates TItem="CountryModel">
+                                                <ItemTemplate Context="langCtx">
+                                                    <div>
+                                                        <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
+                                                        <div class="ename">@L[((langCtx as CountryModel).Text)] </div>
+                                                    </div>
+                                                </ItemTemplate>
+                                                <ValueTemplate Context="ctx">
+                                                    <div class="dropdown-width" style="width:100%;height:100%;">
+                                                        <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
+                                                        <div class="name">@L[((ctx as CountryModel).Text)] </div>
+                                                    </div>
+                                                </ValueTemplate>
+                                            </DropDownListTemplates>
+                                            <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
+                                            <DropDownListEvents TItem="CountryModel" TValue="string" ValueChange="OnSelected"></DropDownListEvents>
+                                        </SfDropDownList>
+                                    </div>
+
                                 </div>
                             </div>
                             <hr />
                             <div class="d-flex justify-content-center align-items-md-center my-3">
                                 <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateOtherSettings">Update</SfButton>
                             </div>
+                            <hr class="mb-3" />
                         </EditForm>
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
                     <HeaderTemplate>@L["TituloMenuProprietario"]</HeaderTemplate>
                     <ContentTemplate>
-                        <ProprietarioPage/>
+                        <Proprietario />
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
@@ -166,17 +192,52 @@ else
     </div>
 }
 
+<SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+         Title="@ToastTitle" Icon="@ToastIcon"
+         Content="@ToastMessage"
+         CssClass="@ToastCss" Timeout="2000"
+         ShowCloseButton="true">
+    <ToastAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+    </ToastAnimationSettings>
+    <ToastButtons>
+        <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+    </ToastButtons>
+    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+</SfToast>
+
+
 @code {
 
     [Inject] public IStringLocalizer<App>? L { get; set; }
+    [Inject] public ILogger<App>? logger { get; set; }
 
     private ApplicationSettingsVM? settings;
     private SfButton? ToggleBtnObj;
     private string IconCss = "fa fa-play";
     private string Content = "Ssl";
 
+    private string culture;
+    private string selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+
+    private string portugues;
+    protected SfToast? ToastObj { get; set; }
+
+    protected string? ToastTitle;
+    protected string? ToastMessage;
+    protected string? ToastCss;
+    protected string? ToastIcon;
+
     protected override async Task OnInitializedAsync()
     {
+        portugues = L["TituloIdiomaPortugues"]; // TODO set languages
+        ToastTitle = "";
+        ToastMessage = "";
+        ToastCss = "";
+        ToastIcon = "";
+
+
         try
         {
             settings = await AppSettingsService.GetSettingsAsync();
@@ -206,28 +267,90 @@ else
 
     private async Task UpdateSettings()
     {
+        ToastTitle = "Update email settings";
+
         try
         {
             await AppSettingsService.UpdateSettingsAsync(settings!);
+            ToastCss = "e-toast-success";
+            ToastMessage = $"{L["SuccessUpdate"]}";
+            ToastIcon = "fas fa-check";
+            await ShowToastMessage();
+
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
-            throw;
+            ToastCss = "e-toast-danger";
+            ToastMessage = $"{L["MSG_ApiError"]}";
+            ToastIcon = "fas fa-times";
+            await ShowToastMessage();
+            logger?.LogError(ex.Message);
         }
     }
+
     private async Task UpdateOtherSettings()
     {
+        ToastTitle = "Update other settings";
         try
         {
             await AppSettingsService.UpdateOtherSettingsAsync(settings!);
+            ToastCss = "e-toast-success";
+            ToastMessage = $"{L["SuccessUpdate"]}";
+            ToastIcon = "fas fa-check";
+            await ShowToastMessage();
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.Message);
-            throw;
+            ToastCss = "e-toast-danger";
+            ToastMessage = $"{L["MSG_ApiError"]}";
+            ToastIcon = "fas fa-times";
+            await ShowToastMessage();
+            logger?.LogError(ex.Message);
         }
     }
+
+    private void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
+    {
+        if (e.Value == null)
+            return;
+
+        culture = e.Value.ToString();
+        selectedCulture = culture;
+
+        settings!.DefaultLanguage = culture;
+
+    }
+
+    private async Task ShowToastMessage()
+    {
+        StateHasChanged();
+        await Task.Delay(100);
+        await ToastObj!.ShowAsync();
+    }
+
+
+    protected async Task HideToast()
+    {
+        await ToastObj!.HideAsync();
+    }
+
+
+    public List<CountryModel> CountryData = new List<CountryModel>
+    {
+            new CountryModel { ID ="pt-PT", Text = "TituloIdiomaPortugues", Pic = "portugal" },
+            new CountryModel { ID = "es", Text = "TituloIdiomaEspanhol", Pic = "espanha", },
+            new CountryModel { ID ="en-US", Text = "TituloIdiomaIngles", Pic = "american_flag",},
+            new CountryModel { ID ="fr", Text = "TituloIdiomaFrances", Pic = "franca" }
+    };
+
+    public class CountryModel
+    {
+        public string ID { get; set; } = string.Empty;
+        public string? Text { get; set; }
+        public string? Pic { get; set; }
+    }
+
+
 }
 
 <style type="text/css" scoped>
@@ -243,4 +366,35 @@ else
     .e-round-corner {
         border-radius: 10px;
     }
+
+    .template.e-popup .e-list-item * {
+        display: block;
+        text-indent: 0;
+    }
+
+    .e-bigger:not(.bootstrap) .template .e-dropdownbase .e-list-item {
+        line-height: 42px;
+        height: 80px;
+    }
+
+    .e-bigger:not(.bootstrap) .template.e-popup .empImage {
+        margin: 10px 16px;
+    }
+
+    .bootstrap4 .template.e-popup .empImage {
+        margin: 0px 16px;
+    }
+
+    .bootstrap .ename {
+        font-size: 15px;
+        margin-top: 20px;
+        opacity: .87;
+        padding: 3px 0 20px;
+    }
+
+    .e-bigger.bootstrap .ename {
+        font-size: 12px;
+        padding-bottom: 15px;
+    }
+
 </style>

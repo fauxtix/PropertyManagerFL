@@ -36,11 +36,13 @@ else
                         <div class="group-box">
                             <SfTextBox Readonly="true" Value="@SelectedLease.Data_Inicio.ToShortDateString()"
                                FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDataInicio"]" />
-                            <SfTextBox Readonly="true" Value="@SelectedLease.Data_Pagamento.ToShortDateString()"
-                               FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloUltimoPagamento"]" />
                             <SfTextBox Readonly="true" Value="@_prazo"
                                CssClass="custom-class" FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDuracao"]" />
                                <span> (em anos)</span>
+                        </div>
+                        <div>
+                            <SfTextBox Readonly="true" Value="@SelectedLease.Data_Pagamento.ToShortDateString()"
+                                       FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloUltimoPagamento"]" />
                         </div>
                     }
                     else

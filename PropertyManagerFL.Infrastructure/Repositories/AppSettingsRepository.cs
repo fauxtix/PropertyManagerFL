@@ -30,7 +30,6 @@ public class AppSettingsRepository : IAppSettingsRepository
 
         var parameters = new DynamicParameters();
 
-        parameters.Add("@Id", settings.Id);
         parameters.Add("@DisplayName", settings?.DisplayName);
         parameters.Add("@Username", settings?.Username);
         parameters.Add("@Password", settings?.Password);
@@ -41,6 +40,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@SmtpServer", settings?.SmtpServer);
         parameters.Add("@EmailPort", settings?.EmailPort);
         parameters.Add("@EmailUsername", settings?.EmailUsername);
+        parameters.Add("@EmailPassword", settings?.EmailPassword);
 
         parameters.Add("@HotMailHostname", settings?.HotmailHostname);
         parameters.Add("@HotmailPort", settings?.HotmailPort);
@@ -87,6 +87,7 @@ public class AppSettingsRepository : IAppSettingsRepository
 
         parameters.Add("@BackupBaseDados", settings?.BackupBaseDados);
         parameters.Add("@BackupOutrosFicheiros", settings?.BackupOutrosFicheiros);
+        parameters.Add("@DefaultLanguage", settings?.DefaultLanguage);
 
         using (var connection = _context.CreateConnection())
         {

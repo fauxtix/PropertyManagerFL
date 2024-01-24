@@ -26,6 +26,7 @@ public class ApplicationSettingsVM
     public bool EnableSSL { get; set; }
 
     public string? ApiKey { get; set; }
+    public string? DefaultLanguage { get; set; }
 
     public byte PrazoContratoEmAnos { get; set; }
     public byte PrazoEnvioCartaAtraso { get; set; }
