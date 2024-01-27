@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿namespace PropertyManagerFL.UI.Pages.ComponentsBase;
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -6,17 +8,17 @@ using PropertyManagerFL.Application.Interfaces.Services.Contract;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Pages.Notifications;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
-namespace PropertyManagerFL.UI.Pages.ComponentsBase;
+
 
 public class ArrendamentosBase : ComponentBase, IDisposable
 {
-    [Inject] IWebHostEnvironment? _env { get; set; }
     [Inject] public IArrendamentoService? arrendamentosService { get; set; }
     [Inject] public ILogger<ArrendamentosBase>? _logger { get; set; }
     [Inject] public IContratoService? contratosService { get; set; }
@@ -87,6 +89,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     protected DateTime? DataAtualizacaoRenda { get; set; }
     protected bool SpinnerVisibility { get; set; } = false;
     protected Dictionary<string, int> LeaseAlerts = new Dictionary<string, int>();
+    private List<string> messages = new List<string>();
+
     protected override async Task OnInitializedAsync()
     {
         ToastTitle = "";

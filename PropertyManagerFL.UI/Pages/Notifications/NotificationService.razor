@@ -1,0 +1,168 @@
+﻿@using System.Timers
+@using PropertyManagerFL.UI.Services.Notifications
+@using PropertyManagerFLApplication.Utilities
+@using static PropertyManagerFL.UI.Services.Notifications.Enums
+@implements IDisposable
+
+@if (notices != null)
+{
+    <div class="@positionCss">
+        @foreach (var item in notices)
+        {
+            <div class="@item.AlertCss @item.AlertShow" style="max-width: 80vw; max-height: 80vh; overflow:hidden" role="alert">
+
+                <div class="d-flex flex-wrap gap-2 justify-content-between">
+                    <i class="@item.IconCss"></i>
+
+                    <div style="max-width: 90%;">
+                        @item.Message.ToMarkupString()
+                    </div>
+
+                    <div>
+                        <button @onclick="() => close(item)" type="button" class="c-close-button" aria-label="Close">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+@code {
+    List<Notice> notices; //Can't be a Queue because the user can arbitrarily close any notice if there are multiple notices being displayed
+    string positionCss = ""; //use this to position danger messages in the center
+    Timer timer;
+    bool userClosing = false;
+
+    /// <summary>
+    /// Displays a notice in the bottom left of the viewport.
+    /// </summary>
+    /// <param name="htmlMessage">The message for the user. Can optionally be HTML. NOTE: If you include a link, be sure to add "alert-link" to the anchor class attribute for it to match Bootstrap's alert classes. For h1-h6 elements, use "alert-heading" <see href="https://getbootstrap.com/docs/5.0/components/alerts/"></param>
+    /// <param name="alertLevel">Determines the Bootstrap class to add to the alert. <see href="https://getbootstrap.com/docs/5.0/components/alerts/" /> </param>
+    /// <param name="removeAfterSeconds">How long the notice is displayed, in seconds. Default is 6</param>
+    public void Notify(string htmlMessage = "Success", BootstrapColor alertLevel = BootstrapColor.Success, NotificationPosition position = NotificationPosition.Top, int removeAfterSeconds = 6)
+    {
+        notify(htmlMessage, alertLevel, position, removeAfterSeconds);
+    }
+
+    /// <summary>
+    /// Displays a Bootstrap "alert-danger" notice in the center of the viewport
+    /// </summary>
+    /// <param name="htmlMessage">The message for the user. Can optionally be HTML. NOTE: If you include a link, be sure to add "alert-link" to the anchor class attribute for it to match Bootstrap's alert classes. For h1-h6 elements, use "alert-heading" <see href="https://getbootstrap.com/docs/5.0/components/alerts/"></param>
+    /// <param name="removeAfterSeconds">How long the notice is displayed, in seconds. Default is int.Max</param>
+    public void NotifyError(string htmlMessage, int removeAfterSeconds = int.MaxValue)
+    {
+        notify(htmlMessage, BootstrapColor.Danger, NotificationPosition.Center, removeAfterSeconds);
+    }
+
+    public async Task NotifyNonSuccessResponseAsync(HttpResponseMessage response, int removeAfterSeconds = int.MaxValue)
+    {
+        var msg = await response.Content.ReadAsStringAsync();
+        var statusCode = response.StatusCode;
+
+        string html = $"<h4 class='alert-heading'>{(int)statusCode} - {statusCode.ToString().ToTitleCase()}</h4><p class='mb-0'>{msg}</p>";
+
+        notify(html, BootstrapColor.Danger, NotificationPosition.Center, removeAfterSeconds);
+    }
+
+    public void NotifyWithHeading(string heading, string htmlBody, BootstrapColor alertLevel = BootstrapColor.Info, NotificationPosition position = NotificationPosition.Top, int removeAfterSeconds = 15)
+    {
+        string html = $"<h4 class='alert-heading'>{heading}</h4><div>{htmlBody}</div>";
+        notify(html, alertLevel, position, removeAfterSeconds);
+    }
+
+    #region Helpers
+
+    async void close(Notice notice)
+    {
+        userClosing = true;
+        notice.AlertShow = "";
+        await Task.Delay(100); //give the fade CSS time to do it's thing
+        notices.Remove(notice);
+        userClosing = false;
+    }
+
+    void killTimer()
+    {
+        timer.Stop();
+        timer.Elapsed -= timerElapsed;
+        timer.Dispose();
+        timer = null;
+        notices = null;
+    }
+
+    void notify(string htmlMessage, BootstrapColor bootstrapColor, NotificationPosition position, int removeAfterSeconds)
+    {
+        switch (position)
+        {
+            case NotificationPosition.BottomLeft:
+                positionCss = "c-bottom-left-container";
+                break;
+            case NotificationPosition.Center:
+                positionCss = "c-centered-container";
+                break;
+            case NotificationPosition.Top:
+                positionCss = "c-top-container";
+                break;
+            default:
+                positionCss = "c-bottom-left-container";
+                break;
+        }
+
+        if (notices == null) notices = new();
+
+        Notice notice = new(htmlMessage, bootstrapColor, removeAfterSeconds);
+        notices.Add(notice);
+        StateHasChanged();
+
+        startTimerIfNotRunning();
+    }
+
+    void startTimerIfNotRunning()
+    {
+        if (timer == null)
+        {
+            timer = new Timer(1000);
+            timer.Elapsed += timerElapsed;
+            timer.Start();
+        }
+    }
+
+    async void timerElapsed(object source, ElapsedEventArgs e)
+    {
+        if (userClosing) return;
+
+        var now = DateTime.Now;
+        bool stateHasChanged = false;
+        for (int i = notices.Count - 1; i >= 0; i--)
+        {
+            if (userClosing) return;
+            var item = notices[i];
+            if (item.RemoveAt <= now)
+            {
+                item.AlertShow = "";
+                await InvokeAsync(StateHasChanged); //need this one for the fade effect
+                await Task.Delay(100); //give the fade CSS time to do it's thing
+                notices.Remove(item);
+                stateHasChanged = true;
+            }
+        }
+
+        if (notices.Count < 1)
+        {
+            killTimer();
+            notices = null;
+            stateHasChanged = true;
+        }
+
+        if (stateHasChanged) await InvokeAsync(StateHasChanged); //if an item has been removed or no items left
+    }
+    #endregion //helpers
+
+    public void Dispose()
+    {
+        if (timer != null) timer.Dispose();
+    }
+}

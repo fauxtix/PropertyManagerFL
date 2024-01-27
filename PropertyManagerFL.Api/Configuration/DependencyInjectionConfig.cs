@@ -37,6 +37,7 @@ public static class DependencyInjectionConfig
         services.AddScoped<IDespesaRepository, DespesaRepository>();
         services.AddScoped<IHelpManagerRepository, HelpManagerRepository>();
         services.AddScoped<IHistoricoAtualizacaoRendaRepository, HistoricoAtualizacaoRendaRepository>();
+        services.AddScoped<IHistoricoEnvioCartasRepository, HistoricoEnvioCartasRepository>(); // 01-2024
         services.AddScoped<IMediadorRepository, MediadorRepository>();
         services.AddScoped<IRecebimentoRepository, RecebimentoRepository>();
         services.AddScoped<ITipoContactoRepository, TipoContactoRepository>();

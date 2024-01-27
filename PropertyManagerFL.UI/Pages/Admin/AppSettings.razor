@@ -29,54 +29,90 @@ else
                         <EditForm Model="@settings">
                             <hr />
                             <div class="row" id="msg-custom-section">
-                                <div class="form-group col-md-6 my-2">
+                                <div class="form-group col-md-6 my-2 card w-50">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook settings</SfMessage>
-                                    <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.Username" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.Password" Placeholder="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.DisplayName" Placeholder="Display Name" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfTextBox class="form-control" @bind-Value="settings.Username" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.Password" Placeholder="Password" Type="InputType.Password" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfTextBox class="form-control" @bind-Value="settings.Host" Placeholder="Host" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.Port" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md-6 my-2">
+                                <div class="form-group col-md-6 my-2 ml-2 card w-50">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail Settings</SfMessage>
-                                    <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.SmtpServer" Placeholder="SMTP Server" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfNumericTextBox @bind-Value="settings.EmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.EmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.EmailPassword" Placeholder="Password" FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.FromEmail" Placeholder="From" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfTextBox class="form-control" @bind-Value="settings.SmtpServer" Placeholder="SMTP Server" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.EmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfTextBox class="form-control" @bind-Value="settings.EmailPassword" Placeholder="Password" FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <SfNumericTextBox @bind-Value="settings.EmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 my-2">
+                                <div class="form-group col-md-6 card w-50 mt-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Hotmail Settings</SfMessage>
-                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailHostname" Placeholder="Hostname" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfNumericTextBox @bind-Value="settings.HotmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <label class="mt-2">Use Ssl</label>
-                                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.UseSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailUsername" Placeholder="Username" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.HotmailPassword" Placeholder="Password"
-                                               FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.HotmailUsername" Placeholder="Username"
+                                                       FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfTextBox class="form-control" @bind-Value="settings.HotmailPassword" Placeholder="Password"
+                                                       FloatLabelType="FloatLabelType.Always" Type="InputType.Password"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.HotmailHostname" Placeholder="Hostname"
+                                                       FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                            <SfNumericTextBox @bind-Value="settings.HotmailPort" Placeholder="Port" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="d-flex justify-content-start gap-3 align-items-md-center mt-2">
+                                                    <label class="fs-6">Use Ssl</label>
+                                                    <SfSwitch @bind-Checked="settings.UseSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-md-6 my-2">
+                                <div class="form-group col-md-6 card w-50 mt-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>PaperCut</SfMessage>
-                                    <SfTextBox class="form-control" @bind-Value="settings.PaperCutSmtpServer" Placeholder="SMTP Server"></SfTextBox>
-                                    <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="Port"></SfNumericTextBox>
-                                    <label class="mt-2">Enable Ssl</label>
-                                    <SfSwitch CssClass="mt-2 p-2" @bind-Checked="settings.EnableSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfTextBox class="form-control" @bind-Value="settings.PaperCutSmtpServer" Placeholder="SMTP Server"
+                                                       FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="Port"
+                                                              FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="d-flex justify-content-start gap-3 align-items-md-center">
+                                            <label class="fs-6">Enable Ssl</label>
+                                            <SfSwitch @bind-Checked="settings.EnableSSL" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                        </div>
 
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-md-6 my-2">
-                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
-                                    <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
+                                    </div>
                                 </div>
                             </div>
                             <hr />
@@ -95,13 +131,31 @@ else
                                 <div class="col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-1</SfMessage>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                    <SfNumericTextBox class="form-control"  @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoInspecaoGas" Placeholder="Prazo de inspeção do gás (anos)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PercentagemMultaPorAtrasoPagamento" Placeholder="Multa por atraso pagamento renda (%)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-md-6 my-2">
                                     <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
@@ -128,35 +182,40 @@ else
                                             </div>
                                         </div>
                                     </div>
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoInspecaoGas" Placeholder="Prazo de inspeção do gás (anos)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-
-                                    <SfNumericTextBox class="form-control" @bind-Value="settings.PercentagemMultaPorAtrasoPagamento" Placeholder="Multa por atraso pagamento renda (%)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-
                                     <SfTextBox class="form-control" @bind-Value="settings.BackupBaseDados" Placeholder="Backup da base de dados" FloatLabelType="FloatLabelType.Always"></SfTextBox>
                                     <SfTextBox class="form-control" @bind-Value="settings.BackupOutrosFicheiros" Placeholder="Backup de outros ficheiros" FloatLabelType="FloatLabelType.Always"></SfTextBox>
 
-                                    <div class="mt-2">
-                                        <SfDropDownList TValue="string" CssClass="template"
-                                                        TItem="CountryModel"
-                                                        Placeholder="@L["lblEscolhaLinguagem"]"
-                                                        DataSource="@CountryData" Value="@selectedCulture">
-                                            <DropDownListTemplates TItem="CountryModel">
-                                                <ItemTemplate Context="langCtx">
-                                                    <div>
-                                                        <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
-                                                        <div class="ename">@L[((langCtx as CountryModel).Text)] </div>
-                                                    </div>
-                                                </ItemTemplate>
-                                                <ValueTemplate Context="ctx">
-                                                    <div class="dropdown-width" style="width:100%;height:100%;">
-                                                        <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
-                                                        <div class="name">@L[((ctx as CountryModel).Text)] </div>
-                                                    </div>
-                                                </ValueTemplate>
-                                            </DropDownListTemplates>
-                                            <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
-                                            <DropDownListEvents TItem="CountryModel" TValue="string" ValueChange="OnSelected"></DropDownListEvents>
-                                        </SfDropDownList>
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Default language</SfMessage>
+                                            <SfDropDownList TValue="string" CssClass="template"
+                                                            TItem="CountryModel"
+                                                            Placeholder="@L["lblEscolhaLinguagem"]"
+                                                            DataSource="@CountryData" Value="@selectedCulture">
+                                                <DropDownListTemplates TItem="CountryModel">
+                                                    <ItemTemplate Context="langCtx">
+                                                        <div>
+                                                            <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
+                                                            <div class="ename">@L[((langCtx as CountryModel).Text)] </div>
+                                                        </div>
+                                                    </ItemTemplate>
+                                                    <ValueTemplate Context="ctx">
+                                                        <div class="dropdown-width" style="width:100%;height:100%;">
+                                                            <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
+                                                            <div class="name">@L[((ctx as CountryModel).Text)] </div>
+                                                        </div>
+                                                    </ValueTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
+                                                <DropDownListEvents TItem="CountryModel" TValue="string" ValueChange="OnSelected"></DropDownListEvents>
+                                            </SfDropDownList>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
+                                            <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
+                                        </div>
                                     </div>
 
                                 </div>
@@ -208,150 +267,7 @@ else
 </SfToast>
 
 
-@code {
 
-    [Inject] public IStringLocalizer<App>? L { get; set; }
-    [Inject] public ILogger<App>? logger { get; set; }
-
-    private ApplicationSettingsVM? settings;
-    private SfButton? ToggleBtnObj;
-    private string IconCss = "fa fa-play";
-    private string Content = "Ssl";
-
-    private string culture;
-    private string selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
-
-    private string portugues;
-    protected SfToast? ToastObj { get; set; }
-
-    protected string? ToastTitle;
-    protected string? ToastMessage;
-    protected string? ToastCss;
-    protected string? ToastIcon;
-
-    protected override async Task OnInitializedAsync()
-    {
-        portugues = L["TituloIdiomaPortugues"]; // TODO set languages
-        ToastTitle = "";
-        ToastMessage = "";
-        ToastCss = "";
-        ToastIcon = "";
-
-
-        try
-        {
-            settings = await AppSettingsService.GetSettingsAsync();
-        }
-        catch (Exception ex)
-        {
-            settings = new();
-        }
-    }
-
-    public void OnToggleClick()
-    {
-        if (ToggleBtnObj?.Content == "Ssl")
-        {
-            settings!.EnableSSL = true; // Hotmail
-            this.Content = "No Ssl";
-            this.IconCss = "fa fa-pause";
-        }
-        else
-        {
-            settings!.EnableSSL = false;
-
-            this.Content = "Ssl";
-            this.IconCss = "fa fa-play";
-        }
-    }
-
-    private async Task UpdateSettings()
-    {
-        ToastTitle = "Update email settings";
-
-        try
-        {
-            await AppSettingsService.UpdateSettingsAsync(settings!);
-            ToastCss = "e-toast-success";
-            ToastMessage = $"{L["SuccessUpdate"]}";
-            ToastIcon = "fas fa-check";
-            await ShowToastMessage();
-
-        }
-        catch (Exception ex)
-        {
-            ToastCss = "e-toast-danger";
-            ToastMessage = $"{L["MSG_ApiError"]}";
-            ToastIcon = "fas fa-times";
-            await ShowToastMessage();
-            logger?.LogError(ex.Message);
-        }
-    }
-
-    private async Task UpdateOtherSettings()
-    {
-        ToastTitle = "Update other settings";
-        try
-        {
-            await AppSettingsService.UpdateOtherSettingsAsync(settings!);
-            ToastCss = "e-toast-success";
-            ToastMessage = $"{L["SuccessUpdate"]}";
-            ToastIcon = "fas fa-check";
-            await ShowToastMessage();
-        }
-        catch (Exception ex)
-        {
-            ToastCss = "e-toast-danger";
-            ToastMessage = $"{L["MSG_ApiError"]}";
-            ToastIcon = "fas fa-times";
-            await ShowToastMessage();
-            logger?.LogError(ex.Message);
-        }
-    }
-
-    private void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
-    {
-        if (e.Value == null)
-            return;
-
-        culture = e.Value.ToString();
-        selectedCulture = culture;
-
-        settings!.DefaultLanguage = culture;
-
-    }
-
-    private async Task ShowToastMessage()
-    {
-        StateHasChanged();
-        await Task.Delay(100);
-        await ToastObj!.ShowAsync();
-    }
-
-
-    protected async Task HideToast()
-    {
-        await ToastObj!.HideAsync();
-    }
-
-
-    public List<CountryModel> CountryData = new List<CountryModel>
-    {
-            new CountryModel { ID ="pt-PT", Text = "TituloIdiomaPortugues", Pic = "portugal" },
-            new CountryModel { ID = "es", Text = "TituloIdiomaEspanhol", Pic = "espanha", },
-            new CountryModel { ID ="en-US", Text = "TituloIdiomaIngles", Pic = "american_flag",},
-            new CountryModel { ID ="fr", Text = "TituloIdiomaFrances", Pic = "franca" }
-    };
-
-    public class CountryModel
-    {
-        public string ID { get; set; } = string.Empty;
-        public string? Text { get; set; }
-        public string? Pic { get; set; }
-    }
-
-
-}
 
 <style type="text/css" scoped>
     .e-message {
@@ -397,27 +313,4 @@ else
         padding-bottom: 15px;
     }
 
-/*     .e-input-group input.e-input, .e-input-group.e-control-wrapper input.e-input, .e-input-group textarea.e-input, .e-input-group.e-control-wrapper textarea.e-input {
-        height: 40px;
-        font-size: 20px;
-    }
-
-    .e-numeric.e-control-wrapper.e-input-group .e-input-group-icon {
-        font-size: 20px;
-        background-color: beige;
-    }
-
-    .e-input:not(:valid), .e-input:valid, .e-float-input.e-control-wrapper input:not(:valid),
-    .e-float-input.e-control-wrapper input:valid, .e-float-input input:not(:valid), .e-float-input input:valid, .e-input-group input:not(:valid), .e-input-group input:valid, .e-input-group.e-control-wrapper input:not(:valid), .e-input-group.e-control-wrapper input:valid, .e-float-input.e-control-wrapper textarea:not(:valid), .e-float-input.e-control-wrapper textarea:valid, .e-float-input textarea:not(:valid), .e-float-input textarea:valid, .e-input-group.e-control-wrapper textarea:not(:valid), .e-input-group.e-control-wrapper textarea:valid, .e-input-group textarea:not(:valid), .e-input-group textarea:valid {
-        font-size: 20px;
-        height: 30px;
-        vertical-align:middle;
-        margin: 10px;
-    }
-
-    .e-float-input.e-control-wrapper:not(.e-error) input:valid ~ label.e-float-text, .e-float-input.e-control-wrapper:not(.e-error) input ~ label.e-label-top.e-float-text {
-        color: #343a40;
-        font-size: 15px;
-    }
-
- */</style>
+</style>

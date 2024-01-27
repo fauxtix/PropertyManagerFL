@@ -383,7 +383,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             catch (Exception exc)
             {
                 _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                return new(); // Enumerable.Empty<DocumentoInquilinoVM>();
             }
         }
 

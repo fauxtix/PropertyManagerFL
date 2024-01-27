@@ -68,4 +68,13 @@ main {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
     }
+
+    .centered-div {
+        position: absolute;
+        top: 3rem; /* Size of the Menu css top row*/
+        left: -1rem; /*position X*/
+        transform: translate(-50%, -50%);
+        background-color: blue;
+    }
+
 }

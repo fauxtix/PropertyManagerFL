@@ -52,8 +52,6 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@PaperCutPort", settings?.PaperCutPort);
         parameters.Add("@EnableSsl", settings?.EnableSSL);
 
-        parameters.Add("@ApiKey", settings?.ApiKey);
-
         using (var connection = _context.CreateConnection())
         {
             string sp_Name = "usp_AppSettings_Update";
@@ -88,6 +86,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@BackupBaseDados", settings?.BackupBaseDados);
         parameters.Add("@BackupOutrosFicheiros", settings?.BackupOutrosFicheiros);
         parameters.Add("@DefaultLanguage", settings?.DefaultLanguage);
+        parameters.Add("@ApiKey", settings?.ApiKey);
 
         using (var connection = _context.CreateConnection())
         {

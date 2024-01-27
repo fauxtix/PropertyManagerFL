@@ -1,32 +1,56 @@
-﻿@inherits LayoutComponentBase
+﻿@using PropertyManagerFL.UI.Pages.Notifications
+@inherits LayoutComponentBase
 @inject IJSRuntime JS
+@inject NavigationManager navigationManager
 
 <PageTitle>PropertyManagerFL.UI</PageTitle>
 
-    <div class="page">
-        <div class="sidebar">
-            <NavMenuBlazored />
-        </div>
-
-        <main>
-            <div class="top-row px-4 auth">
-                <div class="mt-2 d-lg-block">
-                    <CultureSwitcher />
-                </div>
-            @* <div class="mt-2 d-lg-block">
-                <SfButton IsPrimary="true" Content="@Content" IsToggle="true" @onclick="changeTheme" @ref="ToggleBtnObj"></SfButton>
-                </div> *@
-                <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-                <LoginDisplay />
-            </div>
-
-            <article class="content px-4">
-                @Body
-            </article>
-        </main>
+<div class="page">
+    <div class="sidebar">
+        <NavMenuBlazored />
     </div>
 
+    <main>
+        <div class="d-flex gap-3 top-row px-4 auth">
+            <div class="mt-2 d-lg-block">
+                <button class="nav-link btn btn-link text-dark position-relative" @onclick="ToggleNotificationPopup" id="notificationButton">
+                    <i class="oi oi-bell" style="color: red; block-size:stretch"></i> <!-- Icône de notification -->
+                    <span class="notification-badge position-absolute top-100 start-100 translate-middle badge rounded-pill bg-warning">
+                        @if (!ShowNotificationPopup)
+                        {
+                            @NotificationCount <!-- Nombre de notifications -->
+                        }
+                    </span>
+                    @if (ShowNotificationPopup)
+                    {
+                        <div class="centered-div">
+                            <NotificationPopup showPopup="@ShowNotificationPopup" />
+                        </div>
+                    }
+                </button>
+
+            </div>
+            <div class="mt-2 ml-2 d-md-block">
+                <CultureSwitcher />
+            </div>
+            @* <div class="mt-2 d-lg-block">
+            <SfButton IsPrimary="true" Content="@Content" IsToggle="true" @onclick="changeTheme" @ref="ToggleBtnObj"></SfButton>
+            </div> *@
+            <LoginDisplay />
+
+
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
 @code {
+    private int NotificationCount = 3; // number of notifications
+
+    private bool ShowNotificationPopup { get; set; } = false;
     SfButton? ToggleBtnObj;
 
     public string Content = "Light";
@@ -43,5 +67,11 @@
             this.Content = "Light";
             JS.InvokeAsync<object>("setTheme", "fluent");
         }
+    }
+
+    private void ToggleNotificationPopup()
+    {
+        // Toggle the visibility of the notification popup
+        ShowNotificationPopup = !ShowNotificationPopup;
     }
 }

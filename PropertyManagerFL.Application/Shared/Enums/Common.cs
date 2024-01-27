@@ -146,11 +146,11 @@
 
         public enum DocumentoEmitido
         {
-            ContratoArrendamento,
-            AtualizacaoRendas,
-            AtualizacaoManualRenda,
-            OposicaoRenovacaoContrato,
-            RendasEmAtraso
+            ContratoArrendamento = 1,
+            AtualizacaoRendas = 2,
+            AtualizacaoManualRenda = 3,
+            OposicaoRenovacaoContrato = 4,
+            RendasEmAtraso = 5
         }
 
         public enum TipoDocumento

@@ -1,0 +1,18 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Arrendamentos
+
+@if (showPopup && Alerts is not null && Alerts.Any())
+{
+    <div class="floating-popup">
+        <div class="popup-content">
+            <!-- Your notification content here -->
+            @foreach (var item in Alerts)
+            {
+                <p>@item</p>
+            }
+        </div>
+    </div>
+}
+
+
+

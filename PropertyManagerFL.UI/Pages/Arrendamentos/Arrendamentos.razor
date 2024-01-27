@@ -4,6 +4,7 @@
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos
 @using PropertyManagerFL.UI.Pages.ComponentsBase
 @using System.Globalization;
+@using PropertyManagerFL.UI.Pages.Notifications
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
 @inherits ArrendamentosBase
@@ -267,7 +268,6 @@ else
                         <SfMessage Severity="MessageSeverity.Error" Variant="MessageVariant.Text">@item.Key</SfMessage>
                     }
 
-
                 }
             }
         </div>
@@ -408,8 +408,8 @@ else
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>
 
-
-
+@* <NotificationService @ref="notificationService" />
+ *@
 
 <style type="text/css" scoped>
     .source-options {

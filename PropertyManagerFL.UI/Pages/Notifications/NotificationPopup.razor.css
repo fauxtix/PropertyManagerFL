@@ -1,0 +1,24 @@
+﻿.floating-popup {
+    position: fixed;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    /*max-width: 400px;*/
+    max-height: 12rem;
+    text-align: justify;
+    color: black;
+    font-size:small;
+}
+
+    .floating-popup .popup-content {
+        max-height: 11rem; /* Set a maximum height for the content */
+        overflow-y: auto; /* Apply vertical scrollbar if needed */
+        /*max-width: 8rem;*/
+        background-color: white;
+        padding: 5px;
+        border-radius: 2px;
+    }
+

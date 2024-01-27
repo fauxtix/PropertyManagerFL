@@ -25,6 +25,7 @@ public static class AutoMapperConfig
             typeof(RecebimentoMappingProfile),
             typeof(DocumentosMappingProfile),
             typeof(TipoDespesaMappingProfile),
+            typeof(HistoricoEnvioCartasMappingProfile),
             typeof(ImovelMappingProfile));
     }
 }

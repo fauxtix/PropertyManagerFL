@@ -1,0 +1,39 @@
+﻿.c-bottom-left-container {
+    position: fixed;
+    z-index: 1000;
+    bottom: 20px;
+    left: 20px;
+}
+
+.c-centered-container {
+    position: fixed;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.c-top-container {
+    position: fixed;
+    z-index: 1000;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.c-close-button {
+    border: none;
+    background-color: transparent;
+    transition: all .3s;
+}
+
+    .c-close-button:hover {
+        font-weight: bold;
+        background-color: midnightblue;
+        border-radius: 5px;
+        color: white;
+    }
+
+.alert { /*Bootstrap's CSS is a bit much */
+    padding: .5rem .5rem;
+}

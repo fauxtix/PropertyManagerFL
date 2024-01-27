@@ -13,6 +13,7 @@ using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
 using Syncfusion.Blazor;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = builder.Configuration.GetConnectionString("PMConnection");
@@ -35,6 +36,7 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         //        .WriteTo.Console()
         .CreateLogger();
 }).UseSerilog();
+
 
 builder.Services.AddMemoryCache(options =>
 {

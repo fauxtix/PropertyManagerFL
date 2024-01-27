@@ -476,6 +476,19 @@
             </summary>
             <param name="services"></param>
         </member>
+        <member name="M:PropertyManagerFL.UI.Pages.Admin.ConfigurationTablesView`1.DeleteData">
+            <summary>
+            Method not used (example from syncfusion support)
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:PropertyManagerFL.UI.Pages.Admin.ConfigurationTablesView`1.GetFieldNamesExpando(`0)">
+            <summary>
+            Não usado
+            </summary>
+            <param name="tItem"></param>
+            <returns></returns>
+        </member>
         <member name="T:PropertyManagerFL.UI.Pages.ComponentsBase.AppConfiguration_Tables`1">
             <summary>
             Configuration tables
@@ -812,19 +825,8 @@
             <param name="Long">Longitude of new center.</param>
             <returns>A Task to wait on.</returns>
         </member>
-        <member name="M:PropertyManagerFL.UI.Pages.Admin.ConfigurationTablesView`1.DeleteData">
-            <summary>
-            Method not used (example from syncfusion support)
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:PropertyManagerFL.UI.Pages.Admin.ConfigurationTablesView`1.GetFieldNamesExpando(`0)">
-            <summary>
-            Não usado
-            </summary>
-            <param name="tItem"></param>
-            <returns></returns>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:PropertyManagerFL.UI.Pages.Notifications.NotificationService.Notify(System.String,PropertyManagerFL.UI.Services.Notifications.Enums.BootstrapColor,PropertyManagerFL.UI.Services.Notifications.Enums.NotificationPosition,System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:PropertyManagerFL.UI.Pages.Notifications.NotificationService.NotifyError(System.String,System.Int32)" -->
         <member name="M:PropertyManagerFL.UI.Pages.Arrendamentos.UpdateRentsLetter.GetAll">
             <summary>
             Get all leases
@@ -11288,6 +11290,13 @@
             <summary>
               Looks up a localized string similar to File uploaded successfully.
             </summary>
+        </member>
+        <member name="M:PropertyManagerFL.UI.Services.Notifications.MarkupHelpers.ToMarkupString(System.String)">
+            <summary>
+            Renders raw HTML into a view/page/component
+            </summary>
+            <param name="htmlString">The HTML string you want to render unescaped</param>
+            <returns>Raw HTML</returns>
         </member>
     </members>
 </doc>

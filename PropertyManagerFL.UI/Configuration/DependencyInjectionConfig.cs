@@ -34,6 +34,7 @@ public static class DependencyInjectionConfig
         services.AddTransient<IContratoService, WrapperContratos>();
         services.AddTransient<IImovelService, WrapperImoveis>();
         services.AddTransient<IDocumentosService, WrapperDocumentos>();
+        services.AddTransient<IHistoricoEnvioCartasService, WrapperHistoricoEnvioCartas>();
         services.AddTransient<IContactosService, WrapperContactos>();
         services.AddTransient<IDespesaService, WrapperDespesas>();
         services.AddTransient<IRecebimentoService, WrapperRecebimentos>();
