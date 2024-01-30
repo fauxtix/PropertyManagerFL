@@ -60,10 +60,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected bool EditTransationDialogVisibility { get; set; } = false;
         protected bool DeleteConfirmVisibility { get; set; } = false;
-        protected bool SettlePaymentConfirmVisibility { get; set; } = false;
-        protected List<string> Error_Warnings_Msgs = new();
         protected bool ErrorVisibility { get; set; } = false;
         protected bool AddEditMonthlyTransactionsVisibility { get; set; } = false;
+        protected bool AddEditSaveButtonEnabled { get; set; } = true;
+        protected bool SettlePaymentConfirmVisibility { get; set; } = false;
+
+        protected List<string> Error_Warnings_Msgs = new();
 
 
         protected bool editRecord = true;

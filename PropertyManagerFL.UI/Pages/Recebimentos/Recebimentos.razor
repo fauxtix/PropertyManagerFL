@@ -88,9 +88,11 @@ else
                             <Template Context="IsRent">
                                 @{
                                     var currentTransactionRecord = (IsRent as RecebimentoVM);
-                                    <span>@(currentTransactionRecord.Renda ? 
-                                        L["TituloRenda"] : 
-                                        currentTransactionRecord.TipoRecebimento)</span>
+                                    <span>
+                                        @(currentTransactionRecord.Renda ?
+                                    L["TituloRenda"] :
+                                    currentTransactionRecord.TipoRecebimento)
+                                    </span>
                                 }
                             </Template>
                         </GridColumn>
@@ -356,6 +358,7 @@ else
                     <FooterTemplate>
                         <div>
                             <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
+                                      Disabled="AddEditSaveButtonEnabled"
                                       @onclick="AddOrSaveTransaction" Content="@L["btnSalvar"]">
                             </SfButton>
                             <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]"

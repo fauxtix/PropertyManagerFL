@@ -24,48 +24,70 @@
                 </SfDatePicker>
             </div>
             <div class="form-group w-100">
-                <SfDropDownList TValue="int" Enabled="@(!EditMode)" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                @bind-Value="@idxTipoRecebimento" ShowClearButton="true" Width="300px"
+                <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                @bind-Value="@idxFracao" ShowClearButton="true" Enabled="@(!EditMode)"
                                 FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="@L["TituloTipo"]" DataSource="@TiposRecebimento" FloatLabelType="FloatLabelType.Always">
+                                Placeholder="@L["TituloFracao"]" DataSource="@Fracoes" FloatLabelType="FloatLabelType.Always">
                     <DropDownListTemplates TItem="LookupTableVM">
                     </DropDownListTemplates>
-                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoRecebimento"></DropDownListEvents>
+                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeFracao"></DropDownListEvents>
                     <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                 </SfDropDownList>
             </div>
         </div>
+
+        @if (!HideTenantName)
+        {
+            <div class="group-box">
+                <div class="form-group w-100 mt-2">
+                    <SfTextBox Readonly="true"
+                               Placeholder="@L["TituloInquilino"]"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@nomeInquilino">
+                    </SfTextBox>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Readonly="true"
+                               Placeholder="@L["TituloRenda"]"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@ValorRenda.ToString("C2")">
+                    </SfTextBox>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Readonly="true"
+                               Placeholder="@L["TituloUltimoMesPago"]"
+                               CssClass="e-field  e-corner"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@ultimoPagamentoRenda.ToShortDateString()" />
+                </div>
+            </div>
+        }
+
         <div class="group-box mt-2">
-            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                            @bind-Value="@idxFracao" ShowClearButton="true" Enabled="@(!EditMode)"
+            <SfDropDownList TValue="int" Enabled="@(!EditMode)" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            @bind-Value="@idxTipoRecebimento" ShowClearButton="true" Width="300px"
                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                            Placeholder="@L["TituloFracao"]" DataSource="@Fracoes" FloatLabelType="FloatLabelType.Always">
+                            Placeholder="@L["TituloTipo"]" DataSource="@TiposRecebimento" FloatLabelType="FloatLabelType.Always">
                 <DropDownListTemplates TItem="LookupTableVM">
                 </DropDownListTemplates>
-                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeFracao"></DropDownListEvents>
+                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoRecebimento"></DropDownListEvents>
                 <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
             </SfDropDownList>
-        </div>
-        <div hidden="@HideTenantName" class="form-group mt-2">
-            <SfTextBox Readonly="true"
-                       Placeholder="@L["TituloInquilino"]"
-                       CssClass="e-field  e-corner"
-                       FloatLabelType="@FloatLabelType.Always"
-                       Value="@nomeInquilino">
-            </SfTextBox>
         </div>
         <div class="form-group mt-2">
             @if (EditMode == false) // insert
             {
                 <SfNumericTextBox Placeholder="@L["TituloValorRecebido"]" @bind-Value="@SelectedRecord.ValorRecebido"
-                              Format="C2" FloatLabelType="FloatLabelType.Always"
-                              TValue="decimal"
-                              Width="150px"
-                              Enabled="@(EnableValue && EditMode ==false)"
-                              Min="1"
-                              Max="50000" Decimals="2" Step="10"
-                              ShowSpinButton=true
-                              Currency="EUR">
+                                  Format="C2" FloatLabelType="FloatLabelType.Always"
+                                  TValue="decimal"
+                                  Width="150px"
+                                  Enabled="@(EnableValue && EditMode ==false)"
+                                  Min="1"
+                                  Max="50000" Decimals="2" Step="10"
+                                  ShowSpinButton=true
+                                  Currency="EUR">
                     <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
                 </SfNumericTextBox>
             }
@@ -73,25 +95,25 @@
             {
                 <div class="d-flex justify-content-around">
                     <SfTextBox Readonly="true"
-                           Placeholder="@L["TituloValorPago"]"
-                           CssClass="e-field  e-corner right-align"
-                           Width="100px"
-                           FloatLabelType="@FloatLabelType.Always"
-                           Value="@ValueReceived.ToString("C2")">
+                               Placeholder="@L["TituloValorPago"]"
+                               CssClass="e-field  e-corner right-align"
+                               Width="100px"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@ValueReceived.ToString("C2")">
                     </SfTextBox>
                     <SfTextBox Readonly="true"
-                           Placeholder="@L["TituloValorPrevisto"]"
-                           CssClass="e-field  e-corner right-align"
-                           Width="100px"
-                           FloatLabelType="@FloatLabelType.Always"
-                           Value="@SelectedRecord.ValorPrevisto.ToString("C2")">
+                               Placeholder="@L["TituloValorPrevisto"]"
+                               CssClass="e-field  e-corner right-align"
+                               Width="100px"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@SelectedRecord.ValorPrevisto.ToString("C2")">
                     </SfTextBox>
                     <SfTextBox Readonly="true"
-                           Placeholder="@L["TituloValorAPagar"]"
-                           CssClass="e-field  e-corner right-align"
-                           Width="100px"
-                           FloatLabelType="@FloatLabelType.Always"
-                           Value="@SelectedRecord.ValorEmFalta.ToString("C2")">
+                               Placeholder="@L["TituloValorAPagar"]"
+                               CssClass="e-field  e-corner right-align"
+                               Width="100px"
+                               FloatLabelType="@FloatLabelType.Always"
+                               Value="@SelectedRecord.ValorEmFalta.ToString("C2")">
                     </SfTextBox>
                 </div>
             }
@@ -124,7 +146,7 @@
     [Inject] public IFracaoService? FracoesService { get; set; }
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
     [Inject] IRecebimentoService? RecebimentosService { get; set; }
-    [Inject] IStringLocalizer<App>? L{ get; set; }
+    [Inject] IStringLocalizer<App>? L { get; set; }
 
     public IEnumerable<LookupTableVM>? TiposRecebimento { get; set; }
     public IEnumerable<LookupTableVM>? Fracoes { get; set; }
@@ -144,6 +166,7 @@
     protected int idFracao;
     protected int idInquilino;
     protected string nomeInquilino = "";
+    protected string valorRenda = "";
     protected DateTime ultimoPagamentoRenda = DateTime.MinValue;
     protected bool EnableValue;
     protected bool HideTenantName;
@@ -232,21 +255,25 @@
     {
         idxFracao = args.Value;
         SelectedRecord.ID_Propriedade = idxFracao;
+            var unit = await FracoesService.GetFracao_ById(idxFracao);
 
         if (PagamentoRenda)
         {
-            var unit = await FracoesService.GetFracao_ById(idxFracao);
             ValorRenda = unit.ValorRenda;
-            ultimoPagamentoRenda = await ArrendamentosService.GetLastPaymentDate(idxFracao);           
+            ultimoPagamentoRenda = await ArrendamentosService.GetLastPaymentDate(idxFracao);
         }
         else
         {
             ValorRenda = 0;
         }
 
-        SelectedRecord.ValorRecebido = ValorRenda;
 
         idInquilino = await ArrendamentosService.GetIdInquilino_ByUnitId(idxFracao);
+        if (!EditMode)
+        {
+            ValorRenda = (await FracoesService.GetFracao_ById(idxFracao)).ValorRenda;
+            ultimoPagamentoRenda = await ArrendamentosService.GetLastPaymentDate(idxFracao);
+        }
 
         MaxValueAllowed = await RecebimentosService.GetMaxValueAllowed_ManualInput(idInquilino);
         if (MaxValueAllowed == -1) // no debts, max value can be set for no higher than 3x the value of the fee (rent value)-- could be more... ==> configured in appsetting?
@@ -256,7 +283,10 @@
         }
 
         nomeInquilino = await ArrendamentosService.GetNomeInquilino(idInquilino);
+        nomeInquilino = nomeInquilino.Replace("\"", "");
         SelectedRecord.ID_Inquilino = idInquilino;
+
+        SelectedRecord.ValorRecebido = ValorRenda;
 
         EnableValue = true;
         HideTenantName = false;

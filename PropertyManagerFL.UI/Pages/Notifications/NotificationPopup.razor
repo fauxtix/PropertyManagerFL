@@ -5,11 +5,12 @@
 {
     <div class="floating-popup">
         <div class="popup-content">
-            <!-- Your notification content here -->
-            @foreach (var item in Alerts)
-            {
-                <p>@item</p>
-            }
+            <div>
+                @foreach (var item in Alerts)
+                {
+                    <p>@item</p>
+                }
+            </div>
         </div>
     </div>
 }

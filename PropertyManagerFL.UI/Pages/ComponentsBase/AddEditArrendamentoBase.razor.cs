@@ -451,7 +451,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 return;
             }
 
-            var minimumDateAllowed = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 2, 1);
+            var minimumDateAllowed = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-2);
             if (args.Value.Date < minimumDateAllowed)
             {
                 UserDialogTitle = "Criar arrendamento";

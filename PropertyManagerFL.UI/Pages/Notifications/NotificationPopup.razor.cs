@@ -34,7 +34,7 @@ public partial class NotificationPopup
         {
             foreach (var document in tenantDocuments)
             {
-                Alerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}");
+                Alerts.Add($"Enviar de carta de atualização ({document.NomeInquilino})");
             }
         }
 
@@ -44,9 +44,9 @@ public partial class NotificationPopup
         {
             foreach (var item in leasesWhoNeedToUpdateRent)
             {
-                var alertMsg = $"Necessário atualizar renda do inquilino {item.NomeInquilino} ({item.Fracao})";
+                var alertMsg = $"Atualizar renda ({item.NomeInquilino})";
                 if (item.EnvioCartaAtualizacaoRenda == false)
-                    alertMsg += " - não foi enviada carta de atualização!";
+                    alertMsg += " - não foi enviada carta!";
 
                 Alerts.Add(alertMsg);
             }
@@ -57,7 +57,7 @@ public partial class NotificationPopup
             var monthsToEnd = GetMonthDifference(DateTime.Now, _leaseitem.Data_Fim);
             if (monthsToEnd >= 0 && monthsToEnd <= 4)
             {
-                Alerts.Add($"Contrato do inquilino {_leaseitem.NomeInquilino} ({_leaseitem.Fracao}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação");
+                Alerts.Add($"Contrato do inquilino {_leaseitem.NomeInquilino} ({_leaseitem.Fracao}) \nestá prestes a terminar. Renovar data-fim, ou enviar carta de revogação");
             }
         }
 
@@ -68,7 +68,7 @@ public partial class NotificationPopup
             var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
             if (UpdateLetterSent == false)
             {
-                Alerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano.");
+                Alerts.Add("Cartas de atualização de rendas \nnão foram emitidas para o ano corrente!!");
             }
         }
     }
