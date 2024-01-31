@@ -39,15 +39,17 @@
             </div>
         }
         <div class="display-amounts">
-            <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorPrevisto"]" FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorPrevisto.ToString("C2")"></SfTextBox>
-            <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorRecebido"]" FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorRecebido.ToString("C2")"></SfTextBox>
+            <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorPrevisto"]"
+                       FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorPrevisto.ToString("C2")"></SfTextBox>
+            <SfTextBox Readonly="true" CssClass="custom-class" Placeholder="@L["TituloValorRecebido"]"
+                       FloatLabelType="FloatLabelType.Always" Value="@SelectedRecord?.ValorRecebido.ToString("C2")"></SfTextBox>
             <SfTextBox Readonly="true" CssClass="@InDebtColor"
                        Placeholder="@L["TituloEmFalta"]"
                        FloatLabelType="FloatLabelType.Always"
                        Value="@SelectedRecord?.ValorEmFalta.ToString("C2")"></SfTextBox>
         </div>
 
-        <div hidden="@(!AllowEnteringAmountPaid)" class="form-group mt-2">
+        <div class="form-group mt-2">
             <SfNumericTextBox Placeholder="@L["TituloValorPago"]" @bind-Value="@SelectedRecord.ValorRecebido"
                               Format="C2" FloatLabelType="FloatLabelType.Always"
                               TValue="decimal"
@@ -58,15 +60,19 @@
                 <NumericTextBoxEvents TValue="decimal" ValueChange="(e => onAmountChanged(e))"></NumericTextBoxEvents>
             </SfNumericTextBox>
         </div>
-        <div class="form-group mt-3">
+        <div class="form-group mt-3" 
             <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
                        HtmlAttributes="NotesAttribute"
                        CssClass="e-field e-corner"
                        FloatLabelType="FloatLabelType.Always"
-            @bind-Value="@SelectedRecord.Notas">
+                       @bind-Value="@SelectedRecord.Notas">
             </SfTextBox>
         </div>
     </EditForm>
+    <div class="mt-2" hidden="@HideMessageVisibility">
+        <SfMessage Severity="MessageSeverity.Warning" ShowIcon="true"
+                   CssClass="e-warning" Variant="MessageVariant.Filled">Valor pago é inferior ao previsto!</SfMessage>
+    </div>
 </div>
 
 <ValidateErrorComponent Visible="@ErrorVisibility" DialogTitle="@L["TituloRecebimentos"]"
@@ -80,115 +86,7 @@
                     Message="@WarningMessage"
                     OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
 
-@code {
 
-    [Inject] public IArrendamentoService? ArrendamentosService { get; set; }
-    [Inject] IRecebimentoService? RecebimentosService { get; set; }
-    [Inject] protected IStringLocalizer<App>? L { get; set; }
-
-    [Parameter] public RecebimentoVM? SelectedRecord { get; set; }
-    [Parameter] public string? HeaderCaption { get; set; }
-
-    protected int idxTipoRecebimento;
-    protected int idxFracao;
-
-    protected decimal ValorRenda { get; set; }
-    protected decimal ValorEmFalta { get; set; }
-    protected bool PagamentoRenda { get; set; }
-
-    protected int idTipoRecebimento;
-    protected int idFracao;
-    protected int idInquilino;
-    protected string nomeInquilino = "";
-    protected DateTime ultimoPagamentoRenda = DateTime.MinValue;
-    protected bool EnableValue;
-    protected bool HideTenantName;
-    protected bool HideComboTipoRecebimento = true;
-
-    protected decimal MaxValueAllowed { get; set; }
-    protected decimal ValueReceived { get; set; }
-
-    protected DateTime transactionDate { get; set; } = DateTime.Now;
-
-    protected bool ErrorVisibility { get; set; } = false;
-    protected List<string> ValidationsMessages = new();
-
-    protected bool AlertVisibility { get; set; } = false;
-    protected string? AlertTitle = "";
-
-    protected bool WarningVisibility { get; set; }
-    protected string? WarningMessage { get; set; }
-
-    protected bool AllowEnteringAmountPaid = true;
-    protected string InDebtColor = "black";
-
-    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
-    {
-            {"rows", "3" }
-    };
-    protected Dictionary<string, object> ColorAttribute = new Dictionary<string, object>()
-    {
-            {"color", "yellow" }
-    };
-
-    protected override void OnInitialized()
-    {
-        idFracao = SelectedRecord.ID_Propriedade;
-        EnableValue = false;
-        HideTenantName = true;
-        PagamentoRenda = true;
-        ValorRenda = 0;
-        ValorEmFalta = 0;
-    }
-    protected override async Task OnParametersSetAsync()
-    {
-        PagamentoRenda = SelectedRecord.Renda;
-
-        ValorRenda = SelectedRecord!.ValorRecebido;
-        ValorEmFalta = SelectedRecord.ValorEmFalta;
-        ultimoPagamentoRenda = await ArrendamentosService!.GetLastPaymentDate(SelectedRecord.ID_Propriedade);
-        ValueReceived = SelectedRecord!.ValorRecebido;
-
-        if (ValorEmFalta > 0)
-        {
-            AllowEnteringAmountPaid = false;
-            InDebtColor = "custom-class e-error";
-        }
-        else
-        {
-            InDebtColor = "custom-class e-success";
-        }
-    }
-
-
-
-    protected void onAmountChanged(Syncfusion.Blazor.Inputs.ChangeEventArgs<decimal> args)
-    {
-        var inputAmount = args.Value;
-        if (inputAmount >= SelectedRecord!.ValorPrevisto)
-        {
-            AlertVisibility = true;
-            AlertTitle = L["TituloValorRecebidoAlterado"];
-            WarningMessage = $"{L["TituloValorMaximoPermitido"]} {SelectedRecord.ValorPrevisto - 1} {L["TituloUltrapassado"]}. {L["TituloVerificar"]}";
-            StateHasChanged();
-            return;
-        }
-
-        if (SelectedRecord?.ValorPrevisto != inputAmount)
-        {
-            SelectedRecord!.ValorRecebido = inputAmount;
-            SelectedRecord!.ValorEmFalta = SelectedRecord.ValorPrevisto - inputAmount;
-            SelectedRecord.Estado = 2; // pago parcialmente
-        }
-        else
-        {
-            SelectedRecord.Estado = 3; // pago na totalidade
-            SelectedRecord!.ValorEmFalta = 0;
-            SelectedRecord!.ValorRecebido = inputAmount;
-        }
-        StateHasChanged();
-    }
-}
 
 <style>
     .display-amounts {

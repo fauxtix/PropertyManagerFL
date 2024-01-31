@@ -520,7 +520,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 try
                 {
                     var documentoInquilinoAlterado = await connection.ExecuteAsync("usp_Inquilinos_UpdateDocument",
-                        param: document, commandType: CommandType.StoredProcedure);
+                        param: new { document.Id, document.Descricao }, commandType: CommandType.StoredProcedure);
                     return documentoInquilinoAlterado > 0;
 
                 }

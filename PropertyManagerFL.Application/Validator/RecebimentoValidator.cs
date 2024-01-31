@@ -19,7 +19,7 @@ namespace PropertyManagerFL.Application.Validator
             RuleFor(p => p.ValorRecebido)
                 .NotNull()
                 .NotEmpty().WithMessage("Deve preencher Valor Recebido")
-                .LessThan(p=>p.ValorPrevisto).WithMessage("Valor Recebido deve ser inferior ao valor da renda")
+                .LessThanOrEqualTo(p=>p.ValorPrevisto).WithMessage("Valor Recebido deve ser inferior ao valor da renda")
                 .When(p=>p.Renda);
         }
 

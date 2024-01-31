@@ -17,11 +17,11 @@
         *@
         </div>
         <hr style="color:black;" />
-        <div class="d-flex justify-content-between align-items-md-center gap-2">
-            <SfMessage Severity="MessageSeverity.Normal" Variant="MessageVariant.Outlined" ShowIcon="false">Valor corrente @CurrentRentValue.ToString("C")</SfMessage>
-            <SfMessage Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="false">Coeficiente @DateTime.Now.Year.ToString() @coefficient%</SfMessage>
-            <SfMessage Severity="MessageSeverity.Success" Variant="MessageVariant.Outlined" ShowIcon="false">Valor esperado @expecteRentValueAfterIncrease.ToString("C")</SfMessage>
-            <SfMessage Severity="MessageSeverity.Warning" Variant="MessageVariant.Filled" ShowIcon="false">Aumento @((NewRentValue - CurrentRentValue).ToString("C"))</SfMessage>
+        <div class="d-flex justify-content-between align-items-center gap-2">
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Normal" Variant="MessageVariant.Outlined" ShowIcon="false">Valor corrente @CurrentRentValue.ToString("C")</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="false">Coeficiente @DateTime.Now.Year.ToString() @coefficient%</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Success" Variant="MessageVariant.Outlined" ShowIcon="false">Valor esperado @expecteRentValueAfterIncrease.ToString("C")</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Warning" Variant="MessageVariant.Filled" ShowIcon="false">Aumento @((NewRentValue - CurrentRentValue).ToString("C"))</SfMessage>
         </div>
         <hr style="color:black;" />
 
@@ -179,9 +179,10 @@
 
     .e-amounts {
         display: flex;
-        align-items: start;
-        justify-content: start;
+        align-items: center;
+        justify-content: center;
+        padding:4px;
         gap: 12px;
-        margin: 4px;
+        /* margin: 4px; */
     }
 </style>

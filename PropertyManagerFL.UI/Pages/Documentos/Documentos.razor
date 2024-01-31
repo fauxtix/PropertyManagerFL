@@ -63,7 +63,7 @@ else
                     EnableAltRow="true"
                     EnableHover="true"
                     DataSource="@Documents"
-                    AllowFiltering="false"
+                    AllowFiltering="true"
                     AllowGrouping="true"
                     AllowPaging="true"
                     AllowSorting="true"
@@ -75,6 +75,8 @@ else
                 <GridSelectionSettings Type="Syncfusion.Blazor.Grids.SelectionType.Single"
                                        Mode="Syncfusion.Blazor.Grids.SelectionMode.Row"
                                        PersistSelection="true" />
+                <GridGroupSettings ShowUngroupButton="true" />
+                <GridFilterSettings Mode="FilterBarMode.Immediate" Type="Syncfusion.Blazor.Grids.FilterType.Menu" />
                 <GridEvents OnToolbarClick="ToolbarClickHandler" OnRecordDoubleClick="OnDocumentDoubleClickHandler"
                             CommandClicked="OnDocumentCommandClicked"
                             RowSelected="OnRowSelected"
@@ -85,11 +87,15 @@ else
                                 HeaderText="ID#" Visible="false" />
                     <GridColumn Field=@nameof(DocumentoVM.CreatedOn) TextAlign="TextAlign.Center"
                                 HideAtMedia="(min-width: 900px)" HeaderText="@L["TituloData"]" 
+                                AllowFiltering="false"
+                                AllowGrouping="false"
                                 Width="100" Format="d"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.Title)
+                                AllowGrouping="false"
                                 CustomAttributes="@(new Dictionary<string, object>(){ { "class", "e-attr" }})"
                                 HeaderText="@L["lblTitulo"]" Width="360"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.Description) HeaderText="@L["lblSinopse"]"
+                                AllowGrouping="false"
                                 HideAtMedia="(min-width: 1280px)" Width="350"></GridColumn>
                     <GridColumn Field=@nameof(DocumentoVM.DocumentType) HeaderText="@L["TituloTipo"]"
                                 HideAtMedia="(min-width: 1400px)" Width="200"></GridColumn>
