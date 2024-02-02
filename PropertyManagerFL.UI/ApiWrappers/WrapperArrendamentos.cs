@@ -825,13 +825,13 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return false;
             }
         }
-        public async Task RegistaCartaAtrasoRendas(int Id, DateTime? referralDate, string tentiva, string docGerado)
+        public async Task RegistaCartaAtrasoRendas(int Id, DateTime? referralDate, string tentativa, string docGerado)
         {
             try
             {
                 var fileName = Path.GetFileName(docGerado);
                 var referralDateAsString = referralDate!.Value.ToString("yyyy-MM-dd");
-                var endpoint = $"{_uri}/RegistaCartaAtraso/{Id}/{referralDateAsString}/{tentiva}/{fileName}";
+                var endpoint = $"{_uri}/RegistaCartaAtraso/{Id}/{referralDateAsString}/{tentativa}/{fileName}";
                 using (HttpResponseMessage result = await _httpClient.GetAsync(endpoint))
                 {
                     var success = result.IsSuccessStatusCode;

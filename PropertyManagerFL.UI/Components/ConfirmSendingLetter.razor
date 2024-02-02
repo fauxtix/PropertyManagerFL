@@ -144,7 +144,7 @@
             case DocumentoEmitido.OposicaoRenovacaoContrato:
                 if (Lease is null) return;
 
-                alertMsg = "carta de oposição de renovação do contrato?";
+                alertMsg = "carta de oposição à renovação do contrato?";
                 SubTitle = "Oposição de renovação do contrato";
 
                 var monthsToEnd = GetMonthDifference(DateTime.Now, Lease!.Data_Fim);
@@ -160,7 +160,7 @@
                 }
                 if (monthsToEnd > 4 && hasDeletedPayments)
                 {
-                    WarningMessage += $" Há indicação de rendas não pagas, mas ainda faltam  {monthsToEnd} meses para terminar o contrato!) ";
+                    WarningMessage += $" Há indicação de rendas não pagas, mas ainda faltam {monthsToEnd} meses para terminar o contrato. ";
                 }
                 if (hasDeletedPayments == false)
                 {
@@ -168,8 +168,12 @@
                 }
                 if (hasDeletedPayments)
                 {
-                    string dummyText = tenantPayments.Count() == 1 ? "renda não paga " : "rendas não pagas ";
-                    WarningMessage += $"Há indicação de {tenantPayments.Count()} {dummyText})";
+                    string dummyText = tenantPayments.Count() == 1 ? "renda não paga" : "rendas não pagas";
+                    if(tenantPayments.Count() < 3)
+                    {
+                        dummyText += " (lei permite 3). Verifique também, se cartas de atraso no pagamento, foram enviadas dentro do prazo";
+                    }
+                    WarningMessage += $"Há indicação de {tenantPayments.Count()} {dummyText}.";
                 }
                 break;
         }

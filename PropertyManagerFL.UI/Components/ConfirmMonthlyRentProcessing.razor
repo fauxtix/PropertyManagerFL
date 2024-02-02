@@ -5,63 +5,63 @@
 
 @inject IStringLocalizer<App> L
 
+<div class="container-fluid">
+    <SfDialog CssClass="quick-info-header"
+              Width="@DialogWidth"
+              Height="@DialogHeight"
+              CloseOnEscape="false"
+              Visible="@Visible"
+              AllowDragging="true"
+              IsModal="true"
+              ShowCloseIcon="false">
+        <DialogTemplates>
+            <Header>
+                <div class="ml-1 mr-1 font-weight-bold" style="color:@TitleColor">@L[DialogTitle]</div>
+            </Header>
+            <Content>
+                <div class="group-box m-2 p-2">
+                    <SfComboBox TValue="int" TItem="Mes" Placeholder="@L["TituloMes"]"
+                                FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedMonth"
+                                DataSource="@MonthList">
+                        <ComboBoxFieldSettings Text="Descricao" Value="Id" />
+                        <ComboBoxEvents TItem="Mes" TValue="int"
+                                        ValueChange="MonthChangeHandler" />
+                    </SfComboBox>
+                    <SfComboBox TValue="int" TItem="Ano" Placeholder="@L["TituloAno"]"
+                                FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedYear"
+                                DataSource="@YearsList">
+                        <ComboBoxFieldSettings Text="Descricao" Value="Id" />
+                        <ComboBoxEvents TItem="Ano" TValue="int"
+                                        ValueChange="YearChangeHandler" />
+                    </SfComboBox>
+                </div>
 
-<SfDialog CssClass="quick-info-header"
-          Width="@DialogWidth"
-          Height="@DialogHeight"
-          CloseOnEscape="false"
-          Visible="@Visible"
-          AllowDragging="true"
-          IsModal="true"
-          ShowCloseIcon="false">
-    <DialogTemplates>
-        <Header>
-            <div class="ml-1 mr-1 font-weight-bold" style="color:@TitleColor">@L[DialogTitle]</div>
-        </Header>
-        <Content>
-            <div class="group-box m-2 p-2">
-                <SfComboBox TValue="int" TItem="Mes" Placeholder="@L["TituloMes"]"
-                            FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedMonth"
-                            DataSource="@MonthList">
-                    <ComboBoxFieldSettings Text="Descricao" Value="Id" />
-                    <ComboBoxEvents TItem="Mes" TValue="int"
-                                    ValueChange="MonthChangeHandler" />
-                </SfComboBox>
-                <SfComboBox TValue="int" TItem="Ano" Placeholder="@L["TituloAno"]"
-                            FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedYear"
-                            DataSource="@YearsList">
-                    <ComboBoxFieldSettings Text="Descricao" Value="Id" />
-                    <ComboBoxEvents TItem="Ano" TValue="int"
-                                    ValueChange="YearChangeHandler" />
-                </SfComboBox>
-            </div>
-
-            <div hidden="@HideMessage" class="row mx-2 my-2">
-                <div class="col-9">
-                    <div>
-                        <SfMessage Severity=MessageSeverityType Variant="MessageVariant.Text" ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
+                <div hidden="@HideMessage" class="row mx-2 my-2">
+                    <div class="col-9">
+                        <div>
+                            <SfMessage Severity=MessageSeverityType Variant="MessageVariant.Text" ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
+                            </div>
                         </div>
+                        <RightSideImageComponent Operation="@IconType" />
                     </div>
-                    <RightSideImageComponent Operation="@IconType" />
-                </div>
-            </Content>
-            <FooterTemplate>
-                <hr />
-                <div>
-                    <SfButton CssClass="@OkButtonColor" IconCss="fas fa-check"
-                              @onclick="OnConfirmYes" Content="@L["Sim"]">
-                    </SfButton>
-                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                              @onclick="OnConfirmNo" Content="@L["Nao"]">
-                    </SfButton>
-                </div>
-            </FooterTemplate>
-        </DialogTemplates>
-        <DialogPositionData X="@PositionX" Y="@PositionY"></DialogPositionData>
-        <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
-    </SfDialog>
+                </Content>
+                <FooterTemplate>
+                    <hr />
+                    <div>
+                        <SfButton CssClass="@OkButtonColor" IconCss="fas fa-check"
+                                  @onclick="OnConfirmYes" Content="@L["Sim"]">
+                        </SfButton>
+                        <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
+                                  @onclick="OnConfirmNo" Content="@L["Nao"]">
+                        </SfButton>
+                    </div>
+                </FooterTemplate>
+            </DialogTemplates>
+            <DialogPositionData X="@PositionX" Y="@PositionY"></DialogPositionData>
+            <DialogAnimationSettings Effect="@Effects" Duration=600></DialogAnimationSettings>
+        </SfDialog>
 
-
+    </div>
 
     @code {
     [Parameter] public string? DialogTitle { get; set; }
@@ -113,7 +113,6 @@
         TitleColor = "cornflowerblue";
         MonthList = GetMonths();
         YearsList = GetYears();
-
     }
 
     protected override void OnParametersSet()
@@ -141,7 +140,8 @@
         }
 
         if (SelectedMonth == 13) SelectedMonth = 1;
-        var MesageCaption = $"{MonthList.FirstOrDefault(p => p.Id == SelectedMonth).Descricao} de {YearsList.FirstOrDefault(y => y.Id == SelectedYear).Descricao}";
+
+        var MesageCaption = $"{MonthList?.FirstOrDefault(p => p.Id == SelectedMonth).Descricao} de {YearsList.FirstOrDefault(y => y.Id == SelectedYear).Descricao}";
         AlertMessage = $"{L["TituloConfirmarProcessamento"]}  {MesageCaption}?";
         StateHasChanged();
     }
@@ -158,6 +158,7 @@
 
     protected void MonthChangeHandler(ChangeEventArgs<int, Mes> args)
     {
+
         SelectedMonth = args.Value;
         var strSelectedMonth = $"{args.ItemData.Descricao} de {SelectedYear.ToString()}";
         AlertMessage = $"{L["TituloConfirmarProcessamento"]}  {strSelectedMonth}?";

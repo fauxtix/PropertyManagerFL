@@ -314,7 +314,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     {
                         errorMessage = "Período inválido. Verifique, p.f.";
                     }
-                    else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth > lastPeriodProcessed.Mes + 1)
+                    else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth >= lastPeriodProcessed.Mes + 1)
                     {
                         var dateDecoded = Helpers.DecodeMonthYear(lastMonthProcessed, lastYearProcessed);
                         errorMessage = $"Mês inválido. Último mês processado: {dateDecoded}. Verifique, p.f.";
