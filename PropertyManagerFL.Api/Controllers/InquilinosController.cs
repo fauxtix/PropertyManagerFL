@@ -69,6 +69,39 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
+        /// Returns all database tenants
+        /// </summary>
+        /// <param name="tenantId">Id Inquilino</param>
+        /// <returns>IEnumerable pagamentos do Inquilino</returns>
+
+        [HttpGet("TenantPayments/{tenantId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetTenantPayments(int tenantId)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var tenantPayments = await _repoInquilinos.GetTenantPayments(tenantId);
+                if (tenantPayments.Any())
+                {
+                    return Ok(tenantPayments);
+                }
+                else
+                {
+                    return NotFound("Inquilino sem pagamentos");
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
+        /// <summary>
         /// Conta corrente do inquilino
         /// </summary>
         /// <param name="id">Id Inquilino</param>

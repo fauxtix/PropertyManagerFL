@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
@@ -49,6 +50,6 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao);
         Task<bool> CriaCartaAtualizacaoInquilinoDocumentosInquilino(int tenantId, string docGerado);
         Task<IEnumerable<LatePaymentLettersVM>> GetRentUpdateLetters();
-
+        Task<IEnumerable<RecebimentoVM>> GetTenantPayments(int tenantId);
     }
 }

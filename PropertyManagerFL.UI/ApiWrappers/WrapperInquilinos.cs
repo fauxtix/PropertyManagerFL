@@ -10,6 +10,7 @@ using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFLApplication.Utilities;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
@@ -924,5 +925,28 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return Enumerable.Empty<LatePaymentLettersVM>();
             }
         }
+
+        public async Task<IEnumerable<RecebimentoVM>> GetTenantPayments(int tenantId)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_uri}/TenantPayments/{tenantId}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var output = JsonConvert.DeserializeObject<IEnumerable<RecebimentoVM>>(data);
+                    return output;
+                }
+
+                return null;
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API Recebimentos / GetTenantPayments");
+                return null;
+            }
+        }
+
     }
 }

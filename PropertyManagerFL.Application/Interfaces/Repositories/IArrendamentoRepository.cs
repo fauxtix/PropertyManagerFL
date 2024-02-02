@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {

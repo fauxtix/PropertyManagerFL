@@ -674,15 +674,18 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 FracaoVM DadosFracao = await _svcFracoes.GetFracao_ById(_arrendamento.ID_Fracao);
                 ImovelVM DadosImovel = await _svcImoveis.GetImovel_ById(DadosFracao.Id_Imovel);
 
+                var tenantCurrentBalance = Convert.ToInt32(  Math.Abs(DadosInquilino.SaldoCorrente - DadosInquilino.SaldoPrevisto));
+                int monthsDued = Convert.ToInt16( tenantCurrentBalance / DadosFracao.ValorRenda);
+
+
                 var moradaFracao = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado}";
-                var rentMonthsCollected = await _svcRecebimentos.GetMonthlyRentsProcessed(DateTime.Now.Year);
-                var lastMonthCollect = rentMonthsCollected.Max(r => r.DataProcessamento).Month;
-                var lastMonthPaid = _arrendamento.Data_Pagamento.Month;
-                var monthsDued = lastMonthCollect - lastMonthPaid;
+                //var rentMonthsCollected = await _svcRecebimentos.GetMonthlyRentsProcessed(DateTime.Now.Year);
+                //var lastMonthCollect = rentMonthsCollected.Max(r => r.DataProcessamento).Month;
+                //var lastMonthPaid = _arrendamento.Data_Pagamento.Month;
+                //var monthsDued = lastMonthCollect - lastMonthPaid;
                 var lastPaymentDate = _arrendamento.Data_Pagamento;
                 string months = "";
 
-                var tenantCurrentBalance = DadosInquilino.SaldoPrevisto - DadosInquilino.SaldoCorrente;
                 if (tenantCurrentBalance > 0 && monthsDued == 0)
                     monthsDued = 1;
 
@@ -715,7 +718,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     NomeInquilino = DadosInquilino.Nome,
                     MoradaInquilino = moradaFracao,
                     Nome = DadosProprietario.Nome,
-                    Morada = DadosProprietario.Morada,                     
+                    Morada = DadosProprietario.Morada,
                     PrazoEmDias = "10", // TODO - adaptar pazo em dias para resolver situação de atraso no pagto. renda (appsettings?)
                     RendasEmAtraso = dueRentsAsString,
                     MontanteRendasAtraso = DadosFracao.ValorRenda * monthsDued
@@ -772,9 +775,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
             };
 
             string docGerado = await _MailMergeSvc.MailMergeLetter(mergeModel);
-            var output = docGerado.Substring(0, docGerado.Length - 1); // ended with 2 "", remove the last
+            //var output = docGerado.Substring(0, docGerado.Length - 1); // ended with 2 "", remove the last
 
-            return output;
+            return docGerado;
 
         }
 

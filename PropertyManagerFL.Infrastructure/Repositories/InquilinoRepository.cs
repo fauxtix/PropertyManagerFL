@@ -4,6 +4,7 @@ using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
 using System.Data;
@@ -847,5 +848,24 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<RecebimentoVM>> GetTenantPayments(int tenantId)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var output = await connection.QueryAsync<RecebimentoVM>("usp_Inquilinos_GetTenantPayments",
+                        param: new {TenantId = tenantId},
+                        commandType: CommandType.StoredProcedure);
+                    return output.ToList();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
     }
 }

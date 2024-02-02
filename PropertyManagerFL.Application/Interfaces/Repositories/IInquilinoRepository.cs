@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
@@ -19,6 +20,8 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         string GetNomeFracao(int IdInquilino, bool bTitular);
         string GetUltimoMesPago_Inquilino(int ID_Inquilino);
         Task<IEnumerable<InquilinoVM>> GetAll();
+        Task<IEnumerable<RecebimentoVM>> GetTenantPayments(int tenantId);
+
         Task<InquilinoVM> GetInquilino_ById(int id);
         Task<bool> CanInquilinoBeDeleted(int id);
 
