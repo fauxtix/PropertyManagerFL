@@ -1635,7 +1635,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
             }
 
-            return "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
+            return "";
         }
 
         private void HideToolbar_LetterOptions()

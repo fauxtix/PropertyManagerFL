@@ -69,7 +69,10 @@
 
   <ItemGroup>
     <Folder Include="Filter\" />
+    <Folder Include="Reports\Docs\AtualizacaoRendas\" />
     <Folder Include="Reports\Docs\Contratos\" />
+    <Folder Include="Reports\Docs\OposicaoRenovacaoContrato\" />
+    <Folder Include="Reports\Docs\RendasAtraso\" />
     <Folder Include="Reports\pdfs\" />
     <Folder Include="uploads\properties\" />
     <Folder Include="uploads\units\" />

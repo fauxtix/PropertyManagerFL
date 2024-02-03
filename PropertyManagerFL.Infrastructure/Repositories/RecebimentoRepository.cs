@@ -10,6 +10,7 @@ using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text;
 using static Dapper.SqlMapper;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
@@ -338,6 +339,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             int currentStateAfterPayment = paymentState;
             string? Notas = "";
 
+            int mesMovimento = recebimento.DataMovimento.Month;
+            int anoMovimento = recebimento.DataMovimento.Year;
 
             // TODO - se houver mais de um pagamento em atraso, não atualiza corretamente o saldo do inquilino !! Erro na stored procedure?
             try
@@ -373,6 +376,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                 using (var connection = _context.CreateConnection())
                 {
+                    //StringBuilder sb = new();
+                    //sb.Append("select * from documentosInquilino ");
+                    //sb.Append("WHERE DocumentType = 18 AND ");
+                    //sb.Append($"TenantId = {idInquilino} AND ");
+                    //sb.Append($"MONTH(ReferralDate) = {mesMovimento} AND ");
+                    //sb.Append($"YEAR(ReferralDate) = {anoMovimento}");
+                    //var teste = await connection.QueryAsync(sb.ToString());
+
                     var result = await connection.ExecuteAsync("usp_Recebimentos_AcertaPagamentoRenda",
                         param: parameters,
                         commandType: CommandType.StoredProcedure);
