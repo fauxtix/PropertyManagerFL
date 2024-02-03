@@ -1,18 +1,22 @@
 ﻿using Dapper;
+using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Core.Entities;
 using System.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace PropertyManagerFL.Infrastructure.Repositories;
 public class AppSettingsRepository : IAppSettingsRepository
 {
     private readonly IDapperContext _context;
+    private readonly ILogger<AppSettingsRepository> _logger;
 
-    public AppSettingsRepository(IDapperContext context)
+    public AppSettingsRepository(IDapperContext context, ILogger<AppSettingsRepository> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     public async Task<ApplicationSettings> GetSettingsAsync()
@@ -95,6 +99,28 @@ public class AppSettingsRepository : IAppSettingsRepository
             return;
         }
 
+    }
+
+    public async Task InitializeRentProcessingTables()
+    {
+        try
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                string sp_Name = "usp_Development_ResetRentsYearUpdate";
+                var result = (await connection.ExecuteAsync(sp_Name, commandType: CommandType.StoredProcedure));
+                sp_Name = "usp_Development_initializeRentPaymentTables";
+                result = (await connection.ExecuteAsync(sp_Name, commandType: CommandType.StoredProcedure));
+
+                // Apaga documentos gerados (cartas)
+
+
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+        }
     }
 
 }

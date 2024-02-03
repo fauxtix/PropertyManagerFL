@@ -2,11 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
-using PropertyManagerFL.Application.ViewModels.Inquilinos;
-using PropertyManagerFL.Application.ViewModels.Logs;
 using PropertyManagerFL.Core.Entities;
-using static PropertyManagerFL.Application.ViewModels.AppSettings.ApplicationSettingsVM;
-using static System.Reflection.Metadata.BlobBuilder;
 
 namespace PropertyManagerFL.Api.Controllers;
 
@@ -16,13 +12,17 @@ public class AppSettingsController : ControllerBase
 {
     private readonly IAppSettingsRepository _appSettingsRepository;
     private readonly IMapper _mapper;
-    private readonly ILogger<AppSettingsController> _logger;
+    private readonly ILogger<AppSettingsController>? _logger;
+    private readonly IWebHostEnvironment _environment;
 
 
-    public AppSettingsController(IAppSettingsRepository appSettingsRepository, IMapper mapper)
+    public AppSettingsController(IAppSettingsRepository appSettingsRepository,
+                                 IMapper mapper,
+                                 IWebHostEnvironment environment)
     {
         _appSettingsRepository = appSettingsRepository;
         _mapper = mapper;
+        _environment = environment;
     }
 
     /// <summary>
@@ -58,7 +58,6 @@ public class AppSettingsController : ControllerBase
         }
     }
 
-
     /// <summary>
     /// Altera settings do e-mail
     /// </summary>
@@ -76,7 +75,7 @@ public class AppSettingsController : ControllerBase
             if (settings == null)
             {
                 string msg = "As definições passadas são incorretas.";
-                _logger.LogWarning("As definições passadas são incorretas.");
+                _logger?.LogWarning("As definições passadas são incorretas.");
                 return BadRequest(msg);
             }
 
@@ -126,6 +125,51 @@ public class AppSettingsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Inicializa tabelas de pagamentos
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    [HttpGet("initialize")]
+    public async Task<IActionResult> Initialize()
+    {
+        var location = GetControllerActionNames();
+
+        try
+        {
+            await _appSettingsRepository.InitializeRentProcessingTables();
+
+            string docsAtualizacaoRendasPath = Path.Combine(_environment.ContentRootPath, "Reports", "Docs", "AtualizacaoRendas");
+            string docsContratosPath = Path.Combine(_environment.ContentRootPath, "Reports", "Docs", "Contratos");
+            string docsOposicaoRenovacaoPath = Path.Combine(_environment.ContentRootPath, "Reports", "Docs", "OposicaoRenovacaoContrato");
+            string docsAtrasoRendasPath = Path.Combine(_environment.ContentRootPath, "Reports", "Docs", "RendasAtraso");
+
+            DeleteFiles(docsAtualizacaoRendasPath);
+            DeleteFiles(docsContratosPath);
+            DeleteFiles(docsOposicaoRenovacaoPath);
+            DeleteFiles(docsAtrasoRendasPath);
+
+            return Ok($"{location} - Tabelas inicializadas com sucesso");
+        }
+        // C:\NewProjects\PropertyManagerFL\PropertyManagerFL.Api\Reports\Docs\AtualizacaoRendas
+        catch (Exception e)
+        {
+            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+        }
+    }
+
+
+    private void DeleteFiles(string path)
+    {
+        var files = Directory.GetFiles(path);
+        if (files.Length == 0) return;
+
+        Array.ForEach(files, System.IO.File.Delete);
+
+    }
     private string GetControllerActionNames()
     {
         var controller = ControllerContext.ActionDescriptor.ControllerName;

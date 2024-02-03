@@ -27,6 +27,10 @@ public partial class AppSettings
     protected string? ToastCss;
     protected string? ToastIcon;
 
+    private bool InitializationMessageVisibility = false;
+    private string InitializationMessage = string.Empty;
+
+
     protected override async Task OnInitializedAsync()
     {
         portugues = L["TituloIdiomaPortugues"]; // TODO set languages
@@ -118,6 +122,15 @@ public partial class AppSettings
         settings!.DefaultLanguage = culture;
 
     }
+
+    private async void InitializeTables()
+    {
+        var processed = await AppSettingsService.InitializeRentProcessingTables();
+        InitializationMessage = processed ? "Processo terminou com sucesso" : "Erro na inicialização. Verifique log, p.f.";
+        InitializationMessageVisibility = true;
+        StateHasChanged();
+    }
+
 
     private async Task ShowToastMessage()
     {

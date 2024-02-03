@@ -10,6 +10,7 @@ public class WrapperAppSettings : IAppSettingsService
     private readonly ILogger<WrapperAppSettings> _logger;
     private readonly string? _url;
     private readonly string? _otherSettingsUrl;
+    private readonly string? _initializeUrl;
 
     public WrapperAppSettings(HttpClient httpClient, IConfiguration env,
                                     ILogger<WrapperAppSettings> logger)
@@ -17,6 +18,7 @@ public class WrapperAppSettings : IAppSettingsService
         _env = env;
         _url = $"{_env["BaseUrl"]}/appsettings/emailsettings";
         _otherSettingsUrl = $"{_env["BaseUrl"]}/appsettings/othersettings";
+        _initializeUrl = $"{_env["BaseUrl"]}/appsettings/initialize";
         _logger = logger;
 
         _httpClient = httpClient;
@@ -57,5 +59,27 @@ public class WrapperAppSettings : IAppSettingsService
     public async Task UpdateOtherSettingsAsync(ApplicationSettingsVM settings)
     {
         await _httpClient.PutAsJsonAsync(_otherSettingsUrl, settings);
+    }
+
+    public async Task<bool> InitializeRentProcessingTables()
+    {
+        try
+        {
+            using (HttpResponseMessage response = await _httpClient.GetAsync(_initializeUrl))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogError(response.ReasonPhrase, "Erro ao executar API (AppSettings/Initialize)");
+                    return false;
+                }
+
+                return true;
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, "Erro ao executar API (AppSettings/Initialize)");
+            return false;
+        }
     }
 }

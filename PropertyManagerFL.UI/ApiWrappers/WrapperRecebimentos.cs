@@ -196,7 +196,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao criar Recebimento {exc.Message}");
+                _logger.LogError(exc, $"Erro ao processar pagamentos mensais: {exc.Message}");
                 return -1;
             }
         }

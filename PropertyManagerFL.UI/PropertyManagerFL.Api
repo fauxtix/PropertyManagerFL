@@ -350,7 +350,6 @@
             <param name="svcImoveis"></param>
             <param name="svcFracoes"></param>
             <param name="mailMergeSvc"></param>
-            <param name="svcInquilinos"></param>
         </member>
         <member name="M:PropertyManagerFL.UI.ApiWrappers.WrapperInquilinos.InsereInquilino(PropertyManagerFL.Application.ViewModels.Inquilinos.InquilinoVM)">
             <summary>

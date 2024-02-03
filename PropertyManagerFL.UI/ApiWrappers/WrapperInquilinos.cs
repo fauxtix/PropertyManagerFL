@@ -33,7 +33,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IFracaoService _svcFracoes;
         readonly IMailMergeService _MailMergeSvc;
 
-        private ArrendamentoVM? _arrendamento;
+        private ArrendamentoVM _arrendamento = new();
 
         /// <summary>
         /// Tenant's service constructor
@@ -46,7 +46,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="svcImoveis"></param>
         /// <param name="svcFracoes"></param>
         /// <param name="mailMergeSvc"></param>
-        /// <param name="svcInquilinos"></param>
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,
@@ -897,7 +896,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<IEnumerable<LatePaymentLettersVM>> GetRentUpdateLetters()
         {
-            // RentUpdateLetters
+            // Rent Update Letters
             try
             {
                 using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/RentUpdateLetters"))

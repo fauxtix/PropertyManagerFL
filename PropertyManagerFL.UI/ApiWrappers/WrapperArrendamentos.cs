@@ -36,7 +36,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IMailMergeService _MailMergeSvc;
         readonly IRecebimentoService _svcRecebimentos;
 
-        private ArrendamentoVM? _arrendamento;
+        private ArrendamentoVM _arrendamento = new();
 
 
         /// <summary>
@@ -674,8 +674,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 FracaoVM DadosFracao = await _svcFracoes.GetFracao_ById(_arrendamento.ID_Fracao);
                 ImovelVM DadosImovel = await _svcImoveis.GetImovel_ById(DadosFracao.Id_Imovel);
 
-                var tenantCurrentBalance = Convert.ToInt32(  Math.Abs(DadosInquilino.SaldoCorrente - DadosInquilino.SaldoPrevisto));
-                int monthsDued = Convert.ToInt16( tenantCurrentBalance / DadosFracao.ValorRenda);
+                var tenantCurrentBalance = Convert.ToInt32(Math.Abs(DadosInquilino.SaldoCorrente - DadosInquilino.SaldoPrevisto));
+                int monthsDued = Convert.ToInt16(tenantCurrentBalance / DadosFracao.ValorRenda);
 
 
                 var moradaFracao = $"{DadosImovel.Morada}, {DadosImovel.Numero}  {DadosFracao.Andar}  {DadosFracao.Lado}";
@@ -745,8 +745,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 "LocalEmissao", "DataEmissao",
                 "NomeSenhorio", "MoradaSenhorio",
                 "NomeInquilino", "MoradaInquilino",
-                "MontanteRendasEmAtraso", "RendasEmAtraso",
-                "PrazoEmDias"
+                "MontanteRendasEmAtraso", "ValorExtenso",
+                "RendasEmAtraso", "PrazoEmDias"
             };
 
             string[] aDados = new string[]
@@ -758,6 +758,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 dadosCartaAtraso.NomeInquilino,
                 dadosCartaAtraso.MoradaInquilino,
                 dadosCartaAtraso.MontanteRendasAtraso.ToString("##,###.00"),
+                dadosCartaAtraso.ValorExtenso = Utilitarios.ValorPorExtenso(dadosCartaAtraso.MontanteRendasAtraso),
                 dadosCartaAtraso.RendasEmAtraso,
                 dadosCartaAtraso.PrazoEmDias
             };

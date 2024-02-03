@@ -1372,22 +1372,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     else
                     {
                         var documentoARegistar = docGerado.Replace(".docx", ".pdf");
-                        try
-                        {
-                            await arrendamentosService.RegistaCartaAtrasoRendas(leaseId, referralDate, tentativa, documentoARegistar);
-                            ToastMessage = L["TituloOperacaoOk"];
-                            ToastCss = "e-toast-success";
-                        }
-                        catch (Exception ex)
-                        {
-                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
-                            ToastCss = "e-toast-danger";
-                        }
+                        await arrendamentosService.RegistaCartaAtrasoRendas(leaseId, referralDate, tentativa, documentoARegistar);
+                        ToastMessage = L["TituloOperacaoOk"];
+                        ToastCss = "e-toast-success";
                     }
                 }
                 else
                 {
-                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    var _errorMessage = "Erro ao obter dados para emissão de carta";
+                    _logger?.LogError(_errorMessage);
+
+                    ToastMessage = _errorMessage;
                     ToastCss = "e-toast-danger";
                 }
 

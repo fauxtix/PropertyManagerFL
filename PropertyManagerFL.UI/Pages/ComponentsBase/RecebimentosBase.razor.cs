@@ -16,6 +16,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 {
     public class RecebimentosBase : ComponentBase, IDisposable
     {
+        [Inject] protected NavigationManager? navigation { get; set; }
+        [Inject] protected ILogger<App>? _logger { get; set; }
         [Inject] protected IStringLocalizer<App>? L { get; set; }
         [Inject] protected IRecebimentoService? transactionsService { get; set; }
         [Inject] protected IFracaoService? unitsService { get; set; }
@@ -191,14 +193,18 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
+                var _errorMessage = $"Error while processings monthly rents! ({ex.Message}). Please check log.";
+                _logger?.LogError(_errorMessage);
                 ToastCss = "e-toast-danger";
-                ToastMessage = $"Error while processings monthly rents! ({ex.Message}). Please check log.";
+                ToastMessage = _errorMessage;
                 ToastIcon = "fas fa-exclamation";
             }
             finally
             {
                 AddEditMonthlyTransactionsVisibility = false;
                 await GetTransactions();
+
+                navigation?.NavigateTo("/Recebimentos");
 
                 StateHasChanged();
 
@@ -222,8 +228,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ToastMessage = L["TituloOperacaoOk"];
                 ToastIcon = "fas fa-check";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                _logger?.LogError(ex.Message, ex);
+
                 ToastCss = "e-toast-danger";
                 ToastMessage = "Erro ao cancelar! Verifique log, p.f.";
                 ToastIcon = "fas fa-exclamation";
@@ -247,85 +255,96 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningMessage = string.Empty;
             WarningVisibility = false;
 
-            ValidationsMessages = validatorService!.ValidateTransactonsEntries(SelectedTransation!);
-            ToastTitle =L["TituloPagamentos"];
-
-            if (ValidationsMessages == null)
+            try
             {
+                ValidationsMessages = validatorService!.ValidateTransactonsEntries(SelectedTransation!);
+                ToastTitle = L["TituloPagamentos"];
 
-                // Se fôr pagamento de renda, verifica se data de entrada é anterior à data do último pagamento
-                if (SelectedTransation.Renda)
+                if (ValidationsMessages == null)
                 {
-                    var rentsPaid = Transactions.Where(r => r.Renda && r.ID_Inquilino == SelectedTransation.ID_Inquilino).ToList();
-                    if (rentsPaid.Count > 0)
+
+                    // Se fôr pagamento de renda, verifica se data de entrada é anterior à data do último pagamento
+                    if (SelectedTransation.Renda)
                     {
-                        var lastPayment = rentsPaid.OrderByDescending(r => r.DataMovimento).FirstOrDefault().DataMovimento;
-                        if (SelectedTransation.DataMovimento < lastPayment)
+                        var rentsPaid = Transactions.Where(r => r.Renda && r.ID_Inquilino == SelectedTransation.ID_Inquilino).ToList();
+                        if (rentsPaid.Count > 0)
                         {
-                            ValidationsMessages = new List<string>
+                            var lastPayment = rentsPaid.OrderByDescending(r => r.DataMovimento).FirstOrDefault().DataMovimento;
+                            if (SelectedTransation.DataMovimento < lastPayment)
+                            {
+                                ValidationsMessages = new List<string>
                             {
                                 $"Data de pagamento ({SelectedTransation.DataMovimento.ToShortDateString()}) inválida. Já existe movimento com data posterior! ({lastPayment.ToShortDateString()})" };
-                            ErrorVisibility = true;
-                            return;
+                                ErrorVisibility = true;
+                                return;
+                            }
                         }
                     }
-                }
 
-                if (RecordMode == OpcoesRegisto.Gravar)
-                {
-                    if (SelectedTransation.Renda == false)
+                    if (RecordMode == OpcoesRegisto.Gravar)
+                    {
+                        if (SelectedTransation.Renda == false)
+                        {
+                            SelectedTransation.ValorPrevisto = 0;
+                        }
+
+
+                        var updateOk = await transactionsService!.UpdateRecebimento(transactionId, SelectedTransation);
+
+                        if (updateOk)
+                        {
+                            ToastCss = "e-toast-success";
+                            ToastMessage = L["TituloOperacaoOk"];
+                            ToastIcon = "fas fa-check";
+                        }
+                        else
+                        {
+                            _logger?.LogError("Erro ao atualizar dados da transação");
+
+                            ToastCss = "e-toast-danger";
+                            ToastMessage = "Erro ao atualizar dados";
+                            ToastIcon = "fas fa-exclamation";
+                        }
+
+                    }
+
+                    else // !editMode (Insert) - só acessível a 'outros' recebimentos
                     {
                         SelectedTransation.ValorPrevisto = 0;
+                        var InsertOk = await transactionsService!.InsertRecebimento(SelectedTransation!);
+                        if (InsertOk > 0)
+                        {
+                            ToastCss = "e-toast-success";
+                            ToastMessage = L["TituloOperacaoOk"];
+                            ToastIcon = "fas fa-check";
+                        }
+                        else
+                        {
+                            _logger?.LogError("Erro ao inserir pagamento na base de dados");
+                            ToastCss = "e-toast-danger";
+                            ToastMessage = "Erro ao inserir pagamento na base de dados";
+                            ToastIcon = "fas fa-exclamation";
+                        }
                     }
 
+                    StateHasChanged();
+                    await Task.Delay(100);
+                    await ToastObj!.ShowAsync();
 
-                    var updateOk = await transactionsService.UpdateRecebimento(transactionId, SelectedTransation);
+                    await GetTransactions();
+                    await gridObj!.Refresh();
 
-                    if (updateOk)
-                    {
-                        ToastCss = "e-toast-success";
-                        ToastMessage = L["TituloOperacaoOk"];
-                        ToastIcon = "fas fa-check";
-                    }
-                    else
-                    {
-                        ToastCss = "e-toast-danger";
-                        ToastMessage = "Erro ao atualizar dados";
-                        ToastIcon = "fas fa-exclamation";
-                    }
-
+                    EditTransationDialogVisibility = false;
                 }
-
-                else // !editMode (Insert) - só acessível a 'outros' recebimentos
+                else // dados inválidos ou em falta
                 {
-                    SelectedTransation.ValorPrevisto = 0;
-                    var InsertOk = await transactionsService!.InsertRecebimento(SelectedTransation!);
-                    if (InsertOk > 0)
-                    {
-                        ToastCss = "e-toast-success";
-                        ToastMessage = L["TituloOperacaoOk"];
-                        ToastIcon = "fas fa-check";
-                    }
-                    else
-                    {
-                        ToastCss = "e-toast-danger";
-                        ToastMessage = "Erro ao inserir pagamento na base de dados";
-                        ToastIcon = "fas fa-exclamation";
-                    }
+                    ErrorVisibility = true;
                 }
 
-                StateHasChanged();
-                await Task.Delay(100);
-                await ToastObj!.ShowAsync();
-
-                await GetTransactions();
-                await gridObj!.Refresh();
-
-                EditTransationDialogVisibility = false;
             }
-            else // dados inválidos ou em falta
+            catch (Exception ex)
             {
-                ErrorVisibility = true;
+                _logger?.LogError(ex.Message, ex);
             }
         }
 
@@ -552,6 +571,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
+                _logger?.LogError(ex.Message, ex);
+
                 expenseDeleted = false;
                 ToastCssClass = "e-toast-danger";
                 ToastContent = $"Transação não terminou com sucesso. Verifique (erro: {ex.Message})";
@@ -563,34 +584,42 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected async Task SettlePayment()
         {
             // Estado: 1 => Pago, 2=> Pago parcialmente, 3=> Em atraso
-            SettlePaymentConfirmVisibility = false;
-            var paymentState = SelectedTransation.Estado;
-            if (paymentState == 3) // renda em atraso
+            try
             {
-                ToastTitle = L["TituloPagamentoRendaEmAtraso"];
-            }
-            else //  parcialmente
-            {
-                ToastTitle = L["TituloPagamentosEmDivida"];
-            }
+                SettlePaymentConfirmVisibility = false;
+                var paymentState = SelectedTransation.Estado;
+                if (paymentState == 3) // renda em atraso
+                {
+                    ToastTitle = L["TituloPagamentoRendaEmAtraso"];
+                }
+                else //  parcialmente
+                {
+                    ToastTitle = L["TituloPagamentosEmDivida"];
+                }
 
-            var processOk = await transactionsService!.AcertaPagamentoRenda(transactionId, paymentState, SelectedTransation.ValorEmFalta);
-            if (processOk == false)
-            {
-                ToastCssClass = "e-toast-danger";
-                ToastContent = $"Erro ao acertar pagamento. Verifique log, p.f.";
-            }
-            else
-            {
-                ToastCssClass = "e-toast-success";
-                ToastMessage = L["TituloOperacaoOk"];
-            }
+                var processOk = await transactionsService!.AcertaPagamentoRenda(transactionId, paymentState, SelectedTransation.ValorEmFalta);
+                if (processOk == false)
+                {
+                    _logger?.LogError("Erro ao acertar pagamento. Verifique log, p.f");
+                    ToastCssClass = "e-toast-danger";
+                    ToastContent = $"Erro ao acertar pagamento. Verifique log, p.f.";
+                }
+                else
+                {
+                    ToastCssClass = "e-toast-success";
+                    ToastMessage = L["TituloOperacaoOk"];
+                }
 
-            await GetTransactions();
-            StateHasChanged();
-            await Task.Delay(200);
-            await ToastObj!.ShowAsync();
+                await GetTransactions();
+                StateHasChanged();
+                await Task.Delay(200);
+                await ToastObj!.ShowAsync();
 
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex.Message, ex);
+            }
         }
 
 
