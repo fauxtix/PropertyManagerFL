@@ -31,6 +31,7 @@ public class ApplicationSettingsVM
     public byte PrazoContratoEmAnos { get; set; }
     public byte PrazoEnvioCartaAtraso { get; set; }
     public byte PrazoEnvioCartaAumento { get; set; }
+    public bool CartasAumentoAutomaticas { get; set; }
     public byte PrazoEnvioCartaRevogacao { get; set; }
     public byte PrazoRespostaCartaAtraso { get; set; }
     public byte PrazoRespostaCartaAumento { get; set; }

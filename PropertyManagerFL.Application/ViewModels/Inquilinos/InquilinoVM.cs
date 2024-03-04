@@ -3,9 +3,9 @@
     public class InquilinoVM
     {
         public int Id { get; set; }
-        public string? Nome { get; set; }
-        public string? Morada { get; set; }
-        public string? Naturalidade { get; set; }
+        public string Nome { get; set; } = string.Empty;
+        public string Morada { get; set; } = string.Empty;
+        public string Naturalidade { get; set; } = string.Empty;
         public DateTime DataNascimento { get; set; }
         public string? Contacto1 { get; set; }
         public string? Contacto2 { get; set; }

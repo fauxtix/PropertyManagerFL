@@ -31,14 +31,14 @@ else
 
                         <div class="group-ckeckbox">
                             <SfCheckBox Label="@L["chkActive"]" Disabled="true" TChecked="bool" @bind-Checked=@SelectedLease!.Ativo
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         </div>
                         <div class="group-box">
                             <SfTextBox Readonly="true" Value="@SelectedLease.Data_Inicio.ToShortDateString()"
-                               FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDataInicio"]" />
+                                       FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDataInicio"]" />
                             <SfTextBox Readonly="true" Value="@_prazo"
-                               CssClass="custom-class" FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDuracao"]" />
-                               <span> (em anos)</span>
+                                       CssClass="custom-class" FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDuracao"]" />
+                            <span> (em anos)</span>
                         </div>
                         <div>
                             <SfTextBox Readonly="true" Value="@SelectedLease.Data_Pagamento.ToShortDateString()"
@@ -49,28 +49,28 @@ else
                     {
                         <div class="group-box mt-2">
                             <SfDatePicker Enabled="@DatesCanBeChanged" Placeholder="@L["TituloDataInicio"]"
-                                  Width="150px"
-                                  CssClass="e-align-middle e-corner"
-                                  FloatLabelType="FloatLabelType.Always"
-                                  @bind-Value="@SelectedLease!.Data_Inicio">
+                                          Width="150px"
+                                          CssClass="e-align-middle e-corner"
+                                          FloatLabelType="FloatLabelType.Always"
+                                          @bind-Value="@SelectedLease!.Data_Inicio">
                                 <DatePickerEvents TValue="DateTime" ValueChange="DtInicioChanged"></DatePickerEvents>
                             </SfDatePicker>
 
                             <SfComboBox TValue="int" TItem="LeaseYear" Placeholder="@L["TituloDuracao"]" Width="110px"
-                                FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedLease.Prazo"
-                                DataSource="@LeaseYearsList">
+                                        FloatLabelType="FloatLabelType.Always" ShowClearButton="false" @bind-Value="SelectedLease.Prazo"
+                                        DataSource="@LeaseYearsList">
                                 <ComboBoxFieldSettings Text="Year" Value="Id" />
                                 <ComboBoxEvents TItem="LeaseYear" TValue="int"
-                                        ValueChange="TimeInYearChangeHandler" />
+                                                ValueChange="TimeInYearChangeHandler" />
                             </SfComboBox>
                         </div>
 
                         <div class="col-md-6" hidden="@SelectedLease.ArrendamentoNovo">
                             <SfDatePicker Enabled="@DatesCanBeChanged" Placeholder="@L["TituloUltimoPagamento"]"
-                                  Width="150px"
-                                  CssClass="e-align-middle e-corner"
-                                  FloatLabelType="FloatLabelType.Always"
-                                  @bind-Value="@SelectedLease!.Data_Pagamento">
+                                          Width="150px"
+                                          CssClass="e-align-middle e-corner"
+                                          FloatLabelType="FloatLabelType.Always"
+                                          @bind-Value="@SelectedLease!.Data_Pagamento">
                                 <DatePickerEvents TValue="DateTime" ValueChange="DtUltPagamentoChanged"></DatePickerEvents>
                             </SfDatePicker>
                         </div>
@@ -80,9 +80,9 @@ else
                     {
                         <div class="form-group mt-2">
                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Value="@idxProperty" ShowClearButton="true" Enabled="@(EditMode == OpcoesRegisto.Inserir)"
-                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
+                                            Value="@idxProperty" ShowClearButton="true" Enabled="@(EditMode == OpcoesRegisto.Inserir)"
+                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                            Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeProperty"></DropDownListEvents>
@@ -91,9 +91,9 @@ else
                         </div>
                         <div class="form-group mt-2">
                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Value="@idxUnit" ShowClearButton="true" Enabled="@ShowUnitsCombo"
-                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
+                                            Value="@idxUnit" ShowClearButton="true" Enabled="@ShowUnitsCombo"
+                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                            Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnit"></DropDownListEvents>
@@ -102,9 +102,9 @@ else
                         </div>
                         <div class="form-group mt-2">
                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Value="@idxTenant" ShowClearButton="true" Enabled="@ShowTenantsCombo"
-                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="@L["TituloInquilino"]" DataSource="@InquilinosLookup" FloatLabelType="FloatLabelType.Always">
+                                            Value="@idxTenant" ShowClearButton="true" Enabled="@ShowTenantsCombo"
+                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                            Placeholder="@L["TituloInquilino"]" DataSource="@InquilinosLookup" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTenant"></DropDownListEvents>
@@ -119,7 +119,8 @@ else
                     else
                     {
                         <div class="form-group mt-2">
-                            <SfTextBox Value="@nomePropriedade" FloatLabelType="FloatLabelType.Auto" Readonly="true" Placeholder="@L["TituloPropriedade"]"></SfTextBox>
+                            <SfTextBox Value="@nomePropriedade" FloatLabelType="FloatLabelType.Auto"
+                                       Readonly="true" Placeholder="@L["TituloPropriedade"]"></SfTextBox>
                         </div>
                         <div class="form-group mt-2">
                             <SfTextBox Value="@nomeFracao" FloatLabelType="FloatLabelType.Auto" Readonly="true" Placeholder="@L["TituloFracao"]"></SfTextBox>
@@ -134,42 +135,42 @@ else
                     }
                     <div class="group-box">
                         <SfNumericTextBox Enabled="false" ShowSpinButton="false"
-                                      Placeholder="@L["TituloDuracao"]" style="text-align-last:end; margin-right:10px;"
-                                      CssClass="e-field  e-corner"
-                                      FloatLabelType="@FloatLabelType.Always"
-                                      @bind-Value="@SelectedLease!.Prazo_Meses">
+                                          Placeholder="@L["TituloDuracao"]" style="text-align-last:end; margin-right:10px;"
+                                          CssClass="e-field  e-corner"
+                                          FloatLabelType="@FloatLabelType.Always"
+                                          @bind-Value="@SelectedLease!.Prazo_Meses">
                         </SfNumericTextBox>
                         <SfNumericTextBox Enabled="false" ShowSpinButton="false"
-                                      Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
-                                      CssClass="e-field  e-corner"
-                                      FloatLabelType="@FloatLabelType.Always"
-                                      @bind-Value="@SelectedLease!.Valor_Renda">
+                                          Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
+                                          CssClass="e-field  e-corner"
+                                          FloatLabelType="@FloatLabelType.Always"
+                                          @bind-Value="@SelectedLease!.Valor_Renda">
                         </SfNumericTextBox>
                     </div>
                 </div>
                 <div class="col-md-6 col-sm-12">
                     <div class="group-ckeckbox">
                         <SfCheckBox Label="@L["TituloContratoNovo"]" Disabled=true
-                                TChecked="bool" @bind-Checked=@SelectedLease!.ArrendamentoNovo
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    TChecked="bool" @bind-Checked=@SelectedLease!.ArrendamentoNovo
+                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         <SfCheckBox Label="@L["TituloRenovacao"]" TChecked="bool" Disabled="@(EditMode == OpcoesRegisto.Gravar)"
-                                @bind-Checked=@SelectedLease!.RenovacaoAutomatica
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    @bind-Checked=@SelectedLease!.RenovacaoAutomatica
+                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         <SfCheckBox @ref="chbIRS" Disabled="@(InibeComprovativoIRS || (EditMode == OpcoesRegisto.Gravar))"
-                                Label="@L["TituloComprovativoIRS"]" TChecked="bool" @bind-Checked=@SelectedLease!.Doc_IRS
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    Label="@L["TituloComprovativoIRS"]" TChecked="bool" @bind-Checked=@SelectedLease!.Doc_IRS
+                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         <SfCheckBox @ref="chbVencimento" Disabled="@(InibeVencimento || (EditMode == OpcoesRegisto.Gravar))"
-                                Label="@L["TituloReciboVencimento"]" TChecked="bool" @bind-Checked=@SelectedLease!.Doc_Vencimento
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    Label="@L["TituloReciboVencimento"]" TChecked="bool" @bind-Checked=@SelectedLease!.Doc_Vencimento
+                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                         <SfCheckBox @ref="chbEntregaCaucao" Disabled="@(InibeCaucao || (EditMode == OpcoesRegisto.Gravar))"
-                                Label="@L["TituloEntregaCaucao"]" TChecked="bool" @bind-Checked=@SelectedLease!.Caucao
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
+                                    Label="@L["TituloEntregaCaucao"]" TChecked="bool" @bind-Checked=@SelectedLease!.Caucao
+                                    LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                     </div>
                     <div class="form-group mt-2">
                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Width="200px" Value="@idxPaymentType" ShowClearButton="true"
-                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="@L["TituloTipoPagamento"]" DataSource="@PaymentTypes" FloatLabelType="FloatLabelType.Always">
+                                        Width="200px" Value="@idxPaymentType" ShowClearButton="true"
+                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                        Placeholder="@L["TituloTipoPagamento"]" DataSource="@PaymentTypes" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="LookupTableVM">
                             </DropDownListTemplates>
                             <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangePaymentType"></DropDownListEvents>
@@ -181,9 +182,9 @@ else
                     {
                         <div class="form-group mt-2">
                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    ShowClearButton="true"
-                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="Lei vigente" DataSource="@ApplicableLaws" FloatLabelType="FloatLabelType.Always">
+                                            ShowClearButton="true"
+                                            FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                            Placeholder="Lei vigente" DataSource="@ApplicableLaws" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeApplicableLaw"></DropDownListEvents>
@@ -203,62 +204,62 @@ else
 
                     <div class="form-group mt-2">
                         <SfTextBox Multiline=true Placeholder="@L["lblSinopse"]"
-                               HtmlAttributes="NotesAttribute"
-                               CssClass="e-field e-corner"
-                               FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@SelectedLease.Notas">
+                                   HtmlAttributes="NotesAttribute"
+                                   CssClass="e-field e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@SelectedLease.Notas">
                         </SfTextBox>
                     </div>
                     @if (EditMode == OpcoesRegisto.Gravar)
                     {
                         <div class="form-group mt-4">
                             <SfMessage CssClass="e-ouline" Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="true">@SelectedLease.LeiVigente</SfMessage>
-                        </div>
+                            </div>
                     }
 
                     <div class="mt-1" hidden="@(SelectedLease.EnvioCartaAtrasoRenda == false)">
                         <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Carta de atraso de renda enviada em @SelectedLease.DataEnvioCartaAtraso.ToShortDateString()</SfMessage>
-                        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaAtrasoRenda == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaAtrasoRenda.ToShortDateString()</SfMessage>
-                    </div>
-                    <div class="mt-1" hidden="@(SelectedLease.EnvioCartaRevogacao == false)">
-                        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Carta de revogação enviada em @SelectedLease.DataEnvioCartaRevogacao.ToShortDateString()</SfMessage>
-                        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaRevogacao == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaRevogacao.ToShortDateString()</SfMessage>
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaAtrasoRenda == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaAtrasoRenda.ToShortDateString()</SfMessage>
+                        </div>
+                        <div class="mt-1" hidden="@(SelectedLease.EnvioCartaRevogacao == false)">
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Carta de revogação enviada em @SelectedLease.DataEnvioCartaRevogacao.ToShortDateString()</SfMessage>
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaRevogacao == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaRevogacao.ToShortDateString()</SfMessage>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="group-box">
-                    <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
-                           Readonly="true"
-                           Width="15%"
-                           CssClass="e-field e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@SaldoCorrente">
-                    </SfTextBox>
-                    <SfTextBox Placeholder="@L["TituloFimContrato"]"
-                           Readonly="true"
-                           Width="15%"
-                           CssClass="e-field e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           Value="@SelectedLease.Data_Fim.ToShortDateString()">
-                    </SfTextBox>
+                <div class="row">
+                    <div class="group-box">
+                        <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
+                                   Readonly="true"
+                                   Width="15%"
+                                   CssClass="e-field e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@SaldoCorrente">
+                        </SfTextBox>
+                        <SfTextBox Placeholder="@L["TituloFimContrato"]"
+                                   Readonly="true"
+                                   Width="15%"
+                                   CssClass="e-field e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   Value="@SelectedLease.Data_Fim.ToShortDateString()">
+                        </SfTextBox>
 
-                </div>
+                    </div>
 
-                @*existentes*@
-                @if (SelectedLease.ArrendamentoNovo == false && EditMode == OpcoesRegisto.Inserir)
+                    @*existentes*@
+                    @if (SelectedLease.ArrendamentoNovo == false && EditMode == OpcoesRegisto.Inserir)
                 {
                     <div class="row col-6 mb-1">
                         <hr style="color:black" />
                         <div class="col-md-6 mt-4">
                             <SfCheckBox Label="@L["TituloPagamentosEmDia"]" TChecked="bool" @bind-Checked=@blnPagamentosEmDia
-                                LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before" ValueChange="OnPagamentosEmDia" />
+                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before" ValueChange="OnPagamentosEmDia" />
                         </div>
                         <div hidden="@blnPagamentosEmDia" class="col-md-6">
                             <SfNumericTextBox @ref="@TxtSaldoInicial" Placeholder="@L["TituloEmFalta"]" Readonly="@(!ShowSaldoInicial)"
-                                      CssClass="e-field e-corner custom-class-right" ShowClearButton="false" ShowSpinButton="false"
-                                      FloatLabelType="FloatLabelType.Always" @bind-Value="@SelectedLease.SaldoInicial" />
+                                              CssClass="e-field e-corner custom-class-right" ShowClearButton="false" ShowSpinButton="false"
+                                              FloatLabelType="FloatLabelType.Always" @bind-Value="@SelectedLease.SaldoInicial" />
                         </div>
                     </div>
 

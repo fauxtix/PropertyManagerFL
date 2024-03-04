@@ -26,7 +26,7 @@ public class AppSettingsController : ControllerBase
     }
 
     /// <summary>
-    /// Altera settings do e-mail
+    /// Lê settings do e-mail (outlook)
     /// </summary>
     /// <returns></returns>
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -59,7 +59,7 @@ public class AppSettingsController : ControllerBase
     }
 
     /// <summary>
-    /// Altera settings do e-mail
+    /// Altera settings do e-mail (outlook)
     /// </summary>
     /// <returns></returns>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -87,6 +87,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -109,7 +110,7 @@ public class AppSettingsController : ControllerBase
             if (settings == null)
             {
                 string msg = "As definições passadas são incorretas.";
-                _logger.LogWarning("As definições passadas são incorretas.");
+                _logger?.LogWarning("As definições passadas são incorretas.");
                 return BadRequest(msg);
             }
 
@@ -121,6 +122,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
+            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -154,9 +156,9 @@ public class AppSettingsController : ControllerBase
 
             return Ok($"{location} - Tabelas inicializadas com sucesso");
         }
-        // C:\NewProjects\PropertyManagerFL\PropertyManagerFL.Api\Reports\Docs\AtualizacaoRendas
         catch (Exception e)
         {
+            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -180,7 +182,7 @@ public class AppSettingsController : ControllerBase
 
     private ObjectResult InternalError(string message)
     {
-        _logger.LogError(message);
+        _logger?.LogError(message);
         return StatusCode(500, "Algo de errado ocorreu. Contacte o Administrador");
     }
 

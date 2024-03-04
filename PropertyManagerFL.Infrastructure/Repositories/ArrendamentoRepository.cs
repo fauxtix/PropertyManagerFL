@@ -1087,22 +1087,70 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public async Task ExtendLeaseTerm(int Id)
         {
-            try
+
+            if (Id > 0)
+            {
+                try
+                {
+                    using (var connection = _context.CreateConnection())
+                    {
+                        var output = await connection.ExecuteAsync("usp_Arrendamentos_ExtendLeaseTerm",
+                         new { Id },
+                         commandType: CommandType.StoredProcedure);
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                }
+            }
+            else
             {
                 using (var connection = _context.CreateConnection())
                 {
-                    var output = await connection.ExecuteAsync("usp_Arrendamentos_ExtendLeaseTerm",
-                      new { Id },
-                      commandType: CommandType.StoredProcedure);
-                    return;
-                }
+                    connection.Open();
+                    using (var tran = connection.BeginTransaction())
+                    {
+                        try
+                        {
 
+                            var leases = await connection
+                            .QueryAsync<ArrendamentoVM>("usp_Arrendamentos_GetAll",
+                            commandType: CommandType.StoredProcedure, transaction: tran);
+                            if (leases is null)
+                                return;
+
+                            foreach (var lease in leases)
+                            {
+                                if (lease.Ativo)
+                                {
+                                    var leaseEndDate = lease.Data_Fim;
+                                    if (leaseEndDate.Month == DateTime.Now.Month - 1)
+                                    {
+                                        var leaseTerm = lease.Prazo;
+                                        var leaseId = lease.Id;
+                                        var output = await connection.ExecuteAsync("usp_Arrendamentos_ExtendLeaseTerm",
+                                             new { Id = leaseId },
+                                              commandType: CommandType.StoredProcedure, transaction: tran);
+                                    }
+                                }
+                            }
+                            tran.Commit();
+                        }
+
+                        catch (Exception ex)
+                        {
+                            tran.Rollback();
+                            _logger.LogError(ex.Message);
+                        }
+
+                    }
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-            }
+            return;
         }
+
 
         public async Task<IEnumerable<LookupTableVM>> GetApplicableLaws()
         {

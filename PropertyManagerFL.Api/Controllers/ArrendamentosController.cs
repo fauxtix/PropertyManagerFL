@@ -1099,15 +1099,19 @@ namespace PropertyManagerFL.Api.Controllers
             var location = GetControllerActionNames();
             try
             {
-                if (Id < 1) return NotFound();
+                if (Id < 0) return NotFound();
 
-                var lease = await _repoArrendamentos.GetArrendamento_ById(Id);
-                if (lease is null)
+                if (Id > 0)
                 {
-                    return NotFound();
+                    var result = await _repoArrendamentos.GetArrendamento_ById(Id);
+                    if (result is null)
+                    {
+                        return NotFound();
+                    }
                 }
 
                 await _repoArrendamentos.ExtendLeaseTerm(Id);
+
                 return Ok();
             }
             catch (Exception e)

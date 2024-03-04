@@ -32,21 +32,12 @@
     },
     new ItemModel()
     {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-success e-round-corner",
-        Text = "Carta de atraso no pagamento de renda",
-        Id = "DueRentLetter",
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-outline e-round-corner",
+        Text = "Cartas de aumento de renda",
+        Id = "RisingRentsIncreaseLetter",
         ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
         ShowAlwaysInPopup = true,
         Visible = ShowToolbarDueRentLetter
-    },
-    new ItemModel()
-    {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-warning e-round-corner",
-        Text = L["TituloCartaRevogacao"],
-        Id = "ContractOpposition",
-        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
-        ShowAlwaysInPopup = true,
-        Visible = ShowToolbaContractRevocationLetter,
     },
     new ItemModel()
     {
@@ -350,7 +341,7 @@ else
                    Visible="@LeaseTermVisibility"
                     AlertMessageNote ="@LeaseTermCaptionNote"
                    AlertMessage="@LeaseTermCaption"
-                   OnConfirmationYes="@(async ()=>await ExtendLeaseTerm(SelectedLease.Id))"
+                   OnConfirmationYes="@(()=>ExtendLeaseTerm(SelectedLease!.Id))"
                    OnConfirmationNo="@(()=>LeaseTermVisibility = false)" />
 
 <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"

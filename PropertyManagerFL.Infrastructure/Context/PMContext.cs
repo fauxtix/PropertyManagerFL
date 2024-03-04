@@ -7,7 +7,7 @@ public class PMContext : DbContext
 {
     public DbSet<Arrendamento>? Arrendamentos { get; set; }
     public DbSet<CategoriaDespesa>? CategoriasDespesas { get; set; }
-    public DbSet<Contact>? Contactos  { get; set; }
+    public DbSet<Contact>? Contactos { get; set; }
     public DbSet<Contrato>? Contratos { get; set; }
     public DbSet<DadosOutorgante>? Outorgantes { get; set; }
     public DbSet<Despesa>? Despesas { get; set; }

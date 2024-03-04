@@ -2,10 +2,8 @@
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
-using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Core.Entities;
 using System.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace PropertyManagerFL.Infrastructure.Repositories;
 public class AppSettingsRepository : IAppSettingsRepository
@@ -21,11 +19,20 @@ public class AppSettingsRepository : IAppSettingsRepository
 
     public async Task<ApplicationSettings> GetSettingsAsync()
     {
-        using (var connection = _context.CreateConnection())
+        try
         {
-            string sql = "SELECT TOP 1 * FROM ApplicationSettings";
-            var result = (await connection.QueryFirstOrDefaultAsync<ApplicationSettings>(sql));
-            return result;
+            using (var connection = _context.CreateConnection())
+            {
+                string sql = "SELECT TOP 1 * FROM ApplicationSettings";
+                var result = (await connection.QueryFirstOrDefaultAsync<ApplicationSettings>(sql));
+                return result;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.Message, ex);
+            return new ApplicationSettings();
         }
     }
 
@@ -56,13 +63,20 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@PaperCutPort", settings?.PaperCutPort);
         parameters.Add("@EnableSsl", settings?.EnableSSL);
 
-        using (var connection = _context.CreateConnection())
+        try
         {
-            string sp_Name = "usp_AppSettings_Update";
-            var result = (await connection.ExecuteAsync(sp_Name, param: parameters, commandType: CommandType.StoredProcedure));
-            return;
-        }
+            using (var connection = _context.CreateConnection())
+            {
+                string sp_Name = "usp_AppSettings_Update";
+                var result = (await connection.ExecuteAsync(sp_Name, param: parameters, commandType: CommandType.StoredProcedure));
+                return;
+            }
 
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.Message, ex);
+        }
     }
 
     public async Task UpdateOtherSettingsAsync(ApplicationSettings settings)
@@ -73,6 +87,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@PrazoContratoEmAnos", settings.PrazoContratoEmAnos);
         parameters.Add("@PrazoEnvioCartaAtraso", settings?.PrazoEnvioCartaAtraso);
         parameters.Add("@PrazoEnvioCartaAumento", settings?.PrazoEnvioCartaAumento);
+        parameters.Add("@CartasAumentoAutomaticas", settings?.CartasAumentoAutomaticas);
         parameters.Add("@PrazoEnvioCartaRevogacao", settings?.PrazoEnvioCartaRevogacao);
         parameters.Add("@PrazoRespostaCartaAtraso", settings?.PrazoRespostaCartaAtraso);
         parameters.Add("@PrazoRespostaCartaAumento", settings?.PrazoRespostaCartaAumento);
@@ -92,13 +107,20 @@ public class AppSettingsRepository : IAppSettingsRepository
         parameters.Add("@DefaultLanguage", settings?.DefaultLanguage);
         parameters.Add("@ApiKey", settings?.ApiKey);
 
-        using (var connection = _context.CreateConnection())
+        try
         {
-            string sp_Name = "usp_AppOtherSettings_Update";
-            var result = (await connection.ExecuteAsync(sp_Name, param: parameters, commandType: CommandType.StoredProcedure));
-            return;
-        }
+            using (var connection = _context.CreateConnection())
+            {
+                string sp_Name = "usp_AppOtherSettings_Update";
+                var result = (await connection.ExecuteAsync(sp_Name, param: parameters, commandType: CommandType.StoredProcedure));
+                return;
+            }
 
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.Message, ex);
+        }
     }
 
     public async Task InitializeRentProcessingTables()
@@ -111,15 +133,11 @@ public class AppSettingsRepository : IAppSettingsRepository
                 var result = (await connection.ExecuteAsync(sp_Name, commandType: CommandType.StoredProcedure));
                 sp_Name = "usp_Development_initializeRentPaymentTables";
                 result = (await connection.ExecuteAsync(sp_Name, commandType: CommandType.StoredProcedure));
-
-                // Apaga documentos gerados (cartas)
-
-
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger?.LogError(ex.Message, ex);
         }
     }
 

@@ -1097,11 +1097,21 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     var tenantName = await _svcInquilinos.GetNomeInquilino(Id);
                     if (success)
                     {
-                        _logger.LogInformation($"Estendido prazo do contrato para o Inquilino {tenantName}");
+                        string message = string.Empty;
+                        if (Id == 0)
+                        {
+                            message = $"Estendido prazos dos contratos para todos os inquilinos";
+                        }
+                        else
+                        {
+                            message = $"Estendido prazo do contrato para o Inquilino {tenantName}";
+                        }
+
+                        _logger.LogInformation(message);
                     }
                     else
                     {
-                        _logger.LogError($"Erro ao atualizar prazo do contrato (Inquilino: {tenantName})");
+                        _logger.LogError("Erro ao atualizar prazos dos contratos");
                     }
                     return success;
                 }

@@ -162,12 +162,17 @@ else
                                                Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-2</SfMessage>
                                     <div class="row">
                                         <div class="col-md-9 my-2">
+
+                                            <div class="mt-2">Cartas de aumento automáticas</div>
                                             <div class="mt-2">Renovação automática do contrato</div>
                                             <div class="mt-2">Comprovativo IRS</div>
                                             <div class="mt-2">Comprovativo recibo vencimento</div>
                                             <div class="mt-2">Caução requerida</div>
                                         </div>
                                         <div class="col-md-3 my-2">
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CartasAumentoAutomaticas" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
                                             <div>
                                                 <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.RenovacaoAutomatica" OnLabel="On" OffLabel="Off"></SfSwitch>
                                             </div>

@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Core.Entities;
-using PropertyManagerFL.UI.Pages.Notifications;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -26,6 +28,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     [Inject] public IRecebimentoService? recebimentosService { get; set; }
     [Inject] protected IValidationService? validatorService { get; set; }
     [Inject] protected IStringLocalizer<App>? L { get; set; }
+    [Inject] protected IAppSettingsService? appSettingsService { get; set; }
 
     protected IEnumerable<ArrendamentoVM>? leases { get; set; }
     protected IEnumerable<ArrendamentoVM>? activeLeases { get; set; }
@@ -80,6 +83,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     protected DocumentoEmitido SendingLetterType { get; set; }
     protected bool SendLetterDialogVisibility { get; set; } = false;
 
+    protected bool contractAutomaticRenewals;
     protected string? PdfFilePath { get; set; }
     protected bool TableHasData { get; set; }
     protected string? ToastTitle;
@@ -90,6 +94,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     protected bool SpinnerVisibility { get; set; } = false;
     protected Dictionary<string, int> LeaseAlerts = new Dictionary<string, int>();
     private List<string> messages = new List<string>();
+
+    protected ArrendamentoVM? Lease { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -118,6 +124,10 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
         // Verificar se há alertas para mostrar
         await CheckForAlerts();
+
+        var settings = await GetSettings();
+        ShowToolbarDueRentLetter = settings.CartasAumentoAutomaticas;
+        ShowToolbaContractLeaseTerm = settings.RenovacaoAutomatica;
     }
 
     private async Task CheckForAlerts()
@@ -333,21 +343,16 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 SendingLetterType = DocumentoEmitido.RendasEmAtraso;
                 SendLetterDialogVisibility = true;
                 break;
-            case "ContractOpposition": // carta de oposição à renovação do contrato
-                SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
-                SendLetterDialogVisibility = true;
-                break;
             case "ContractLeaseTerm": // Estender prazo do contrato
                 LeaseTermCaption = "Confirma operação?";
                 alertMessageType = AlertMessageType.Info;
-                var monthsToEnd = GetMonthDifference(DateTime.Now, SelectedLease.Data_Fim);
-                if (monthsToEnd > 0 && monthsToEnd != 1)
-                {
-                    LeaseTermCaptionNote = $"Contrato só termina dentro de {monthsToEnd} meses!";
-                    alertMessageType = AlertMessageType.Warning;
-                    StateHasChanged();
-                }
                 LeaseTermVisibility = true;
+                break;
+            case "RisingRentsIncreaseLetter": // aumentos de renda
+                LeaseTermCaption = "Confirma operação?";
+                alertMessageType = AlertMessageType.Info;
+                SendingLetterType = DocumentoEmitido.AtualizacaoRendas;
+                SendLetterDialogVisibility = true;
                 break;
             case "ViewLeaseContract": // Visualizar Pdf do contrato de arrendamento
                 await ViewLeaseContract();
@@ -526,15 +531,26 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     protected async Task ExtendLeaseTerm(int Id)
     {
-        var resultOk = await arrendamentosService!.ExtendLeaseTerm(Id);
+        contractAutomaticRenewals = (await GetSettings()).RenovacaoAutomatica;
+        if (!contractAutomaticRenewals)
+        {
+            ShowToolbaContractLeaseTerm = false;
+            ToastTitle = "Atualização do termo do contrato";
+            ToastMessage = "Não aplicável. Ver 'Settings'";
+            ToastCss = "e-toast-warning";
+            await InvokeAsync(StateHasChanged);
+            return;
+        }
+
+        var resultOk = await arrendamentosService!.ExtendLeaseTerm(Id); // todos os contratos, onde aplicável
         if (resultOk)
         {
-            LeaseTermVisibility = false;
+            ShowToolbaContractLeaseTerm = false;
             ToastTitle = "Atualização do termo do contrato";
             ToastMessage = L["RegistoGravadoSucesso"];
             ToastCss = "e-toast-success";
             await InvokeAsync(StateHasChanged);
-            await leasesGridObj.Refresh();
+            await leasesGridObj!.Refresh();
             leases = await GetAllLeases();
         }
         else
@@ -1054,7 +1070,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         LeaseId = args.Data.Id;
         SelectedLease = await arrendamentosService!.GetArrendamento_ById(LeaseId);
 
-        ShowToolbar_LetterOptions();
+        await ShowToolbar_LetterOptions();
 
     }
 
@@ -1102,9 +1118,12 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             case DocumentoEmitido.ContratoArrendamento:
                 break;
             case DocumentoEmitido.AtualizacaoRendas:
+                await SendIncreaseRentsLetter();
                 break;
             case DocumentoEmitido.OposicaoRenovacaoContrato:
-                await IssueContractOppositionLetter();
+                AlertVisibility = true;
+
+                // await IssueContractOppositionLetter();
                 break;
             //case DocumentoEmitido.RendasEmAtraso:
             //    await IssueLateRentLetter();
@@ -1140,6 +1159,107 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         return Math.Abs(monthsApart);
     }
 
+    protected async Task<ApplicationSettingsVM> GetSettings()
+    {
+        return await appSettingsService!.GetSettingsAsync();
+    }
+
+    protected async Task SendIncreaseRentsLetter()
+    {
+        ToastTitle = "Cartas de atualização de rendas";
+        alertTitle = ToastTitle;
+
+        try
+        {
+            // TODO - antes de iniciar procedimento abaixo, verificar se os aumentos já foram feitos para os inquilinos
+
+            foreach (var leaseRecord in leases!)
+            {
+                var _tenantId = leaseRecord.ID_Inquilino;
+
+                var leaseId = leaseRecord.Id;
+                var tenantRentUpdates = await inquilinosService!.GetRentUpdates_ByTenantId(_tenantId);
+                if (tenantRentUpdates.Any())
+                {
+                    _logger?.LogWarning($"Já foi feito aumento manual de renda para o Inquilino {_tenantId}");
+                    continue;
+                }
+                var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
+                if (currentYearUpdateValues is not null)
+                {
+                    AlertVisibility = true;
+                    WarningMessage = "Já foi feito aumento de renda para o ano corrente";
+                    return;
+                }
+
+                InquilinoVM DadosInquilino = await inquilinosService.GetInquilino_ById(_tenantId);
+                var currentYearAsString = DateTime.Now.Year.ToString();
+                var ValorRenda = currentYearUpdateValues!.PriorValue;
+                var NovoValorRenda = currentYearUpdateValues.UpdatedValue;
+                var rentUpdateCoefficientData = (await arrendamentosService!.GetRentUpdatingCoefficients()).ToList();
+                var currentYearRentUpdateCoefficientData = rentUpdateCoefficientData.FirstOrDefault(c => c.Ano == DateTime.Now.Year.ToString());
+
+                var rentUpdateData = await inquilinosService!.GetDadosCartaAtualizacaoInquilino(Lease, currentYearRentUpdateCoefficientData!);
+                if (rentUpdateData is not null)
+                {
+                    rentUpdateData.ValorRenda = ValorRenda;
+                    rentUpdateData.NomeInquilino = DadosInquilino.Nome;
+                    rentUpdateData.Naturalidade = DadosInquilino.Naturalidade;
+                    rentUpdateData.NovoValorRenda = NovoValorRenda;
+
+                    var docGerado = await inquilinosService.EmiteCartaAtualizacaoInquilino(rentUpdateData);
+                    if (string.IsNullOrEmpty(docGerado))
+                    {
+                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastCss = "e-toast-danger";
+                    }
+                    else
+                    {
+                        var documentoARegistar = docGerado.Replace(".docx", ".pdf");
+                        try
+                        {
+                            var creationOk = await inquilinosService.CriaCartaAtualizacaoInquilinoDocumentosInquilino(_tenantId, documentoARegistar);
+                            if (creationOk)
+                            {
+                                ToastMessage = L["TituloOperacaoOk"];
+                                ToastCss = "e-toast-success";
+                            }
+                            else
+                            {
+                                ToastMessage = L["TituloOperacaoComErro"];
+                                ToastCss = "e-toast-danger";
+                            }
+                        }
+
+                        catch (Exception ex)
+                        {
+                            _logger?.LogError($"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.");
+                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                            ToastCss = "e-toast-danger";
+                        }
+                    }
+                }
+
+                else
+                {
+                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    ToastCss = "e-toast-danger";
+                }
+
+                SendLetterDialogVisibility = false;
+
+                await ShowToastMessage();
+
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex.Message, ex.ToString());
+            throw;
+        }
+    }
+
+
     private DateTime FirstDayOfNextMonth(DateTime dt)
     {
         DateTime ss = new DateTime(dt.Year, dt.Month, 1);
@@ -1154,17 +1274,21 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     private void HideToolbar_LetterOptions()
     {
-        ShowToolbarDueRentLetter = false;
-        ShowToolbaContractRevocationLetter = false;
-        ShowToolbaContractLeaseTerm = false;
+        //        ShowToolbarDueRentLetter = false;
         ShowToolbarViewContract = false;
     }
-    private void ShowToolbar_LetterOptions()
+    private async Task ShowToolbar_LetterOptions()
     {
-        ShowToolbarDueRentLetter = true;
-        ShowToolbaContractRevocationLetter = true;
-        ShowToolbaContractLeaseTerm = true;
-        if (SelectedLease.ContratoEmitido)
+        //        ShowToolbarDueRentLetter = true;
+
+        contractAutomaticRenewals = (await GetSettings()).RenovacaoAutomatica;
+        if (contractAutomaticRenewals)
+        {
+            ShowToolbaContractLeaseTerm = true;
+            //            LeaseTermVisibility = settings.RenovacaoAutomatica;
+        }
+
+        if (SelectedLease!.ContratoEmitido)
             ShowToolbarViewContract = true;
     }
 
