@@ -2,7 +2,7 @@
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Hosting
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
-@using Syncfusion.Blazor.PdfViewer
+@using Syncfusion.Blazor.SfPdfViewer;
 
 @inject IStringLocalizer<App> L
 
@@ -11,13 +11,12 @@
 <SfSpinner @ref="SpinnerObj"
            @bind-Visible="@VisibleProperty"
            Label="@L["MSG_PreparandoDados"]" Size="50"
-           Type="SpinnerType.Material" />
-
+           Type="SpinnerType.Bootstrap5" />
 
 <div class="container-fluid">
     <hr />
     <div>
-        <SfPdfViewerServer @ref="@Viewer"
+        <SfPdfViewer2 
                            Width="100%"
                            Height="800px"
                            DocumentPath="@PdfPath"
@@ -25,8 +24,8 @@
                            EnableThumbnailPanel = "false"
                            ZoomValue="100"
                            EnableDownload="true">
-            <PdfViewerEvents DocumentLoaded="@OnDocumentLoaded" Created="OnCreate"></PdfViewerEvents>
-        </SfPdfViewerServer>
+            @* <PdfViewerEvents DocumentLoaded="@OnDocumentLoaded" Created="OnCreate"></PdfViewerEvents> *@
+        </SfPdfViewer2>
 
     </div>
 </div>
@@ -34,23 +33,31 @@
 @code {
     [Parameter] public string? PdfPath { get; set; }
 
-    private SfPdfViewerServer? Viewer { get; set; }
+    // private SfPdfViewerServer? Viewer { get; set; }
     private SfSpinner? SpinnerObj { get; set; }
     private bool VisibleProperty;
 
-    protected override async Task OnParametersSetAsync()
-    {
-        await Task.Delay(3000);
-        await Viewer!.LoadAsync(PdfPath, null);
-    }
-    private void OnDocumentLoaded(LoadEventArgs args)
-    {
-        VisibleProperty = false;
-    }
-    private void OnCreate()
-    {
-        VisibleProperty = true;
-    }
+    // protected override async Task OnParametersSetAsync()
+    // {
+
+    //     try
+    //     {
+    //         await Task.Delay(200);
+    //         await Viewer!.LoadAsync(PdfPath, null);
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         throw;
+    //     }
+    // }
+    // private void OnDocumentLoaded(LoadEventArgs args)
+    // {
+    //     VisibleProperty = false;
+    // }
+    // private void OnCreate()
+    // {
+    //     VisibleProperty = true;
+    // }
 }
 
 <style type="text/css" scoped>

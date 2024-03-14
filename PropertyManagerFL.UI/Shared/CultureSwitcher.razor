@@ -2,7 +2,10 @@
 @inject IStringLocalizer<App> Loc
 @*@inject Blazored.LocalStorage.ILocalStorageService localStorage;*@
 
+@using PropertyManagerFL.Application.Interfaces.Services.Common
+@using PropertyManagerFL.Application.ViewModels.AppSettings
 @using Syncfusion.Blazor.DropDowns
+@using System.Globalization
 
 
 <div class="navbar-nav ml-auto my-2 my-lg-0 mr-2">
@@ -29,11 +32,15 @@
 
 
 @code {
-    //private string storedCulture;
-    private string culture;
-    private string selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+    [Inject] public IAppSettingsService? appSettingsService { get; set; }
 
-    private string portugues;
+    private string? storedCulture;
+    private string ?culture;
+    private string? selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+
+    private string? portugues;
+    private ApplicationSettingsVM? appSettings;
+
     //protected async override Task OnAfterRenderAsync(bool firstRender)
     //{
     //    if(firstRender)
@@ -50,11 +57,20 @@
     //    }
     //}
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+
         portugues = Loc["TituloIdiomaPortugues"]; // TODO set languages
+
+        appSettings = await GetSettings();
+        selectedCulture = appSettings.DefaultLanguage;
+        var culture = new CultureInfo(selectedCulture);
+        CultureInfo.DefaultThreadCurrentCulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
+        
+
     }
-    private void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
+    private async void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
     {
         if (e.Value == null)
             return;
@@ -68,9 +84,15 @@
         var query = $"?culture={Uri.EscapeDataString(culture)}&" +
             $"redirectUri={Uri.EscapeDataString(uri)}";
 
+        await appSettingsService!.UpdateLanguageAsync(selectedCulture); // 11/03/2024
+
         NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
     }
 
+    private async Task<ApplicationSettingsVM> GetSettings()
+    {
+        return await appSettingsService!.GetSettingsAsync();
+    }
 
 
     public List<CountryModel> CountryData = new List<CountryModel>

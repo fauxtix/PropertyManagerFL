@@ -5,7 +5,7 @@ using PropertyManagerFL.Application.ViewModels.Inquilinos;
 
 namespace PropertyManagerFL.Application.Validator
 {
-    public class InquilinoValidator : AbstractValidator<InquilinoVM>
+    public class InquilinoValidator : AbstractValidator<InquilinoVMEx>
     {
         public InquilinoValidator()
         {
@@ -40,11 +40,14 @@ namespace PropertyManagerFL.Application.Validator
             RuleFor(p => p.IRSAnual)
                 .NotNull()
                 .NotEmpty().WithMessage("Preencha Valor do IRS anual, p.f.")
-                .GreaterThan(15000).WithMessage("Valor do IRS anual deverá ser superior a 15.000€");
+                .GreaterThan(15000).WithMessage("Valor do IRS anual deverá ser superior a 15.000€")
+                 .When(p => p.Settings.ComprovativoIRS);
+           
             RuleFor(p => p.Vencimento)
                 .NotNull()
                 .NotEmpty().WithMessage("Preencha Valor do vencimento mensal, p.f.")
-                .GreaterThan(750).WithMessage("Valor do vencimento mensal deverá ser superior a 750€");
+                .GreaterThan(750).WithMessage("Valor do vencimento mensal deverá ser superior a 750€")
+                .When(p => p.Settings.ComprovativoReciboVencimento);
 
             RuleFor(p => p.DataNascimento)
                 .Must(BeAValidDate).WithMessage("Data de Nascimento inválida.")

@@ -2503,4 +2503,10 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloCodigoPostal" xml:space="preserve">
     <value>Código postal</value>
   </data>
+  <data name="TituloEmiteContrato" xml:space="preserve">
+    <value>Créer un document de contrat?</value>
+  </data>
+  <data name="TituloVisualizarContrato" xml:space="preserve">
+    <value>Ver contrato de alquiler</value>
+  </data>
 </root>

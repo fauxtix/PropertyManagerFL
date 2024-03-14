@@ -88,7 +88,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (TipoDespesa/GetAll)");
                 return Enumerable.Empty<TipoDespesaVM>();
             }
         }
@@ -117,8 +117,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (TipoDespesa/Get_ById)");
+                return new();
             }
         }
 

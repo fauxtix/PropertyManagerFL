@@ -54,21 +54,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<string> EmiteContrato(Contrato? contrato)
         {
-
-            // TODO falta acrescentar restantes campos do contrato - Modelo 1
-
-            //string[] aCampos = new string[] {
-            //    "NomeOutorgante_1", "NomeOutorgante_2", "NomeOutorgante_3",
-            //    "DtNasc_O_1", "DtNasc_O_2", "DtNasc_O_3",
-            //    "MoradaOutorgante_1", "MoradaOutorgante_2", "MoradaOutorgante_3",
-            //    "NaturalidadeOutorgante_1", "NaturalidadeOutorgante_2", "NaturalidadeOutorgante_3",
-            //    "EC_Outorgante_1", "EC_Outorgante_2", "EC_Outorgante_3",
-            //    "CC_Outorgante_1", "CC_Outorgante_2", "CC_Outorgante_3",
-            //    "ValidadeCC_Outorgante_1", "ValidadeCC_Outorgante_2", "ValidadeCC_Outorgante_3",
-            //    "NIF_Outorgante_1", "NIF_Outorgante_2", "NIF_Outorgante_3"
-            //};
-
-            // Modelo 2
             string[] aCampos = new string[] {
                 "NomeOutorgante_1", "NomeOutorgante_2", "NomeOutorgante_3",
                 "DtNasc_O_1", "DtNasc_O_2", "DtNasc_O_3",
@@ -118,27 +103,33 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 contrato.Proprietario.NIF,
                 contrato.Inquilino.NIF,
                 contrato.Fiador.NIF,
+
                 contrato.LetraFracao,
                 contrato.Andar,
                 contrato.Lado,
+
                 contrato.MoradaImovel + ", " + contrato.Numero,
                 contrato.FreguesiaFracao,
                 contrato.ConcelhoFracao,
+
                 contrato.Artigo,
                 contrato.LicencaHabitacao,
                 contrato.DataEmissaoLicencaHabitacao.ToShortDateString(),
-                contrato.Quartos,"36",
+                contrato.Quartos,
+                "36",
+
                 contrato.Inicio.ToShortDateString(),
                 contrato.Inicio.ToString("dd"),
                 contrato.Inicio.ToString("MMM"),
                 contrato.Inicio.ToString("yyyy"),
+
                 contrato.Valor_Renda.ToString(),
                 contrato.Valor_Renda_Extenso
             };
 
             try
             {
-                if (!contrato.ContratoEmitido) // repo_Fracao.FracaoEstaLivre(contrato.IdFracao))
+                if (!contrato.ContratoEmitido) 
                 {
                     var mergeModel = new MailMergeModel()
                     {
@@ -152,11 +143,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                         Referral = true
                     };
 
-                    var result = await _MailMergeSvc.MailMergeLetter(mergeModel); // devolve nome do ficheiro gerado (docx)
-
-
-                    //esta opção abaixo deixa de ser necessária, ao criar registo de 'Arrendamento', situação é logo alterada (??) - onde?
-                    //AtualizaSituacaoFracao(contrato.IdFracao);
+                    var result = await _MailMergeSvc.MailMergeLetter(mergeModel); // returns the file full path generated (docx)
 
                     return result; ;
                 }
@@ -209,6 +196,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 },
                 Inquilino = new DadosOutorgante()
                 {
+                     Id = DadosInquilino.Id,
                     Nome = DadosInquilino.Nome,
                     DataNascimento = DadosInquilino.DataNascimento,
                     Morada = DadosInquilino.Morada,

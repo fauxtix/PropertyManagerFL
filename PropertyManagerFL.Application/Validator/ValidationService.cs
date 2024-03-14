@@ -55,7 +55,7 @@ namespace PropertyManagerFL.Application.Validator
             _fiadoresValidator = fiadoresValidator;
             _landlordService = landlordService;
         }
-        public List<string> ValidateTenantEntries(InquilinoVM SelectedTenant)
+        public List<string> ValidateTenantEntries(InquilinoVMEx SelectedTenant)
         {
             List<string> sValidationErrors = new List<string>();
 

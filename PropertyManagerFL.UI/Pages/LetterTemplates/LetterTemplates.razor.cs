@@ -23,7 +23,7 @@ public partial class LetterTemplates
     bool HideErrroMessage = true;
     ImportFormatType formatType;
 
-    protected IList<string>? FileList { get; set; }
+    protected List<string> FileList { get; set; } = new();
     protected List<TemplateFileName>? FileNamesOnlyList { get; set; } = new();
 
     protected string? AlertTitle = "";
@@ -116,25 +116,30 @@ public partial class LetterTemplates
 
     private async void OnCreated()
     {
-        if (!string.IsNullOrEmpty(filePath))
+        var documentEditor = container.DocumentEditor;
+
+        if (!string.IsNullOrEmpty(filePath) && documentEditor != null)
         {
             try
             {
+                if (!File.Exists(filePath))
+                {
+                    DisplayResult("Templates", $"File ({filePath}) not found. Please verify.", AlertMessageType.Error);
+                    return;
+                }
 
                 using (FileStream fileStream = new(filePath, FileMode.Open, FileAccess.Read))
                 {
                     WordDocument document = WordDocument.Load(fileStream, ImportFormatType.Docx);
-                    await container.DocumentEditor.OpenAsync(JsonSerializer.Serialize(document));
-
-
+                    await documentEditor.OpenAsync(JsonSerializer.Serialize(document));
                     document.Dispose();
+                    document = null;
                 }
             }
             catch (Exception ex)
             {
                 DisplayResult($"Error loading file ({filePath}).", $"{ex.Message}");
             }
-
         }
     }
 
@@ -151,7 +156,7 @@ public partial class LetterTemplates
                     }
                     catch (Exception ex)
                     {
-                        DisplayResult("Save document", $"{ex.Message}");
+                        DisplayResult("Save document", ex.Message);
                     }
                 }
                 break;
@@ -198,7 +203,6 @@ public partial class LetterTemplates
             string fieldCode = $"MERGEFIELD  {fieldName}  \\* MERGEFORMAT ";
             string fieldResult = $"'«{fieldName}»";
             await container.DocumentEditor.Editor.InsertFieldAsync(fieldCode, fieldResult);
-            //            await container!.DocumentEditor.Editor.InsertFieldAsync($"MERGEFIELD {fieldName} \\* MERGEFORMAT");
         }
 
         CancelDialog();
@@ -227,7 +231,6 @@ public partial class LetterTemplates
         OpcoesRegisto = OpcoesRegisto.Info;
         AlertVisibility = true;
         StateHasChanged();
-
     }
 
     protected class TemplateFileName

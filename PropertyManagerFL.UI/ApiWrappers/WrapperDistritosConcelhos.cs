@@ -42,7 +42,7 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc, "Erro ao pesquisar API (Concelhos)");
+            _logger.LogError(exc, "Erro ao pesquisar API (Concelhos/GetConcelhos)");
             return Enumerable.Empty<Concelho>();
         }
     }
@@ -83,7 +83,7 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc, "Erro ao pesquisar API (Distritos)");
+            _logger.LogError(exc, "Erro ao pesquisar API (Distritos/GetDistritos)");
             return Enumerable.Empty<LookupTableVM>();
         }
     }

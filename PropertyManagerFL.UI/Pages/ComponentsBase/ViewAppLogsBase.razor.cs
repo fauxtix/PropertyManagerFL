@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Logs;
@@ -10,9 +12,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 {
     public class ViewAppLogsBase : ComponentBase, IDisposable
     {
+        [Inject] UserManager<IdentityUser>? UserManager { get; set; }
+
         [Inject] public ILogService? logService { get; set; }
         [Inject] public ILogger<ViewAppLogsBase>? logger { get; set; }
         [Inject] public IWebHostEnvironment? hostEnvironment { get; set; }
+
+        [CascadingParameter] protected Task<AuthenticationState>? authenticationStateTask { get; set; }
+
         protected AppLogDto? SelectedAppLog { get; set; }
         protected List<AppLogDto>? Logs { get; set; }
         protected int LogId { get; set; }
@@ -37,9 +44,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected string? pageBadgeCaption;
 
+        protected System.Security.Claims.ClaimsPrincipal? CurrentUser;
+        protected IdentityUser? user;
+        protected string email = "";
 
         protected async override Task OnInitializedAsync()
         {
+            CurrentUser = (await authenticationStateTask!).User;
+            user = await UserManager!.FindByNameAsync(CurrentUser?.Identity?.Name);
+            email = user.Email;
+
+
             pageBadgeCaption = "Todos os registos";
             await GetAllLogs();
         }
@@ -97,7 +112,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 alertTitle = "Log Viewer";
                 DeleteLogEntryCaption = $"Marcou {FilteredRecords?.Count()} registos para apagar. Não tem reversão! Backup recomendado antes de continuar";
                 DeleteLogsDialogVisibility = true;
-                logger?.LogWarning($"Utilizador apagou {FilteredRecords?.Count()} registos ");
+                logger?.LogWarning($"Utilizador ({user}) apagou {FilteredRecords?.Count()} registos ");
                 StateHasChanged();
             }
             else
@@ -105,7 +120,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 AlertVisibility = true;
                 pageBadgeCaption = "Todos os registos";
                 WarningMessage = "Não há registos para apagar... Verifique, p.f.";
-                logger?.LogWarning($"Utilizador tentou apagar registos com tabela vazia... ");
+                logger?.LogWarning($"Utilizador ({user}) tentou apagar registos com tabela vazia... ");
 
                 return;
             }
@@ -257,7 +272,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 args.Cancel = true; //cancel default filter action
                 if (LogGrid.FilterSettings.Columns == null)
                 {
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
                     LogGrid.FilterSettings.Columns = new List<GridFilterColumn>();
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
                 }
 
                 if (LogGrid.FilterSettings.Columns.Count > 0)
@@ -266,10 +283,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
 
                 //Get all the Grid columns
-                var columns = await LogGrid.GetColumns();
+                var columns = await LogGrid.GetColumnsAsync();
                 //Fetch the Uid of TimeStamp column
                 string fUid = columns[3].Uid;
 
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
                 LogGrid.FilterSettings.Columns.Add(new GridFilterColumn
                 {
                     Field = "TimeStamp",
@@ -278,7 +296,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Value = StartDate,
                     Uid = fUid
                 });
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
                 LogGrid.FilterSettings.Columns.Add(new GridFilterColumn
                 {
                     Field = "TimeStamp",
@@ -287,7 +307,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Value = EndDate.AddDays(1).AddSeconds(-1),
                     Uid = fUid
                 });
-                LogGrid.Refresh();
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
+
+                await LogGrid.Refresh();
             }
 
         }

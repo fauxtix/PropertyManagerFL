@@ -53,13 +53,14 @@
                                Width="200px"
                                FloatLabelType="FloatLabelType.Always"
                                Value="@IdadeInquilino.ToString()" />
+                               
                     <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Value="@idxMaritalStatus" ShowClearButton="true"
+                                    Value="@idxMaritalStatus" ShowClearButton="false" PopupWidth="auto"
                                     FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                     Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
                         <DropDownListTemplates TItem="LookupTableVM">
                         </DropDownListTemplates>
-                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeEstadoCivil"></DropDownListEvents>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeEstadoCivil"></DropDownListEvents>
                         <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                     </SfDropDownList>
                 </div>
@@ -220,20 +221,21 @@
     public IEnumerable<LookupTableVM>? MaritalStatus { get; set; }
 
     protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
-{
+    {
             {"rows", "3" }
     };
 
     protected override async Task OnParametersSetAsync()
     {
-        MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
-        idxMaritalStatus = Tenant!.ID_EstadoCivil;
         IdadeInquilino = CalculaIdade(Tenant.DataNascimento);
         Status = Tenant.Ativo ? L["chkActive"] : L["Nao"] + " " + L["chkActive"];
         CurrentBalance = Tenant.Titular ? Tenant.SaldoCorrente.ToString("C2") : "N/A";
-        RealBalance = Tenant.SaldoPrevisto - Tenant.SaldoCorrente;
         LastMonthPaid = await inquilinoService.GetUltimoMesPago_Inquilino(Tenant.Id);
 
+        MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
+        idxMaritalStatus = Tenant!.ID_EstadoCivil;
+
+        RealBalance = Tenant.SaldoPrevisto - Tenant.SaldoCorrente;
         if(RealBalance > 0)
         {
             InDebtColor = "e-field e-corner custom-class e-error";
@@ -244,10 +246,10 @@
         }
     }
 
-    protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected void OnChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
     {
         idxMaritalStatus = args.Value;
-        Tenant.ID_EstadoCivil = idxMaritalStatus;
+        Tenant!.ID_EstadoCivil = idxMaritalStatus;
     }
 
     protected void DtNascChanged(ChangedEventArgs<DateTime> args)

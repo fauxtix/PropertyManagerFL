@@ -16,7 +16,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.Validation
     {
         List<string> ValidatePropertyEntries(ImovelVM PropertyToValidate);
         List<string> ValidateUnitEntries(FracaoVM UnitToValidate);
-        List<string> ValidateTenantEntries(InquilinoVM SelectedTenant);
+        List<string> ValidateTenantEntries(InquilinoVMEx SelectedTenant);
         List<string> ValidateFiadorEntries(FiadorVM SelectedFiador);
         List<string> ValidateTableEntries<T>(T model);
         List<string> ValidateContactsEntries(ContactoVM contactToValidate);

@@ -124,7 +124,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API de imóveis");
+                _logger.LogError(exc, "Erro ao pesquisar API de imóveis/GetAll");
                 return null;
             }
         }
@@ -138,7 +138,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Imoveis/GetCodigo_Imovel)");
                 return 0; ;
             }
         }
@@ -152,7 +152,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Imoveis/GetDescricao_Imovel)");
                 return "";
             }
         }
@@ -171,8 +171,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Imoveis/GetImovel_ById)");
+                return new();
             }
         }
 
@@ -190,7 +190,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Imoveis/GetPropertiesAsLookupTables)");
                 return null!;
             }
         }

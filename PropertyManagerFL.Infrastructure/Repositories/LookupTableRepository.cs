@@ -268,6 +268,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 				using (var connection = _context.CreateConnection())
 				{
                     var result = connection.QueryFirstOrDefault<string>(Query, paramCollection).ToString();
+					
+					if(result.IndexOf("\\") == -1) return result;
+
                     result = result.Substring(1, result.Length - 1).Replace("\\\\", "\\");
                     result = result.Substring(0, result.Length - 1);
 					return result;

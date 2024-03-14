@@ -2154,6 +2154,11 @@
               Looks up a localized string similar to Em dívida.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloEmiteContrato">
+            <summary>
+              Looks up a localized string similar to Emite contrato?.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloEmitidaEm">
             <summary>
               Looks up a localized string similar to Emitida em.
@@ -3142,6 +3147,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloVerificarLog">
             <summary>
               Looks up a localized string similar to Verifique Log, por favor..
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloVisualizarContrato">
+            <summary>
+              Looks up a localized string similar to Visualizar contrato.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.txtCodigo">

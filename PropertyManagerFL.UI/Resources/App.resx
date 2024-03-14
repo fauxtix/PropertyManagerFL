@@ -1501,4 +1501,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloCodigoPostal" xml:space="preserve">
     <value>Código postal</value>
   </data>
+  <data name="TituloEmiteContrato" xml:space="preserve">
+    <value>Emite contrato?</value>
+  </data>
+  <data name="TituloVisualizarContrato" xml:space="preserve">
+    <value>Visualizar contrato</value>
+  </data>
 </root>

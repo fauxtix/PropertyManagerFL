@@ -1,4 +1,7 @@
-﻿namespace PropertyManagerFL.Application.ViewModels.Inquilinos
+﻿using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
+
+namespace PropertyManagerFL.Application.ViewModels.Inquilinos
 {
     public class InquilinoVM
     {
@@ -27,6 +30,10 @@
         public int ID_EstadoCivil { get; set; }
         public string? EstadoCivil { get; set; }
 
+    }
+    public class InquilinoVMEx : InquilinoVM
+    {
+        public ApplicationSettingsVM Settings { get; set; } = new();
 
     }
 }

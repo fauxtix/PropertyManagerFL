@@ -2508,4 +2508,10 @@
   <data name="TituloCodigoPostal" xml:space="preserve">
     <value>Postcode</value>
   </data>
+  <data name="TituloEmiteContrato" xml:space="preserve">
+    <value>Create a lease document?</value>
+  </data>
+  <data name="TituloVisualizarContrato" xml:space="preserve">
+    <value>View lease agreement</value>
+  </data>
 </root>

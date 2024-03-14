@@ -141,5 +141,23 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
     }
 
+    public async Task UpdateLanguageAsync(string language)
+    {
+        try
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                string sp_Name = "usp_AppSettings_UpdateLanguage";
+                var result = (await connection.ExecuteAsync(sp_Name, 
+                    new { DefaultLanguage = language},
+                    commandType: CommandType.StoredProcedure));
+            }
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
+    }
 }
 

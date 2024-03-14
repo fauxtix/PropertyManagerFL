@@ -10,10 +10,10 @@
 @inherits ArrendamentosBase
 
 <PageTitle>@L["TituloMenuArrendamentos"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloMenuArrendamentos"]"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloMenuArrendamentos"]"></PageTitleComponent>
 
 
-@{
+    @{
     var Tool = (new List<object>() {
         "Search",
         "PdfExport",
@@ -23,17 +23,21 @@
     },
     new ItemModel()
     {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-round-corner",
-        Text = "Visualizar contrato",
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-outline e-round-corner my-1",
+        Text = L["TituloVisualizarContrato"],
         Id = "ViewLeaseContract",
         ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
         ShowAlwaysInPopup = true,
         Visible = ShowToolbarViewContract
     },
+        new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
     new ItemModel()
     {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-outline e-round-corner",
-        Text = "Cartas de aumento de renda",
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-outline e-warning e-round-corner",
+        Text = L["TituloMenuAtualizacaoRendas"],
         Id = "RisingRentsIncreaseLetter",
         ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
         ShowAlwaysInPopup = true,
@@ -41,7 +45,11 @@
     },
     new ItemModel()
     {
-        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-round-corner",
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-file", CssClass = "e-btn e-primary e-outline e-round-corner",
         Text = L["TituloEstenderPrazoContrato"],
         Id = "ContractLeaseTerm",
         ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
@@ -60,39 +68,39 @@ else
     <div id="expensescontainer" class="mt-0 container-fluid w-100">
         <div class="group-box">
             <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-                  @onclick="@onAddLease" IsPrimary="true">
+                      @onclick="@onAddLease" IsPrimary="true">
             </SfButton>
             <SfButton CssClass="e-primary mx-3 e-round-corner" IconCss="fa fa-check" Content="@L["TituloContratoExistente"]"
-                  @onclick="@onAddExistentLease" IsPrimary="false">
+                      @onclick="@onAddExistentLease" IsPrimary="false">
             </SfButton>
         </div>
 
         <hr class="divider" />
         <div class="table table-stripped table-hover">
             <SfGrid ID="Leases_Grid"
-                Height="100%" @ref="leasesGridObj"
-                Toolbar="@Tool"
-                EnableStickyHeader="true"
-                EnableAltRow="true"
-                EnableHover="true"
-                DataSource="@leases"
-                AllowFiltering="false"
-                AllowSelection="true"
-                AllowGrouping="false"
-                AllowPaging="true"
-                AllowSorting="true"
-                AllowPdfExport="true"
-                RowHeight="32"
-                AllowTextWrap="true">
-                <GridSelectionSettings Mode = "Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                    Height="100%" @ref="leasesGridObj"
+                    Toolbar="@Tool"
+                    EnableStickyHeader="true"
+                    EnableAltRow="true"
+                    EnableHover="true"
+                    DataSource="@leases"
+                    AllowFiltering="false"
+                    AllowSelection="true"
+                    AllowGrouping="false"
+                    AllowPaging="true"
+                    AllowSorting="true"
+                    AllowPdfExport="true"
+                    RowHeight="32"
+                    AllowTextWrap="true">
+                <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
                 <GridEvents OnRecordDoubleClick="OnLeaseDoubleClickHandler"
-                        RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
-                        OnToolbarClick="ToolbarClickHandler" CommandClicked="OnLeaseCommandClicked" TValue="ArrendamentoVM" />
+                            RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
+                            OnToolbarClick="ToolbarClickHandler" CommandClicked="OnLeaseCommandClicked" TValue="ArrendamentoVM" />
                 <GridColumns>
                     <GridColumn Field=@nameof(ArrendamentoVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="325"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Ativo) HeaderText="@L["chkActive"]"
-                            TextAlign="TextAlign.Center" DisplayAsCheckBox="true" Width="100"></GridColumn>
-                    <GridColumn  Field=@nameof(ArrendamentoVM.Data_Inicio) HeaderText="@L["TituloInicio"]" Width="110" Format="d"></GridColumn>
+                                TextAlign="TextAlign.Center" DisplayAsCheckBox="true" Width="100"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Data_Inicio) HeaderText="@L["TituloInicio"]" Width="110" Format="d"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Data_Fim) HeaderText="@L["TituloFim"]" Width="110" Format="d">
                         <Template>
                             @{
@@ -107,7 +115,7 @@ else
                         </Template>
                     </GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Data_Pagamento) TextAlign="TextAlign.Center"
-                            HeaderText="@L["TituloUltimoPagamento"]" Width="120" Format="d">
+                                HeaderText="@L["TituloUltimoPagamento"]" Width="120" Format="d">
                         <Template>
                             @{
                                 var lastPayment = (context as ArrendamentoVM).Data_Pagamento;
@@ -131,38 +139,41 @@ else
                             }
                         </Template>
                     </GridColumn>
-                    <GridColumn TextAlign="TextAlign.Center"
-                            HeaderText="@L["TituloDataAtualizacao"]" Width="150" Format="d">
-                        <Template>
-                            @{
-                                var leaseDate = (context as ArrendamentoVM).Data_Inicio;
-                                var leaseDateMonth = leaseDate.Month;
-                                var currentMonth = DateTime.Now.Month;
+                    @if (AppSettings?.RenovacaoAutomatica == false)
+                    {
+                        <GridColumn TextAlign="TextAlign.Center"
+                                    HeaderText="@L["TituloDataAtualizacao"]" Width="150" Format="d">
+                            <Template>
+                                @{
+                                    var leaseDate = (context as ArrendamentoVM).Data_Inicio;
+                                    var leaseDateMonth = leaseDate.Month;
+                                    var currentMonth = DateTime.Now.Month;
 
-                                var leaseDateYear = leaseDate.Year;
-                                var currentYear = DateTime.Now.Year;
+                                    var leaseDateYear = leaseDate.Year;
+                                    var currentYear = DateTime.Now.Year;
 
-                                var leaseUpdateDate = new DateTime(DateTime.Now.Year, leaseDateMonth, 1);
+                                    var leaseUpdateDate = new DateTime(DateTime.Now.Year, leaseDateMonth, 1);
 
-                                var ChipCss = leaseDateMonth == currentMonth ?
+                                    var ChipCss = leaseDateMonth == currentMonth ?
                                 "e-danger" : leaseDateMonth == currentMonth + 1 ?
                                 "e-warning" :
                                 "e-outline";
-                                var textToDisplay = leaseUpdateDate.ToShortDateString();
-                                if (leaseDate == DateTime.MinValue)
-                                {
-                                    textToDisplay = "N/A";
-                                }
-                                <SfChip>
-                                    <ChipItems>
-                                        <ChipItem Text="@textToDisplay" CssClass="@ChipCss"></ChipItem>
-                                    </ChipItems>
-                                </SfChip>
+                                    var textToDisplay = leaseUpdateDate.ToShortDateString();
+                                    if (leaseDate == DateTime.MinValue)
+                                    {
+                                        textToDisplay = "N/A";
+                                    }
+                                    <SfChip>
+                                        <ChipItems>
+                                            <ChipItem Text="@textToDisplay" CssClass="@ChipCss"></ChipItem>
+                                        </ChipItems>
+                                    </SfChip>
 
-                                //<span>@textToDisplay</span>
-                            }
-                        </Template>
-                    </GridColumn>
+                                    //<span>@textToDisplay</span>
+                                }
+                            </Template>
+                        </GridColumn>
+                    }
 
                     <GridColumn Field=@nameof(ArrendamentoVM.Prazo_Meses) TextAlign="TextAlign.Center" HeaderText="@L["TituloPrazoEmMeses"]" Width="100"></GridColumn>
                     <GridColumn HeaderText="@L["TituloMesesDecorridos"]" Width="110">
@@ -215,22 +226,22 @@ else
                     </GridColumn>
 
                     <GridColumn Field=@nameof(ArrendamentoVM.ContratoEmitido) DisplayAsCheckBox=true
-                            HeaderText="@L["TituloContratoEmitido"]" Width="100" TextAlign="TextAlign.Center"></GridColumn>
+                                HeaderText="@L["TituloContratoEmitido"]" Width="100" TextAlign="TextAlign.Center"></GridColumn>
 
                     @*<GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
-                            HeaderText="Carta Atualiz. enviada" Width="120" TextAlign="TextAlign.Center"/>*@
+                HeaderText="Carta Atualiz. enviada" Width="120" TextAlign="TextAlign.Center"/>*@
 
                     <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="130">
                         <GridCommandColumns>
                             <GridCommandColumn Type=CommandButtonType.Edit
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-primary e-round",
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                             </GridCommandColumn>
                             <GridCommandColumn Type=CommandButtonType.Delete
-                                           ButtonOption="@(new CommandButtonOptions()
+                                               ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
                                                                            IconCss = "fa fa-trash"
@@ -265,10 +276,10 @@ else
     </div>
 
     <SfSpinner @ref="SpinnerObj"
-           @bind-Visible="@SpinnerVisibility"
-           Label="@L["MSG_PreparandoDados"]" Size="50"
-           Type="SpinnerType.Bootstrap4"
-           CssClass="e-spin-overlay" />
+               @bind-Visible="@SpinnerVisibility"
+               Label="@L["MSG_PreparandoDados"]" Size="50"
+               Type="SpinnerType.Bootstrap4"
+               CssClass="e-spin-overlay" />
 }
 
 <SfDialog Width="40%"
@@ -339,7 +350,7 @@ else
                    DialogTitle="@L["TituloEstenderPrazoContrato"]"
                    Message="@SelectedLease?.NomeInquilino"
                    Visible="@LeaseTermVisibility"
-                    AlertMessageNote ="@LeaseTermCaptionNote"
+                   AlertMessageNote="@LeaseTermCaptionNote"
                    AlertMessage="@LeaseTermCaption"
                    OnConfirmationYes="@(()=>ExtendLeaseTerm(SelectedLease!.Id))"
                    OnConfirmationNo="@(()=>LeaseTermVisibility = false)" />
@@ -348,7 +359,7 @@ else
                    DialogTitle="@L["SuccessInsert"]"
                    Message="@SelectedLease?.Fracao"
                    Visible="@IssueRentalContractVisibility"
-                   AlertMessage="Emite Contrato?."
+                   AlertMessage="@L["TituloEmiteContrato"]"
                    OnConfirmationYes="@(async ()=>await Emite_Contrato())"
                    OnConfirmationNo="@(()=>IssueRentalContractVisibility = false)" />
 
@@ -363,7 +374,7 @@ else
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                         DialogTitle="@(L["DeleteMsg"] + " " + L["TituloArrendamento"])"
-                        Message="@DeleteLeaseCaption" 
+                        Message="@DeleteLeaseCaption"
                         ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                         Visible="@DeleteLeaseVisibility"
                         DialogWidth="20%"

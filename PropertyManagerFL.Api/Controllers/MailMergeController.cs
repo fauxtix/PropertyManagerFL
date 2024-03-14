@@ -71,37 +71,38 @@ namespace PropertyManagerFL.Api.Controllers
                     sRestFilename = "_" + model.CodContrato.ToString() + "_" + DateTime.Now.ToString("ddMMyyyyHHmm");
                     result = Path.Combine(sDir2Save, Abreviatura_DocGerado + sRestFilename);
                 }
-                string sOutputPDF = result + ".pdf";
-                string sOutputWord = result;
+                string outputPDF = result + ".pdf";
+                string outputWord = result;
 
                 string sSourceDoc = Path.Combine(sPathDocs, model.WordDocument!);
                 if (!System.IO.File.Exists(sSourceDoc))
                 {
-                    _logger.LogWarning("Ficheiro " + sPathDocs + model.WordDocument + " não foi encontrado.\r\n\r\nVerifique, p.f.", "Erro na abrtura de ficheiro");
-                    return BadRequest("");
+                    var notFoundMsg = "File " + sPathDocs + model.WordDocument + " not found.\r\n\r\nVerifique, p.f.";
+                    _logger.LogWarning(notFoundMsg, "Error opening file");
+                    return BadRequest(notFoundMsg);
                 }
 
                 FileStream fileStreamPath = new FileStream(sSourceDoc, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
                 WordDocument document = new WordDocument(fileStreamPath, FormatType.Dotx);
                 document.MailMerge.Execute(model.MergeFields, model.ValuesFields);
 
-                sOutputWord = sOutputWord.Replace(@"\\\", @"\").Replace(@"\\", @"\");
-                sOutputWord += ".docx";
-                using (FileStream outFileStreamPath = new FileStream(sOutputWord, FileMode.CreateNew, FileAccess.Write, FileShare.ReadWrite))
+                outputWord = outputWord.Replace(@"\\\", @"\").Replace(@"\\", @"\");
+                outputWord += ".docx";
+                using (FileStream outFileStreamPath = new FileStream(outputWord, FileMode.CreateNew, FileAccess.Write, FileShare.ReadWrite))
                 {
                     document.Save(outFileStreamPath, FormatType.Docx);
                     document.Close();
                     document.Dispose();
                 }
 
-                GeneratePDF_FromDocx(sOutputWord, sOutputPDF);
+                GeneratePDF_FromDocx(outputWord, outputPDF);
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
 
-                return Ok(sOutputWord);
+                return Ok(outputWord);
             }
             catch (Exception e)
             {

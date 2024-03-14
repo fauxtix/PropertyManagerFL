@@ -112,7 +112,7 @@ else
                                                 DataSource="tenantPaymentHistory"
                                                 AllowFiltering="false"
                                                 AllowGrouping="false"
-                                                Width="80%" EnableAltRow="true"
+                                                Width="90%" EnableAltRow="true"
                                                 AllowPaging="true"
                                                 AllowSorting="true"
                                                 RowHeight="32"
@@ -181,7 +181,7 @@ else
                                                     DataSource="@fiadores"
                                                     AllowFiltering="false"
                                                     AllowGrouping="false"
-                                                    Width="70%"
+                                                    Width="90%"
                                                     AllowPaging="false"
                                                     AllowSorting="false"
                                                     RowHeight="32"
@@ -243,7 +243,7 @@ else
                                                     DataSource="docs"
                                                     AllowFiltering="false"
                                                     AllowGrouping="false"
-                                                    Width="80%"
+                                                    Width="90%"
                                                     AllowPaging="true"
                                                     AllowSorting="true"
                                                     RowHeight="32"
@@ -274,8 +274,7 @@ else
 
                                                         </Template>
                                                     </GridColumn>
-                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>
-                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.DocumentPath) HeaderText="@L["TituloDocumento"]" Width="250"></GridColumn>
+                                                    <GridColumn Field=@nameof(DocumentoInquilinoVM.Descricao) HeaderText="@L["rbtDescricao"]" Width="320"></GridColumn>                                                    
                                                     <GridColumn Field=@nameof(DocumentoInquilinoVM.StorageType) TextAlign="TextAlign.Center" HeaderText="@L["TituloTipo"]" Width="80"></GridColumn>
                                                     <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="150">
                                                         <GridCommandColumns>
@@ -321,7 +320,7 @@ else
                                                     DataSource="rentUpdates"
                                                     AllowFiltering="false"
                                                     AllowGrouping="false"
-                                                    Width="50%"
+                                                    Width="80%"
                                                     AllowPaging="true"
                                                     AllowSorting="true"
                                                     RowHeight="32"
@@ -513,6 +512,7 @@ else
 
 <SfDialog CssClass="responsive-pdf-word-viewer"
           IsModal="true"
+          Width="50%"
           ShowCloseIcon="false"
           CloseOnEscape="true"
           @bind-Visible="ShowFileVisibility">

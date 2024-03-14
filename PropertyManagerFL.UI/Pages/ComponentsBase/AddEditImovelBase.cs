@@ -69,7 +69,7 @@ public class AddEditImovelBase : ComponentBase
         CalcDataProxInspecao();
     }
 
-    protected void onChangeConservationState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected void OnChangeConservationState(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
     {
         idxConservationState = args.Value;
         Property!.Conservacao = idxConservationState;

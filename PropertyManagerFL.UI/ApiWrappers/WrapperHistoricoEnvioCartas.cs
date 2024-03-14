@@ -50,7 +50,7 @@ public class WrapperHistoricoEnvioCartas : IHistoricoEnvioCartasService
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc, "Erro ao pesquisar API (GetLettersSent)");
+            _logger.LogError(exc, "Erro ao pesquisar API (HistoricoEnvioCartas/GetLettersSent)");
             return Enumerable.Empty<HistoricoEnvioCartasVM>();
         }
     }

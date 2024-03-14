@@ -4,6 +4,7 @@ using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
@@ -588,6 +589,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         }
 
+        
         public async Task SaveTenantData()
         {
             IsDirty = false;
@@ -595,17 +597,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningMessage = string.Empty;
             WarningVisibility = false;
 
-            ValidationsMessages = validatorService.ValidateTenantEntries(SelectedTenant!);
+            var tenantEx = await MapTenantDataForValidation();
+            ValidationsMessages = validatorService.ValidateTenantEntries(tenantEx);
 
             if (ValidationsMessages == null)
             {
                 if (RecordMode == OpcoesRegisto.Gravar)
                 {
-                    //CheckIfTenantData_Changed(); // 08/2022
-                    //if (IsDirty) // registo alterado
-                    //{
-                    //}
-
                     ToastTitle = $"{L["btnSalvar"]} {L["TituloInquilino"]}";
 
                     var updateOk = await inquilinoService!.AtualizaInquilino(SelectedTenant!.Id, SelectedTenant);
@@ -648,6 +646,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ErrorVisibility = true;
                 await Task.Delay(100);
                 await SpinnerObj!.HideAsync();
+                return;
             }
 
             AddEditTenantVisibility = false;
@@ -1631,6 +1630,41 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
 
             return "";
+        }
+
+        private async Task< InquilinoVMEx> MapTenantDataForValidation()
+        {
+            var appSettings = await GetSettings();
+            InquilinoVMEx mappedTenant = new()
+            {
+                Ativo = SelectedTenant!.Ativo,
+                Contacto1 = SelectedTenant.Contacto1,
+                Contacto2 = SelectedTenant.Contacto2,
+                Contrato = SelectedTenant.Contrato,
+                DataNascimento = SelectedTenant.DataNascimento,
+                eMail = SelectedTenant.eMail,
+                EstadoCivil = SelectedTenant.EstadoCivil,
+                Identificacao = SelectedTenant.Identificacao,
+                ID_EstadoCivil = SelectedTenant.ID_EstadoCivil,
+                IRSAnual = SelectedTenant.IRSAnual,
+                Morada = SelectedTenant.Morada,
+                Naturalidade = SelectedTenant.Naturalidade,
+                NIF = SelectedTenant.NIF,
+                Nome = SelectedTenant.Nome,
+                Notas = SelectedTenant.Notas,
+                SaldoCorrente = SelectedTenant.SaldoCorrente,
+                SaldoPrevisto = SelectedTenant.SaldoPrevisto,
+                Titular = SelectedTenant.Titular,
+                ValidadeCC = SelectedTenant.ValidadeCC,
+                Vencimento = SelectedTenant.Vencimento,
+                Settings = appSettings
+            };
+
+            return mappedTenant;
+        }
+        private async Task<ApplicationSettingsVM> GetSettings()
+        {
+            return await appSettingsService!.GetSettingsAsync();
         }
 
         private void HideToolbar_LetterOptions()

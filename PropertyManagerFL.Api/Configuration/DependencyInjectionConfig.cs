@@ -60,6 +60,7 @@ public static class DependencyInjectionConfig
 
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IAppSettingsRepository, AppSettingsRepository>();
+        services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 
     }
 }

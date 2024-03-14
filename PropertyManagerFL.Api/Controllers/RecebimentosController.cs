@@ -50,7 +50,7 @@ namespace PropertyManagerFL.Api.Controllers
 
                 if (insertedId < 1)
                 {
-                    return InternalError($"{location} => Erro ao inserir movimento "); ;
+                    return InternalError($"{location} => Erro ao inserir movimento (Recebimentos)"); ;
                 }
 
                 var viewRecebimento = await _repoRecebimentos.GetRecebimento_ById(insertedId);
@@ -82,7 +82,7 @@ namespace PropertyManagerFL.Api.Controllers
 
                 if (insertedId < 1)
                 {
-                    return InternalError($"{location} => Erro ao inserir movimento "); ;
+                    return InternalError($"{location} => Erro ao inserir movimento (Recebimentos)"); ;
                 }
 
                 var viewRecebimento = await _repoRecebimentos.GetRecebimentoTemp_ById(insertedId);

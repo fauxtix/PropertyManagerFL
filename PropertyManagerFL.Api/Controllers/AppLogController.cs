@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Logs;
-using PropertyManagerFL.Application.ViewModels.Security.Models;
 using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Api.Controllers

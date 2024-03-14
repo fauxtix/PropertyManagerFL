@@ -62,5 +62,6 @@ public static class DependencyInjectionConfig
         services.AddScoped<IEmailSender, EmailSender>();
 
         services.AddScoped<IAppSettingsService, WrapperAppSettings>();
+        services.AddScoped<IAppointmentsService, WrapperAppointments>();
     }
 }

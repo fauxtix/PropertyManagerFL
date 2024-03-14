@@ -86,7 +86,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Despesas/GetAll)");
                 return Enumerable.Empty<DespesaVM>();
             }
         }
@@ -100,7 +100,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Despesas/GetDespesa_ById)");
                 return null;
             }
         }
@@ -120,7 +120,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Despesas/AreThereProperties)");
                 return false;
             }
 
@@ -150,7 +150,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Despesas/GetTipoDespesa_ByCategoriaDespesa)");
                 return Enumerable.Empty<TipoDespesaVM>();
             }
         }

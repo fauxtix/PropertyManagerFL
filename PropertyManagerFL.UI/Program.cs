@@ -70,7 +70,7 @@ builder.Services.Configure<OpenIdConnectOptions>(
     });
 
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
-builder.Services.AddSyncfusionBlazor(options => { options.IgnoreScriptIsolation = false; });
+builder.Services.AddSyncfusionBlazor();
 builder.Services.AddAutoMapperConfiguration();
 builder.Services.AddFluentValidationConfiguration();
 builder.Services.AddServicesDependencyInjectionConfiguration();
@@ -117,7 +117,7 @@ app.UseRequestLocalization(localizationOptions);
 #endregion
 
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Nzc5NTM3QDMyMzAyZTMzMmUzMGI2eGIzS0JKL2lpZGllaytQQ2NvcHFYN2dXWG5tcUtyRDdoODI1TEpsOEU9");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE0NzIzMUAzMjMyMmUzMDJlMzBJVmZuU0w2cHFkVnRQaW5oWXZhQ2V6dVgvcmF1M04zT3A0NmZDNUNrRkdNPQ==");
 //app.UseRequestLocalization("pt");
 
 // Configure the HTTP request pipeline.

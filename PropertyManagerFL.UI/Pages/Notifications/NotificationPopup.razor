@@ -1,12 +1,21 @@
 ﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos
 
-@if (showPopup && Alerts is not null && Alerts.Any())
+@if (showPopup && LeaseAlerts is not null && LeaseAlerts.Any())
 {
+
+   @*  <div class="no-data float">
+        <i class="fas fa-caret-left fa-md arrow"></i>
+        <i class="fas fa-warning"></i>
+        @foreach (var item in Alerts)
+        {
+            <p>@item</p>
+        }
+    </div> *@
     <div class="floating-popup">
         <div class="popup-content">
             <div>
-                @foreach (var item in Alerts)
+                @foreach (var item in LeaseAlerts)
                 {
                     <p>@item</p>
                 }

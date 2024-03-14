@@ -1,0 +1,419 @@
+﻿@page "/scheduler"
+@page "/scheduler/search-events"
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Appointments
+@using PropertyManagerFL.UI.Data.Scheduler;
+@using Syncfusion.Blazor
+@using Syncfusion.Blazor.Buttons
+@using Syncfusion.Blazor.Calendars
+@using Syncfusion.Blazor.Data
+@using Syncfusion.Blazor.Grids
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor.Schedule
+
+
+<PageTitle>Agenda</PageTitle>
+<PageTitleComponent PageTitle="Agenda"/>
+
+@if (dataSource is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-9 control-section">
+                <SfSchedule TValue="AppointmentVM" @ref="ScheduleRef"
+                            Width="100%" CssClass="@(ShowSchedule ? string.Empty : "schedule-hide")"
+                            Height="650px" @bind-SelectedDate="@CurrentDate">
+                    <ScheduleResources>
+                        <ScheduleResource TItem="ResourceData" TValue="int" DataSource="@ApptTypeData"
+                                          Field="ApptType" Title="Tipo" Name="ApptTypes" TextField="Text" IdField="Id"
+                                          ColorField="Color"></ScheduleResource>
+                    </ScheduleResources>
+                    <ScheduleEvents TValue="AppointmentVM"
+                                    OnActionFailure="OnActionFailure"
+                        OnActionBegin="OnActionBegin" ActionCompleted="OnActionCompleted" />
+                    <ScheduleEventSettings DataSource="@dataSource" />
+                    @*                     <ScheduleField>
+                <FieldSubject Title="Assunto"></FieldSubject>
+                <FieldDescription Title="Notas"></FieldDescription>
+                </ScheduleField>
+                *@
+                    <ScheduleTemplates>
+                        <ScheduleViews>
+                            <ScheduleView Option="View.Day"></ScheduleView>
+                            <ScheduleView Option="View.Week"></ScheduleView>
+                            <ScheduleView Option="View.WorkWeek"></ScheduleView>
+                            <ScheduleView Option="View.Month"></ScheduleView>
+                            <ScheduleView Option="View.Agenda"></ScheduleView>
+                        </ScheduleViews>
+                    </ScheduleTemplates>
+                </SfSchedule>
+                @if (!ShowSchedule)
+                {
+                    <SfGrid DataSource="gridDataSource" Width="auto" Height="505px">
+                        <GridColumns>
+                            <GridColumn Field="Subject" HeaderText="Subject" Width="120px"></GridColumn>
+                            <GridColumn Field="Location" HeaderText="Location" Width="120px"></GridColumn>
+                            <GridColumn Field="StartTime" HeaderText="StartTime" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
+                            <GridColumn Field="EndTime" HeaderText="EndTime" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                }
+            </div>
+            <div class="col-lg-3 property-section property-customization">
+                <br>
+                <div class="property-panel-section">
+                    <p class="property-panel-header header-customization" style="width: 100%;">Search by all event fields</p>
+                    <div class="property-panel-content">
+                        <SfTextBox ID="events-search" Placeholder='Enter the Search text' @bind-Value="@SearchValue" OnChange="@OnEventSearch"></SfTextBox>
+                    </div>
+                    <div class="event-search">
+                        <p class="property-panel-header header-customization" style="width: 100%;">Search by specific event fields</p>
+                        <table id="property-specific" style="width:100%">
+                            <tbody>
+                                <tr class="row">
+                                    <td class="property-panel-content" colspan="2">
+                                        <div>
+                                            <SfTextBox ID="searchEventName" @bind-Value="@SubjectValue" Placeholder="Subject"></SfTextBox>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="row" style="height: 45px">
+                                    <td class="property-panel-content" colspan="2">
+                                        <div>
+                                            <SfTextBox ID="searchEventLocation" @bind-Value="@LocationValue" Placeholder="Location"></SfTextBox>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="row" style="height: 45px">
+                                    <td class="property-panel-content" colspan="2">
+                                        <div>
+                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateStart" Placeholder="Start Date"></SfDatePicker>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="row" style="height: 45px">
+                                    <td class="property-panel-content" colspan="2">
+                                        <div>
+                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateEnd" Placeholder="End Date"></SfDatePicker>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="row" style="height: 45px">
+                                    <td class="e-field button-customization" style="width: 50%; padding: 15px 3px;">
+                                        <div>
+                                            <SfButton Content="Search" OnClick="@OnSearchClick"></SfButton>
+                                        </div>
+                                    </td>
+                                    <td class="e-field button-customization" style="width: 50%; padding: 15px 3px;">
+                                        <div>
+                                            <SfButton Content="Clear" OnClick="@OnClearClick"></SfButton>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
+             Title="@ToastTitle" Icon="@ToastIcon"
+             Content="@ToastMessage"
+             CssClass="@ToastCss" Timeout="3000"
+             ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+
+}
+
+@code {
+
+    [Inject] public IAppointmentsService? ApptsService { get; set; }
+    [Inject] protected IStringLocalizer<App>? L { get; set; }
+
+    protected SfSchedule<AppointmentVM>? ScheduleRef;
+    protected AppointmentVM SelectedAppointment { get; set; } = new();
+    protected List<AppointmentVM> dataSource = new();
+    protected List<AppointmentVM>? gridDataSource = new List<AppointmentVM>();
+
+    protected DateTime CurrentDate = DateTime.Now;
+    protected bool ShowSchedule { get; set; } = true;
+    protected string SearchValue { get; set; } = string.Empty;
+    protected string SubjectValue { get; set; } = string.Empty;
+    protected string LocationValue { get; set; } = string.Empty;
+    protected DateTime? DateStart { get; set; }
+    protected DateTime? DateEnd { get; set; }
+
+    protected DateTime ApptStartAppt { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 09, 00, 00);
+
+    protected List<ResourceData> ApptTypeData { get; set; } = new List<ResourceData> {
+        new ResourceData{ Text = "IRS", Id= 1, Color = "#df5286" },
+        new ResourceData{ Text = "IMI", Id= 2, Color = "#7fa900" }, //matters relating to council tax
+        new ResourceData{ Text = "Recibos", Id= 3, Color = "#ea7a57" }, // matters relating to rental receipts
+        new ResourceData{ Text = "Finanças", Id= 4, Color = "#4682B4" }, // matters relating to the tax office
+        new ResourceData{ Text = "Cartas", Id= 5, Color = "#a1d179" }, // Letters that should be sent to tenants
+        new ResourceData{ Text = "Contratos", Id= 6, Color = "#455275" }, // matters relating to lease contracts
+        new ResourceData{ Text = "Outros", Id= 7, Color = "#7f89a3" } // Other events (personal)
+    };
+
+    protected SfToast? ToastObj { get; set; }
+    protected string ToastTitle = "";
+    protected string ToastContent = "";
+    protected string ToastCssClass = "";
+
+    protected string? ToastMessage;
+    protected string? ToastCss;
+    protected string? ToastIcon;
+
+    protected string? NewCaption { get; set; }
+    protected string? EditCaption { get; set; }
+    protected string? DeleteCaption;
+
+    protected int AppointmentId;
+
+    protected class ResourceData
+    {
+        public int Id { get; set; }
+        public string Text { get; set; } = string.Empty;
+        public string Color { get; set; } = string.Empty;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        dataSource = await GetAppointments();
+    }
+
+#pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
+    public async Task OnEventSearch()
+    {
+        if (!string.IsNullOrEmpty(SearchValue) && ScheduleRef != null)
+        {
+            Query query = new Query().Search(SearchValue, new List<string> { "Subject", "Location", "Description" }, null, true, true);
+            List<AppointmentVM> eventCollections = await ScheduleRef.GetEventsAsync(null, null, true);
+            object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
+            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
+            if (resultData?.Count > 0)
+            {
+                ShowSchedule = false;
+                gridDataSource = resultData;
+            }
+            else
+            {
+                ShowSchedule = true;
+            }
+        }
+        else
+        {
+            ShowSchedule = true;
+        }
+    }
+
+
+    protected async Task HideToast()
+    {
+        await ToastObj!.HideAsync();
+    }
+
+    protected async Task OnSearchClick() // taken from syncfusion demos
+    {
+        DateTime? startDate = null;
+        DateTime? endDate = null;
+        List<WhereFilter> searchObj = new List<WhereFilter>();
+        if (!string.IsNullOrEmpty(SubjectValue))
+        {
+            searchObj.Add(new WhereFilter() { Field = "Subject", Operator = "contains", value = SubjectValue, Condition = "or", IgnoreCase = true });
+        }
+        if (!string.IsNullOrEmpty(LocationValue))
+        {
+            searchObj.Add(new WhereFilter() { Field = "Location", Operator = "contains", value = LocationValue, Condition = "or", IgnoreCase = true });
+        }
+        if (DateStart != null)
+        {
+            startDate = Convert.ToDateTime(DateStart);
+            searchObj.Add(new WhereFilter() { Field = "StartTime", Operator = "greaterthanorequal", value = startDate, Condition = "and", IgnoreCase = false });
+        }
+        if (DateEnd != null)
+        {
+            endDate = (Convert.ToDateTime(DateEnd)).AddDays(1);
+            searchObj.Add(new WhereFilter() { Field = "EndTime", Operator = "lessthanorequal", value = endDate, Condition = "and", IgnoreCase = false });
+        }
+        if (searchObj.Count > 0)
+        {
+            Query query = new Query().Where(new WhereFilter() { Condition = "and", IsComplex = true, predicates = searchObj });
+            List<AppointmentVM>? eventCollections = await ScheduleRef.GetEventsAsync(startDate, endDate, true);
+            object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
+            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
+            gridDataSource = resultData;
+            ShowSchedule = false;
+        }
+        else
+        {
+            ShowSchedule = true;
+        }
+    }
+#pragma warning restore BL0005, CA2000 // Component parameter should not be set outside of its component, Dispose objects before losing scope
+    protected void OnClearClick()
+    {
+        ShowSchedule = true;
+        SearchValue = SubjectValue = LocationValue = string.Empty;
+        DateStart = DateEnd = null;
+    }
+
+    protected async Task OnDataBound(Syncfusion.Blazor.Schedule.DataBoundEventArgs<AppointmentVM> args)
+    {
+        // You can get the entire appointment collections in the EventCollection variable
+        // List<Appointment> eventCollection = await ScheduleObj.GetEvents();
+
+        string startWkgHour = ApptStartAppt.ToShortTimeString();
+        await ScheduleRef!.ScrollToAsync(startWkgHour, DateTime.Now);
+    }
+
+    protected async void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
+    {
+        if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange)
+        {
+            if (args.ActionType == ActionType.EventCreate)
+            {
+                SelectedAppointment = args.AddedRecords[0];
+                SelectedAppointment.CategoryColor = ApptTypeData[SelectedAppointment.ApptType - 1].Color;
+
+                var result = await ApptsService!.InsertAsync(SelectedAppointment);
+
+                ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
+                ToastCss = "e-toast-success";
+                ToastMessage = L["SuccessInsert"];
+                ToastIcon = "fas fa-check";
+            }
+            if (args.ActionType == ActionType.EventChange)
+            {
+                ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
+                ToastCss = "e-toast-success";
+                ToastMessage = L["RegistoGravadoSucesso"];
+                ToastIcon = "fas fa-check";
+
+                SelectedAppointment = args.ChangedRecords[0];
+                SelectedAppointment.CategoryColor = ApptTypeData[SelectedAppointment.ApptType - 1].Color;
+                var result = await ApptsService!.UpdateAsync(SelectedAppointment.Id, SelectedAppointment);
+            }
+
+            StateHasChanged();
+            await Task.Delay(200);
+            await ToastObj?.ShowAsync();
+            try
+            {
+                dataSource = await GetAppointments();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        else if (args.ActionType == ActionType.EventRemove)
+        {
+            ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
+            ToastCssClass = "e-toast-success";
+            ToastContent = L["RegistoAnuladoSucesso"];
+            ToastIcon = "fas fa-check";
+            await ApptsService!.DeleteAsync(args.DeletedRecords[0].Id);
+
+            SelectedAppointment = args.DeletedRecords[0];
+
+            StateHasChanged();
+            await Task.Delay(200);
+            await ToastObj.ShowAsync();
+            try
+            {
+                dataSource = await GetAppointments();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
+
+    }
+    protected async void OnActionCompleted(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
+    {
+
+        if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange)
+        {
+            if (args.ActionType == ActionType.EventCreate)
+            {
+                ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
+                ToastCss = "e-toast-success";
+                ToastMessage = L["SuccessInsert"];
+                ToastIcon = "fas fa-check";
+            }
+            if (args.ActionType == ActionType.EventChange)
+            {
+                ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
+                ToastCss = "e-toast-success";
+                ToastMessage = L["RegistoGravadoSucesso"];
+                ToastIcon = "fas fa-check";
+            }
+
+            StateHasChanged();
+            await Task.Delay(200);
+            await ToastObj?.ShowAsync();
+        }
+        else if (args.ActionType == ActionType.EventRemove)
+        {
+            ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
+            ToastCssClass = "e-toast-success";
+            ToastContent = L["RegistoAnuladoSucesso"];
+            ToastIcon = "fas fa-check";
+            StateHasChanged();
+            await Task.Delay(200);
+            await ToastObj.ShowAsync();
+        }
+
+    }
+
+    public void OnActionFailure(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
+    {
+        var actionType = args.ActionType; // for debugging
+        var errors = args.Error;
+    }
+
+    private async Task<List<AppointmentVM>> GetAppointments()
+    {
+        return (await ApptsService!.GetAllAsync()).ToList();
+    }
+}
+<style>
+    .header-customization {
+        padding-bottom: 10px;
+    }
+
+    .property-customization {
+        padding-right: 5px;
+    }
+
+    .button-customization {
+        padding: 15px 3px;
+    }
+
+    .schedule-hide {
+        display: none;
+    }
+
+    @@media (max-width: 441px) {
+        .button-customization {
+            padding: 30px !important;
+        }
+    }
+</style>

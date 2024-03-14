@@ -299,7 +299,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         }
                         else
                         {
-                            _logger?.LogError("Erro ao atualizar dados da transação");
+                            _logger?.LogError("Erro ao atualizar dados da transação (Recebimentos");
 
                             ToastCss = "e-toast-danger";
                             ToastMessage = "Erro ao atualizar dados";

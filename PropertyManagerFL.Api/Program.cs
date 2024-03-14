@@ -53,7 +53,7 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 var app = builder.Build();
 
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("NRAiBiAaIQQuGjN/V0Z+X09EaFpEVmJLYVB3WmpQdldgdVRMZVVbQX9PIiBoS35RdUViWX1fdXdRR2ddUUJx");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE0NzIzMUAzMjMyMmUzMDJlMzBJVmZuU0w2cHFkVnRQaW5oWXZhQ2V6dVgvcmF1M04zT3A0NmZDNUNrRkdNPQ==");
 
 if (app.Environment.IsDevelopment())
 {

@@ -213,6 +213,14 @@ else
                             ValidationMessages="@ValidationMessages"
                             OnCloseDialog="CloseValidationErrorBox" />
 
+    <AlertUserComponent AlertMessageType="@alertMessageType"
+                        Title="@WarningTitle"
+                        OperationType="OpcoesRegisto.Warning"
+                        Visibility="@WarningVisibility"
+                        Message="@WarningMessage"
+                        MessageNote="@SelectedDocument?.Description"
+                        OnCloseDialog="(()=>WarningVisibility=false)"></AlertUserComponent>
+
 }
 
 <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true

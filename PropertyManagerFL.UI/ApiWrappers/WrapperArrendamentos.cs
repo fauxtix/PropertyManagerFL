@@ -189,7 +189,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/ArrendamentoExiste)");
                 return true;
             }
         }
@@ -211,7 +211,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/ChildrenExists)");
                 return true;
             }
 
@@ -226,7 +226,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/ContratoEmitido)");
                 return true;
             }
 
@@ -345,8 +345,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
-                return new ArrendamentoVM();
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/GetArrendamento_ById)");
+                return new();
             }
         }
 
@@ -373,7 +373,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/GetLastId)");
                 return 0;
             }
         }
@@ -405,7 +405,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/GetPdfFilename)");
                 return "";
             }
         }
@@ -419,7 +419,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/UpdateLastPaymentDate)");
                 return false;
             }
         }
@@ -855,8 +855,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API/GetRentUpdatingCoefficients");
+                return Enumerable.Empty<CoeficienteAtualizacaoRendas>();
             }
         }
 
@@ -869,8 +869,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API/GetRentUpdatingCoefficient_ById");
+                return new();
             }
         }
         public async Task<CoeficienteAtualizacaoRendas> GetRentCoefficient_ByYear(int year)
@@ -882,8 +882,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (coeficientes");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Coeficientes/GetRentCoefficient_ByYear");
+                return new();
             }
         }
 
@@ -930,7 +930,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/CartaAtualizacaoRendasEmitida)");
                 return true;
             }
         }
@@ -944,7 +944,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/VerificaSeExisteCartaRevogacao)");
                 return true;
             }
         }
@@ -958,7 +958,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/VerificaSeExisteRespostaCartaRevogacao)");
                 return false;
             }
         }
@@ -1010,7 +1010,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Arrendamentos/VerificaEnvioCartaAtrasoEfetuado)");
                 return false;
             }
         }
@@ -1055,8 +1055,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro ao pesquisar API (Arrendamentos)");
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Erro ao pesquisar API (Arrendamentos/MarcaCartaAtrasoRendaComoEmitida)");
             }
         }
 
@@ -1111,7 +1110,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     }
                     else
                     {
-                        _logger.LogError("Erro ao atualizar prazos dos contratos");
+                        _logger.LogError("Erro ao atualizar prazos dos contratos (Arrendamento)");
                     }
                     return success;
                 }

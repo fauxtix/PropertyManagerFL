@@ -5,5 +5,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
     public interface ICategoriaDespesaRepository : IBaseRepository<CategoriaDespesa>
     {
+
     }
 }

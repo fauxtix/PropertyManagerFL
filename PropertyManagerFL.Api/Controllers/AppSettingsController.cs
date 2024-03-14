@@ -128,6 +128,40 @@ public class AppSettingsController : ControllerBase
     }
 
     /// <summary>
+    /// Altera settings (outros)
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    [HttpPatch("updatelanguage")]
+    public async Task<IActionResult> UpdateLanguage([FromBody] string languageToUpdate)
+    {
+        var location = GetControllerActionNames();
+
+        if (string.IsNullOrEmpty(languageToUpdate))
+        {
+            string msg = "Campo 'Idioma' incorreto (Api AppSettings)";
+            _logger?.LogWarning(msg);
+            return BadRequest(msg);
+        }
+
+        try
+        {
+            await _appSettingsRepository.UpdateLanguageAsync(languageToUpdate);
+            return NoContent();
+
+        }
+        catch (Exception e)
+        {
+            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+        }
+    }
+
+
+    /// <summary>
     /// Inicializa tabelas de pagamentos
     /// </summary>
     /// <returns></returns>

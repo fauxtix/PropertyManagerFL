@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -188,7 +189,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetAll)");
                 return Enumerable.Empty<InquilinoVM>();
             }
         }
@@ -206,7 +207,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/Query_ById)");
                 return null;
             }
         }
@@ -236,7 +237,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilinosDisponiveis)");
                 return null;
             }
         }
@@ -250,8 +251,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilinosAsLookup)");
+                return Enumerable.Empty<LookupTableVM>();
             }
         }
 
@@ -265,7 +266,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilinos)");
                 return null;
             }
 
@@ -304,7 +305,6 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<string?> GetUltimoMesPago_Inquilino(int ID_Inquilino)
         {
-            _logger.LogInformation("Último mês pago pelo inquilino");
             try
             {
                 var ultimoMesPago = await _httpClient.GetStringAsync($"{_uri}/GetUltimoMesPago_Inquilino/{ID_Inquilino}");
@@ -315,7 +315,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos / GetUltimoMesPago_Inquilino)");
                 return "";
             }
         }
@@ -350,7 +350,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilino_ById)");
                 return null;
             }
         }
@@ -382,7 +382,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilino_ById)");
                 return new(); // Enumerable.Empty<DocumentoInquilinoVM>();
             }
         }
@@ -391,12 +391,18 @@ namespace PropertyManagerFL.UI.ApiWrappers
         {
             try
             {
+                HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetDocumentosInquilinos");
+                if (!response.IsSuccessStatusCode)
+                {
+                    return Enumerable.Empty<DocumentoInquilinoVM>();
+                }
+
                 var tenants = await _httpClient.GetFromJsonAsync<IEnumerable<DocumentoInquilinoVM>>($"{_uri}/GetDocumentosInquilinos");
                 return tenants!.ToList();
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API de Inquilinos (GetDocumentosInquilinos)");
                 return Enumerable.Empty<DocumentoInquilinoVM>();
             }
         }
@@ -492,7 +498,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 }
                 catch (Exception exc)
                 {
-                    _logger.LogError(exc, "Erro ao pesquisar API");
+                    _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GeFiadorInquilino_ById)");
                     return null;
                 }
             }
@@ -526,7 +532,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetTenantPaymentsHistory)");
                 return new List<CC_InquilinoVM>();
             }
 
@@ -552,7 +558,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     }
                     else
                     {
-                        _logger.LogError("Erro ao ler dados (TenantPaymentsHistory)");
+                        _logger.LogError("Erro ao ler dados (GetInquilinos_SemContrato)");
                         return new List<LookupTableVM>();
                     }
                 }
@@ -560,7 +566,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetInquilinos_SemContrato)");
                 return new List<LookupTableVM>();
             }
         }
@@ -581,8 +587,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return "Erro ao pesquisar API"; ;
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)");
+                return "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)"; ;
             }
         }
 
@@ -606,8 +612,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao pesquisar API ({exc.ToString()})");
-                return "Erro ao pesquisar API"; ;
+                _logger.LogError(exc, $"Erro ao pesquisar API AtualizaRendaInquilino_Manual ({exc.ToString()})");
+                return "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino_Manual)"; ;
             }
         }
 
@@ -629,7 +635,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (GetTenantRent");
+                _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/GetTenantRent");
                 return -1;
             }
         }
@@ -653,7 +659,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao pesquisar API (PriorRentUpdates_ThisYear ({exc.Message})");
+                _logger.LogError(exc, $"Erro ao pesquisar API (Inquilinos/PriorRentUpdates_ThisYear ({exc.Message})");
                 return false;
             }
         }
@@ -677,7 +683,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates) ({exc.Message})");
+                _logger.LogError(exc, $"Erro ao pesquisar API (Inquilinos/RentUpdates) ({exc.Message})");
                 return null;
             }
         }

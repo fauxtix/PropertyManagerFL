@@ -1,76 +1,91 @@
 using Microsoft.AspNetCore.Components;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 
 namespace PropertyManagerFL.UI.Pages.Notifications;
 public partial class NotificationPopup
 {
     [Parameter] public bool showPopup { get; set; }
-    [Parameter] public EventCallback<bool> ShowPopupChanged { get; set; }
+    [Parameter] public EventCallback<int> HasAlerts { get; set; }
 
     [Inject] public IArrendamentoService? arrendamentosService { get; set; }
     [Inject] public IInquilinoService? inquilinosService { get; set; }
     [Inject] public IRecebimentoService? recebimentosService { get; set; }
+    [Inject] protected IAppSettingsService? appSettingsService { get; set; }
+
     [Inject] public ILogger<App>? logger { get; set; }
 
-    protected IEnumerable<ArrendamentoVM>? leases { get; set; }
+    protected Dictionary<string, int> LeaseAlerts = new Dictionary<string, int>();
 
-    protected List<string> Alerts { get; set; } = new();
+    protected IEnumerable<ArrendamentoVM>? leases { get; set; }
+    protected ApplicationSettingsVM? AppSettings { get; set; } = new();
+
+    //protected List<string> Alerts { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
         leases = await GetAllLeases();
         if (leases is not null && leases.Any())
         {
+            AppSettings = await GetSettings();
             await CheckForAlerts();
         }
     }
 
+    protected async Task<ApplicationSettingsVM> GetSettings()
+    {
+        return await appSettingsService!.GetSettingsAsync();
+    }
+
     private async Task CheckForAlerts()
     {
-        Alerts.Clear();
-        var tenantDocuments = await inquilinosService!.GetDocumentos();
-        var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
-        if (updateLetterSentCurrentYear.Any())
+        LeaseAlerts.Clear();
+        if (AppSettings?.CartasAumentoAutomaticas == false)
         {
-            foreach (var document in tenantDocuments)
+            // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualização de renda' 
+            var tenantDocuments = await inquilinosService!.GetDocumentos();
+            var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
+            if (updateLetterSentCurrentYear.Any())
             {
-                Alerts.Add($"Enviar de carta de atualização ({document.NomeInquilino})");
+                foreach (var document in tenantDocuments)
+                {
+                    LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}", 1);
+                }
+            }
+
+            var leasesWhoNeedToUpdateRent = leases?.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
+            if (leasesWhoNeedToUpdateRent?.Count() > 0)
+            {
+                foreach (var item in leasesWhoNeedToUpdateRent)
+                {
+                    var alertMsg = $"Necessário atualizar renda do inquilino {item.NomeInquilino} ({item.Fracao})";
+                    if (item.EnvioCartaAtualizacaoRenda == false)
+                        alertMsg += " - não foi enviada carta de atualização!";
+
+                    LeaseAlerts.Add(alertMsg, 1);
+                }
+            }
+            else // Cartas de aumento de rendas automáticas
+            {
+                if (leases?.Count() > 0)
+                {
+                    var rentPayments = (await recebimentosService!.GetAll()).ToList().Count();
+                    if (rentPayments > 0)
+                    {
+                        var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
+                        if (UpdateLetterSent == false)
+                        {
+                            LeaseAlerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano.", 3);
+                        }
+                    }
+                }
+
             }
         }
 
-        var leasesWhoNeedToUpdateRent =
-            leases?.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
-        if (leasesWhoNeedToUpdateRent is not null && leasesWhoNeedToUpdateRent.Any())
-        {
-            foreach (var item in leasesWhoNeedToUpdateRent)
-            {
-                var alertMsg = $"Atualizar renda ({item.NomeInquilino})";
-                if (item.EnvioCartaAtualizacaoRenda == false)
-                    alertMsg += " - não foi enviada carta!";
-
-                Alerts.Add(alertMsg);
-            }
-        }
-
-        foreach (var _leaseitem in leases)
-        {
-            var monthsToEnd = GetMonthDifference(DateTime.Now, _leaseitem.Data_Fim);
-            if (monthsToEnd >= 0 && monthsToEnd <= 4)
-            {
-                Alerts.Add($"Contrato do inquilino {_leaseitem.NomeInquilino} ({_leaseitem.Fracao}) \nestá prestes a terminar. Renovar data-fim, ou enviar carta de revogação");
-            }
-        }
-
-        // Este procedimento está condicionado pela chamada feita no início: (leases is not null)~=> não faz sentido haver recebimentos se não houver contratos ('leases')
-        var rentPayments = (await recebimentosService!.GetAll()).ToList().Count();
-        if (rentPayments > 0)
-        {
-            var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
-            if (UpdateLetterSent == false)
-            {
-                Alerts.Add("Cartas de atualização de rendas \nnão foram emitidas para o ano corrente!!");
-            }
-        }
+        await HasAlerts.InvokeAsync(LeaseAlerts.Count);
+        StateHasChanged();
     }
 
     protected async Task<IEnumerable<ArrendamentoVM>> GetAllLeases()

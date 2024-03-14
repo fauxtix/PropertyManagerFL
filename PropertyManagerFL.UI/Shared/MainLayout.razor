@@ -1,7 +1,8 @@
-﻿@using PropertyManagerFL.UI.Pages.Notifications
+﻿﻿@using PropertyManagerFL.UI.Pages.Notifications
 @inherits LayoutComponentBase
 @inject IJSRuntime JS
 @inject NavigationManager navigationManager
+@inject IStringLocalizer<App> L
 
 <PageTitle>PropertyManagerFL.UI</PageTitle>
 
@@ -11,6 +12,42 @@
     </div>
 
     <main>
+        @*         <div class="container-fluid">
+        <SfAppBar ColorMode="AppBarColor.Light" style="margin-left:25px;height:auto; vertical-align:middle" IsSticky="true">
+        <NavLink class="navlink-button" href="Contactos">
+        <i class="fa fa-users pl-2" aria-hidden="true" />&nbsp;&nbsp;@L["Site_Menu_Contactos"]
+        </NavLink>&nbsp&nbsp;
+        <NavLink class="nav-link navlink-button" href="documentos">
+        <i class="fas fa-file-pdf" aria-hidden="true" />&nbsp;&nbsp;@L["TituloDocumentacao"]
+        </NavLink>
+        <AppBarSpacer></AppBarSpacer>
+        <AppBarSeparator></AppBarSeparator>
+        <div class="mt-2 d-lg-block">
+        <button class="nav-link btn btn-link text-dark position-relative" @onclick="ToggleNotificationPopup" id="notificationButton">
+        <i class="oi oi-bell" style="color: red; block-size:stretch"></i> <!-- Icône de notification -->
+        <span class="notification-badge position-absolute top-100 start-100 translate-middle badge rounded-pill bg-warning">
+        @if (!ShowNotificationPopup)
+        {
+        @NotificationCount <!-- Nombre de notifications -->
+        }
+        </span>
+        @if (ShowNotificationPopup)
+        {
+        <div class="centered-div">
+        <NotificationPopup showPopup="@ShowNotificationPopup" />
+        </div>
+        }
+        </button>
+
+        </div>
+        <div class="mt-2 ml-2 d-md-block">
+        <CultureSwitcher />
+        </div>
+        <LoginDisplay />
+        </SfAppBar>
+        </div>
+        *@
+
         <div class="d-flex gap-3 top-row px-4 auth">
             <div class="mt-2 d-lg-block">
                 <button class="nav-link btn btn-link text-dark position-relative" @onclick="ToggleNotificationPopup" id="notificationButton">
@@ -24,7 +61,7 @@
                     @if (ShowNotificationPopup)
                     {
                         <div class="centered-div">
-                            <NotificationPopup showPopup="@ShowNotificationPopup" />
+                            <NotificationPopup showPopup="@ShowNotificationPopup" HasAlerts="CheckForAlerts" />
                         </div>
                     }
                 </button>
@@ -33,24 +70,19 @@
             <div class="mt-2 ml-2 d-md-block">
                 <CultureSwitcher />
             </div>
-            @* <div class="mt-2 d-lg-block">
-            <SfButton IsPrimary="true" Content="@Content" IsToggle="true" @onclick="changeTheme" @ref="ToggleBtnObj"></SfButton>
-            </div> *@
             <LoginDisplay />
-
-
         </div>
 
-        <article class="content px-4">
+        <article class="content px-4 mb-4">
             @Body
         </article>
     </main>
 </div>
 
 @code {
-    private int NotificationCount = 3; // number of notifications
+    private int NotificationCount = 0; // number of notifications
 
-    private bool ShowNotificationPopup { get; set; } = false;
+    private bool ShowNotificationPopup { get; set; } = true;
     SfButton? ToggleBtnObj;
 
     public string Content = "Light";
@@ -74,4 +106,29 @@
         // Toggle the visibility of the notification popup
         ShowNotificationPopup = !ShowNotificationPopup;
     }
+
+    private void CheckForAlerts(int numberAlerts)
+    {
+        NotificationCount = numberAlerts;
+        StateHasChanged();
+    }
 }
+
+<style>
+    .navlink-button {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background-color: #f2f2f2; /* Light gray */
+        color: #333; /* Dark text color for better contrast */
+        text-decoration: none; /* Remove underline */
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+        /* Hover effect */
+        .navlink-button:hover {
+            background-color: #e5e5e5; /* Slightly darker gray on hover */
+        }
+</style>

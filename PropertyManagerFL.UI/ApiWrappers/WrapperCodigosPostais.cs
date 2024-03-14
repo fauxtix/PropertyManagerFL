@@ -33,7 +33,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (CodigosPostais/GetAddresses)");
                 return new List<AddressVM>();
             }
 

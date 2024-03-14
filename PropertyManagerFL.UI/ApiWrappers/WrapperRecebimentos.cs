@@ -114,7 +114,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetTotalRecebimentos)");
                 return -1;
             }
         }
@@ -128,8 +128,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetAll)");
+                return Enumerable.Empty<RecebimentoVM>();
             }
         }
 
@@ -164,7 +164,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/TotalRecebimentosPrevisto_Inquilino)");
                 return -1;
             }
         }
@@ -178,7 +178,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetRecebimento_ById)");
                 return null;
             }
         }
@@ -298,8 +298,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GeneratePagamentoRendas)");
+                return Enumerable.Empty<RecebimentoVM>();
             }
         }
 
@@ -312,7 +312,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetValorUltimaRendaPaga)");
                 return -1;
             }
         }
@@ -326,7 +326,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/RentalProcessingPerformed)");
                 return false;
             }
         }
@@ -360,8 +360,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetRecebimentoTemp_ById)");
+                return new();
             }
         }
 
@@ -413,8 +413,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetAllTemp)");
+                return Enumerable.Empty<RecebimentoVM>();
             }
         }
 
@@ -440,7 +440,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/GetMaxValueAllowed_ManualInput)");
                 return -1;
             }
         }
@@ -463,7 +463,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos/AcertaPagamentoRenda)");
                 return false;
             }
         }
@@ -507,8 +507,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API Recebimentos / GetMonthlyRentsProcessed");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Recebimentos / GetMonthlyRentsProcessed)");
+                return new();
             }
         }
 

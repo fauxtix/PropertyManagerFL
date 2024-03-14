@@ -28,6 +28,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] protected IStringLocalizer<App>? L { get; set; }
         [Inject] protected NavigationManager? NavigationManager { get; set; }
         [Inject] protected IJSRuntime? JSRuntime { get; set; }
+        [Inject] protected ILogger<App>? _logger{ get; set; }
 
 
         /// <summary>
@@ -57,6 +58,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected bool IsDirty = false;
         protected List<string>? ValidationMessages = new();
+        protected string? WarningTitle;
+        protected AlertMessageType alertMessageType = AlertMessageType.Info;
 
         protected string? ToastTitle;
         protected string? ToastMessage;
@@ -72,7 +75,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string DeleteMsg { get; set; } = string.Empty;
         protected string DirtyMsg { get; set; } = string.Empty;
 
-        protected double primaryIndex;
+        protected int primaryIndex;
 
         /// <summary>
         /// Documentos
@@ -205,7 +208,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var fileName = args.RowData.URL;
                 if (fileName!.ToLower().StartsWith("http"))
                 {
-                    await JSRuntime!.InvokeAsync<object>("open", fileName, "_blank");
+                    try
+                    {
+                        await JSRuntime!.InvokeAsync<object>("open", fileName, "_blank");
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError($"Abertura de documento em nova página\n ({ex.Message})");
+                    }
                 }
                 else
                 {
@@ -451,7 +461,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             //}
             //else
             //{
-                AddEditVisibility = false;
+            AddEditVisibility = false;
             //}
         }
 

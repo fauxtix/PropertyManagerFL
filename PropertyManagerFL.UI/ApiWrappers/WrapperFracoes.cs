@@ -120,7 +120,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetAll)");
                 return Enumerable.Empty<FracaoVM>();
             }
         }
@@ -144,8 +144,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetFracao_ById)");
+                return new();
             }
         }
 
@@ -163,7 +163,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetUnit_ById)");
                 return null;
             }
         }
@@ -182,7 +182,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetFracoes_Imovel)");
                 return Enumerable.Empty<FracaoVM>();
             }
         }
@@ -203,7 +203,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao pesquisar API: {exc.Message}");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/FracaoEstaLivre)");
                 return false;
             }
         }
@@ -223,7 +223,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetFracoes)");
                 return Enumerable.Empty<LookupTableVM>();
             }
         }
@@ -237,7 +237,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/MarcaFracaoComoAlugada)");
                 return false;
             }
         }
@@ -251,7 +251,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/MarcaFracaoComoAlugada)");
                 return false;
             }
         }
@@ -275,7 +275,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetIDSituacao_ByDescription)");
                 return -1;
             }
         }
@@ -315,7 +315,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetFracoes_Disponiveis)");
                 return null;
             }
 
@@ -330,7 +330,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetImages_ByUnitId)");
                 return null;
             }
         }
@@ -396,7 +396,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fracoes/GetImage_ByUnitId)");
                 return null;
             }
         }

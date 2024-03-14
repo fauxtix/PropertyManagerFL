@@ -118,7 +118,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Contactos/GetAll)");
                 return Enumerable.Empty<ContactoVM>();
             }
         }
@@ -137,7 +137,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Contactos/GetContacto_ById)");
                 return new ContactoVM();
             }
         }

@@ -103,7 +103,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Documentos/GetAll)");
                 return Enumerable.Empty<DocumentoVM>();
             }
         }
@@ -122,7 +122,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Documentos/GetDocument_ById)");
                 return new DocumentoVM();
             }
         }
@@ -136,7 +136,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Documentos/GetAll_DocumentTypes)");
                 return Enumerable.Empty<DocumentType>();
             }
         }
@@ -150,7 +150,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Documentos/GetDocumentType_ById)");
                 return new DocumentType();
             }
         }
@@ -167,7 +167,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Documentos/GetPdfFilename)");
                 return "";
             }
         }

@@ -8,4 +8,6 @@ public interface IAppSettingsRepository
     Task InitializeRentProcessingTables();
     Task UpdateOtherSettingsAsync(ApplicationSettings settings);
     Task UpdateSettingsAsync(ApplicationSettings settings);
+    Task UpdateLanguageAsync(string language);
+
 }

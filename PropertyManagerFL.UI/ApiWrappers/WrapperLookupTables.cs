@@ -65,7 +65,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao inserir registo no API");
+                _logger.LogError(exc, "Erro ao inserir registo no API (LookupTables)");
                 return false;
             }
         }
@@ -95,7 +95,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao atualizar registo no API");
+                _logger.LogError(exc, "Erro ao atualizar registo no API (LookupTables)");
                 return false;
             }
         }
@@ -112,7 +112,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao apagar registo no API");
+                _logger.LogError(exc, "Erro ao apagar registo no API (LookupTables");
                 return false;
             }
 
@@ -157,7 +157,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (LookupTables/GetLookupTableData)");
                 return Enumerable.Empty<LookupTableVM>();
             }
 
@@ -202,7 +202,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (LookupTables/GetCodByDescricao)");
                 return -1;
             }
         }
@@ -235,7 +235,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (LookupTables/CheckFKInUse)");
                 return false;
             }
         }
@@ -255,7 +255,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (LookupTables/CheckRegistoExist)");
                 return false;
             }
         }
@@ -274,7 +274,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (LookupTables/GetLastInsertedId)");
                 return -1;
             }
         }

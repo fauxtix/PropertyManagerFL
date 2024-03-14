@@ -2411,6 +2411,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Emite contrato?.
+        /// </summary>
+        public static string TituloEmiteContrato {
+            get {
+                return ResourceManager.GetString("TituloEmiteContrato", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Emitida em.
         /// </summary>
         public static string TituloEmitidaEm {
@@ -4189,6 +4198,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloVerificarLog {
             get {
                 return ResourceManager.GetString("TituloVerificarLog", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visualizar contrato.
+        /// </summary>
+        public static string TituloVisualizarContrato {
+            get {
+                return ResourceManager.GetString("TituloVisualizarContrato", resourceCulture);
             }
         }
         

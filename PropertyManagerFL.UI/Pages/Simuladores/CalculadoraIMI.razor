@@ -7,13 +7,13 @@
 <PageTitle>Calculadora IMI</PageTitle>
 <PageTitleComponent PageTitle="Calculadora IMI"></PageTitleComponent>
 
-@if (Distritos is null || !Distritos.Any() )
+@if (Distritos is null || !Distritos.Any())
 {
-    <LoadingData/>
+    <LoadingData />
 }
 else
 {
-    <div class="container-fluid w-75 ">
+    <div class="container-fluid w-50 ">
         <div class="card card-block w-100 h-100 my-3 mx-2">
             <div class="card-header h4 text-center  mt-1">Calcular IMI de cada imóvel</div>
             <div class="card-content">
@@ -25,18 +25,18 @@ else
                                         Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="LookupTableVM">
                             </DropDownListTemplates>
-                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeProperty"></DropDownListEvents>
+                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeProperty"></DropDownListEvents>
                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                         </SfDropDownList>
                     </div>
-                    <div class="col-md-6 mt-2">
+                    <div hidden="@(idxProperty == 0)" c class="col-md-6 mt-2">
                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                         ShowClearButton="true" Enabled="@ShowUnitsCombo"
                                         FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                         Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="LookupTableVM">
                             </DropDownListTemplates>
-                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeUnit"></DropDownListEvents>
+                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeUnit"></DropDownListEvents>
                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                         </SfDropDownList>
                     </div>
@@ -64,24 +64,25 @@ else
                     <div class="col-md-6">
                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                         ShowClearButton="true" Width="250px"
+                                        Value="@idxDistrito"
                                         FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                         Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="LookupTableVM">
                             </DropDownListTemplates>
-                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeDistrito"></DropDownListEvents>
+                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeDistrito"></DropDownListEvents>
                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                         </SfDropDownList>
                     </div>
                     <div hidden="@(idxDistrito == 0)" class="col-md-6">
                         <SfDropDownList TValue="int" TItem="Concelho" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                         ShowClearButton="true" Width="250px"
-                                        Value="@idxDistrito"
+                                        Value="@idxConcelho"
                                         FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                         Placeholder="Concelho" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="Concelho">
                             </DropDownListTemplates>
-                            <DropDownListEvents TValue="int" TItem="Concelho" ValueChange="onChangeConcelho"></DropDownListEvents>
-                            <DropDownListFieldSettings Value="IdDistrito" Text="Descricao"></DropDownListFieldSettings>
+                            <DropDownListEvents TValue="int" TItem="Concelho" ValueChange="OnChangeConcelho"></DropDownListEvents>
+                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                         </SfDropDownList>
                     </div>
                 </div>
@@ -94,7 +95,7 @@ else
                                         Placeholder="Tipo de Imóvel" DataSource="@TiposImovel" FloatLabelType="FloatLabelType.Always">
                             <DropDownListTemplates TItem="LookupTableVM">
                             </DropDownListTemplates>
-                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTipoImovel"></DropDownListEvents>
+                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeTipoImovel"></DropDownListEvents>
                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
                         </SfDropDownList>
                     </div>
@@ -155,167 +156,7 @@ else
         </div>
     </div>
 }
-@code {
 
-    /*
-    * Se o valor do IMI for igual ou inferior a 100 euros, tem de ser pago na totalidade, em maio.
-    * Caso o valor do imposto seja superior a 100 euros e inferior a 500 euros, o pagamento é efetuado em duas prestações, em maio e novembro.
-    * A partir de 500 euros, o valor de IMI é pago em três prestações, em maio, agosto e novembro.
-    */
-
-    [Inject] public IImovelService? imoveisService { get; set; }
-    [Inject] public IFracaoService? fracoesService { get; set; }
-    [Inject] public IDistritosConcelhosService? service { get; set; }
-    [Inject] public IStringLocalizer<App> L { get; set; }
-
-    protected IEnumerable<LookupTableVM>? PropertiesLookup { get; set; }
-    protected List<LookupTableVM>? UnitsLookup { get; set; } = new();
-    protected List<FracaoVM>? Units { get; set; } = new();
-
-    protected IEnumerable<LookupTableVM>? Distritos { get; set; }
-    protected IEnumerable<Concelho>? Concelhos { get; set; }
-    protected bool distritoSelected;
-    protected int idxDistrito;
-    protected int idxConcelho;
-    protected int idxTipoImovel;
-    protected double coeficiente;
-    protected string coeficienteCaption = string.Empty;
-    protected decimal valorPatrimonio;
-    protected decimal valorIMI;
-    protected decimal valorPrestacaoIMI;
-    protected List<string> listaCaptionsPrestacoes = new();
-
-    protected bool generalUse = false;
-    protected int idxProperty;
-    protected int idxUnit;
-    protected bool ShowUnitsCombo;
-    protected bool HideResults = true;
-    protected string? coefCaption;
-
-    protected int pagamentosFracionados = 1;
-
-    protected List<LookupTableVM> TiposImovel { get; set; } = new List<LookupTableVM>()
-    {
-        new LookupTableVM{Id = 1, Descricao = "Urbano"},
-        new LookupTableVM{Id = 2, Descricao = "Rústico"}
-    };
-    protected override async Task OnInitializedAsync()
-    {
-        coeficienteCaption = string.Empty;
-        idxTipoImovel = 1;
-        coeficiente = 0;
-        valorIMI = 0;
-        distritoSelected = false;
-        Distritos = (await service!.GetDistritos()).ToList();
-        PropertiesLookup = await imoveisService!.GetPropertiesAsLookupTables();
-    }
-
-    protected async void onChangeDistrito(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
-    {
-        idxDistrito = args.Value;
-        distritoSelected = true;
-
-        // ao escolher distrito, devolve concelhos pertencentes a este; permite visualização da respetiva combo (distritoSelected = true)
-        Concelhos = (await service!.GetConcelhosByDistrito(idxDistrito)).ToList();
-        StateHasChanged();
-    }
-    protected void onChangeConcelho(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, Concelho> args)
-    {
-        if (args.Value == 0) return;
-
-        idxConcelho = args.Value;
-        // ao escolher concelho, determina qual o coeficiente aplicável ao mesmo
-        coeficiente = args.ItemData.Coeficiente;
-
-        // valor em % para apresentar ao utilizador
-        coeficienteCaption = Math.Round(args.ItemData.Coeficiente * 100, 2).ToString();
-
-        StateHasChanged();
-    }
-    protected void onChangeTipoImovel(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
-    {
-        idxTipoImovel = args.Value;
-        StateHasChanged();
-    }
-
-    protected async Task onChangeProperty(ChangeEventArgs<int, LookupTableVM> args)
-    {
-        idxProperty = args.Value;
-        UnitsLookup = new();
-        Units = (await fracoesService!.GetFracoes_Imovel(idxProperty)).ToList();
-        foreach (var unit in Units)
-        {
-            UnitsLookup!.Add(
-                 new LookupTableVM { Id = unit.Id, Descricao = unit.Descricao });
-        }
-
-        // após escolha do imóvel, e filtragem das frações pertencentes ao mesmo, disponibiliza combo das frações
-        ShowUnitsCombo = true;
-    }
-    protected async Task onChangeUnit(ChangeEventArgs<int, LookupTableVM> args)
-    {
-        if (args.Value < 1) return;
-        var unit = await fracoesService!.GetFracao_ById(args.Value);
-        // ao escolher uma fração, guarda valor tributável
-        valorPatrimonio = unit.ValorUltAvaliacao;
-
-    }
-
-    protected void Clear()
-    {
-        idxProperty = 0;
-        idxDistrito = 0;
-        idxTipoImovel = 0;
-        ShowUnitsCombo = false;
-        HideResults = true;
-        valorPatrimonio = 0;
-        valorIMI = 0;
-        valorPrestacaoIMI = 0;
-    }
-
-    protected void Calculate()
-    {
-        listaCaptionsPrestacoes.Clear();
-        coefCaption = $"{coeficiente:F2}%";
-        valorIMI = Math.Round(valorPatrimonio * (decimal)coeficiente, 2);
-        switch (valorIMI)
-        {
-            case decimal valor when valor <= 100:
-                pagamentosFracionados = 1;
-                listaCaptionsPrestacoes = new List<string>
-                {
-                    "Maio"
-                };
-                break;
-            case decimal valor when valor < 500:
-                pagamentosFracionados = 2;
-                listaCaptionsPrestacoes = new List<string>
-                {
-                    "Maio", "Novembro"
-                };
-                break;
-            case decimal valor when valor >= 500:
-                pagamentosFracionados = 3;
-                listaCaptionsPrestacoes = new List<string>
-                {
-                    "Maio", "Agosto", "Setembro"
-                };
-                break;
-        }
-
-        valorPrestacaoIMI = valorIMI / pagamentosFracionados;
-        HideResults = false;
-    }
-
-    protected class IMIResults
-    {
-        public decimal ValPatrimonio { get; set; }
-        public string? Descricao { get; set; }
-        public double Coeficiente { get; set; }
-        public decimal ValorPagar { get; set; }
-    }
-
-}
 <style type="text/css" scoped>
     .card {
         height: 100%;

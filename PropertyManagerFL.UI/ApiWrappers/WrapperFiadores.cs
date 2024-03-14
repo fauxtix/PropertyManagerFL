@@ -114,7 +114,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fiadores/GetAll)");
                 return Enumerable.Empty<FiadorVM>();
             }
         }
@@ -132,7 +132,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fiadores/Query_ById)");
                 return null;
             }
         }
@@ -162,8 +162,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Fiadores/Query_ById)");
+                return Enumerable.Empty<LookupTableVM>();
             }
         }
 
@@ -176,7 +176,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (Fiadores/GetFiadores_ForLookUp)");
                 return null;
             }
 
@@ -227,8 +227,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
-                return null;
+                _logger.LogError(exc, "Erro ao pesquisar API (Fiadores/GetFiador_ById)");
+                return new();
             }
         }
     }

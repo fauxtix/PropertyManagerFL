@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
+using System.Text;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 public class WrapperAppSettings : IAppSettingsService
@@ -11,6 +12,7 @@ public class WrapperAppSettings : IAppSettingsService
     private readonly string? _url;
     private readonly string? _otherSettingsUrl;
     private readonly string? _initializeUrl;
+    private readonly string? _updateLanguageUrl;
 
     public WrapperAppSettings(HttpClient httpClient, IConfiguration env,
                                     ILogger<WrapperAppSettings> logger)
@@ -19,6 +21,7 @@ public class WrapperAppSettings : IAppSettingsService
         _url = $"{_env["BaseUrl"]}/appsettings/emailsettings";
         _otherSettingsUrl = $"{_env["BaseUrl"]}/appsettings/othersettings";
         _initializeUrl = $"{_env["BaseUrl"]}/appsettings/initialize";
+        _updateLanguageUrl = $"{_env["BaseUrl"]}/appsettings/updatelanguage";
         _logger = logger;
 
         _httpClient = httpClient;
@@ -80,6 +83,25 @@ public class WrapperAppSettings : IAppSettingsService
         {
             _logger.LogError(exc, "Erro ao executar API (AppSettings/Initialize)");
             return false;
+        }
+    }
+
+    public async Task UpdateLanguageAsync(string language)
+    {
+        // _updateLanguageUrl = $"{_env["BaseUrl"]}/appsettings/updatelanguage";
+        // controller = AppSettingsController
+
+        var content = new StringContent("\"" + language + "\"", Encoding.UTF8, "application/json");
+
+        var response = await _httpClient.PatchAsync(_updateLanguageUrl, content);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var resultadoAtualizacao = "Campo atualizado com sucesso!";
+        }
+        else
+        {
+            var resultadoAtualizacao = "Falha ao atualizar o campo.";
         }
     }
 }

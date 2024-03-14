@@ -75,7 +75,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API");
+                _logger.LogError(exc, "Erro ao pesquisar API (GetMessageById)");
                 return new ComposeMessageVM();
             }
         }
@@ -92,7 +92,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, $"Erro ao atualizar Mensagem");
+                _logger.LogError(exc, $"Erro ao atualizar Mensagem (Messages)");
                 return false;
             }
         }
