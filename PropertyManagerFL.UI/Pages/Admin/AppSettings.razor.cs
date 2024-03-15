@@ -16,8 +16,8 @@ public partial class AppSettings
     private string IconCss = "fa fa-play";
     private string Content = "Ssl";
 
-    private string culture;
-    private string selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
+    private string? culture;
+    private string selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
 
     private string portugues;
     protected SfToast? ToastObj { get; set; }
@@ -44,7 +44,7 @@ public partial class AppSettings
         {
             settings = await AppSettingsService.GetSettingsAsync();
         }
-        catch (Exception ex)
+        catch
         {
             settings = new();
         }
@@ -55,15 +55,15 @@ public partial class AppSettings
         if (ToggleBtnObj?.Content == "Ssl")
         {
             settings!.EnableSSL = true; // Hotmail
-            this.Content = "No Ssl";
-            this.IconCss = "fa fa-pause";
+            Content = "No Ssl";
+            IconCss = "fa fa-pause";
         }
         else
         {
             settings!.EnableSSL = false;
 
-            this.Content = "Ssl";
-            this.IconCss = "fa fa-play";
+            Content = "Ssl";
+            IconCss = "fa fa-play";
         }
     }
 

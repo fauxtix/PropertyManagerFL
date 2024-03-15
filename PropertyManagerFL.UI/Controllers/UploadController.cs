@@ -157,7 +157,7 @@ namespace PropertyManagerFL.UI.Controllers
                     return Json(new { success = false, message = "No file provided" });
                 }
             }
-            catch (Exception e)
+            catch 
             {
                 // Handle exceptions
                 return Json(new { success = false, message = "File removal failed" });

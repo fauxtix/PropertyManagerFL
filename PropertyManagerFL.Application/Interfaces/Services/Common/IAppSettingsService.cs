@@ -6,6 +6,6 @@ public interface IAppSettingsService
     Task<ApplicationSettingsVM> GetSettingsAsync();
     Task UpdateSettingsAsync(ApplicationSettingsVM settings);
     Task UpdateOtherSettingsAsync(ApplicationSettingsVM settings);
-    Task UpdateLanguageAsync(string language);
+    Task<(string, bool)> UpdateLanguageAsync(string language);
     Task<bool> InitializeRentProcessingTables();
 }

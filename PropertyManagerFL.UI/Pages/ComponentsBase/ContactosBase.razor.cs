@@ -193,12 +193,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             //Below code is to customize the columns width for the pdf exported grid irrespective of the actual grid columns width
 
+#pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             ExportProperties.Columns = new List<GridColumn>()
             {
                 new GridColumn(){ Field="Nome", HeaderText=L["TituloNome"], TextAlign=TextAlign.Left, Width="250"},
                 new GridColumn(){ Field="Contacto", HeaderText=L["TituloCampo3Editoras"], TextAlign=TextAlign.Left, Width="100"},
                 new GridColumn(){ Field="TipoContacto", HeaderText=L["TituloTipo"], TextAlign=TextAlign.Left, Width="150"}
             };
+#pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
             await contactsGridObj.PdfExport(ExportProperties);
 

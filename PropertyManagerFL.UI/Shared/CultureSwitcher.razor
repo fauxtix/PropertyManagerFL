@@ -35,7 +35,7 @@
     [Inject] public IAppSettingsService? appSettingsService { get; set; }
 
     private string? storedCulture;
-    private string ?culture;
+    private string? culture;
     private string? selectedCulture = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
 
     private string? portugues;
@@ -67,7 +67,7 @@
         var culture = new CultureInfo(selectedCulture);
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
-        
+
 
     }
     private async void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
@@ -84,9 +84,11 @@
         var query = $"?culture={Uri.EscapeDataString(culture)}&" +
             $"redirectUri={Uri.EscapeDataString(uri)}";
 
-        await appSettingsService!.UpdateLanguageAsync(selectedCulture); // 11/03/2024
+        var resp = await appSettingsService!.UpdateLanguageAsync(selectedCulture); // 11/03/2024
+        var success = resp.Item2 == true;
 
-        NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+        if (success)
+            NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
     }
 
     private async Task<ApplicationSettingsVM> GetSettings()

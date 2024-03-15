@@ -22,7 +22,7 @@
         <div class="row">
             @if (EditMode == OpcoesRegisto.Inserir)
             {
-                <div class="input-group mt-3">
+                <div class="form-group mt-3">
                     <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
                                 DropArea=".control-fluid"
                                 AllowMultiple=false AllowedExtensions=" .docx, .pdf"
@@ -33,21 +33,36 @@
                     </SfUploader>
                 </div>
             }
-            <div hidden="@string.IsNullOrEmpty(Document!.DocumentPath)" class="input-group mt-2">
-                <SfTextBox Enabled="false"
-                           Placeholder="@L["TituloDocumento"]"
-                           CssClass="form-control  e-corner"
-                           FloatLabelType="@FloatLabelType.Auto"
-                           Value="@Document!.DocumentPath">
-                </SfTextBox>
-            </div>
-            <div class="input-group m-2">
-                <SfTextBox Enabled="true"
-                           Placeholder="@L["rbtDescricao"]"
-                           CssClass="form-control  e-corner"
-                           FloatLabelType="@FloatLabelType.Auto"
-                @bind-Value="@Document!.Descricao">
-                </SfTextBox>
+            <div hidden="@string.IsNullOrEmpty(Document!.DocumentPath)" class="form-group mt-2">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <SfTextBox Enabled="false"
+                               Placeholder="@L["TituloData"]"
+                               CssClass="form-control  e-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               Value="@Document!.ReferralDate.ToShortDateString()">
+                    </SfTextBox>
+                    <SfTextBox Enabled="false"
+                               Placeholder="Storage folder"
+                               CssClass="form-control  e-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               Value="@Document!.StorageFolder">
+                    </SfTextBox>
+                </div>
+                <div>
+                    <SfTextBox Enabled="false"
+                               Placeholder="@L["TituloDocumento"]"
+                               CssClass="form-control  e-corner"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               Value="@Document!.DocumentPath">
+                    </SfTextBox>
+                </div>
+                <div>
+                    <SfTextBox Placeholder="@L["rbtDescricao"]"
+                               CssClass="form-control"
+                               FloatLabelType="@FloatLabelType.Auto"
+                               @bind-Value="@Document!.Descricao">
+                    </SfTextBox>
+                </div>
             </div>
 
         </div>

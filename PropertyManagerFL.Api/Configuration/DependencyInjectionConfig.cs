@@ -2,7 +2,6 @@
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Repositories.Data_Operations;
-using PropertyManagerFL.Application.Interfaces.Repositories.Email;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
 using PropertyManagerFL.Infrastructure.Context;

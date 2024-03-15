@@ -17,28 +17,36 @@ public static class JwtConfig
     {
         services.AddScoped<IJwtService, JwtService>();
 
-        var chave = Encoding.ASCII.GetBytes(configuration.GetSection("JWT:Secret").Value);
+        var secretValue = configuration.GetSection("JWT:Secret")?.Value;
+        if (secretValue != null)
+        {
+            var chave = Encoding.ASCII.GetBytes(secretValue);
 
-        services.AddAuthentication(p =>
-        {
-            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(p =>
-        {
-            p.RequireHttpsMetadata = false;
-            p.SaveToken = true;
-            p.TokenValidationParameters = new TokenValidationParameters
+            services.AddAuthentication(p =>
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(chave),
-                ValidateIssuer = true,
-                ValidIssuer = configuration.GetSection("JWT:Issuer").Value,
-                ValidateAudience = true,
-                ValidAudience = configuration.GetSection("JWT:Audience").Value,
-                ValidateLifetime = true
-            };
-        });
+                p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(p =>
+            {
+                p.RequireHttpsMetadata = false;
+                p.SaveToken = true;
+                p.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(chave),
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration.GetSection("JWT:Issuer").Value,
+                    ValidateAudience = true,
+                    ValidAudience = configuration.GetSection("JWT:Audience").Value,
+                    ValidateLifetime = true
+                };
+            });
+        }
+        else
+        {
+            throw new InvalidOperationException("JWT secret configuration value is missing.");
+        }
     }
 
     /// <summary>

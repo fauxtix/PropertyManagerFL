@@ -11,6 +11,8 @@ using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFLApplication.Utilities;
+using Syncfusion.Blazor.Data;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -290,6 +292,14 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 }
                 else
                 {
+                    DateTime leaseStart = SelectedLease.Data_Inicio;
+                    DateTime leaseEnd = SelectedLease.Data_Fim;
+                    int leaseMonths = Utilitarios.GetMonthDifference(leaseStart, leaseEnd);
+                    if(SelectedLease.Prazo == 1 && leaseMonths > 12)
+                    {
+                        SelectedLease.Prazo_Meses = 36; // contratos com duração de um ano, após a não revogação nesse período passam a ser de 36 meses (Prazo = 3)
+                    }
+
                     var insertOk = await arrendamentosService!.InsertArrendamento(SelectedLease!);
                     if (insertOk == false)
                     {
@@ -1000,8 +1010,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             ID_Fracao = 0,
             ID_Inquilino = 0,
             Notas = "",
-            Prazo_Meses = 36,
-            Prazo = 3,
+            Prazo_Meses = AppSettings.PrazoContratoEmAnos * 12,
+            Prazo = AppSettings.PrazoContratoEmAnos,
             RenovacaoAutomatica = true,
             Valor_Renda = 0,
             SaldoInicial = 0

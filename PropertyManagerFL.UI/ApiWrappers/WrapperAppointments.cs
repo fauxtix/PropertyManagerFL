@@ -30,6 +30,10 @@ public class WrapperAppointments : IAppointmentsService
         {
             await _httpClient.DeleteAsync($"{_appointmentsUri}/{Id}");
         }
+        catch (HttpRequestException exc)
+        {
+            _logger.LogError(exc, "Erro de comunicação de rede ao apagar registro (API Appointments)");
+        }
         catch (Exception exc)
         {
             _logger.LogError(exc, "Erro ao apagar registo (API Appointments)");

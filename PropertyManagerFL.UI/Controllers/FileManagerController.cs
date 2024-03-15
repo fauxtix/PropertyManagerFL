@@ -69,7 +69,9 @@ namespace PropertyManagerFL.UI.Controllers
         [HttpPost("Upload")]
         public IActionResult Upload(string path, IList<IFormFile> uploadFiles, string action)
         {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var uploadResponse = _operation.Upload(path, uploadFiles, action, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             if (uploadResponse.Error != null)
             {
@@ -82,7 +84,9 @@ namespace PropertyManagerFL.UI.Controllers
         [HttpGet("GetImage")]
         public IActionResult GetImage(FileManagerDirectoryContent args)
         {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             return _operation.GetImage(args.Path, null, false, null, null);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
 
         private void HandleErrorResponse(ErrorDetails error)

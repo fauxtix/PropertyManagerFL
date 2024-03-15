@@ -173,6 +173,7 @@
         spinnerVisible = true;
 
         await GetTenantsDetails();
+
         var firstId = Tenants.FirstOrDefault(r => r.Id > 0).Id;
         await GetTenantCheckingAcount(firstId);
         await Task.Delay(100);

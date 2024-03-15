@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("PMConnection");
 
 
+#pragma warning disable ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 {
     Log.Logger = new LoggerConfiguration()
@@ -36,6 +37,7 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
         //        .WriteTo.Console()
         .CreateLogger();
 }).UseSerilog();
+#pragma warning restore ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 
 
 builder.Services.AddMemoryCache(options =>
@@ -102,11 +104,17 @@ var emailConfig = builder.Configuration
     .GetSection("EmailConfiguration")
     .Get<EmailConfiguration>();
 
-builder.Services.AddSingleton(emailConfig);
+if (emailConfig != null)
+{
+    builder.Services.AddSingleton(emailConfig);
+}
+else
+{
+    throw new InvalidOperationException("Email configuration is missing or invalid.");
+}
 
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<TokenProvider>();
-
 
 var app = builder.Build();
 

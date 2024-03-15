@@ -536,15 +536,18 @@
 
         DeleteConfirmVisibility = false;
 
-        await Task.Delay(200);
-        await ToastObj.ShowAsync();
+        if(ToastObj is not null)
+        {
+            await Task.Delay(200);
+            await ToastObj.ShowAsync();
+        }
     }
 
     private int ItemValue(TItem Item)
     {
         if (Item is ExpandoObject)
         {
-            IDictionary<string, object> dictionary_object = (Item as ExpandoObject);
+            IDictionary<string, object>? dictionary_object = (Item as ExpandoObject);
             return (int)dictionary_object["Codigo"];
         }
         else

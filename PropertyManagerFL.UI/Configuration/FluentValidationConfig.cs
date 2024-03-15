@@ -18,6 +18,7 @@ public static class FluentValidationConfig
         //    .AddFluentValidationRulesToSwagger()
         //    .AddValidatorsFromAssemblyContaining<InquilinoValidator>();
 
+#pragma warning disable CS0618 // Type or member is obsolete
         services.AddControllers()
             .AddNewtonsoftJson(x =>
             {
@@ -44,6 +45,7 @@ public static class FluentValidationConfig
                p.RegisterValidatorsFromAssemblyContaining<TipoRecebimentoValidator>();
                p.ValidatorOptions.LanguageManager.Culture = new CultureInfo("pt-PT");
            });
+#pragma warning restore CS0618 // Type or member is obsolete
 
         services.AddFluentValidationRulesToSwagger();
     }

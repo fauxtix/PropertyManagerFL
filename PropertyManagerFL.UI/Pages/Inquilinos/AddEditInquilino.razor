@@ -12,193 +12,189 @@
 <div>
     <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="home-owner"></HeaderDialogComponent>
 </div>
-<div>
-    <hr class="divider">
-    <EditForm Model="Tenant" style="margin:auto;padding:10px;">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <SfTextBox Enabled="true"
-                               Placeholder="@L["TituloNome"]"
-                               CssClass="e-field  e-corner"
-                               FloatLabelType="@FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Nome">
-                    </SfTextBox>
-                </div>
-                <div class="form-group mt-2">
-                    <SfTextBox Enabled="true"
-                               Placeholder="@L["TituloMorada"]"
-                               CssClass="e-field  e-corner"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Morada">
-                    </SfTextBox>
-                </div>
-                <div class="form-group mt-2">
-                    <SfTextBox Enabled="true"
-                               Placeholder="@L["TituloCodigoPostal"]"
-                               CssClass="e-field  e-corner"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Naturalidade">
-                    </SfTextBox>
-                </div>
-                <div class="group-box">
-                    <SfDatePicker Enabled="true" Placeholder="@L["TituloDtNascimento"]"
-                                  CssClass="e-align-middle e-corner"
-                                  FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant.DataNascimento">
-                        <DatePickerEvents TValue="DateTime" ValueChange="DtNascChanged"></DatePickerEvents>
-                    </SfDatePicker>
-                    <SfTextBox Placeholder="@L["MSG_Idade"]" Readonly="true"
-                               CssClass="e-field e-corner custom-class"
-                               Width="200px"
-                               FloatLabelType="FloatLabelType.Always"
-                               Value="@IdadeInquilino.ToString()" />
-                               
-                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    Value="@idxMaritalStatus" ShowClearButton="false" PopupWidth="auto"
-                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                    Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
-                        <DropDownListTemplates TItem="LookupTableVM">
-                        </DropDownListTemplates>
-                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeEstadoCivil"></DropDownListEvents>
-                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                    </SfDropDownList>
-                </div>
-                <div class="group-box">
-                    <SfTextBox Placeholder="@L["TituloIdentificacao"]"
-                               CssClass="e-field  e-corner custom-class"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Identificacao">
-                    </SfTextBox>
-                    <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]"
-                                  CssClass="e-corner"
-                                  FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant.ValidadeCC">
-                        <DatePickerEvents TValue="DateTime"></DatePickerEvents>
-                    </SfDatePicker>
-                    <SfTextBox Placeholder="NIF"
-                               CssClass="e-field  e-corner custom-class"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.NIF">
-                    </SfTextBox>
-
-                </div>
-                <div class="group-box-left">
-                    <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #1")"
-                               Width="130px"
-                               CssClass="e-field  e-corner custom-class"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Contacto1">
-                    </SfTextBox>
-                    <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #2")"
-                               Width="130px"
-                               CssClass="e-field  e-corner custom-class"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.Contacto2">
-                    </SfTextBox>
-                </div>
-                <div class="form-group mt-2">
-                    <SfTextBox Enabled="true"
-                               Placeholder="e-mail"
-                               CssClass="e-field e-corner"
-                               FloatLabelType="FloatLabelType.Always"
-                    @bind-Value="@Tenant!.eMail">
-                    </SfTextBox>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div>
-                    <div hidden="hidden">
-                        <div class="group-box">
-                            <SfRadioButton Name="TitularInquilino"
-                                           Value=true
-                                           Label="Titular"
-                                           TChecked="bool"
-                            @bind-Checked="@(Tenant.Titular)">
-                            </SfRadioButton>
-                            <SfRadioButton Name="TitularInquilino"
-                                           Label="@L["TituloInquilino"]"
-                                           Value=false
-                                           TChecked="bool"
-                            @bind-Checked="@(Tenant.Titular)">
-                            </SfRadioButton>
-                        </div>
-                    </div>
-                    <div class="group-box-left">
-                        <SfNumericTextBox Placeholder="@L["TituloIrsAnual"]" @bind-Value="@Tenant.IRSAnual"
-                                          Format="C2" FloatLabelType="FloatLabelType.Always" Width="150px"
-                                          ShowSpinButton=false style="text-align-last:end; margin-right:10px;"
-                                          Currency="EUR" />
-                        <SfNumericTextBox Placeholder="@L["TituloVencimento"]" @bind-Value="@Tenant.Vencimento"
-                                          Format="C2" FloatLabelType="FloatLabelType.Always"
-                                          ShowSpinButton=false Width="150px" style="text-align-last:end; margin-right:10px;"
-                                          Currency="EUR" />
-                    </div>
-                    <div class="form-group mt-2">
-                        <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
-                                   HtmlAttributes="NotesAttribute"
-                                   CssClass="e-field e-corner"
-                                   FloatLabelType="FloatLabelType.Always"
-                        @bind-Value="@Tenant.Notas">
+@if (MaritalStatus is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div>
+        <hr style="color:black">
+        <EditForm Model="Tenant" style="margin:auto;padding:10px;">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloNome"]"
+                                   CssClass="e-field  e-corner"
+                                   FloatLabelType="@FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Nome">
                         </SfTextBox>
                     </div>
-                    @if (EditMode == OpcoesRegisto.Gravar && Tenant.Titular)
-                    {
-                        <div class="group-box">
-                            <SfTextBox Placeholder="@L["TituloEstado"]"
-                                       Readonly="true"
-                                       CssClass="e-field e-corner custom-class"
-                                       FloatLabelType="FloatLabelType.Always"
-                                       Value="@Status">
-                            </SfTextBox>
-                            <SfTextBox Placeholder="@L["TituloUltimoMesPago"]"
-                                       Readonly="true"
-                                       CssClass="e-field e-corner custom-class"
-                                       FloatLabelType="FloatLabelType.Always"
-                                       Value="@LastMonthPaid">
-                            </SfTextBox>
+                    <div class="form-group mt-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloMorada"]"
+                                   CssClass="e-field  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Morada">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group mt-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloCodigoPostal"]"
+                                   CssClass="e-field  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Naturalidade">
+                        </SfTextBox>
+                    </div>
+                    <div class="group-box">
 
-                            @if (RealBalance == 0)
-                            {
-                                <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
-                                           Readonly="true"
-                                           CssClass="e-field e-corner custom-class"
-                                           FloatLabelType="FloatLabelType.Always"
-                                           Value="@CurrentBalance">
-                                </SfTextBox>
-                            }
+                        @*                    <SfDatePicker Enabled="true" Placeholder="@L["TituloDtNascimento"]"
+                    CssClass="e-align-middle e-corner"
+                    FloatLabelType="FloatLabelType.Always"
+                    @bind-Value="@Tenant.DataNascimento">
+                    <DatePickerEvents TValue="DateTime" ValueChange="DtNascChanged"></DatePickerEvents>
+                    </SfDatePicker>
 
+                    <SfTextBox Placeholder="@L["MSG_Idade"]" Readonly="true"
+                    CssClass="e-field e-corner custom-class"
+                    Width="200px"
+                    FloatLabelType="FloatLabelType.Always"
+                    Value="@IdadeInquilino.ToString()" /> *@
+                        @if (MaritalStatus is not null)
+                        {
+                            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                            @bind-Value="@Tenant.ID_EstadoCivil" ShowClearButton="false" PopupWidth="auto"
+                                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                            Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
+                                <DropDownListTemplates TItem="LookupTableVM">
+                                </DropDownListTemplates>
+                                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeEstadoCivil"></DropDownListEvents>
+                                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                            </SfDropDownList>
+                        }
+                    </div>
+                    <div class="group-box">
+                        <SfTextBox Placeholder="@L["TituloIdentificacao"]"
+                                   CssClass="e-field  e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Identificacao">
+                        </SfTextBox>
+
+                        @*                     <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]"
+                    CssClass="e-corner"
+                    FloatLabelType="FloatLabelType.Always"
+                    @bind-Value="@Tenant.ValidadeCC">
+                    <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+                    </SfDatePicker> *@
+
+                        <SfTextBox Placeholder="NIF"
+                                   CssClass="e-field  e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.NIF">
+                        </SfTextBox>
+
+                    </div>
+                    <div class="group-box-left">
+                        <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #1")"
+                                   Width="130px"
+                                   CssClass="e-field  e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Contacto1">
+                        </SfTextBox>
+                        <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #2")"
+                                   Width="130px"
+                                   CssClass="e-field  e-corner custom-class"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.Contacto2">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group mt-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="e-mail"
+                                   CssClass="e-field e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Tenant!.eMail">
+                        </SfTextBox>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div>                      
+                        <div class="group-box-left">
+                            <SfNumericTextBox Placeholder="@L["TituloIrsAnual"]" @bind-Value="@Tenant.IRSAnual"
+                                              Format="C2" FloatLabelType="FloatLabelType.Always" Width="150px"
+                                              ShowSpinButton=false style="text-align-last:end; margin-right:10px;"
+                                              Currency="EUR" />
+                            <SfNumericTextBox Placeholder="@L["TituloVencimento"]" @bind-Value="@Tenant.Vencimento"
+                                              Format="C2" FloatLabelType="FloatLabelType.Always"
+                                              ShowSpinButton=false Width="150px" style="text-align-last:end; margin-right:10px;"
+                                              Currency="EUR" />
                         </div>
-                        <div class="group-box">
-                            @if (RealBalance != 0)
-                            {
-                                <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
+                        <div class="form-group mt-2">
+                            <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
+                                       HtmlAttributes="NotesAttribute"
+                                       CssClass="e-field e-corner"
+                                       FloatLabelType="FloatLabelType.Always"
+                                       @bind-Value="@Tenant.Notas">
+                            </SfTextBox>
+                        </div>
+                        @if (EditMode == OpcoesRegisto.Gravar && Tenant.Titular)
+                        {
+                            <div class="group-box">
+                                <SfTextBox Placeholder="@L["TituloEstado"]"
                                            Readonly="true"
                                            CssClass="e-field e-corner custom-class"
                                            FloatLabelType="FloatLabelType.Always"
-                                           Value="@CurrentBalance">
+                                           Value="@Status">
                                 </SfTextBox>
-                                <SfTextBox Placeholder="@L["TituloSaldoPrevisto"]"
+                                <SfTextBox Placeholder="@L["TituloUltimoMesPago"]"
                                            Readonly="true"
                                            CssClass="e-field e-corner custom-class"
                                            FloatLabelType="FloatLabelType.Always"
-                                           Value="@Tenant.SaldoPrevisto.ToString("C2")">
+                                           Value="@LastMonthPaid">
                                 </SfTextBox>
-                                <SfTextBox Placeholder="@L["TituloDiferenca"]"
-                                           Readonly="true"
-                                           CssClass="@InDebtColor"
-                                           FloatLabelType="FloatLabelType.Always"
-                                           Value="@(RealBalance.ToString("C2"))">
-                                </SfTextBox>
-                            }
-                        </div>
-                    }
+
+                                @if (RealBalance == 0)
+                                {
+                                    <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
+                                               Readonly="true"
+                                               CssClass="e-field e-corner custom-class"
+                                               FloatLabelType="FloatLabelType.Always"
+                                               Value="@CurrentBalance">
+                                    </SfTextBox>
+                                }
+
+                            </div>
+                            <div class="group-box">
+                                @if (RealBalance != 0)
+                                {
+                                    <SfTextBox Placeholder="@L["TituloSaldoCorrente"]"
+                                               Readonly="true"
+                                               CssClass="e-field e-corner custom-class"
+                                               FloatLabelType="FloatLabelType.Always"
+                                               Value="@CurrentBalance">
+                                    </SfTextBox>
+                                    <SfTextBox Placeholder="@L["TituloSaldoPrevisto"]"
+                                               Readonly="true"
+                                               CssClass="e-field e-corner custom-class"
+                                               FloatLabelType="FloatLabelType.Always"
+                                               Value="@Tenant.SaldoPrevisto.ToString("C2")">
+                                    </SfTextBox>
+                                    <SfTextBox Placeholder="@L["TituloDiferenca"]"
+                                               Readonly="true"
+                                               CssClass="@InDebtColor"
+                                               FloatLabelType="FloatLabelType.Always"
+                                               Value="@(RealBalance.ToString("C2"))">
+                                    </SfTextBox>
+                                }
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
-        </div>
-    </EditForm>
-</div>
-
+        </EditForm>
+    </div>
+}
 @code {
 
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
@@ -208,7 +204,7 @@
     [Parameter] public OpcoesRegisto EditMode { get; set; }
     [Parameter] public string? HeaderCaption { get; set; }
 
-    protected int idxMaritalStatus;
+    protected int maritalStatusIndex;
     protected int IdadeInquilino;
     protected string? Status;
     protected string? CurrentBalance;
@@ -227,16 +223,16 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        IdadeInquilino = CalculaIdade(Tenant.DataNascimento);
+        IdadeInquilino = CalculaIdade(Tenant!.DataNascimento);
         Status = Tenant.Ativo ? L["chkActive"] : L["Nao"] + " " + L["chkActive"];
         CurrentBalance = Tenant.Titular ? Tenant.SaldoCorrente.ToString("C2") : "N/A";
         LastMonthPaid = await inquilinoService.GetUltimoMesPago_Inquilino(Tenant.Id);
 
         MaritalStatus = (await LookupTablesService!.GetLookupTableData("EstadoCivil")).ToList();
-        idxMaritalStatus = Tenant!.ID_EstadoCivil;
+        maritalStatusIndex = Tenant!.ID_EstadoCivil;
 
         RealBalance = Tenant.SaldoPrevisto - Tenant.SaldoCorrente;
-        if(RealBalance > 0)
+        if (RealBalance > 0)
         {
             InDebtColor = "e-field e-corner custom-class e-error";
         }
@@ -248,8 +244,8 @@
 
     protected void OnChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
     {
-        idxMaritalStatus = args.Value;
-        Tenant!.ID_EstadoCivil = idxMaritalStatus;
+        maritalStatusIndex = args.Value;
+        Tenant!.ID_EstadoCivil = maritalStatusIndex;
     }
 
     protected void DtNascChanged(ChangedEventArgs<DateTime> args)
@@ -291,4 +287,14 @@
     .custom-class.e-control-wrapper .e-textbox {
         text-align: center;
     }
+
+    .group-box-left {
+        display: flex;
+        gap: 8px;
+        justify-content:space-between;
+        align-items:center;
+        vertical-align: middle;
+        margin-top:0;
+    }
+
 </style>

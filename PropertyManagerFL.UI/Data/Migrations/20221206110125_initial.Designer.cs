@@ -13,7 +13,7 @@ namespace PropertyManagerFL.UI.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20221206110125_initial")]
-    partial class initial
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

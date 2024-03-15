@@ -7,6 +7,7 @@ using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Infrastructure.Context;
+using PropertyManagerFLApplication.Utilities;
 using System.Data;
 using System.Globalization;
 using System.Text;
@@ -273,7 +274,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     else
                     {
                         dDataPagamento = dDataPagamento.AddMonths(-1);
-                        string sMesUltPagamento = dDataPagamento.ToString("MMMM", CultureInfo.CreateSpecificCulture("pt"));
+                        string sMesUltPagamento = dDataPagamento.ToString("MMM", CultureInfo.CreateSpecificCulture("pt")).ToTitleCase();
                         sOutput = sMesUltPagamento + $" de {dDataPagamento.Year.ToString()}";
                     }
                 }

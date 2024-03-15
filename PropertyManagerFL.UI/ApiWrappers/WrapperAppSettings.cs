@@ -86,22 +86,34 @@ public class WrapperAppSettings : IAppSettingsService
         }
     }
 
-    public async Task UpdateLanguageAsync(string language)
+    public async Task<(string, bool)> UpdateLanguageAsync(string language)
     {
         // _updateLanguageUrl = $"{_env["BaseUrl"]}/appsettings/updatelanguage";
         // controller = AppSettingsController
 
-        var content = new StringContent("\"" + language + "\"", Encoding.UTF8, "application/json");
-
-        var response = await _httpClient.PatchAsync(_updateLanguageUrl, content);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var resultadoAtualizacao = "Campo atualizado com sucesso!";
+            var content = new StringContent("\"" + language + "\"", Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PatchAsync(_updateLanguageUrl, content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return ("Campo atualizado com sucesso!", true);
+            }
+            else
+            {
+                return ("Falha ao atualizar o campo.", false);
+            }
+
         }
-        else
+        catch (HttpRequestException httpEx)
         {
-            var resultadoAtualizacao = "Falha ao atualizar o campo.";
+            return (httpEx.Message, false);
+        }
+        catch (Exception ex)
+        {
+            return (ex.Message, false);
         }
     }
 }

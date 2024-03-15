@@ -173,7 +173,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 AutomaticRentAdjustment = bool.Parse(rentAdjustmentsetting);
             }
-            _logger?.LogInformation("Mensagem de teste para verificar log na base de dados (GetAllTenants)");
             Tenants = await GetAllTenants();
             TenantUpdatedRents = GetTenantRentUpdates();
             //if (!Tenants.Any())

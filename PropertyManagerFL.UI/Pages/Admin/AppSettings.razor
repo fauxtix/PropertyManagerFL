@@ -1,12 +1,13 @@
 ﻿@page "/admin/appsettings"
 @using PropertyManagerFL.Application.Interfaces.Services.Common
 @using PropertyManagerFL.Application.ViewModels.AppSettings
-
 @using PropertyManagerFL.Core.Entities
 @using PropertyManagerFL.UI.Pages.Arrendamentos
 @using PropertyManagerFL.UI.Pages.Proprietario
+
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Buttons
+
 @using Microsoft.AspNetCore.Components.Forms
 @using System.Diagnostics
 
@@ -23,6 +24,135 @@ else
     <div class="container">
         <SfTab>
             <TabItems>
+                <TabItem>
+                    <HeaderTemplate>App Settings</HeaderTemplate>
+                    <ContentTemplate>
+                        <EditForm Model="@settings">
+                            <hr />
+                            <div class="row" id="msg-custom-section">
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-1</SfMessage>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoInspecaoGas" Placeholder="Prazo de inspeção do gás (anos)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PercentagemMultaPorAtrasoPagamento" Placeholder="Multa por atraso pagamento renda (%)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 my-2">
+                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-2</SfMessage>
+                                    <div class="row">
+                                        <div class="col-md-9 my-2">
+
+                                            <div class="mt-2">Cartas de aumento automáticas</div>
+                                            <div class="mt-2">Renovação automática do contrato</div>
+                                            <div class="mt-2">Comprovativo IRS</div>
+                                            <div class="mt-2">Comprovativo recibo vencimento</div>
+                                            <div class="mt-2">Caução requerida</div>
+                                        </div>
+                                        <div class="col-md-3 my-2">
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CartasAumentoAutomaticas" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.RenovacaoAutomatica" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoIRS" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoReciboVencimento" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                            <div>
+                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CaucaoRequerida" OnLabel="On" OffLabel="Off"></SfSwitch>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <SfTextBox class="form-control" @bind-Value="settings.BackupBaseDados" Placeholder="Backup da base de dados" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+                                    <SfTextBox class="form-control" @bind-Value="settings.BackupOutrosFicheiros" Placeholder="Backup de outros ficheiros" FloatLabelType="FloatLabelType.Always"></SfTextBox>
+
+                                    <div class="row mt-2">
+                                        <div class="col-md-6">
+                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Default language</SfMessage>
+                                            <SfDropDownList TValue="string" CssClass="template"
+                                                            TItem="CountryModel"
+                                                            Placeholder="@L["lblEscolhaLinguagem"]"
+                                                            DataSource="@CountryData" Value="@selectedCulture">
+                                                <DropDownListTemplates TItem="CountryModel">
+                                                    <ItemTemplate Context="langCtx">
+                                                        <div>
+                                                            <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
+                                                            <div class="ename">@L[((langCtx as CountryModel).Text!)] </div>
+                                                        </div>
+                                                    </ItemTemplate>
+                                                    <ValueTemplate Context="ctx">
+                                                        <div class="dropdown-width" style="width:100%;height:100%;">
+                                                            <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
+                                                            <div class="name">@L[((ctx as CountryModel).Text!)] </div>
+                                                        </div>
+                                                    </ValueTemplate>
+                                                </DropDownListTemplates>
+                                                <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
+                                                <DropDownListEvents TItem="CountryModel" TValue="string" ValueChange="OnSelected"></DropDownListEvents>
+                                            </SfDropDownList>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
+                                            <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="d-flex justify-content-center align-items-md-center my-3">
+                                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateOtherSettings">Update</SfButton>
+                            </div>
+                            <hr class="mb-3" />
+                        </EditForm>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloMenuProprietario"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <Proprietario />
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloMenuCoeficientesRendas"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <RentUpdatingCoefficients />
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["menu-admin-lookup-tables"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <ConfigAppTables />
+                    </ContentTemplate>
+                </TabItem>
                 <TabItem>
                     <HeaderTemplate>E-Mail</HeaderTemplate>
                     <ContentTemplate>
@@ -123,135 +253,6 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>App Settings</HeaderTemplate>
-                    <ContentTemplate>
-                        <EditForm Model="@settings">
-                            <hr />
-                            <div class="row" id="msg-custom-section">
-                                <div class="col-md-6 my-2">
-                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-1</SfMessage>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoContratoEmAnos" Placeholder="Prazo do contrato em anos" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAtraso" Placeholder="Prazo de envio de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaAumento" Placeholder="Prazo de envio de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoEnvioCartaRevogacao" Placeholder="Prazo de envio de carta revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAtraso" Placeholder="Prazo de resposta de carta de atraso (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaAumento" Placeholder="Prazo de resposta de carta de aumento (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoRespostaCartaRevogacao" Placeholder="Prazo de resposta de carta de revogação (dias)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-6">
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PrazoInspecaoGas" Placeholder="Prazo de inspeção do gás (anos)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <SfNumericTextBox class="form-control" @bind-Value="settings.PercentagemMultaPorAtrasoPagamento" Placeholder="Multa por atraso pagamento renda (%)" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 my-2">
-                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                                               Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Other settings-2</SfMessage>
-                                    <div class="row">
-                                        <div class="col-md-9 my-2">
-
-                                            <div class="mt-2">Cartas de aumento automáticas</div>
-                                            <div class="mt-2">Renovação automática do contrato</div>
-                                            <div class="mt-2">Comprovativo IRS</div>
-                                            <div class="mt-2">Comprovativo recibo vencimento</div>
-                                            <div class="mt-2">Caução requerida</div>
-                                        </div>
-                                        <div class="col-md-3 my-2">
-                                            <div>
-                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CartasAumentoAutomaticas" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                            </div>
-                                            <div>
-                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.RenovacaoAutomatica" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                            </div>
-                                            <div>
-                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoIRS" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                            </div>
-                                            <div>
-                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.ComprovativoReciboVencimento" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                            </div>
-                                            <div>
-                                                <SfSwitch CssClass="mt-1 p-2" @bind-Checked="settings.CaucaoRequerida" OnLabel="On" OffLabel="Off"></SfSwitch>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <SfTextBox class="form-control" @bind-Value="settings.BackupBaseDados" Placeholder="Backup da base de dados" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-                                    <SfTextBox class="form-control" @bind-Value="settings.BackupOutrosFicheiros" Placeholder="Backup de outros ficheiros" FloatLabelType="FloatLabelType.Always"></SfTextBox>
-
-                                    <div class="row mt-2">
-                                        <div class="col-md-6">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Default language</SfMessage>
-                                            <SfDropDownList TValue="string" CssClass="template"
-                                                            TItem="CountryModel"
-                                                            Placeholder="@L["lblEscolhaLinguagem"]"
-                                                            DataSource="@CountryData" Value="@selectedCulture">
-                                                <DropDownListTemplates TItem="CountryModel">
-                                                    <ItemTemplate Context="langCtx">
-                                                        <div>
-                                                            <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
-                                                            <div class="ename">@L[((langCtx as CountryModel).Text)] </div>
-                                                        </div>
-                                                    </ItemTemplate>
-                                                    <ValueTemplate Context="ctx">
-                                                        <div class="dropdown-width" style="width:100%;height:100%;">
-                                                            <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
-                                                            <div class="name">@L[((ctx as CountryModel).Text)] </div>
-                                                        </div>
-                                                    </ValueTemplate>
-                                                </DropDownListTemplates>
-                                                <DropDownListFieldSettings Value="ID" Text="Text"></DropDownListFieldSettings>
-                                                <DropDownListEvents TItem="CountryModel" TValue="string" ValueChange="OnSelected"></DropDownListEvents>
-                                            </SfDropDownList>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
-                                                       Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>Api Key</SfMessage>
-                                            <SfTextBox @bind-Value="settings.ApiKey" Placeholder="API Key"></SfTextBox>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <hr />
-                            <div class="d-flex justify-content-center align-items-md-center my-3">
-                                <SfButton CssClass="e-btn e-primary e-round-corner" IconCss="fa fa-save" OnClick="UpdateOtherSettings">Update</SfButton>
-                            </div>
-                            <hr class="mb-3" />
-                        </EditForm>
-                    </ContentTemplate>
-                </TabItem>
-                <TabItem>
-                    <HeaderTemplate>@L["TituloMenuProprietario"]</HeaderTemplate>
-                    <ContentTemplate>
-                        <Proprietario />
-                    </ContentTemplate>
-                </TabItem>
-                <TabItem>
-                    <HeaderTemplate>@L["TituloMenuCoeficientesRendas"]</HeaderTemplate>
-                    <ContentTemplate>
-                        <RentUpdatingCoefficients />
-                    </ContentTemplate>
-                </TabItem>
-                <TabItem>
-                    <HeaderTemplate>@L["menu-admin-lookup-tables"]</HeaderTemplate>
-                    <ContentTemplate>
-                        <ConfigAppTables />
-                    </ContentTemplate>
-                </TabItem>
-                <TabItem>
                     <HeaderTemplate>Inicializar tabelas</HeaderTemplate>
                     <ContentTemplate>
                         <div class="d-block justify-content-center align-items-md-center my-3">
@@ -290,11 +291,6 @@ else
     </ToastButtons>
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>
-
-@code{
-
-}
-
 
 <style type="text/css" scoped>
     .e-message {

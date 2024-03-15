@@ -270,6 +270,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 DeleteVisibility = false;
                 var resultOk = await Fiadoreservice!.ApagaFiador(SelectedGuarantor!.Id);
+
+
                 if (resultOk)
                 {
                     Guarantors = await GetAllGuarantors();

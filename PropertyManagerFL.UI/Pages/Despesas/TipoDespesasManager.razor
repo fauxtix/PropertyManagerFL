@@ -57,7 +57,7 @@ else
         <div class="patient-operations">
             <div class="container-fluid mt-2 text-left">
                 <SfButton CssClass="e-success e-round-corner mx-3" IconCss="fas fa-plus" Content="@L["NewMsg"]"
-                      @onclick="@onAddTipoDespesa" IsPrimary="true">
+                          @onclick="@onAddTipoDespesa" IsPrimary="true">
                 </SfButton>
             </div>
         </div>
@@ -66,48 +66,48 @@ else
         <div class="col-lg-12 control-section">
             <div class="table table-striped" style="height: auto; width: 80%">
                 <SfGrid ID="SC_Grid" @ref="gridObj" Toolbar=@Tool
-                    DataSource="@subCategoriesList"
-                    AllowPaging="true"
-                    AllowSelection="true"
-                    AllowSorting="true"
-                    AllowFiltering="false"
-                    AllowGrouping="true"
-                    AllowPdfExport="true"
-                    AllowExcelExport="true"
-                    RowHeight="24"
-                    AllowTextWrap="true">
+                        DataSource="@subCategoriesList"
+                        AllowPaging="true"
+                        AllowSelection="true"
+                        AllowSorting="true"
+                        AllowFiltering="false"
+                        AllowGrouping="true"
+                        AllowPdfExport="true"
+                        AllowExcelExport="true"
+                        RowHeight="24"
+                        AllowTextWrap="true">
 
                     <GridGroupSettings AllowReordering="true"
-                                   ShowDropArea="true"
-                                   ShowUngroupButton="true" DisablePageWiseAggregates="true"
-                                   Columns="@Initial">
+                                       ShowDropArea="true"
+                                       ShowUngroupButton="true" DisablePageWiseAggregates="true"
+                                       Columns="@Initial">
                     </GridGroupSettings>
 
                     <GridPageSettings PageSize="10" PageCount="10" PageSizes="true"></GridPageSettings>
                     <GridSelectionSettings PersistSelection="true"></GridSelectionSettings>
                     <GridEvents CommandClicked="OnCommandClicked"
-                            OnToolbarClick="ToolbarClickHandler"
-                            TValue="TipoDespesaVM"></GridEvents>
+                                OnToolbarClick="ToolbarClickHandler"
+                                TValue="TipoDespesaVM"></GridEvents>
                     <GridFilterSettings Mode="FilterBarMode.Immediate" Type="Syncfusion.Blazor.Grids.FilterType.Excel"></GridFilterSettings>
                     <GridColumns>
                         <GridColumn Field=@nameof(TipoDespesaVM.Id)
-                                HeaderText="#"
-                                TextAlign="TextAlign.Center" Visible=false
-                                Width="70">
+                                    HeaderText="#"
+                                    TextAlign="TextAlign.Center" Visible=false
+                                    Width="70">
                         </GridColumn>
                         <GridColumn Field=@nameof(TipoDespesaVM.CategoriaDespesa)
-                                HeaderText="@L["TituloCategoria"]"
-                                Width="150">
+                                    HeaderText="@L["TituloCategoria"]"
+                                    Width="150">
                         </GridColumn>
                         <GridColumn Field=@nameof(TipoDespesaVM.Descricao) Type="Syncfusion.Blazor.Grids.ColumnType.String"
-                                HeaderText="@L["TituloSubCategoria"]"
-                                AllowGrouping="false"
-                                Width="150">
+                                    HeaderText="@L["TituloSubCategoria"]"
+                                    AllowGrouping="false"
+                                    Width="150">
                         </GridColumn>
                         <GridColumn HeaderText="" AllowFiltering="false" AllowSorting="false" Width="130">
                             <GridCommandColumns>
                                 <GridCommandColumn Type=CommandButtonType.Edit
-                                               ButtonOption="@(new CommandButtonOptions()
+                                                   ButtonOption="@(new CommandButtonOptions()
                                                                {
                                                                    Content = "",
                                                                    CssClass = "e-outline e-primary e-round-corner",
@@ -116,7 +116,7 @@ else
                                                                })">
                                 </GridCommandColumn>
                                 <GridCommandColumn Type=CommandButtonType.Delete Title="@L["DeleteMsg"]"
-                                               ButtonOption="@(new CommandButtonOptions()
+                                                   ButtonOption="@(new CommandButtonOptions()
                                                                {
                                                                    Content = "",
                                                                    CssClass = "e-outline e-danger e-round-corner",
@@ -134,11 +134,11 @@ else
 
         <div class="container">
             <SfDialog Width="25%"
-                  Height="auto"
-                  IsModal="true"
-                  ShowCloseIcon="false"
-                  AllowDragging="true"
-                  @bind-Visible="EditTipoDespesaDialogVisibility">
+                      Height="auto"
+                      IsModal="true"
+                      ShowCloseIcon="false"
+                      AllowDragging="true"
+                      @bind-Visible="EditTipoDespesaDialogVisibility">
                 <DialogEvents Opened="Opened" />
                 <DialogTemplates>
                     <Header>
@@ -146,13 +146,13 @@ else
                         {
                             var title = L["TituloSubCategoria"] + " - " + L["NewMsg"] + " " + L["Record"];
                             <HeaderDialogComponent HeaderCaption="@title"
-                                           ImageName="expense.png" />
+                                                   ImageName="expense.png" />
                         }
                         else
                         {
                             var title = L["TituloSubCategoria"] + " - " + L["EditMsg"] + " " + L["Record"];
                             <HeaderDialogComponent HeaderCaption="@title"
-                                           ImageName="expense.png" />
+                                                   ImageName="expense.png" />
                         }
                     </Header>
                     <Content>
@@ -161,10 +161,10 @@ else
                     <FooterTemplate>
                         <div>
                             <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save "
-                                  @onclick="AddOrSaveTipoDespesa" Content="@L["btnSalvar"]">
+                                      @onclick="AddOrSaveTipoDespesa" Content="@L["btnSalvar"]">
                             </SfButton>
                             <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]"
-                                  @onclick="@(()=>EditTipoDespesaDialogVisibility = false)">
+                                      @onclick="@(()=>EditTipoDespesaDialogVisibility = false)">
                             </SfButton>
                         </div>
                     </FooterTemplate>
@@ -175,32 +175,32 @@ else
     </div>
 
     <AlertUserComponent AlertMessageType="AlertMessageType.Warning"
-                    Title="@alertTitle"
-                    OperationType="OpcoesRegisto.Warning"
-                    Visibility="@AlertVisibility"
-                    Message="@WarningMessage"
-                    OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+                        Title="@alertTitle"
+                        OperationType="OpcoesRegisto.Warning"
+                        Visibility="@AlertVisibility"
+                        Message="@WarningMessage"
+                        OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
 
     <ValidateErrorComponent Visible="@ErrorVisibility"
-                        ValidationMessages="@sErrorMsgs"
-                        OnCloseDialog="@(()=>ErrorVisibility = false)" />
+                            ValidationMessages="@sErrorMsgs"
+                            OnCloseDialog="@(()=>ErrorVisibility = false)" />
 
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                        DialogTitle="Apagar Tipo de Despesa"
-                        Message="@DeleteCaption"
-                        ConfirmationText="Confirma operação?"
-                        DialogHeight="auto"
-                        DialogWidth="20%"
-                        Visible="@DeleteConfirmVisibility"
-                        OnConfirmationYes="ConfirmDeleteYes"
-                        OnConfirmationNo="@(()=>DeleteConfirmVisibility=false)" />
+                            DialogTitle="Apagar Tipo de Despesa"
+                            Message="@DeleteCaption"
+                            ConfirmationText="Confirma operação?"
+                            DialogHeight="auto"
+                            DialogWidth="20%"
+                            Visible="@DeleteConfirmVisibility"
+                            OnConfirmationYes="ConfirmDeleteYes"
+                            OnConfirmationNo="@(()=>DeleteConfirmVisibility=false)" />
 
     <SfToast @ref="ToastObj"
-         Title="@ToastTitle"
-         Content="@ToastContent"
-         CssClass="@ToastCssClass"
-         Timeout=2000
-         ShowCloseButton="true">
+             Title="@ToastTitle"
+             Content="@ToastContent"
+             CssClass="@ToastCssClass"
+             Timeout=2000
+             ShowCloseButton="true">
         <ToastPosition X="Right" Y="Bottom"></ToastPosition>
     </SfToast>
 
@@ -211,14 +211,14 @@ else
 
 @code {
 
-    protected SfSpinner SpinnerObj;
-    protected SfGrid<TipoDespesaVM> gridObj;
+    protected SfSpinner? SpinnerObj;
+    protected SfGrid<TipoDespesaVM>? gridObj;
     protected SfToast? ToastObj;
     protected Modules modulo { get; set; }
-    protected string apiSubCategoriesEndpoint;
+    protected string? apiSubCategoriesEndpoint;
     protected bool editRecord = true;
     protected bool EditTipoDespesaDialogVisibility { get; set; } = false;
-    protected string DeleteCaption = "";
+    protected string? DeleteCaption = string.Empty;
     public bool DeleteConfirmVisibility { get; set; } = false;
 
     protected List<string> sErrorMsgs = new();
@@ -235,7 +235,7 @@ else
     protected TipoDespesaVM SelectedTipoDespesa = new();
     protected IEnumerable<TipoDespesaVM>? subCategoriesList { get; set; }
 
-    protected TipoDespesaVM tipoDespesa { get; set; }
+    protected TipoDespesaVM? tipoDespesa { get; set; }
     protected int tipoDespesaId;
 
     protected bool AlertVisibility { get; set; } = false;
@@ -243,7 +243,7 @@ else
     protected string? WarningMessage { get; set; }
 
 
-    protected string tituloPdf;
+    protected string? tituloPdf;
 
     protected async override Task OnInitializedAsync()
     {
@@ -267,8 +267,8 @@ else
         DeleteCaption = data.Descricao;
 
         editRecord = false;
-
-        SelectedTipoDespesa = subCategoriesList.Where(p => p.Id == tipoDespesaId).FirstOrDefault();
+        var output = subCategoriesList?.Where(p => p.Id == tipoDespesaId).FirstOrDefault() ?? new();
+        SelectedTipoDespesa = output;
 
         if (args.CommandColumn.Type == CommandButtonType.Edit)
         {

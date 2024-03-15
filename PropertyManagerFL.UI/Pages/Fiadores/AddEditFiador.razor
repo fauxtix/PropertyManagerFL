@@ -11,105 +11,107 @@
 <div>
     <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="home-owner"></HeaderDialogComponent>
 </div>
-<div class="container-fluid">
-    <hr class="divider">
-    <EditForm Model="@L["TituloFiador"]" style="margin:auto">
-        <div class="row">
-            <div class="col-sm-12">
-                <div class="form-group">
-                    <div><label>@L["TituloInquilino"]</label></div>
-                    <div class="mt-2">
-                        <SfMessage Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@NomeInquilino</SfMessage>
+@if (MaritalStatus is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container-fluid">
+        <hr style="color:black" >
+        <EditForm Model="@L["TituloFiador"]" style="margin:auto">
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group mt-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloNome"]"
+                                   CssClass="e-field  e-corner"
+                                   FloatLabelType="@FloatLabelType.Always"
+                                   @bind-Value="@Fiador!.Nome">
+                        </SfTextBox>
+                    </div>
+                    <div class="form-group mt-2">
+                        <SfTextBox Enabled="true"
+                                   Placeholder="@L["TituloMorada"]"
+                                   CssClass="e-field  e-corner"
+                                   FloatLabelType="FloatLabelType.Always"
+                                   @bind-Value="@Fiador!.Morada">
+                        </SfTextBox>
                     </div>
                 </div>
-                <div class="form-group mt-2">
-                    <SfTextBox Enabled="true"
-                               Placeholder="@L["TituloNome"]"
-                               CssClass="e-field  e-corner"
-                               FloatLabelType="@FloatLabelType.Always"
-                               @bind-Value="@Fiador!.Nome">
-                    </SfTextBox>
-                </div>
-                <div class="form-group mt-2">
-                    <SfTextBox Enabled="true"
-                               Placeholder="@L["TituloMorada"]"
-                               CssClass="e-field  e-corner"
+                <div class="group-box">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    @bind-Value ="@Fiador.ID_EstadoCivil" ShowClearButton="true"
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeEstadoCivil"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                    <SfTextBox Placeholder="@L["TituloIdentificacao"]"
+                               CssClass="e-field  e-corner custom-class"
                                FloatLabelType="FloatLabelType.Always"
-                               @bind-Value="@Fiador!.Morada">
+                               @bind-Value="@Fiador!.Identificacao">
+                    </SfTextBox>
+
+                    @* <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]"
+                CssClass="e-corner"
+                FloatLabelType="FloatLabelType.Always"
+                @bind-Value="@Fiador.ValidadeCC">
+                <DatePickerEvents TValue="DateTime"></DatePickerEvents>
+                </SfDatePicker> *@
+                </div>
+                <div class="group-box-left">
+                    <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #1")"
+                               CssClass="e-field  e-corner custom-class"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Fiador!.Contacto1">
+                    </SfTextBox>
+                    <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #2")"
+                               CssClass="e-field  e-corner custom-class"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Fiador!.Contacto2">
+                    </SfTextBox>
+                    <SfTextBox Placeholder="NIF"
+                               CssClass="e-field  e-corner custom-class"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Fiador!.NIF">
+                    </SfTextBox>
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Enabled="true"
+                               Placeholder="e-mail"
+                               CssClass="e-field e-corner"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Fiador!.eMail">
                     </SfTextBox>
                 </div>
             </div>
-            <div class="group-box">
-                <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                Value="@idxMaritalStatus" ShowClearButton="true"
-                                FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="@L["MSG_EstadoCivil"]" DataSource="@MaritalStatus" FloatLabelType="FloatLabelType.Always">
-                    <DropDownListTemplates TItem="LookupTableVM">
-                    </DropDownListTemplates>
-                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeEstadoCivil"></DropDownListEvents>
-                    <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                </SfDropDownList>
-                <SfTextBox Placeholder="@L["TituloIdentificacao"]"
-                           CssClass="e-field  e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador!.Identificacao">
-                </SfTextBox>
-                <SfDatePicker Enabled="true" Placeholder="@L["TituloValidade"]"
-                              CssClass="e-corner"
-                              FloatLabelType="FloatLabelType.Always"
-                              @bind-Value="@Fiador.ValidadeCC">
-                    <DatePickerEvents TValue="DateTime"></DatePickerEvents>
-                </SfDatePicker>
-            </div>
-            <div class="group-box-left">
-                <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #1")"
-                           CssClass="e-field  e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador!.Contacto1">
-                </SfTextBox>
-                <SfTextBox Placeholder="@(L["TituloCampo3Editoras"] + " #2")"
-                           CssClass="e-field  e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador!.Contacto2">
-                </SfTextBox>
-                <SfTextBox Placeholder="NIF"
-                           CssClass="e-field  e-corner custom-class"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador!.NIF">
-                </SfTextBox>
-            </div>
-            <div class="form-group mt-2">
-                <SfTextBox Enabled="true"
-                           Placeholder="e-mail"
-                           CssClass="e-field e-corner"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador!.eMail">
-                </SfTextBox>
-            </div>
-        </div>
 
-        <div class="col-sm-12">
-            <div class="group-box-left">
-                <SfNumericTextBox Placeholder="@L["TituloIrsAnual"]" @bind-Value="@Fiador.IRSAnual"
-                                  Format="C2" FloatLabelType="FloatLabelType.Always" Width="150px"
-                                  ShowSpinButton=false
-                                  Currency="EUR" />
-                <SfNumericTextBox Placeholder="@L["TituloVencimento"]" @bind-Value="@Fiador.Vencimento"
-                                  Format="C2" FloatLabelType="FloatLabelType.Always"
-                                  ShowSpinButton=false Width="150px"
-                                  Currency="EUR" />
+            <div class="col-sm-12">
+                <div class="group-box-left">
+                    <SfNumericTextBox Placeholder="@L["TituloIrsAnual"]" @bind-Value="@Fiador.IRSAnual"
+                                      Format="C2" FloatLabelType="FloatLabelType.Always" Width="150px"
+                                      ShowSpinButton=false
+                                      Currency="EUR" />
+                    <SfNumericTextBox Placeholder="@L["TituloVencimento"]" @bind-Value="@Fiador.Vencimento"
+                                      Format="C2" FloatLabelType="FloatLabelType.Always"
+                                      ShowSpinButton=false Width="150px"
+                                      Currency="EUR" />
+                </div>
+                <div class="form-group mt-2">
+                    <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
+                               HtmlAttributes="NotesAttribute"
+                               CssClass="e-field e-corner"
+                               FloatLabelType="FloatLabelType.Always"
+                               @bind-Value="@Fiador.Notas">
+                    </SfTextBox>
+                </div>
             </div>
-            <div class="form-group mt-2">
-                <SfTextBox Multiline=true Placeholder="@L["TituloNotas"]"
-                           HtmlAttributes="NotesAttribute"
-                           CssClass="e-field e-corner"
-                           FloatLabelType="FloatLabelType.Always"
-                           @bind-Value="@Fiador.Notas">
-                </SfTextBox>
-            </div>
-        </div>
-    </EditForm>
-</div>
+        </EditForm>
+    </div>
+}
 
 @code {
 
@@ -140,16 +142,16 @@
         NomeInquilino = await inquilinoService!.GetNomeInquilino(Fiador.IdInquilino);
     }
 
-    protected void onChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected void OnChangeEstadoCivil(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
     {
         idxMaritalStatus = args.Value;
         Fiador.ID_EstadoCivil = idxMaritalStatus;
     }
-    protected void onChangeInquilino(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
-    {
-        idxMaritalStatus = args.Value;
-        Fiador.ID_EstadoCivil = idxMaritalStatus;
-    }
+    // protected void onChangeInquilino(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    // {
+    //     idxMaritalStatus = args.Value;
+    //     Fiador.ID_EstadoCivil = idxMaritalStatus;
+    // }
 }
 
 <style type="text/css" scoped>

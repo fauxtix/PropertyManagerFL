@@ -324,11 +324,15 @@ namespace PropertyManagerFL.Api.Controllers
                 }
 
                 var okToDelete = await _repoFiadores.CanFiadorBeDeleted(id);
-                if (!okToDelete)
-                {
-                    _logger.LogError($"Fiador com o Id {id} tem contratos associados!");
-                    return BadRequest($"Fiador com o Id {id} tem contratos associados!");
-                }
+
+                // Comentado código abaixo em 14/03/2024; os dados do fiador só são usados na redação do contrato.
+                // Como pode haver a possibilidade de contratos sem fiador (!), não faz sentido a validação
+
+                //if (!okToDelete)
+                //{
+                //    _logger.LogError($"Fiador com o Id {id} tem contratos associados!");
+                //    return BadRequest($"Fiador com o Id {id} tem contratos associados!");
+                //}
 
                 await _repoFiadores.ApagaFiador(id);
                 return NoContent();

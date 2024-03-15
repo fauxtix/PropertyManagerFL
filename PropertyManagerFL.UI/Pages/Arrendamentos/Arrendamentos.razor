@@ -10,10 +10,10 @@
 @inherits ArrendamentosBase
 
 <PageTitle>@L["TituloMenuArrendamentos"]</PageTitle>
-    <PageTitleComponent PageTitle="@L["TituloMenuArrendamentos"]"></PageTitleComponent>
+<PageTitleComponent PageTitle="@L["TituloMenuArrendamentos"]"></PageTitleComponent>
 
 
-    @{
+@{
     var Tool = (new List<object>() {
         "Search",
         "PdfExport",
@@ -97,7 +97,8 @@ else
                             RowSelected="RowSelectHandler" RowDeselected="RowDeselectHandler"
                             OnToolbarClick="ToolbarClickHandler" CommandClicked="OnLeaseCommandClicked" TValue="ArrendamentoVM" />
                 <GridColumns>
-                    <GridColumn Field=@nameof(ArrendamentoVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="325"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.NomeInquilino) HeaderText="@L["TituloInquilino"]" Width="280"></GridColumn>
+                    <GridColumn Field=@nameof(ArrendamentoVM.Fracao) HeaderText="@L["TituloFracao"]" Width="150"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Ativo) HeaderText="@L["chkActive"]"
                                 TextAlign="TextAlign.Center" DisplayAsCheckBox="true" Width="100"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Data_Inicio) HeaderText="@L["TituloInicio"]" Width="110" Format="d"></GridColumn>
@@ -224,12 +225,11 @@ else
                         </Template>
 
                     </GridColumn>
-
-                    <GridColumn Field=@nameof(ArrendamentoVM.ContratoEmitido) DisplayAsCheckBox=true
-                                HeaderText="@L["TituloContratoEmitido"]" Width="100" TextAlign="TextAlign.Center"></GridColumn>
-
-                    @*<GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
-                HeaderText="Carta Atualiz. enviada" Width="120" TextAlign="TextAlign.Center"/>*@
+                    @if (AppSettings?.CartasAumentoAutomaticas == false)
+                    {
+                        <GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
+                                    HeaderText="carta atualiz. enviada" Width="120" TextAlign="TextAlign.Center" />
+                    }
 
                     <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="130">
                         <GridCommandColumns>
