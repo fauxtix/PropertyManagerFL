@@ -24,10 +24,9 @@
 </div>
 <SfSpinner @bind-Visible="@VisibleProperty"/>
 @code {
+    [Parameter] public string DocumentPath { get; set; } = string.Empty;
 
-    [Parameter] public string? DocumentPath { get; set; } = "";
-
-    protected SfDocumentEditorContainer? container;
+    protected SfDocumentEditorContainer container;
     private bool VisibleProperty { get; set; } = false;
 
 
