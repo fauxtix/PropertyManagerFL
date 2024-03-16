@@ -61,7 +61,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="id"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        [HttpGet("GetDescriptionByIdAndTable/{id:int}/{tableName}")]
+        [HttpGet("GetDescriptionByIdAndTable/{id:int}/{tableName}"), Produces("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

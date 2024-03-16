@@ -57,10 +57,10 @@ else
                 <hr class="bg-black my-1">
                 <SfGrid DataSource="ProcessedRents">
                     <GridColumns>
-                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.Mes) HeaderText="@L["TituloMes"]" Width="50" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.Mes) TextAlign=TextAlign.Center HeaderText="@L["TituloMes"]" Width="50" />
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.Ano) HeaderText="@L["TituloAno"]" Width="50" />
                         <GridColumn Field=@nameof(ProcessamentoRendasDTO.DataProcessamento) Format="d" HeaderText="@L["TituloDataEmissao"]" Width="120" />
-                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.TotalRecebido) Format="C2" HeaderText="@L["TituloValorPrevisto"]" Width="120" />
+                        <GridColumn Field=@nameof(ProcessamentoRendasDTO.TotalRecebido) Format="C2" HeaderText="@L["TituloValorRecebido"]" Width="120" />
                     </GridColumns>
                 </SfGrid>
             </div>

@@ -92,7 +92,7 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
-        /// Get imóvel por Id
+        /// Get property by Id
         /// </summary>
         /// <param name="id">Id do imóvel</param>
         /// <returns></returns>
@@ -119,7 +119,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// </summary>
         /// <param name="id">Id da fração</param>
         /// <returns></returns>
-        [HttpGet("GetCodigo_Imovel/{id:int}")]
+        [HttpGet("GetCodigo_Imovel/{id:int}"), Produces("text/plain")]
         public async Task<IActionResult> GetCodigo_Imovel(int id)
         {
             var location = GetControllerActionNames();
@@ -158,7 +158,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// </summary>
         /// <param name="id">Id da fração</param>
         /// <returns></returns>
-        [HttpGet("GetDescricao_Imovel/{id:int}")]
+        [HttpGet("GetDescricao_Imovel/{id:int}"), Produces("text/plain")]
         public async Task<IActionResult> GetDescricao_Imovel(int id)
         {
             var location = GetControllerActionNames();

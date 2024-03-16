@@ -1,10 +1,10 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+﻿﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Fracoes
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
 <div class="control-container">
     <SfUploader ID="UploadFiles" @ref="sfUploader" AutoUpload=true
-                DropArea=".control-fluid"
+                DropArea=".control-fluid" CssClass="mt-1"
                 AllowMultiple=true AllowedExtensions=" .jpg, .jpeg, .png, .gif"
                 MaxFileSize="@MaxFileSize">
         <UploaderAsyncSettings SaveUrl="api/uploadunits/Save"
@@ -13,13 +13,16 @@
     </SfUploader>
     @if (ImagensFracao!.Count() > 0)
     {
-        <div class="control-container">
+        <hr />
+        <div class="control-container mt-1">
             <SfCarousel AnimationEffect="CarouselAnimationEffect.Fade">
                 @foreach (var item in ImagensFracao!)
                 {
                     <CarouselItem>
-                        <figure class="img-container">
-                            <img src="/uploads//unit_images/@item.Foto" style="height:100%;width:100%;" />
+                        <SfButton CssClass="e-btn e-danger e-outline e-round-corner m-2"
+                                  @onclick="() => DeleteImage(item)" Content="Delete" />
+                        <figure class="card-box">
+                            <img src="/uploads//unit_images/@item.Foto" style="margin-left:10px; margin-right:10px;height:100%;width:95%;" />
                             <figcaption class="img-caption">@item.Descricao</figcaption>
                         </figure>
                     </CarouselItem>
@@ -37,12 +40,6 @@
 
     protected SfUploader? sfUploader;
     int MaxFileSize = 10 * 1024 * 1024; // 10 MB
-                                        //protected List<NovaImagemFracao>? unitImages { get; set; } = new();
-
-    protected override void OnInitialized()
-    {
-        var x = 0;
-    }
 
     private void OnActionCompleteHandler(Syncfusion.Blazor.Inputs.ActionCompleteEventArgs args)
     {
@@ -62,28 +59,10 @@
         SelectedUnit!.Imagens = ImagensFracao;
         StateHasChanged();
     }
+
+    void DeleteImage(NovaImagemFracao item)
+    {
+        ImagensFracao!.Remove(item);
+        StateHasChanged();
+    }
 }
-
-<style>
-    .control-container {
-        background-color: #e5e5e5;
-        height: auto;
-        margin: 0 auto;
-        width: 500px;
-    }
-
-    .e-carousel .e-carousel-items .e-carousel-item .img-container {
-        height: 100%;
-    }
-
-    .e-carousel .e-carousel-items .e-carousel-item .img-caption {
-        bottom: 4em;
-        color: #fff;
-        font-size: 12pt;
-        height: 2em;
-        position: relative;
-        padding: 0.3em 1em;
-        text-align: center;
-        width: 100%;
-    }
-</style>

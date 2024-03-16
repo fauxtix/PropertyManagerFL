@@ -400,7 +400,7 @@ namespace PropertyManagerFL.Api.Controllers
             try
             {
                 var output = (await _repoRecebimentos.GetMonthlyRentsProcessed(year)).ToList();
-                if (output == null && output.Count == 0)
+                if (output == null && output?.Count == 0)
                     return BadRequest("Falha ao ler processamento de rendas");
 
                 return Ok(output);

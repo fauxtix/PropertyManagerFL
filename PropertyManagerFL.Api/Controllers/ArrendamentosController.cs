@@ -35,7 +35,6 @@ namespace PropertyManagerFL.Api.Controllers
                                        IWebHostEnvironment environment)
         {
             _repoArrendamentos = repoArrendamentos;
-            //_contratosSvc = contratosSvc;
             _mapper = mapper;
             _logger = logger;
             _repoInquilinos = repoInquilinos;
@@ -202,7 +201,7 @@ namespace PropertyManagerFL.Api.Controllers
 
 
         /// <summary>
-        /// Get sealse by Id
+        /// Get lease by Id
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -270,7 +269,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// </summary>
         /// <param name="id">Lease tenantd id</param>
         /// <returns></returns>
-        [HttpGet("GetNomeInquilino/{id:int}")]
+        [HttpGet("GetNomeInquilino/{id:int}"), Produces("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -386,7 +385,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("GetDocumentoGerado/{id:int}")]
+        [HttpGet("GetDocumentoGerado/{id:int}"), Produces("text/plain")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -443,7 +442,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// </summary>
         /// <param name="filename"></param>
         /// <returns></returns>
-        [HttpGet("GetPdfFilename/{filename}")]
+        [HttpGet("GetPdfFilename/{filename}"), Produces("text/plain")]
         public IActionResult GetPdfFilename(string? filename)
         {
             var location = GetControllerActionNames();
@@ -791,7 +790,7 @@ namespace PropertyManagerFL.Api.Controllers
         }
 
         /// <summary>
-        /// Check new rents
+        /// Check for new rents
         /// </summary>
         /// <returns></returns>
         [HttpGet("CheckNewRents")]

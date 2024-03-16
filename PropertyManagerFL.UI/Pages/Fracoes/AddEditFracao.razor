@@ -52,7 +52,7 @@ else
                                                    Placeholder="@L["TituloIdentificacao"]"
                                                    CssClass="e-field  e-corner"
                                                    FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.Descricao">
+                                                   @bind-Value="@PropertyUnit!.Descricao">
                                         </SfTextBox>
                                     </div>
                                     <div class="group-box">
@@ -60,13 +60,13 @@ else
                                                    Placeholder="@L["TituloAndar"]"
                                                    CssClass="e-field  e-corner custom-class"
                                                    FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.Andar">
+                                                   @bind-Value="@PropertyUnit!.Andar">
                                         </SfTextBox>
                                         <SfTextBox Enabled="true" Width="15%"
                                                    Placeholder="@L["TituloLado"]"
                                                    CssClass="e-field  e-corner float-right custom-class"
                                                    FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.Lado">
+                                                   @bind-Value="@PropertyUnit!.Lado">
                                         </SfTextBox>
                                         <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                                         Width="35%" Value="@idxTypologyState" ShowClearButton="false" PopupWidth="auto"
@@ -81,25 +81,8 @@ else
                                                    Placeholder="@L["TituloArtigoMatricial"]"
                                                    CssClass="e-field  e-corner float-right custom-class"
                                                    FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.Matriz">
+                                                   @bind-Value="@PropertyUnit!.Matriz">
                                         </SfTextBox>
-                                    </div>
-                                    <div class="mt-2">
-                                        <SfMessage Variant="MessageVariant.Text" ShowIcon=false Severity="MessageSeverity.Info">@L["TituloLicencaHabitacao"]</SfMessage>
-                                    </div>
-                                    <div class="group-box">
-                                        <SfTextBox Enabled="true" @ref="txtLicHabitacao"
-                                                   Width="130px"
-                                                   Placeholder="@L["TituloNumero"]"
-                                                   CssClass="e-field custom-class"
-                                                   FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.LicencaHabitacao">
-                                        </SfTextBox>
-                                        <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
-                                                      CssClass="e-align-middle "
-                                                      FloatLabelType="FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
-                                        </SfDatePicker>
                                     </div>
                                     <hr class="divider" />
                                     <div class="group-box">
@@ -107,19 +90,19 @@ else
                                                           Placeholder="@L["TituloAreaPrivativa"]" style="text-align-last:end; margin-right:10px;"
                                                           CssClass="e-field  e-corner"
                                                           FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.AreaBrutaPrivativa">
+                                                          @bind-Value="@PropertyUnit!.AreaBrutaPrivativa">
                                         </SfNumericTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="37%"
                                                           Placeholder="@L["TituloAreaDependente"]" style="text-align-last:end; margin-right:10px;"
                                                           CssClass="e-field  e-corner"
                                                           FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.AreaBrutaDependente">
+                                                          @bind-Value="@PropertyUnit!.AreaBrutaDependente">
                                         </SfNumericTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="true" Width="33%"
                                                           Placeholder="@L["TituloCasasBanho"]" Step="1" Min=1 Max=3
                                                           CssClass="e-field  e-corner"
                                                           FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.CasasBanho">
+                                                          @bind-Value="@PropertyUnit!.CasasBanho">
                                         </SfNumericTextBox>
                                     </div>
                                     <div class="group-box">
@@ -127,13 +110,13 @@ else
                                                    Placeholder="@L["TituloUltimaAvaliacao"]"
                                                    CssClass="e-field  e-corner custom-class"
                                                    FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.AnoUltAvaliacao">
+                                                   @bind-Value="@PropertyUnit!.AnoUltAvaliacao">
                                         </SfTextBox>
                                         <SfNumericTextBox Enabled="true" ShowSpinButton="false" Currency="EUR"
                                                           Placeholder="@L["TituloValorAvaliacao"]" style="text-align-last:end; margin-right:10px;"
                                                           CssClass="e-field  e-corner custom-class"
                                                           FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.ValorUltAvaliacao">
+                                                          @bind-Value="@PropertyUnit!.ValorUltAvaliacao">
                                         </SfNumericTextBox>
 
                                         @*Quando arrendamento termina, ou aquando da sua criação, fração está 'livre'; só nessa situação, deverá ser possível 'mexer' no valor da renda*@
@@ -143,7 +126,7 @@ else
                                                           Placeholder="@L["TituloValorRenda"]" style="text-align-last:end; margin-right:10px;"
                                                           CssClass="e-field  e-corner e-success custom-class"
                                                           FloatLabelType="@FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.ValorRenda">
+                                                          @bind-Value="@PropertyUnit!.ValorRenda">
                                         </SfNumericTextBox>
                                     </div>
                                     <div class="my-2">
@@ -228,12 +211,31 @@ else
                                                    HtmlAttributes="NotesAttribute"
                                                    CssClass="e-field e-corner"
                                                    FloatLabelType="FloatLabelType.Always"
-                                        @bind-Value="@PropertyUnit!.Notas">
+                                                   @bind-Value="@PropertyUnit!.Notas">
                                         </SfTextBox>
                                     </div>
                                 </div>
                             </div>
                         </EditForm>
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloLicencaHabitacao"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <div class="group-box">
+                            <SfTextBox Enabled="true" @ref="txtLicHabitacao"
+                                       Width="130px"
+                                       Placeholder="@L["TituloNumero"]"
+                                       CssClass="e-field custom-class"
+                                       FloatLabelType="@FloatLabelType.Always"
+                                       @bind-Value="@PropertyUnit!.LicencaHabitacao">
+                            </SfTextBox>
+                            <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
+                                          CssClass="e-align-middle "
+                                          FloatLabelType="FloatLabelType.Always"
+                                          @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
+                            </SfDatePicker>
+                        </div>
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>

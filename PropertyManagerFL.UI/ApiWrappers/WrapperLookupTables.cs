@@ -120,16 +120,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         public async Task<string> GetDescription(int id, string tableName)
         {
-            string? description = string.Empty;
-            //List<LookupTableVM>? lookupData = _memoryCache.Get<List<LookupTableVM>>(tableName);
-            //if (lookupData is not null)
-            //{
-            //    description = lookupData?.SingleOrDefault(d => id == d.Id && d.Tabela == tableName)?.Descricao;
-            //}
-            //else
-            //{
-            description = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
-            //}
+            string? description = await _httpClient.GetStringAsync($"{_uri}/GetDescriptionByIdAndTable/{id}/{tableName}");
 
             return description ?? "";
         }

@@ -1,0 +1,43 @@
+﻿.control-container {
+    background-color: #e5e5e5;
+    height: auto;
+    margin: 0 auto;
+    width: 500px;
+}
+
+.e-carousel .e-carousel-items .e-carousel-item .img-container {
+    height: 100%;
+}
+
+.e-carousel .e-carousel-navigators .e-next .e-btn:not(:disabled) .e-btn-icon,
+.e-carousel .e-carousel-navigators .e-previous .e-btn:not(:disabled) .e-btn-icon {
+    color: aqua;
+    font-size: 25px;
+}
+
+.e-carousel .e-carousel-items .e-carousel-item .img-caption {
+    bottom: 4em;
+    color: #fff;
+    font-size: 12pt;
+    height: 2em;
+    position: relative;
+    padding: 0.3em 1em;
+    text-align: center;
+    width: 100%;
+}
+
+.e-carousel .e-carousel-indicators .e-indicator-bars .e-indicator-bar .e-indicator {
+    width: 20px;
+    border-radius: 50%;
+}
+
+.card-box {
+    -webkit-border-radius: 25px;
+    border-radius: 25px;
+    -moz-border-radius: 25px;
+    margin: 5px 2px 5px 2px;
+    justify-content: center;
+    align-items: center;
+    background-color: #5c5c5c;
+    box-shadow: 0 0px 24px 0 rgba(0, 0, 0, 0.4), 0 1px 0px 0 rgba(0, 0, 0, 0.4);
+}
