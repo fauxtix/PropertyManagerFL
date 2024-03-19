@@ -1839,6 +1839,16 @@
               Looks up a localized string similar to Aumentos de renda.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloBackupBD">
+            <summary>
+              Looks up a localized string similar to Caminho do backup da base de dados.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloBackupOutrosFicheiros">
+            <summary>
+              Looks up a localized string similar to Backup de outros ficheiros.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCampo2Utilizadores">
             <summary>
               Looks up a localized string similar to Último acesso.
@@ -1894,6 +1904,11 @@
               Looks up a localized string similar to Carta de revogação do contrato.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCartasAumentoAutomaticas">
+            <summary>
+              Looks up a localized string similar to Cartas de Aumento de renda automáticas.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCasa">
             <summary>
               Looks up a localized string similar to Casa.
@@ -1919,9 +1934,19 @@
               Looks up a localized string similar to Categoria de documento.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCaucaoRequerida">
+            <summary>
+              Looks up a localized string similar to Caução requerida.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCertificacaoEnergetica">
             <summary>
               Looks up a localized string similar to Certificação energética.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloChaveApi">
+            <summary>
+              Looks up a localized string similar to Chave Api.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCincoUltimosMovimentos">
@@ -1942,6 +1967,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloComprovativoIRS">
             <summary>
               Looks up a localized string similar to Comprovativo IRS.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloComprovativoReciboVencimento">
+            <summary>
+              Looks up a localized string similar to Comprovativo recibo vencimento.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloConcelho">
@@ -2027,6 +2057,16 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataInicio">
             <summary>
               Looks up a localized string similar to Data início.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDefaultLanguage">
+            <summary>
+              Looks up a localized string similar to Linguagem.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDefinicoes">
+            <summary>
+              Looks up a localized string similar to Definições da aplicação.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDepois">
@@ -2744,6 +2784,11 @@
               Looks up a localized string similar to Pendentes.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPercentagemMultaPorAtrasoPagamento">
+            <summary>
+              Looks up a localized string similar to Multa por atraso pagamento renda (%).
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPeriodo">
             <summary>
               Looks up a localized string similar to Periodo.
@@ -2769,9 +2814,49 @@
               Looks up a localized string similar to Porta.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoContratoAnos">
+            <summary>
+              Looks up a localized string similar to Prazo do contrato em anos.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoEmMeses">
             <summary>
               Looks up a localized string similar to Prazo em meses.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoEnvioCartaAtraso">
+            <summary>
+              Looks up a localized string similar to Prazo de envio de carta de atraso (dias).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoEnvioCartaAumento">
+            <summary>
+              Looks up a localized string similar to Prazo de envio de carta de aumento (dias).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoEnvioCartaRevogacao">
+            <summary>
+              Looks up a localized string similar to Prazo de envio de carta revogação (dias).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoInspecaoGas">
+            <summary>
+              Looks up a localized string similar to Prazo de inspeção do gás (anos).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoRespostaCartaAtraso">
+            <summary>
+              Looks up a localized string similar to Prazo de resposta de carta de atraso (dias).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoRespostaCartaAumento">
+            <summary>
+              Looks up a localized string similar to Prazo de resposta de carta de aumento (dias).
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPrazoRespostaCartaRevogacao">
+            <summary>
+              Looks up a localized string similar to Prazo de resposta de carta de revogação (dias).
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloProcessamentoRendas">
@@ -2872,6 +2957,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloRenovacao">
             <summary>
               Looks up a localized string similar to Renovação automática.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRenovaçãoAutomáticaContrato">
+            <summary>
+              Looks up a localized string similar to Renovação automática do contrato.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloResultado">

@@ -2522,4 +2522,58 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloVisualizarContrato" xml:space="preserve">
     <value>Voir le contrat de bail</value>
   </data>
+  <data name="TituloBackupBD" xml:space="preserve">
+    <value>Chemin de sauvegarde de la base de données</value>
+  </data>
+  <data name="TituloBackupOutrosFicheiros" xml:space="preserve">
+    <value>Sauvegarde d'autres fichiers</value>
+  </data>
+  <data name="TituloCartasAumentoAutomaticas" xml:space="preserve">
+    <value>Lettres d'augmentation automatique des revenus</value>
+  </data>
+  <data name="TituloCaucaoRequerida" xml:space="preserve">
+    <value>Garantie du loyer exigé</value>
+  </data>
+  <data name="TituloChaveApi" xml:space="preserve">
+    <value>Clé d'api</value>
+  </data>
+  <data name="TituloComprovativoReciboVencimento" xml:space="preserve">
+    <value>Reçu du bon de commande</value>
+  </data>
+  <data name="TituloDefaultLanguage" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="TituloDefinicoes" xml:space="preserve">
+    <value>Paramètres de l'application</value>
+  </data>
+  <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
+    <value>Amende pour retard de paiement de loyer (%)</value>
+  </data>
+  <data name="TituloPrazoContratoAnos" xml:space="preserve">
+    <value>Durée du contrat en années</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAtraso" xml:space="preserve">
+    <value>Délai d'envoi de la lettre de retard (jours)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAumento" xml:space="preserve">
+    <value>Délai d'envoi de la lettre d'augmentation (jours)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaRevogacao" xml:space="preserve">
+    <value>Délai d'envoi de la lettre de révocation (jours)</value>
+  </data>
+  <data name="TituloPrazoInspecaoGas" xml:space="preserve">
+    <value>Période d'inspection du gaz (années)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAtraso" xml:space="preserve">
+    <value>Délai de réponse à la lettre de retard (jours)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAumento" xml:space="preserve">
+    <value>Délai de réponse à une lettre de majoration (jours)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaRevogacao" xml:space="preserve">
+    <value>Délai de réponse à une lettre de révocation (jours)</value>
+  </data>
+  <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
+    <value>Renouvellement automatique du bail</value>
+  </data>
 </root>

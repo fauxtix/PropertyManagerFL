@@ -8,6 +8,6 @@ public interface ILetterTemplatesService
     Task<IEnumerable<Template>> GetAllTemplatesAsync();
     Task<Template> GetTemplateByIdAsync(int id);
     Task<string> GetTemplateFromServer(string templateName);
-    Task<IList<string>> GetTemplatesFilenamesFromServer();
+    Task<IList<string>> GetTemplatesFilenamesFromServer(string culture);
     Task<bool> UpdateTemplateAsync(Template template);
 }

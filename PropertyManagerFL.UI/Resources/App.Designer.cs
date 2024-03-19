@@ -1844,6 +1844,24 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Caminho do backup da base de dados.
+        /// </summary>
+        public static string TituloBackupBD {
+            get {
+                return ResourceManager.GetString("TituloBackupBD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup de outros ficheiros.
+        /// </summary>
+        public static string TituloBackupOutrosFicheiros {
+            get {
+                return ResourceManager.GetString("TituloBackupOutrosFicheiros", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Último acesso.
         /// </summary>
         public static string TituloCampo2Utilizadores {
@@ -1943,6 +1961,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cartas de Aumento de renda automáticas.
+        /// </summary>
+        public static string TituloCartasAumentoAutomaticas {
+            get {
+                return ResourceManager.GetString("TituloCartasAumentoAutomaticas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Casa.
         /// </summary>
         public static string TituloCasa {
@@ -1988,11 +2015,29 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Caução requerida.
+        /// </summary>
+        public static string TituloCaucaoRequerida {
+            get {
+                return ResourceManager.GetString("TituloCaucaoRequerida", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Certificação energética.
         /// </summary>
         public static string TituloCertificacaoEnergetica {
             get {
                 return ResourceManager.GetString("TituloCertificacaoEnergetica", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Chave Api.
+        /// </summary>
+        public static string TituloChaveApi {
+            get {
+                return ResourceManager.GetString("TituloChaveApi", resourceCulture);
             }
         }
         
@@ -2029,6 +2074,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloComprovativoIRS {
             get {
                 return ResourceManager.GetString("TituloComprovativoIRS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Comprovativo recibo vencimento.
+        /// </summary>
+        public static string TituloComprovativoReciboVencimento {
+            get {
+                return ResourceManager.GetString("TituloComprovativoReciboVencimento", resourceCulture);
             }
         }
         
@@ -2182,6 +2236,24 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloDataInicio {
             get {
                 return ResourceManager.GetString("TituloDataInicio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Linguagem.
+        /// </summary>
+        public static string TituloDefaultLanguage {
+            get {
+                return ResourceManager.GetString("TituloDefaultLanguage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Definições da aplicação.
+        /// </summary>
+        public static string TituloDefinicoes {
+            get {
+                return ResourceManager.GetString("TituloDefinicoes", resourceCulture);
             }
         }
         
@@ -3473,6 +3545,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Multa por atraso pagamento renda (%).
+        /// </summary>
+        public static string TituloPercentagemMultaPorAtrasoPagamento {
+            get {
+                return ResourceManager.GetString("TituloPercentagemMultaPorAtrasoPagamento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Periodo.
         /// </summary>
         public static string TituloPeriodo {
@@ -3518,11 +3599,83 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prazo do contrato em anos.
+        /// </summary>
+        public static string TituloPrazoContratoAnos {
+            get {
+                return ResourceManager.GetString("TituloPrazoContratoAnos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Prazo em meses.
         /// </summary>
         public static string TituloPrazoEmMeses {
             get {
                 return ResourceManager.GetString("TituloPrazoEmMeses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de envio de carta de atraso (dias).
+        /// </summary>
+        public static string TituloPrazoEnvioCartaAtraso {
+            get {
+                return ResourceManager.GetString("TituloPrazoEnvioCartaAtraso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de envio de carta de aumento (dias).
+        /// </summary>
+        public static string TituloPrazoEnvioCartaAumento {
+            get {
+                return ResourceManager.GetString("TituloPrazoEnvioCartaAumento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de envio de carta revogação (dias).
+        /// </summary>
+        public static string TituloPrazoEnvioCartaRevogacao {
+            get {
+                return ResourceManager.GetString("TituloPrazoEnvioCartaRevogacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de inspeção do gás (anos).
+        /// </summary>
+        public static string TituloPrazoInspecaoGas {
+            get {
+                return ResourceManager.GetString("TituloPrazoInspecaoGas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de resposta de carta de atraso (dias).
+        /// </summary>
+        public static string TituloPrazoRespostaCartaAtraso {
+            get {
+                return ResourceManager.GetString("TituloPrazoRespostaCartaAtraso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de resposta de carta de aumento (dias).
+        /// </summary>
+        public static string TituloPrazoRespostaCartaAumento {
+            get {
+                return ResourceManager.GetString("TituloPrazoRespostaCartaAumento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prazo de resposta de carta de revogação (dias).
+        /// </summary>
+        public static string TituloPrazoRespostaCartaRevogacao {
+            get {
+                return ResourceManager.GetString("TituloPrazoRespostaCartaRevogacao", resourceCulture);
             }
         }
         
@@ -3703,6 +3856,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloRenovacao {
             get {
                 return ResourceManager.GetString("TituloRenovacao", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renovação automática do contrato.
+        /// </summary>
+        public static string TituloRenovaçãoAutomáticaContrato {
+            get {
+                return ResourceManager.GetString("TituloRenovaçãoAutomáticaContrato", resourceCulture);
             }
         }
         

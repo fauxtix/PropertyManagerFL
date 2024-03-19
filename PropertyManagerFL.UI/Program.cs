@@ -125,7 +125,7 @@ app.UseRequestLocalization(localizationOptions);
 #endregion
 
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE0NzIzMUAzMjMyMmUzMDJlMzBJVmZuU0w2cHFkVnRQaW5oWXZhQ2V6dVgvcmF1M04zT3A0NmZDNUNrRkdNPQ==");
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE2NjM3MEAzMjM0MmUzMDJlMzBnWFVrR2hOQjJSNUFaNjZPNkU0T1VLYnFRSTZGaEFES3Y0U0xEMGFYdGEwPQ==");
 //app.UseRequestLocalization("pt");
 
 // Configure the HTTP request pipeline.

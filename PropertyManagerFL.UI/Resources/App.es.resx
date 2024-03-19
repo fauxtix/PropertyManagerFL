@@ -2509,4 +2509,55 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloVisualizarContrato" xml:space="preserve">
     <value>Ver contrato de alquiler</value>
   </data>
+  <data name="TituloBackupBD" xml:space="preserve">
+    <value>Ruta de backup de la base de datos</value>
+  </data>
+  <data name="TituloBackupOutrosFicheiros" xml:space="preserve">
+    <value>Backup de outros ficheiros</value>
+  </data>
+  <data name="TituloCartasAumentoAutomaticas" xml:space="preserve">
+    <value>Copia de seguridad de otros archivos</value>
+  </data>
+  <data name="TituloCaucaoRequerida" xml:space="preserve">
+    <value>Garantía del alquiler exigido</value>
+  </data>
+  <data name="TituloChaveApi" xml:space="preserve">
+    <value>Clave Api</value>
+  </data>
+  <data name="TituloComprovativoReciboVencimento" xml:space="preserve">
+    <value>Justificante de nómina</value>
+  </data>
+  <data name="TituloDefaultLanguage" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="TituloDefinicoes" xml:space="preserve">
+    <value>Configuración de la aplicación</value>
+  </data>
+  <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
+    <value>Multa por demora en el pago del alquiler (%)</value>
+  </data>
+  <data name="TituloPrazoContratoAnos" xml:space="preserve">
+    <value>Duración del contrato en años</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAumento" xml:space="preserve">
+    <value>Plazo para enviar la carta de aumento (días)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaRevogacao" xml:space="preserve">
+    <value>Plazo para enviar una carta de revocación (días)</value>
+  </data>
+  <data name="TituloPrazoInspecaoGas" xml:space="preserve">
+    <value>Periodo de inspección del gas (años)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAtraso" xml:space="preserve">
+    <value>Tiempo de respuesta de la carta de demora (días)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAumento" xml:space="preserve">
+    <value>Plazo de respuesta a una carta de aumento (días)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaRevogacao" xml:space="preserve">
+    <value>Plazo de respuesta a una carta de revocación (días)</value>
+  </data>
+  <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
+    <value>Renovación automática del contrato</value>
+  </data>
 </root>

@@ -1507,4 +1507,58 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloVisualizarContrato" xml:space="preserve">
     <value>Visualizar contrato</value>
   </data>
+  <data name="TituloBackupBD" xml:space="preserve">
+    <value>Caminho do backup da base de dados</value>
+  </data>
+  <data name="TituloBackupOutrosFicheiros" xml:space="preserve">
+    <value>Backup de outros ficheiros</value>
+  </data>
+  <data name="TituloCartasAumentoAutomaticas" xml:space="preserve">
+    <value>Cartas de Aumento de renda automáticas</value>
+  </data>
+  <data name="TituloCaucaoRequerida" xml:space="preserve">
+    <value>Caução requerida</value>
+  </data>
+  <data name="TituloChaveApi" xml:space="preserve">
+    <value>Chave Api</value>
+  </data>
+  <data name="TituloComprovativoReciboVencimento" xml:space="preserve">
+    <value>Comprovativo recibo vencimento</value>
+  </data>
+  <data name="TituloDefaultLanguage" xml:space="preserve">
+    <value>Linguagem</value>
+  </data>
+  <data name="TituloDefinicoes" xml:space="preserve">
+    <value>Definições da aplicação</value>
+  </data>
+  <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
+    <value>Multa por atraso pagamento renda (%)</value>
+  </data>
+  <data name="TituloPrazoContratoAnos" xml:space="preserve">
+    <value>Prazo do contrato em anos</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAtraso" xml:space="preserve">
+    <value>Prazo de envio de carta de atraso (dias)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAumento" xml:space="preserve">
+    <value>Prazo de envio de carta de aumento (dias)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaRevogacao" xml:space="preserve">
+    <value>Prazo de envio de carta revogação (dias)</value>
+  </data>
+  <data name="TituloPrazoInspecaoGas" xml:space="preserve">
+    <value>Prazo de inspeção do gás (anos)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAtraso" xml:space="preserve">
+    <value>Prazo de resposta de carta de atraso (dias)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAumento" xml:space="preserve">
+    <value>Prazo de resposta de carta de aumento (dias)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaRevogacao" xml:space="preserve">
+    <value>Prazo de resposta de carta de revogação (dias)</value>
+  </data>
+  <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
+    <value>Renovação automática do contrato</value>
+  </data>
 </root>

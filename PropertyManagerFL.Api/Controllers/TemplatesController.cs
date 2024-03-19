@@ -70,7 +70,7 @@ public class TemplatesController : ControllerBase
                 return "";
             }
 
-            return fileLocation; 
+            return fileLocation;
 
             //var fileBytes = System.IO.File.ReadAllBytes(fileLocation);
             //return File(fileBytes, "application/vnd.openxmlformats-officedocument.wordprocessingml.document", fileLocation);
@@ -84,8 +84,8 @@ public class TemplatesController : ControllerBase
         }
     }
 
-    [HttpGet("GetTemplatesFilenamesFromServer")]
-    public List<string>  GetTemplatesFilenamesFromServer()
+    [HttpGet("GetTemplatesFilenamesFromServer/{culture}")]
+    public List<string> GetTemplatesFilenamesFromServer(string culture)
     {
         try
         {
@@ -95,8 +95,7 @@ public class TemplatesController : ControllerBase
             if (files.Length == 0)
                 return new List<string>();
 
-            List<string> result = new List<string>(); 
-            result.AddRange(files);
+            List<string> result = FilterFilesByCulture(files, culture);
 
             return result;
         }
@@ -155,5 +154,40 @@ public class TemplatesController : ControllerBase
         }
     }
 
+    private List<string> FilterFilesByCulture(string[] files, string culture)
+    {
+        List<string> result = new List<string>();
 
+        if (files.Length == 0)
+            return result;
+
+        string cultureKeyword = GetCultureKeyword(culture);
+
+        if (string.IsNullOrEmpty(cultureKeyword))
+            result.AddRange(files);
+        else
+        {
+            result.AddRange(files.Where(f => f.ToLower().Contains(cultureKeyword)));
+            if (result.Count == 0)
+            {
+                return files.ToList();
+            }
+        }
+
+        return result;
+    }
+
+    private string GetCultureKeyword(string culture)
+    {
+        if (culture.Contains("es"))
+            return "espanhol";
+        else if (culture.Contains("fr"))
+            return "frances";
+        else if (culture.Contains("en"))
+            return "ingles";
+        else if (culture.Contains("pt"))
+            return "portugues";
+        else
+            return "";
+    }
 }

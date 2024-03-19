@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Core.Entities;
 using Syncfusion.Blazor.DocumentEditor;
 using Syncfusion.Blazor.Inputs;
+using System.Globalization;
 using System.Text.Json;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
@@ -11,6 +14,8 @@ namespace PropertyManagerFL.UI.Pages.LetterTemplates;
 public partial class LetterTemplates
 {
     [Inject] ILetterTemplatesService? documentsSevice { get; set; }
+    [Inject] public IAppSettingsService? appSettingsService { get; set; }
+
     [Inject] public IStringLocalizer<App>? L { get; set; }
 
     protected List<Template> Templates { get; set; } = new();
@@ -36,8 +41,12 @@ public partial class LetterTemplates
     string fieldName = "";
     AlertMessageType AlertMessageType = AlertMessageType.Warning;
     OpcoesRegisto OpcoesRegisto = OpcoesRegisto.Warning;
+    private ApplicationSettingsVM? appSettings;
 
     protected int idxFileSelected;
+
+    private string? selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
+
 
     protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"},  "Undo",
         new CustomToolbarItemModel(){ Id="insertfield", Text="Insert Field", PrefixIcon="fa fa-user fa-lg"},
@@ -55,7 +64,12 @@ public partial class LetterTemplates
         AlertTitle = "";
         WarningMessage = "";
         int counter = 0;
-        FileList = (await documentsSevice!.GetTemplatesFilenamesFromServer()).ToList();
+
+        appSettings = await GetSettings();
+        selectedCulture = appSettings.DefaultLanguage;
+        var culture = new CultureInfo(selectedCulture!);
+
+        FileList = (await documentsSevice!.GetTemplatesFilenamesFromServer(selectedCulture!)).ToList();
         foreach (var item in FileList)
         {
             var filename = Path.GetFileNameWithoutExtension(item);
@@ -175,17 +189,21 @@ public partial class LetterTemplates
 
     async Task SaveFile()
     {
+
         SfDocumentEditor editor = container!.DocumentEditor;
-        string base64Data = await editor.SaveAsBlobAsync(FormatType.Docx);
+        string base64Data = await editor.SaveAsBlobAsync(FormatType.Dotx);
         byte[] data = Convert.FromBase64String(base64Data);
-        using (MemoryStream? stream = new(data))
+        base64Data = null;
+
+        Stream stream = new MemoryStream(data);
+        using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
-            {
-                stream.CopyTo(fileStream);
-            }
+            stream.CopyTo(fileStream);
+            fileStream.Close();
         }
 
+        stream.Close();
+        stream = null;
         DisplayResult("Save file", "File successfully saved", AlertMessageType.Info);
     }
 
@@ -231,6 +249,11 @@ public partial class LetterTemplates
         OpcoesRegisto = OpcoesRegisto.Info;
         AlertVisibility = true;
         StateHasChanged();
+    }
+
+    private async Task<ApplicationSettingsVM> GetSettings()
+    {
+        return await appSettingsService!.GetSettingsAsync();
     }
 
     protected class TemplateFileName

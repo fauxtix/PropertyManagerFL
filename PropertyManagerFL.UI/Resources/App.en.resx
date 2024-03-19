@@ -2514,4 +2514,58 @@
   <data name="TituloVisualizarContrato" xml:space="preserve">
     <value>View lease agreement</value>
   </data>
+  <data name="TituloBackupBD" xml:space="preserve">
+    <value>Database backup path</value>
+  </data>
+  <data name="TituloBackupOutrosFicheiros" xml:space="preserve">
+    <value>Backup of other files</value>
+  </data>
+  <data name="TituloCartasAumentoAutomaticas" xml:space="preserve">
+    <value>Automatic rent increase letters</value>
+  </data>
+  <data name="TituloCaucaoRequerida" xml:space="preserve">
+    <value>Security deposit for the rent</value>
+  </data>
+  <data name="TituloChaveApi" xml:space="preserve">
+    <value>Api key</value>
+  </data>
+  <data name="TituloComprovativoReciboVencimento" xml:space="preserve">
+    <value>Proof of salary receipt</value>
+  </data>
+  <data name="TituloDefaultLanguage" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="TituloDefinicoes" xml:space="preserve">
+    <value>Aplication Settings</value>
+  </data>
+  <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
+    <value>Fine for late payment of rent (%)</value>
+  </data>
+  <data name="TituloPrazoContratoAnos" xml:space="preserve">
+    <value>Contract term in years</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAtraso" xml:space="preserve">
+    <value>Deadline for sending a delay letter (days)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaAumento" xml:space="preserve">
+    <value>Deadline for sending a rent increase letter (days)</value>
+  </data>
+  <data name="TituloPrazoEnvioCartaRevogacao" xml:space="preserve">
+    <value>Deadline for sending revocation letter (days)</value>
+  </data>
+  <data name="TituloPrazoInspecaoGas" xml:space="preserve">
+    <value>Gas inspection deadline (years)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAtraso" xml:space="preserve">
+    <value>Delay letter response time (days)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaAumento" xml:space="preserve">
+    <value>Deadline for replying to a letter of increase (days)</value>
+  </data>
+  <data name="TituloPrazoRespostaCartaRevogacao" xml:space="preserve">
+    <value>Deadline for replying to a letter of revocation (days)</value>
+  </data>
+  <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
+    <value>Automatic contract renewal</value>
+  </data>
 </root>

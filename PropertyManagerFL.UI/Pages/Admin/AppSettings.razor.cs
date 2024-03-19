@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using Syncfusion.Blazor.Buttons;
 using Syncfusion.Blazor.Notifications;
+
+
 
 namespace PropertyManagerFL.UI.Pages.Admin;
 public partial class AppSettings
@@ -10,6 +13,8 @@ public partial class AppSettings
 
     [Inject] public IStringLocalizer<App>? L { get; set; }
     [Inject] public ILogger<App>? logger { get; set; }
+    [Inject] public IAppSettingsService? AppSettingsService { get; set; }
+
 
     private ApplicationSettingsVM? settings;
     private SfButton? ToggleBtnObj;
