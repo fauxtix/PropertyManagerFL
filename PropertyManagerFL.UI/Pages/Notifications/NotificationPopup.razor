@@ -1,27 +1,47 @@
 ﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos
 
-@if (showPopup && LeaseAlerts is not null && LeaseAlerts.Any())
+@if (showPopup && AppAlerts is not null && AppAlerts.Any())
 {
 
-   @*  <div class="no-data float">
+    @*      <div class="no-data float">
         <i class="fas fa-caret-left fa-md arrow"></i>
         <i class="fas fa-warning"></i>
-        @foreach (var item in Alerts)
+        @foreach (var item in AppAlerts)
         {
             <p>@item</p>
         }
-    </div> *@
-    <div class="floating-popup">
+    </div>
+ *@
+@*     <div class="floating-popup">
         <div class="popup-content">
-            <div>
-                @foreach (var item in LeaseAlerts)
-                {
-                    <p>@item</p>
-                }
-            </div>
+            @foreach (var item in AppAlerts)
+            {
+                @item
+                <br />
+            }
         </div>
     </div>
+ *@
+    <div class="notification">
+        <div class="notification-header">
+            <h3 class="notification-title">New notification</h3>
+        </div>
+        <div class="notification-container">
+            <div class="notification-media">
+                <img src="/images/icons8-alert-48.png" alt="" class="notification-user-avatar">
+                @* <i class="fa fa-thumbs-up notification-reaction"></i> *@
+            </div>
+            <div class="notification-content">
+                @foreach (var item in AppAlerts)
+                {
+                    <p class="notification-text" >@item</p><br />
+                }
+            </div>
+            <span class="notification-status"></span>
+        </div>
+    </div>
+
 }
 
 

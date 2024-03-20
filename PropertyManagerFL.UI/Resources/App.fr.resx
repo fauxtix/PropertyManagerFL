@@ -2576,4 +2576,25 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
     <value>Renouvellement automatique du bail</value>
   </data>
+  <data name="TituloCartas" xml:space="preserve">
+    <value>Lettres</value>
+  </data>
+  <data name="TituloCondominios" xml:space="preserve">
+    <value>Condominium</value>
+  </data>
+  <data name="TituloContratos" xml:space="preserve">
+    <value>Contrats de location</value>
+  </data>
+  <data name="TituloFinancas" xml:space="preserve">
+    <value>Finances</value>
+  </data>
+  <data name="TituloIMI" xml:space="preserve">
+    <value>Impôt foncier communal</value>
+  </data>
+  <data name="TituloPessoais" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="TituloRecibos" xml:space="preserve">
+    <value>Recettes</value>
+  </data>
 </root>

@@ -1904,6 +1904,11 @@
               Looks up a localized string similar to Carta de revogação do contrato.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCartas">
+            <summary>
+              Looks up a localized string similar to Cartas.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCartasAumentoAutomaticas">
             <summary>
               Looks up a localized string similar to Cartas de Aumento de renda automáticas.
@@ -1979,6 +1984,11 @@
               Looks up a localized string similar to Concelho.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCondominios">
+            <summary>
+              Looks up a localized string similar to Condomínios.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloConfirmar">
             <summary>
               Looks up a localized string similar to Confirmar.
@@ -2022,6 +2032,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloContratoNovo">
             <summary>
               Looks up a localized string similar to Contrato novo.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloContratos">
+            <summary>
+              Looks up a localized string similar to Contratos.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloContratoTerminado">
@@ -2314,6 +2329,11 @@
               Looks up a localized string similar to Fim do contrato.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloFinancas">
+            <summary>
+              Looks up a localized string similar to Finanças.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloFoto">
             <summary>
               Looks up a localized string similar to Foto.
@@ -2397,6 +2417,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloImagens">
             <summary>
               Looks up a localized string similar to Imagens.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloIMI">
+            <summary>
+              Looks up a localized string similar to IMI.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloImovel">
@@ -2804,6 +2829,11 @@
               Looks up a localized string similar to Pesquisa de Utilizadores.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPessoais">
+            <summary>
+              Looks up a localized string similar to Pessoais.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloPlanoConsultas">
             <summary>
               Looks up a localized string similar to Plano de Consultas.
@@ -2922,6 +2952,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloRececaoMensagens">
             <summary>
               Looks up a localized string similar to Receção.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloRecibos">
+            <summary>
+              Looks up a localized string similar to Recibos.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloReciboVencimento">

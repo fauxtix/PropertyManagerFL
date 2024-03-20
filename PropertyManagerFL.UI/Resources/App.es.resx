@@ -2560,4 +2560,25 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloRenovaçãoAutomáticaContrato" xml:space="preserve">
     <value>Renovación automática del contrato</value>
   </data>
+  <data name="TituloCartas" xml:space="preserve">
+    <value>Alquileres</value>
+  </data>
+  <data name="TituloCondominios" xml:space="preserve">
+    <value>Condominios</value>
+  </data>
+  <data name="TituloContratos" xml:space="preserve">
+    <value>Contratos</value>
+  </data>
+  <data name="TituloFinancas" xml:space="preserve">
+    <value>Finanzas</value>
+  </data>
+  <data name="TituloIMI" xml:space="preserve">
+    <value>Impuesto municipal</value>
+  </data>
+  <data name="TituloPessoais" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="TituloRecibos" xml:space="preserve">
+    <value>Recibos</value>
+  </data>
 </root>

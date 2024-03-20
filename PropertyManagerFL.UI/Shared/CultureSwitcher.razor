@@ -88,7 +88,13 @@
         var success = resp.Item2 == true;
 
         if (success)
-            NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+            try
+            {
+                NavigationManager.NavigateTo("/Culture/SetCulture" + query, forceLoad: true);
+            }
+            catch (Exception)
+            {
+            }
     }
 
     private async Task<ApplicationSettingsVM> GetSettings()

@@ -82,7 +82,7 @@
     border: 1px solid #ccc;
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px rgba(0,0,0,0.23);
     z-index: 1000;
     /*max-width: 400px;*/
     max-height: 24rem;
@@ -100,4 +100,123 @@
         border-radius: 2px;
         word-wrap: break-word;
     }
+
+strong {
+    font-weight: 600;
+}
+
+.notification {
+    width: auto;
+    padding: 5px;
+    background-color: white;
+    border-radius: 16px;
+    position: fixed;
+    bottom: 135px;
+    left: 5px;
+    transform: translateY(200%);
+    animation: noti 0.5s infinite forwards alternate ease-in;
+}
+
+.notification-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.notification-title {
+    font-size: 16px;
+    margin-left: 3px;
+    font-weight:300;
+    text-transform: capitalize;
+}
+
+.notification-close {
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F0F2F5;
+    font-size: 14px;
+}
+
+.notification-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.notification-media {
+    position: relative;
+}
+
+.notification-user-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.notification-reaction {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    color: white;
+    background-image: linear-gradient(45deg, #0070E1, #14ABFE);
+    font-size: 14px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.notification-content {
+    width: calc(100% - 60px);
+    padding-left: 20px;
+    line-height: 1.4;
+    overflow-y: auto; /* Apply vertical scrollbar if needed */
+    font-size: small;   
+}
+
+.notification-text {
+    margin-bottom: 5px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 40px;
+    word-wrap: break-word;
+}
+
+.notification-timer {
+    color: #1876F2;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.notification-status {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    background-color: #1876F2;
+    border-radius: 50%;
+}
+
+/*@keyframes noti {
+    50% {
+        transform: translateY(0);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+*/
 

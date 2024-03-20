@@ -1,3 +1,4 @@
+using AnyClone.Extensions;
 using Microsoft.AspNetCore.Components;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
@@ -8,16 +9,17 @@ namespace PropertyManagerFL.UI.Pages.Notifications;
 public partial class NotificationPopup
 {
     [Parameter] public bool showPopup { get; set; }
-    [Parameter] public EventCallback<int> HasAlerts { get; set; }
+    [Parameter] public EventCallback<int> Alerts { get; set; }
 
     [Inject] public IArrendamentoService? arrendamentosService { get; set; }
     [Inject] public IInquilinoService? inquilinosService { get; set; }
     [Inject] public IRecebimentoService? recebimentosService { get; set; }
     [Inject] protected IAppSettingsService? appSettingsService { get; set; }
+    [Inject] protected IAppointmentsService? apptsService { get; set; }
 
     [Inject] public ILogger<App>? logger { get; set; }
 
-    protected Dictionary<string, int> LeaseAlerts = new Dictionary<string, int>();
+    protected List<string> AppAlerts = new();
 
     protected IEnumerable<ArrendamentoVM>? leases { get; set; }
     protected ApplicationSettingsVM? AppSettings { get; set; } = new();
@@ -40,7 +42,21 @@ public partial class NotificationPopup
 
     private async Task CheckForAlerts()
     {
-        LeaseAlerts.Clear();
+        AppAlerts.Clear();
+        var appts = await apptsService.GetAllAsync();
+        if(appts is not null && appts.Any())
+        {
+            var todayAppts = appts.Where(a => a.StartTime.Date == DateTime.Now.Date);
+            if (todayAppts.Any())
+            {
+                foreach (var todayAppt in todayAppts)
+                {
+                    var notes = todayAppt.Description ?? "";
+                    AppAlerts.Add($"{todayAppt.Subject} {todayAppt.Location} ({todayAppt.StartTime.ToShortTimeString()}) {notes}");
+                }
+            }
+        }
+
         if (AppSettings?.CartasAumentoAutomaticas == false)
         {
             // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualização de renda' 
@@ -50,7 +66,7 @@ public partial class NotificationPopup
             {
                 foreach (var document in tenantDocuments)
                 {
-                    LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}", 1);
+                    AppAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}");
                 }
             }
 
@@ -63,7 +79,7 @@ public partial class NotificationPopup
                     if (item.EnvioCartaAtualizacaoRenda == false)
                         alertMsg += " - não foi enviada carta de atualização!";
 
-                    LeaseAlerts.Add(alertMsg, 1);
+                    AppAlerts.Add(alertMsg);
                 }
             }
             else // Cartas de aumento de rendas automáticas
@@ -76,15 +92,14 @@ public partial class NotificationPopup
                         var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
                         if (UpdateLetterSent == false)
                         {
-                            LeaseAlerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano.", 3);
+                            AppAlerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente");
                         }
                     }
                 }
-
             }
         }
 
-        await HasAlerts.InvokeAsync(LeaseAlerts.Count);
+        await Alerts.InvokeAsync(AppAlerts.Count);
         StateHasChanged();
     }
 

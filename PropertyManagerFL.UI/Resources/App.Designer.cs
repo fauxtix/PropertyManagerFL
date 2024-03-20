@@ -1961,6 +1961,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cartas.
+        /// </summary>
+        public static string TituloCartas {
+            get {
+                return ResourceManager.GetString("TituloCartas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cartas de Aumento de renda automáticas.
         /// </summary>
         public static string TituloCartasAumentoAutomaticas {
@@ -2096,6 +2105,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Condomínios.
+        /// </summary>
+        public static string TituloCondominios {
+            get {
+                return ResourceManager.GetString("TituloCondominios", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Confirmar.
         /// </summary>
         public static string TituloConfirmar {
@@ -2173,6 +2191,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloContratoNovo {
             get {
                 return ResourceManager.GetString("TituloContratoNovo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contratos.
+        /// </summary>
+        public static string TituloContratos {
+            get {
+                return ResourceManager.GetString("TituloContratos", resourceCulture);
             }
         }
         
@@ -2699,6 +2726,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Finanças.
+        /// </summary>
+        public static string TituloFinancas {
+            get {
+                return ResourceManager.GetString("TituloFinancas", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Foto.
         /// </summary>
         public static string TituloFoto {
@@ -2848,6 +2884,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloImagens {
             get {
                 return ResourceManager.GetString("TituloImagens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to IMI.
+        /// </summary>
+        public static string TituloIMI {
+            get {
+                return ResourceManager.GetString("TituloIMI", resourceCulture);
             }
         }
         
@@ -3581,6 +3626,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pessoais.
+        /// </summary>
+        public static string TituloPessoais {
+            get {
+                return ResourceManager.GetString("TituloPessoais", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Plano de Consultas.
         /// </summary>
         public static string TituloPlanoConsultas {
@@ -3793,6 +3847,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloRececaoMensagens {
             get {
                 return ResourceManager.GetString("TituloRececaoMensagens", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recibos.
+        /// </summary>
+        public static string TituloRecibos {
+            get {
+                return ResourceManager.GetString("TituloRecibos", resourceCulture);
             }
         }
         
