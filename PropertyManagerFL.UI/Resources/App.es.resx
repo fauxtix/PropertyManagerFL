@@ -2581,4 +2581,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloRecibos" xml:space="preserve">
     <value>Recibos</value>
   </data>
+  <data name="TituloNotificacoes" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
 </root>

@@ -1582,4 +1582,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloRecibos" xml:space="preserve">
     <value>Recibos</value>
   </data>
+  <data name="TituloNotificacoes" xml:space="preserve">
+    <value>Notificações</value>
+  </data>
 </root>

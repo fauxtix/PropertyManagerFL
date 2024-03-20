@@ -111,7 +111,8 @@ strong {
     background-color: white;
     border-radius: 16px;
     position: fixed;
-    bottom: 135px;
+    top: calc(100% - 180px);
+    
     left: 5px;
     transform: translateY(200%);
     animation: noti 0.5s infinite forwards alternate ease-in;
@@ -183,14 +184,15 @@ strong {
 }
 
 .notification-text {
-    margin-bottom: 5px;
+    margin-bottom: 7px;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: 40px;
     word-wrap: break-word;
+    border: 1px solid #cecece;
+    padding: 5px 40px 5px 3px;
 }
 
 .notification-timer {

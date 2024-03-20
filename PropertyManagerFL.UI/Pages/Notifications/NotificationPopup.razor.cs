@@ -1,5 +1,5 @@
-using AnyClone.Extensions;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
@@ -11,24 +11,24 @@ public partial class NotificationPopup
     [Parameter] public bool showPopup { get; set; }
     [Parameter] public EventCallback<int> Alerts { get; set; }
 
-    [Inject] public IArrendamentoService? arrendamentosService { get; set; }
-    [Inject] public IInquilinoService? inquilinosService { get; set; }
-    [Inject] public IRecebimentoService? recebimentosService { get; set; }
-    [Inject] protected IAppSettingsService? appSettingsService { get; set; }
-    [Inject] protected IAppointmentsService? apptsService { get; set; }
-
-    [Inject] public ILogger<App>? logger { get; set; }
+    [Inject] public IArrendamentoService? LeasesService { get; set; }
+    [Inject] public IInquilinoService? TenantsService { get; set; }
+    [Inject] public IRecebimentoService? RentPaymentsService { get; set; }
+    [Inject] protected IAppSettingsService? AppSettingsService { get; set; }
+    [Inject] protected IAppointmentsService? AppointmentsService { get; set; }
+    [Inject] public ILogger<App>? Logger { get; set; }
+    [Inject] public IStringLocalizer<App>? L { get; set; }
 
     protected List<string> AppAlerts = new();
 
-    protected IEnumerable<ArrendamentoVM>? leases { get; set; }
+    protected IEnumerable<ArrendamentoVM>? Leases { get; set; }
     protected ApplicationSettingsVM? AppSettings { get; set; } = new();
 
     //protected List<string> Alerts { get; set; } = new();
     protected override async Task OnInitializedAsync()
     {
-        leases = await GetAllLeases();
-        if (leases is not null && leases.Any())
+        Leases = await GetAllLeases();
+        if (Leases is not null && Leases.Any())
         {
             AppSettings = await GetSettings();
             await CheckForAlerts();
@@ -37,13 +37,13 @@ public partial class NotificationPopup
 
     protected async Task<ApplicationSettingsVM> GetSettings()
     {
-        return await appSettingsService!.GetSettingsAsync();
+        return await AppSettingsService!.GetSettingsAsync();
     }
 
     private async Task CheckForAlerts()
     {
         AppAlerts.Clear();
-        var appts = await apptsService.GetAllAsync();
+        var appts = await AppointmentsService!.GetAllAsync();
         if(appts is not null && appts.Any())
         {
             var todayAppts = appts.Where(a => a.StartTime.Date == DateTime.Now.Date);
@@ -60,7 +60,7 @@ public partial class NotificationPopup
         if (AppSettings?.CartasAumentoAutomaticas == false)
         {
             // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualização de renda' 
-            var tenantDocuments = await inquilinosService!.GetDocumentos();
+            var tenantDocuments = await TenantsService!.GetDocumentos();
             var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
             if (updateLetterSentCurrentYear.Any())
             {
@@ -70,7 +70,7 @@ public partial class NotificationPopup
                 }
             }
 
-            var leasesWhoNeedToUpdateRent = leases?.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
+            var leasesWhoNeedToUpdateRent = Leases?.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
             if (leasesWhoNeedToUpdateRent?.Count() > 0)
             {
                 foreach (var item in leasesWhoNeedToUpdateRent)
@@ -84,12 +84,12 @@ public partial class NotificationPopup
             }
             else // Cartas de aumento de rendas automáticas
             {
-                if (leases?.Count() > 0)
+                if (Leases?.Count() > 0)
                 {
-                    var rentPayments = (await recebimentosService!.GetAll()).ToList().Count();
+                    var rentPayments = (await RentPaymentsService!.GetAll()).ToList().Count();
                     if (rentPayments > 0)
                     {
-                        var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
+                        var UpdateLetterSent = await LeasesService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
                         if (UpdateLetterSent == false)
                         {
                             AppAlerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente");
@@ -107,7 +107,7 @@ public partial class NotificationPopup
     {
         try
         {
-            IEnumerable<ArrendamentoVM> listOfleases = await arrendamentosService!.GetAll();
+            IEnumerable<ArrendamentoVM> listOfleases = await LeasesService!.GetAll();
             if (listOfleases is not null && listOfleases.Any())
             {
                 listOfleases = listOfleases.OrderByDescending(l => l.Id).ToList();
@@ -118,13 +118,11 @@ public partial class NotificationPopup
         }
         catch (Exception ex)
         {
-            logger?.LogError(ex.Message, ex);
+            Logger?.LogError(ex.Message, ex);
             return new List<ArrendamentoVM>();
 
         }
     }
-
-
     protected int GetMonthDifference(DateTime startDate, DateTime endDate)
     {
         if (endDate.Date < startDate.Date)
@@ -135,6 +133,4 @@ public partial class NotificationPopup
         int monthsApart = 12 * (startDate.Year - endDate.Year) + startDate.Month - endDate.Month;
         return Math.Abs(monthsApart);
     }
-
-
 }

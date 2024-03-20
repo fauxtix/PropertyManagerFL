@@ -2659,6 +2659,11 @@
               Looks up a localized string similar to Observações.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloNotificacoes">
+            <summary>
+              Looks up a localized string similar to Notificações.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloNovaDespesaPorDuplicacao">
             <summary>
               Looks up a localized string similar to Nova despesa (por duplicação).

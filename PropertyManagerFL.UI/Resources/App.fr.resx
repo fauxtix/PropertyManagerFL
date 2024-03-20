@@ -2597,4 +2597,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloRecibos" xml:space="preserve">
     <value>Recettes</value>
   </data>
+  <data name="TituloNotificacoes" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
 </root>

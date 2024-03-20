@@ -3320,6 +3320,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notificações.
+        /// </summary>
+        public static string TituloNotificacoes {
+            get {
+                return ResourceManager.GetString("TituloNotificacoes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nova despesa (por duplicação).
         /// </summary>
         public static string TituloNovaDespesaPorDuplicacao {

@@ -25,24 +25,19 @@
  *@
     <div class="notification">
         <div class="notification-header">
-            <h3 class="notification-title">New notification</h3>
+            <h3 class="notification-title">@L["TituloNotificacoes"]</h3>
         </div>
         <div class="notification-container">
             <div class="notification-media">
                 <img src="/images/icons8-alert-48.png" alt="" class="notification-user-avatar">
-                @* <i class="fa fa-thumbs-up notification-reaction"></i> *@
             </div>
             <div class="notification-content">
                 @foreach (var item in AppAlerts)
                 {
-                    <p class="notification-text" >@item</p><br />
+                    <p class="notification-text" >@item</p>
                 }
-            </div>
-            <span class="notification-status"></span>
+            </div>            
         </div>
     </div>
 
 }
-
-
-

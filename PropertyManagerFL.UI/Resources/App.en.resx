@@ -2589,4 +2589,7 @@
   <data name="TituloRecibos" xml:space="preserve">
     <value>Receipts</value>
   </data>
+  <data name="TituloNotificacoes" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
 </root>
