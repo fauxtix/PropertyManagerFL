@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Formatting;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
+using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -56,8 +57,9 @@ namespace PropertyManagerFL.Api.Controllers
                 var imagensFracao = fracao.Imagens;
 
                 var novaFracao = _mapper.Map<NovaFracao>(fracao);
+                var newPolicy = _mapper.Map<Seguro>(fracao.Apolice);
 
-                int idUnitCreated = await _repoFracoes.InsereFracao(novaFracao, imagensFracao!);
+                int idUnitCreated = await _repoFracoes.InsereFracao(novaFracao, imagensFracao!, newPolicy);
                 if (idUnitCreated > 0)
                 {
                     var actionReturned = CreatedAtAction(nameof(GetFracaoById), new { id = idUnitCreated }, fracao);
@@ -106,6 +108,51 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        /// <summary>
+        /// Cria nova apólice da fração
+        /// </summary>
+        /// <param name="apolice"></param>
+        /// <returns></returns>
+
+        [HttpPost("InsereApoliceFracao")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> InsereApoliceFracao([FromBody] SeguroVM apolice)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (apolice is null)
+                {
+                    return BadRequest();
+                }
+
+                var novaApolice = _mapper.Map<Seguro>(apolice);
+
+                int idApoliceCreated = await _repoFracoes.InsereApoliceFracao(novaApolice);
+                if (idApoliceCreated > 0)
+                {
+                    var actionReturned = CreatedAtAction(nameof(GetApoliceById), new { id = idApoliceCreated }, apolice);
+                    return actionReturned;
+                }
+                else
+                {
+                    return InternalError($"{location}: Erro no Api (InsereApolice");
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Cria nova apólice da fração
+        /// </summary>
+        /// <param name="seguro"></param>
+        /// <returns></returns>
 
         /// <summary>
         /// Altera dados de fração
@@ -113,7 +160,7 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="id">Id da fração</param>
         /// <param name="updatedUnit"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        ///    [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
@@ -145,7 +192,8 @@ namespace PropertyManagerFL.Api.Controllers
                 var imagensFracao = updatedUnit.Imagens;
 
                 var unitToUpdate = _mapper.Map<AlteraFracao>(updatedUnit);
-                var fracaoAlterada = await _repoFracoes.AtualizaFracao(unitToUpdate, imagensFracao);
+                var policyToUpdate = _mapper.Map<Seguro>(updatedUnit.Apolice);
+                var fracaoAlterada = await _repoFracoes.AtualizaFracao(unitToUpdate, imagensFracao, policyToUpdate);
                 return NoContent();
             }
             catch (Exception e)
@@ -153,6 +201,7 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
+
 
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -480,6 +529,44 @@ namespace PropertyManagerFL.Api.Controllers
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
+
+        /// <summary>
+        /// Apólice por Id
+        /// </summary>
+        /// <param name="id">Id da fração</param>
+        /// <returns>View Model</returns>
+        [HttpGet("GetApoliceById/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetApoliceById(int id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (id < 1)
+                {
+                    return BadRequest();
+                }
+
+                var apolice = await _repoFracoes.GetApoliceFracao_ById(id);
+                if (apolice is not null)
+                {
+                    return Ok(apolice);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
 
         /// <summary>
         /// Fração por Id

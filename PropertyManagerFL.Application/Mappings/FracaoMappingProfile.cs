@@ -34,6 +34,7 @@ namespace PropertyManagerFL.Application.Mappings
 			CreateMap<EstadoConservacao, ReferenciaEstadoConservacao>().ReverseMap();
 			CreateMap<EstadoConservacao, EstadoConservacaoVM>().ReverseMap();
 
-		}
-	}
+            CreateMap<Seguro, SeguroVM>().ReverseMap();
+        }
+    }
 }

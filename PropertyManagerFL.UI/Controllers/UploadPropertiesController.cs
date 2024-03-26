@@ -47,6 +47,11 @@ namespace PropertyManagerFL.UI.Controllers
 
                     if (!System.IO.File.Exists(filenameToCopy))
                     {
+                        //FileStream filestream = new FileStream(filenameToCopy, FileMode.Create, FileAccess.Write);
+                        //// Calls the OpenReadStream method on the uploaded file to get a read stream
+                        //await file.File.OpenReadStream(long.MaxValue).CopyToAsync(filestream);
+                        //filestream.Close();
+
                         using (FileStream fs = System.IO.File.Create(filenameToCopy))
                         {
                             file.CopyTo(fs);

@@ -23,7 +23,8 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             _logger = logger;
         }
 
-        public async Task<int> InsereFracao(NovaFracao fracao, List<NovaImagemFracao> imagensFracao)
+        public async Task<int> InsereFracao(NovaFracao fracao,
+            List<NovaImagemFracao> imagensFracao, Seguro policy)
         {
             var fracaoHasPhotos = imagensFracao is not null;
 
@@ -86,6 +87,17 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             }
                         }
 
+                        var InsuranceParameters = new DynamicParameters();
+
+                        InsuranceParameters.Add("@IdFracao", idFracaoCriada);
+                        InsuranceParameters.Add("@Apolice", policy.Apolice);
+                        InsuranceParameters.Add("@Premio", policy.Premio);
+                        InsuranceParameters.Add("@Notas", policy.Notas);
+                        var policyId = await connection.QuerySingleAsync<int>("usp_Fracoes_InsertApolice",
+                            param: InsuranceParameters,
+                            commandType: CommandType.StoredProcedure,
+                            transaction: tran);
+
                         tran.Commit();
                         return idFracaoCriada;
 
@@ -100,9 +112,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
-        public async Task<bool> AtualizaFracao(AlteraFracao fracao, List<NovaImagemFracao> imagensFracao)
+        public async Task<bool> AtualizaFracao(AlteraFracao fracao, List<NovaImagemFracao> imagensFracao, Seguro policy)
         {
             var fracaoHasPhotos = imagensFracao is not null;
+            var PolicyData = await GetApoliceFracao_ById(fracao.Id);
 
             var parameters = new DynamicParameters();
             parameters.Add("@Id", fracao.Id);
@@ -144,7 +157,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     {
                         try
                         {
-                            _logger.LogInformation("Atualiza registo de Fração");
+                            _logger.LogInformation("Atualizar registo de Fração");
 
                             var fracaoAlterada = await connection.QueryAsync("usp_Fracoes_Update",
                                     param: parameters, commandType: CommandType.StoredProcedure,
@@ -165,6 +178,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                     imageParameters.Add("@Id_Fracao", fracao.Id);
                                     imageParameters.Add("@Descricao", imagem.Descricao);
                                     imageParameters.Add("@Foto", imagem.Foto);
+
                                     var imageId = await connection.QuerySingleAsync<int>("usp_Fracoes_InsertImage",
                                         param: imageParameters,
                                         commandType: CommandType.StoredProcedure,
@@ -172,15 +186,27 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 }
                             }
 
+                            string updatePolicySP = "usp_Fracoes_UpdateApolice";
+                            var InsuranceParameters = new DynamicParameters();
+
+                            InsuranceParameters.Add("@Id", policy.Id);
+                            InsuranceParameters.Add("@Apolice", policy.Apolice);
+                            InsuranceParameters.Add("@Premio", policy.Premio);
+                            InsuranceParameters.Add("@Notas", policy.Notas);
+
+                            await connection.ExecuteAsync(updatePolicySP,
+                                param: InsuranceParameters,
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
                             tran.Commit();
-                            return fracaoAlterada is not null;
+                            return true;
                         }
                         catch (Exception ex)
                         {
                             _logger.LogError(ex.Message);
                             tran.Rollback();
                             return false;
-
                         }
                     }
                 }
@@ -214,6 +240,15 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                             _logger.LogInformation("Apaga fração");
 
                             await connection.ExecuteAsync("usp_Fracoes_Delete",
+                                param: new { Id = id },
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+
+                            await connection.ExecuteAsync("usp_Fracoes_DeleteApolice",
+                                param: new { Id = id },
+                                commandType: CommandType.StoredProcedure,
+                                transaction: tran);
+                            await connection.ExecuteAsync("usp_Fracoes_DeleteCondominio",
                                 param: new { Id = id },
                                 commandType: CommandType.StoredProcedure,
                                 transaction: tran);
@@ -408,7 +443,111 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        public async Task<int> InsereApoliceFracao(Seguro apolice)
+        {
+            try
+            {
+                _logger.LogInformation("Insere apólice de uma fração");
 
+                var parameters = new DynamicParameters();
+                parameters.Add("@Apolice", apolice.Apolice);
+                parameters.Add("@Premio", apolice.Premio);
+                parameters.Add("@IdFracao", apolice.IdFracao);
+                using (var connection = _context.CreateConnection())
+                {
+                    var idApoliceCriada = await connection.QuerySingleAsync<int>("usp_Fracoes_InsertApolice",
+                         param: parameters,
+                         commandType: CommandType.StoredProcedure);
+
+                    return idApoliceCriada;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return -1;
+            }
+        }
+
+        public async Task<bool> AtualizaApoliceFracao(Seguro seguro)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var apoliceAlterada = await connection.ExecuteAsync("usp_Fracoes_UpdateApolice",
+                        param: seguro, commandType: CommandType.StoredProcedure);
+                    return apoliceAlterada > 0;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+        public async Task ApagaApoliceFracao(int id)
+        {
+            try
+            {
+                _logger.LogInformation("Apaga apólice de uma fração");
+
+                using (var connection = _context.CreateConnection())
+                {
+                    await connection.ExecuteAsync("usp_Fracoes_DeleteApolice",
+                    param: new { Id = id }, commandType: CommandType.StoredProcedure);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+            }
+        }
+
+        public async Task<SeguroVM> GetApoliceFracao_ById(int id)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var apolice = await connection.QueryFirstOrDefaultAsync<SeguroVM>("usp_Fracoes_GetApolice_ById",
+                        param: new { Id = id },
+                        commandType: CommandType.StoredProcedure);
+
+                    return apolice;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.ToString());
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<SeguroVM>> GetAllApolices()
+        {
+            try
+            {
+
+                using (var connection = _context.CreateConnection())
+                {
+                    var list = (await connection.QueryAsync<SeguroVM>("usp_Fracoes_GetApolices",
+                        commandType: CommandType.StoredProcedure)).ToList();
+                    return list;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
 
         public int GetFirstId()
         {

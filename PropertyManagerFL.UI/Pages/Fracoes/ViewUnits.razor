@@ -80,10 +80,11 @@ else
 
 @code {
     [Inject] protected IFracaoService? UnitsService { get; set; }
-    [Inject] protected NavigationManager NavigationManager { get; set; }
+    [Inject] protected NavigationManager? NavigationManager { get; set; }
     protected IEnumerable<FracaoVM>? Units { get; set; }
     protected FracaoVM? SelectedUnit { get; set; }
     public bool HideUnitDiv { get; set; } = true;
+
     protected override async Task OnInitializedAsync()
     {
 

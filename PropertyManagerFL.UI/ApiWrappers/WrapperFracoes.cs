@@ -5,7 +5,6 @@ using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.SituacaoFracao;
-using PropertyManagerFL.Application.ViewModels.Logs;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -467,5 +466,47 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 throw;
             }
         }
+
+        public Task<int> InsereApoliceFracao(Seguro apolice)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AtualizaApoliceFracao(Seguro seguro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task ApagaApoliceFracao(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<SeguroVM> GetApoliceFracao_ById(int id)
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_uri}/GetApoliceById/{id}");
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var  output = JsonConvert.DeserializeObject<SeguroVM>(data);
+                    return output ?? new();
+                }
+
+                return new();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API de frações - GetApoliceById");
+                return new();
+            }
+        }
+
+        public Task<IEnumerable<SeguroVM>> GetAllApolices()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

@@ -35,5 +35,11 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
 
         Task<IEnumerable<LookupTableVM>> GetFracoes_SemContrato(int propertyId);
         Task<IEnumerable<LookupTableVM>> GetFracoes_WithDuePayments();
+        Task<int> InsereApoliceFracao(Seguro apolice);
+        Task<bool> AtualizaApoliceFracao(Seguro seguro);
+        Task ApagaApoliceFracao(int id);
+        Task<SeguroVM> GetApoliceFracao_ById(int id);
+        Task<IEnumerable<SeguroVM>> GetAllApolices();
+
     }
 }

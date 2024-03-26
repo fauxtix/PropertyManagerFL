@@ -1,6 +1,4 @@
-﻿using PropertyManagerFL.Core.Entities;
-
-namespace PropertyManagerFL.Application.ViewModels.Fracoes
+﻿namespace PropertyManagerFL.Application.ViewModels.Fracoes
 {
     public class FracaoVM
     {
@@ -45,5 +43,6 @@ namespace PropertyManagerFL.Application.ViewModels.Fracoes
 
         // Navigation property (unit images)
         public List<NovaImagemFracao>? Imagens { get; set; }
+        public SeguroVM? Apolice { get; set; }
     }
 }

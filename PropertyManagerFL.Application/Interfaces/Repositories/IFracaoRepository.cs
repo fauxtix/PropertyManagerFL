@@ -7,9 +7,10 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
 	public interface IFracaoRepository
 	{
-		Task<int> InsereFracao(NovaFracao fracao, List<NovaImagemFracao> imagensFracao);
-		Task<bool> AtualizaFracao(AlteraFracao fracao, List<NovaImagemFracao> imagensFracao);
-		Task ApagaFracao(int id);
+        Task<int> InsereFracao(NovaFracao fracao, List<NovaImagemFracao> imagensFracao, Seguro policy);
+        Task<bool> AtualizaFracao(AlteraFracao fracao, List<NovaImagemFracao> imagensFracao, Seguro policy);
+
+        Task ApagaFracao(int id);
 		Task<List<FracaoVM>> GetResumedData();
 		Task<bool> MarcaFracaoComoAlugada(int Id);
 		Task<bool> MarcaFracaoComoLivre(int Id);
@@ -34,5 +35,10 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<LookupTableVM>> GetFracoes_SemContrato(int propertyId);
         Task<bool> TableHasData();
         Task<IEnumerable<LookupTableVM>> GetFracoes_WithDuePayments();
+        Task<int> InsereApoliceFracao(Seguro apolice);
+        Task<bool> AtualizaApoliceFracao(Seguro seguro);
+        Task ApagaApoliceFracao(int id);
+        Task<SeguroVM> GetApoliceFracao_ById(int id);
+        Task<IEnumerable<SeguroVM>> GetAllApolices();
     }
 }

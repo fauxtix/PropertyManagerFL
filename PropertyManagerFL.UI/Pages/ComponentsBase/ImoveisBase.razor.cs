@@ -25,12 +25,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public IFracaoService? unitsService { get; set; }
         [Inject] protected IValidationService? validatorService { get; set; }
         [Inject] public IWebHostEnvironment? hostingEnvironment { get; set; }
-        [Inject] public IStringLocalizer<App>? L{ get; set; }
+        [Inject] public IStringLocalizer<App>? L { get; set; }
 
         protected IEnumerable<ImovelVM>? properties { get; set; }
         protected IEnumerable<FracaoVM>? units { get; set; }
         protected ImovelVM? SelectedProperty { get; set; }
         protected FracaoVM? SelectedUnit { get; set; }
+        protected SeguroVM? SelectedPolicy { get; set; }
         protected ImovelVM? OriginalPropertyData { get; set; }
         protected FracaoVM? OriginalUnitData { get; set; }
         protected OpcoesRegisto RecordMode { get; set; }
@@ -69,7 +70,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected string? ToastMessage;
         protected string? ToastCss;
         protected string? ToastIcon;
-
 
         protected List<NovaImagemFracao>? UnitImages { get; set; }
 
@@ -408,6 +408,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             UnitId = args.RowData.Id;
             modulo = Modules.Fracoes;
             SelectedUnit = await unitsService!.GetFracao_ById(UnitId);
+            SelectedUnit.Apolice = await unitsService.GetApoliceFracao_ById(UnitId);
+
             OriginalUnitData = await unitsService!.GetFracao_ById(UnitId);
             EditCaption = L["EditMsg"] + " " + L["TituloFracao"];
             RecordMode = OpcoesRegisto.Gravar;
@@ -424,6 +426,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             UnitId = args.RowData.Id;
             modulo = Modules.Fracoes;
             SelectedUnit = await unitsService!.GetFracao_ById(UnitId);
+            SelectedUnit.Apolice = await unitsService.GetApoliceFracao_ById(UnitId);
+
             OriginalUnitData = await unitsService!.GetFracao_ById(UnitId);
 
             DeleteUnitCaption = SelectedUnit.Descricao;
@@ -467,6 +471,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     //    var updateOk = await propertiesService!.AtualizaImovel(SelectedProperty!.Id, SelectedProperty);
                     //}
                     ToastTitle = L["btnSalvar"] + " " + L["TituloImovel"];
+
+                    // TODO validate insurance and condominium data
 
                     var updateOk = await propertiesService!.AtualizaImovel(SelectedProperty!.Id, SelectedProperty);
                     if (updateOk)
@@ -657,8 +663,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ValorRenda = 0,
                 Id_TipoPropriedade = 1,
                 Id_Imovel = PropertyId,
-                Situacao = 2, // Livre (replaced) - not to be used!
-                Conservacao = 1
+                Situacao = 2, // Livre (Free to rent / reserved) - not to be used!
+                Conservacao = 1,
+                Apolice = new()
+                {
+                    Apolice = string.Empty,
+                    Notas = string.Empty,
+                    Premio = 0
+                }
             };
 
             AddEditUnitVisibility = true;
@@ -804,6 +816,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         ToastTitle = "Apagar Fração";
                         try
                         {
+                            // todo - delete images references, insurance and condominium data
                             await unitsService!.ApagaFracao(SelectedUnit!.Id);
                             DeleteUnitVisibility = false;
                             properties = await GetAllProperties();

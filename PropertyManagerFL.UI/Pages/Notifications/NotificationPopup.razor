@@ -3,29 +3,9 @@
 
 @if (showPopup && AppAlerts is not null && AppAlerts.Any())
 {
-
-    @*      <div class="no-data float">
-        <i class="fas fa-caret-left fa-md arrow"></i>
-        <i class="fas fa-warning"></i>
-        @foreach (var item in AppAlerts)
-        {
-            <p>@item</p>
-        }
-    </div>
- *@
-@*     <div class="floating-popup">
-        <div class="popup-content">
-            @foreach (var item in AppAlerts)
-            {
-                @item
-                <br />
-            }
-        </div>
-    </div>
- *@
     <div class="notification">
         <div class="notification-header">
-            <h3 class="notification-title">@L["TituloNotificacoes"]</h3>
+            <h3 class="notification-title">@L?["TituloNotificacoes"]</h3>
         </div>
         <div class="notification-container">
             <div class="notification-media">
@@ -39,5 +19,4 @@
             </div>            
         </div>
     </div>
-
 }

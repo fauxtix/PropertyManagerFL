@@ -220,21 +220,29 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>@L["TituloLicencaHabitacao"]</HeaderTemplate>
+                    <HeaderTemplate>Outros</HeaderTemplate>
                     <ContentTemplate>
-                        <div class="group-box">
-                            <SfTextBox Enabled="true" @ref="txtLicHabitacao"
-                                       Width="130px"
-                                       Placeholder="@L["TituloNumero"]"
-                                       CssClass="e-field custom-class"
-                                       FloatLabelType="@FloatLabelType.Always"
-                                       @bind-Value="@PropertyUnit!.LicencaHabitacao">
-                            </SfTextBox>
-                            <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
-                                          CssClass="e-align-middle "
-                                          FloatLabelType="FloatLabelType.Always"
-                                          @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
-                            </SfDatePicker>
+                        <div class="container mt-1">
+                            <SfMessage Severity="MessageSeverity.Info"
+                                       Variant="MessageVariant.Text" ShowCloseIcon="false"
+                                       ShowIcon="true">Licença de Habitação</SfMessage>
+
+                            <div class="group-box">
+                                <SfTextBox Enabled="true" @ref="txtLicHabitacao"
+                                           Width="130px"
+                                           Placeholder="@L["TituloNumero"]"
+                                           CssClass="e-field custom-class"
+                                           FloatLabelType="@FloatLabelType.Always"
+                                           @bind-Value="@PropertyUnit!.LicencaHabitacao">
+                                </SfTextBox>
+                                <SfDatePicker Enabled="true" Placeholder="@L["TituloEmitidaEm"]" Width="140px"
+                                              CssClass="e-align-middle "
+                                              FloatLabelType="FloatLabelType.Always"
+                                              @bind-Value="@PropertyUnit.DataEmissaoLicencaHabitacao">
+                                </SfDatePicker>
+                            </div>
+                            @* Insurance *@
+                            <AddEditInsurance SelectedRecord=PropertyUnit.Apolice />
                         </div>
                     </ContentTemplate>
                 </TabItem>

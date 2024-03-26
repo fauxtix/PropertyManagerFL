@@ -1,0 +1,61 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Fracoes
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
+
+
+@if (SelectedRecord is null)
+{
+    <LoadingData />
+}
+else
+{
+    <SfMessage Severity="MessageSeverity.Info"
+               Variant="MessageVariant.Text" ShowCloseIcon="false"
+               ShowIcon="true">
+        Dados do Seguro
+    </SfMessage>
+    @* <div class="d-flex justify-content-center align-items-center"> *@
+    <EditForm Model="@SelectedRecord">
+        <div class="group-box mb-2">
+            <SfNumericTextBox Enabled="true" ShowSpinButton="true"
+                              Placeholder="Prémio anual"
+                              Width="170px"
+                              CssClass="form-control  e-corner"
+                              FloatLabelType="@FloatLabelType.Always"
+                              @bind-Value="@SelectedRecord.Premio">
+            </SfNumericTextBox>
+            <SfTextBox Placeholder="Apólice"
+                       CssClass="form-control  e-corner"
+                       FloatLabelType="@FloatLabelType.Always"
+                       Width="170px"
+                       @bind-Value="@SelectedRecord!.Apolice">
+            </SfTextBox>
+        </div>
+        <div class="group-box mb-2">
+            <SfTextBox Placeholder="@L["TituloNotas"]"
+                       CssClass="form-control e-corner"
+                       FloatLabelType="FloatLabelType.Always"
+                       @bind-Value="@SelectedRecord!.Notas">
+            </SfTextBox>
+
+        </div>
+    </EditForm>
+    @* </div> *@
+}
+@code {
+    [Inject] public IStringLocalizer<App>? L { get; set; }
+    [Inject] public IImovelService? PropertiesService { get; set; }
+
+
+    [Parameter] public SeguroVM? SelectedRecord { get; set; } = new();
+    [Parameter] public OpcoesRegisto EditMode { get; set; } = OpcoesRegisto.Inserir;
+    [Parameter] public string? HeaderCaption { get; set; } = "Inserir registo";
+
+    protected string? DescricaoImovel;
+    protected string? AnoCorrente;
+
+    protected Dictionary<string, object> NotesAttribute = new Dictionary<string, object>()
+    {
+            {"rows", "2" }
+    };
+}
