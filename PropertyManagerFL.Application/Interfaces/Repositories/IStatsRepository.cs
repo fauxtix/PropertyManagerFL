@@ -11,5 +11,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<ExpensesSummaryData>> GetExpensesCategoriesWithMoreSpending();
         Task<IEnumerable<ExpensesSummaryData>> GetExpensesCategoriesWithMoreSpendings_ByYear(int year);
         Task<IEnumerable<PaymentsSummaryData>> GetTotalPayments(int year);
+        Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByTypeAndYear(int year);
+        Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByType();
     }
 }

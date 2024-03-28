@@ -2544,7 +2544,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
     <value>Langue</value>
   </data>
   <data name="TituloDefinicoes" xml:space="preserve">
-    <value>Paramètres de l'application</value>
+    <value>Définitions</value>
   </data>
   <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
     <value>Amende pour retard de paiement de loyer (%)</value>
@@ -2599,5 +2599,17 @@ Vérifiez les erreurs, s'il vous plaît</value>
   </data>
   <data name="TituloNotificacoes" xml:space="preserve">
     <value>Notifications</value>
+  </data>
+  <data name="TituloAgendaPesquisaCamposEspecificos" xml:space="preserve">
+    <value>Recherche par champs d'événements spécifiques</value>
+  </data>
+  <data name="TituloAgendaPesquisaTodosCampos" xml:space="preserve">
+    <value>Recherche de tous les champs de l'événement</value>
+  </data>
+  <data name="TituloAgendaTextoPesquisar" xml:space="preserve">
+    <value>Entrer le texte de la recherche</value>
+  </data>
+  <data name="TituloModelosMenu" xml:space="preserve">
+    <value>Modèles de lettres</value>
   </data>
 </root>

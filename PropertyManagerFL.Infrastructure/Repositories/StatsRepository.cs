@@ -50,7 +50,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         }
 
         /// <summary>
-        /// Devolve totais de despesas por mês, do parâmetro "ano", por Categoria
+        /// Devolve totais de despesas por mês, do parâmetro "ano"
         /// </summary>
         /// <param name="year"></param>
         /// <returns></returns>
@@ -63,6 +63,37 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 return result;
             }
         }
+
+        /// <summary>
+        /// Devolve totais de despesas por mês, do parâmetro "year", por Tipo de Despesa
+        /// </summary>
+        /// <param name="year"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByTypeAndYear(int year)
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<ExpensesSummaryDataByType>("usp_Despesas_Categorias_GetExpensesByTypeAndYear", param: new { year },
+                     commandType: CommandType.StoredProcedure);
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// Devolve totais de despesas por mês e Tipo de Despesa
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByType()
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryAsync<ExpensesSummaryDataByType>("usp_Despesas_Categorias_GetExpensesByType",
+                     commandType: CommandType.StoredProcedure);
+                return result;
+            }
+        }
+
+
 
         /// <summary>
         /// Categoria com mais gastos

@@ -78,6 +78,58 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet]
+        [Route("GetTotalExpenses_ByTypeAndYear/{year:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetTotalExpenses_ByTypeAndYear(int year)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var result = await _statsRepo.GetTotalExpenses_ByTypeAndYear(year);
+                if (result.Any())
+                {
+                    return Ok(result);
+                }
+
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Erro no Api (GetTotalExpenses_ByTypeAndYear): {e.Message}");
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        [HttpGet]
+        [Route("GetTotalExpenses_ByType")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetTotalExpenses_ByType()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                var result = await _statsRepo.GetTotalExpenses_ByType();
+                if (result.Any())
+                {
+                    return Ok(result);
+                }
+
+                return NotFound();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, $"Erro no Api (GetTotalExpenses_ByType): {e.Message}");
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
 
         [HttpGet]
         [Route("GetExpensesCategoriesWithMoreSpending")]

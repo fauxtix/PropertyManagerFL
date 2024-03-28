@@ -2,71 +2,43 @@
 @using PropertyManagerFL.Core.Entities;
 @using Syncfusion.Blazor.Charts
 
+
 @inject IStringLocalizer<App> localizerApp
 @inject IStatsService statsService
 @inject IStringLocalizer<App> L
 
 @attribute [Authorize]
 
-@if (categoriesPreviousYearSummary is null && categoriesSummaryByYear is null)
-{
-    <LoadingData />
-}
-else
-{
-    <div class="row">
-        <div class="col-lg-6 control-section sb-property-border">
-            <div class="control-section">
-                <SfChart Title="@L["TituloTotalDespesas"]">
-                    <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-                    </ChartPrimaryXAxis>
-                    <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]"></ChartPrimaryYAxis>
-                    <ChartSeriesCollection>
-                        <ChartSeries Name="@(year.ToString())" DataSource="@categoriesSummaryByYear" XName="Descricao" YName="TotalDespesas" Type="ChartSeriesType.Column">
-                            <ChartMarker>
-                                <ChartDataLabel Visible="true"></ChartDataLabel>
-                            </ChartMarker>
-                        </ChartSeries>
-                    </ChartSeriesCollection>
-                </SfChart>
-            </div>
-        </div>
-        @if (previousYearWithData)
+<SfChart Title="@L["TituloTotalDespesas"]">
+    <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
+    </ChartPrimaryXAxis>
+    <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]" LabelPlacement="LabelPlacement.BetweenTicks"></ChartPrimaryYAxis>
+    <ChartSeriesCollection>
+        @foreach (var monthData in GroupedExpensesData)
         {
-            <div class="col-lg-6 control-section sb-property-border">
-                <div class="control-section">
-                    <SfChart Title="@L["TituloTotalDespesas"]">
-                        <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
-                        </ChartPrimaryXAxis>
-                        <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]"></ChartPrimaryYAxis>
-                        <ChartSeriesCollection>
-                            <ChartSeries Name="@(previousYear.ToString())" DataSource="@categoriesPreviousYearSummary" XName="Descricao" YName="TotalDespesas" Type="ChartSeriesType.Column">
-                                <ChartMarker>
-                                    <ChartDataLabel Visible="true"></ChartDataLabel>
-                                </ChartMarker>
-                            </ChartSeries>
-                        </ChartSeriesCollection>
-                    </SfChart>
-                </div>
-            </div>
+            <ChartSeries DataSource="@monthData"
+                         Name="@monthData.Key"
+                         XName="MonthOfExpenses" YName="TotalOfMonthExpenses"
+                         Type="ChartSeriesType.StackingColumn">
+                <ChartMarker>
+                    <ChartDataLabel Visible="true"></ChartDataLabel>
+                </ChartMarker>
+                <ChartSeriesBorder Width="1" Color="#ffffff"></ChartSeriesBorder>
+            </ChartSeries>
         }
-    </div>
+    </ChartSeriesCollection>
+</SfChart>
 }
 
 @code {
 
-    [Parameter] public int year { get; set; }
-    protected IEnumerable<ExpensesSummaryData> categoriesSummaryByYear { get; set; }
-    protected IEnumerable<ExpensesSummaryData> categoriesPreviousYearSummary { get; set; } = null;
-    protected bool previousYearWithData = true;
-    protected int previousYear;
+    [Parameter] public IEnumerable<ExpensesSummaryDataByType>? Expenses { get; set; } = default;
 
-    protected override async Task OnInitializedAsync()
+    protected List<IGrouping<string, ExpensesSummaryDataByType>>? GroupedExpensesData;
+
+    protected override void OnParametersSet()
     {
-        previousYear = year - 1;
-        categoriesSummaryByYear = await statsService.GetTotalExpenses_ByYear(year);
-        categoriesPreviousYearSummary = await statsService.GetTotalExpenses_ByYear(previousYear);
-        previousYearWithData = categoriesPreviousYearSummary.Count() > 0;
+        GroupedExpensesData = Expenses?.GroupBy(c => c.TypeOfExpenses).ToList();
     }
 
 }

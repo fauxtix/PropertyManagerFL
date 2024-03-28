@@ -1729,6 +1729,21 @@
               Looks up a localized string similar to Acertar pagamento.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAgendaPesquisaCamposEspecificos">
+            <summary>
+              Looks up a localized string similar to Pesquisar por campos de eventos específicos.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAgendaPesquisaTodosCampos">
+            <summary>
+              Looks up a localized string similar to Pesquisar por todos os campos do evento.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloAgendaTextoPesquisar">
+            <summary>
+              Looks up a localized string similar to Introduza o texto de pesquisa.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAgora">
             <summary>
               Looks up a localized string similar to Agora.
@@ -2081,7 +2096,7 @@
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDefinicoes">
             <summary>
-              Looks up a localized string similar to Definições da aplicação.
+              Looks up a localized string similar to Definições.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDepois">
@@ -2607,6 +2622,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloMetodoPagamento">
             <summary>
               Looks up a localized string similar to Método de Pagamento.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloModelosMenu">
+            <summary>
+              Looks up a localized string similar to Modelos de cartas.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloModoPagamento">

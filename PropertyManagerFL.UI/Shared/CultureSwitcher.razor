@@ -59,12 +59,21 @@
 
     protected override async Task OnInitializedAsync()
     {
-
+        CultureInfo culture;
         portugues = Loc["TituloIdiomaPortugues"]; // TODO set languages
 
         appSettings = await GetSettings();
         selectedCulture = appSettings.DefaultLanguage;
-        var culture = new CultureInfo(selectedCulture);
+        if (!string.IsNullOrEmpty(selectedCulture))
+        {
+             culture = new CultureInfo(selectedCulture);
+        }
+        else
+        {
+            culture = new CultureInfo("pt-PT");
+
+        }
+
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
 

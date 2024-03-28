@@ -20,6 +20,13 @@
         public int NumeroMovimentos { get; set; }
         public double TotalDespesas { get; set; }
     }
+    public class ExpensesSummaryDataByType
+    {
+        public int YearOfExpenses { get; set; }
+        public string? MonthOfExpenses { get; set; }
+        public double TotalOfMonthExpenses { get; set; }
+        public string TypeOfExpenses { get; set; } = string.Empty;
+    }
 
     public class PaymentsSummaryData
     {

@@ -63,7 +63,7 @@ public partial class CalculadoraIMI
         PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables();
     }
 
-    protected async void OnChangeDistrito(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected async void OnChangeDistrito(ChangeEventArgs<int, LookupTableVM> args)
     {
         idxDistrito = args.Value;
         distritoSelected = true;
@@ -72,7 +72,7 @@ public partial class CalculadoraIMI
         Concelhos = (await DistritosConcelhosService!.GetConcelhosByDistrito(idxDistrito)).ToList();
         StateHasChanged();
     }
-    protected void OnChangeConcelho(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, Concelho> args)
+    protected void OnChangeConcelho(ChangeEventArgs<int, Concelho> args)
     {
         if (args.Value == 0) return;
 
@@ -85,7 +85,7 @@ public partial class CalculadoraIMI
 
         StateHasChanged();
     }
-    protected void OnChangeTipoImovel(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    protected void OnChangeTipoImovel(ChangeEventArgs<int, LookupTableVM> args)
     {
         idxTipoImovel = args.Value;
         StateHasChanged();

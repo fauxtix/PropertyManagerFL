@@ -4,17 +4,15 @@
 
 @inject IStringLocalizer<App> localizerApp
 @inject IStatsService statsService
-@*@attribute [Authorize]*@
 
-<SfAccumulationChart Title="@Titulo" EnableAnimation="true">
-    <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
-    <AccumulationChartLegendSettings Position="Syncfusion.Blazor.Charts.LegendPosition.Bottom" Visible="true"></AccumulationChartLegendSettings>
-    <AccumulationChartTitleStyle FontFamily="Arial" FontStyle="Normal" FontWeight="bold"
-                                 Color="#99ccff" Size="20px"></AccumulationChartTitleStyle>
-    <AccumulationChartSubTitleStyle FontFamily="Arial" FontWeight="regular" Color="#E27F2D" Size="16px"></AccumulationChartSubTitleStyle>
+<SfAccumulationChart Title="@Title" EnableAnimation="true">
+    <AccumulationChartTooltipSettings Enable="true" />
+    <AccumulationChartLegendSettings Position="Syncfusion.Blazor.Charts.LegendPosition.Bottom" Visible="true" />
+    <AccumulationChartTitleStyle FontFamily="Arial" FontStyle="Normal" FontWeight="bold" Color="#99ccff" Size="20px" />
+    <AccumulationChartSubTitleStyle FontFamily="Arial" FontWeight="regular" Color="#E27F2D" Size="16px" />
     <AccumulationChartSeriesCollection>
         <AccumulationChartSeries DataSource="@PieData" XName="Descricao" YName="TotalDespesas" Name="Descricao"
-                                 Radius="@OuterRadius" StartAngle="@StartAngle" EndAngle="@EndAngle"
+                                 Radius="@OuterRadius" StartAngle="@StartAngle" EndAngle="@EndAngle" 
                                  InnerRadius="0%" ExplodeIndex="@ExplodeIndex" Explode="true" ExplodeOffset="@ExplodeRadius">
             <AccumulationDataLabelSettings Visible="true"
                                            Name="TotalDespesas" Position="AccumulationLabelPosition.Inside" />
@@ -23,11 +21,12 @@
     </AccumulationChartSeriesCollection>
 </SfAccumulationChart>
 
+
 @code
 {
-    [Parameter] public int Ano { get; set; }
-    [Parameter] public string? TipoFiltro { get; set; } = "C";  // 'c' - categoria, 'm' - mês
-    [Parameter] public string? Titulo { get; set; }
+    [Parameter] public int Year { get; set; }
+    [Parameter] public string? FilterType { get; set; } = "C";  // 'default 'Category'
+    [Parameter] public string? Title { get; set; }
 
     protected double ExplodeIndex { get; set; } = 0;
     protected string OuterRadius = "70%", ExplodeRadius = "10%";
@@ -37,13 +36,21 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (TipoFiltro == "C")
+        try
         {
-            PieData = await statsService.GetTotalExpenses(Ano);
+            if (FilterType == "C") // By category
+            {
+                PieData = await statsService.GetTotalExpenses(Year);
+            }
+            else
+            {
+                PieData = await statsService.GetTotalExpenses_ByYear(Year);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            PieData = await statsService.GetTotalExpenses_ByYear(Ano);
+            var test = ex.Message;
+            throw;
         }
     }
 }

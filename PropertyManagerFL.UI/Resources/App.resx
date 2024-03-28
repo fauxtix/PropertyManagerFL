@@ -1529,7 +1529,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
     <value>Linguagem</value>
   </data>
   <data name="TituloDefinicoes" xml:space="preserve">
-    <value>Definições da aplicação</value>
+    <value>Definições</value>
   </data>
   <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
     <value>Multa por atraso pagamento renda (%)</value>
@@ -1584,5 +1584,17 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   </data>
   <data name="TituloNotificacoes" xml:space="preserve">
     <value>Notificações</value>
+  </data>
+  <data name="TituloAgendaPesquisaCamposEspecificos" xml:space="preserve">
+    <value>Pesquisar por campos de eventos específicos</value>
+  </data>
+  <data name="TituloAgendaPesquisaTodosCampos" xml:space="preserve">
+    <value>Pesquisar por todos os campos do evento</value>
+  </data>
+  <data name="TituloAgendaTextoPesquisar" xml:space="preserve">
+    <value>Introduza o texto de pesquisa</value>
+  </data>
+  <data name="TituloModelosMenu" xml:space="preserve">
+    <value>Modelos de cartas</value>
   </data>
 </root>

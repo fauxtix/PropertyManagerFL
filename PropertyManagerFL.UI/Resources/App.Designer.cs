@@ -1646,6 +1646,33 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pesquisar por campos de eventos específicos.
+        /// </summary>
+        public static string TituloAgendaPesquisaCamposEspecificos {
+            get {
+                return ResourceManager.GetString("TituloAgendaPesquisaCamposEspecificos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pesquisar por todos os campos do evento.
+        /// </summary>
+        public static string TituloAgendaPesquisaTodosCampos {
+            get {
+                return ResourceManager.GetString("TituloAgendaPesquisaTodosCampos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Introduza o texto de pesquisa.
+        /// </summary>
+        public static string TituloAgendaTextoPesquisar {
+            get {
+                return ResourceManager.GetString("TituloAgendaTextoPesquisar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Agora.
         /// </summary>
         public static string TituloAgora {
@@ -2276,7 +2303,7 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Definições da aplicação.
+        ///   Looks up a localized string similar to Definições.
         /// </summary>
         public static string TituloDefinicoes {
             get {
@@ -3226,6 +3253,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloMetodoPagamento {
             get {
                 return ResourceManager.GetString("TituloMetodoPagamento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modelos de cartas.
+        /// </summary>
+        public static string TituloModelosMenu {
+            get {
+                return ResourceManager.GetString("TituloModelosMenu", resourceCulture);
             }
         }
         

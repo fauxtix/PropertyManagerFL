@@ -2536,7 +2536,7 @@
     <value>Language</value>
   </data>
   <data name="TituloDefinicoes" xml:space="preserve">
-    <value>Aplication Settings</value>
+    <value>Settings</value>
   </data>
   <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
     <value>Fine for late payment of rent (%)</value>
@@ -2591,5 +2591,17 @@
   </data>
   <data name="TituloNotificacoes" xml:space="preserve">
     <value>Notifications</value>
+  </data>
+  <data name="TituloAgendaPesquisaCamposEspecificos" xml:space="preserve">
+    <value>Search by specific event fields</value>
+  </data>
+  <data name="TituloAgendaPesquisaTodosCampos" xml:space="preserve">
+    <value>Search for all event fields</value>
+  </data>
+  <data name="TituloAgendaTextoPesquisar" xml:space="preserve">
+    <value>Enter the Search text</value>
+  </data>
+  <data name="TituloModelosMenu" xml:space="preserve">
+    <value>Letters templates</value>
   </data>
 </root>

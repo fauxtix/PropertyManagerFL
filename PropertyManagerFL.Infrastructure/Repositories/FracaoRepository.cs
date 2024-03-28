@@ -230,7 +230,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     {
                         try
                         {
-                            _logger.LogInformation("Apaga imagens da fração antes de remover a mesma");
+                            _logger.LogInformation("Apaga imagens da fração antes de a remover");
 
                             await connection.ExecuteAsync("usp_Fracoes_DeleteImages",
                                 param: new { Id = id },
@@ -443,6 +443,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        // 03/2024
         public async Task<int> InsereApoliceFracao(Seguro apolice)
         {
             try

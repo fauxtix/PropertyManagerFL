@@ -17,6 +17,8 @@ namespace PropertyManagerFL.Application.Interfaces.Services.Stats
         // Payments
         Task<IEnumerable<PaymentsSummaryData>> GetTotalPayments();
         Task<IEnumerable<PaymentsSummaryData>> GetTotalPayments_ByYear(int year);
+        Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByTypeAndYear(int year);
+        Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByType();
         Task<IEnumerable<PaymentsSummaryData>> GetTotalPayments_ByPaymentMethod(int year);
     }
 }

@@ -279,6 +279,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
         }
 
+        protected async Task DeleteContact()
+        {
+            SelectedContact = await contactsService!.GetContacto_ById(ContactId);
+            DeleteCaption = SelectedContact?.Nome;
+
+            DeleteVisibility = true;
+        }
         private void CheckIfContactData_Changed()
         {
             var comparer = new ObjectsComparer.Comparer<ContactoVM>();
@@ -371,6 +378,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     //WarningVisibility = true;
                     //WarningMessage = $"Apagar contacto - não foi possível concluir operação...";
                 }
+
+                AddEditVisibility = false;
 
                 StateHasChanged();
                 await Task.Delay(100);

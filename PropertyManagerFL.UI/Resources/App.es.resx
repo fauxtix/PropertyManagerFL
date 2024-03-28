@@ -2531,7 +2531,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
     <value>Idioma</value>
   </data>
   <data name="TituloDefinicoes" xml:space="preserve">
-    <value>Configuración de la aplicación</value>
+    <value>Definiciones</value>
   </data>
   <data name="TituloPercentagemMultaPorAtrasoPagamento" xml:space="preserve">
     <value>Multa por demora en el pago del alquiler (%)</value>
@@ -2583,5 +2583,17 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   </data>
   <data name="TituloNotificacoes" xml:space="preserve">
     <value>Notificaciones</value>
+  </data>
+  <data name="TituloAgendaPesquisaCamposEspecificos" xml:space="preserve">
+    <value>Búsqueda por campos de eventos específicos</value>
+  </data>
+  <data name="TituloAgendaPesquisaTodosCampos" xml:space="preserve">
+    <value>Buscar todos los campos del evento</value>
+  </data>
+  <data name="TituloAgendaTextoPesquisar" xml:space="preserve">
+    <value>Introduzca el texto de búsqueda</value>
+  </data>
+  <data name="TituloModelosMenu" xml:space="preserve">
+    <value>Modelos de cartas</value>
   </data>
 </root>

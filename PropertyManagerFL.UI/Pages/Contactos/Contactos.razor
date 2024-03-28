@@ -89,7 +89,12 @@ else
                              HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
             </Content>
             <FooterTemplate>
-                <div>
+                <div class="text-left" style="float:left">
+                    <SfButton CssClass="e-danger e-round-corner" IconCss="fas fa-trash"
+                              @onclick="DeleteContact" Content="@L["DeleteMsg"]">
+                    </SfButton>
+                    </div>
+                <div class="text-right" style="float:right">
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
                           @onclick="SaveContactData" Content="@L["btnSalvar"]">
                     </SfButton>

@@ -1,6 +1,6 @@
 ﻿@page "/scheduler"
 @page "/scheduler/search-events"
-@implements IDisposable
+@* @implements IDisposable *@
 
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Appointments
@@ -12,7 +12,6 @@
 @using Syncfusion.Blazor.Grids
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Schedule
-
 
 <PageTitle>Agenda</PageTitle>
 <PageTitleComponent PageTitle="Agenda" />
@@ -30,20 +29,21 @@ else
                             Width="100%"
                             CssClass="@(ShowSchedule ? string.Empty : "schedule-hide")"
                             Height="650px" @bind-SelectedDate="@CurrentDate">
+                    <ScheduleWorkHours Highlight="true" Start="08:00" End="20:00"></ScheduleWorkHours>
                     <ScheduleResources>
                         <ScheduleResource TItem="ResourceData" TValue="int" DataSource="@ApptResources"
-                                          Field="ApptType" Title="Tipo" Name="ApptTypes" TextField="Text" IdField="Id"
+                                          Field="ApptType" Title="@L["TituloTipo"]" Name="ApptTypes" TextField="Text" IdField="Id"
                                           ColorField="Color"></ScheduleResource>
                     </ScheduleResources>
                     <ScheduleEvents TValue="AppointmentVM"
                                     OnActionFailure="OnActionFailure"
                                     OnActionBegin="OnActionBegin" ActionCompleted="OnActionCompleted" />
-                    <ScheduleEventSettings DataSource="@dataSource" />
-                    @* <ScheduleField>
-                        <FieldSubject Title="Assunto"></FieldSubject>
-                        <FieldDescription Title="Notas"></FieldDescription>
+                    <ScheduleEventSettings DataSource="@dataSource" EnableIndicator="true">
+                    <ScheduleField>
+                            <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
+                            <FieldDescription Title="@L["lblSinopse"]"></FieldDescription>
                     </ScheduleField>
- *@
+                    </ScheduleEventSettings>
                     <ScheduleTemplates>
                         <ScheduleViews>
                             <ScheduleView Option="View.Day"></ScheduleView>
@@ -58,10 +58,10 @@ else
                 {
                     <SfGrid DataSource="gridDataSource" Width="auto" Height="505px">
                         <GridColumns>
-                            <GridColumn Field="Subject" HeaderText="Subject" Width="120px"></GridColumn>
-                            <GridColumn Field="Location" HeaderText="Location" Width="120px"></GridColumn>
-                            <GridColumn Field="StartTime" HeaderText="StartTime" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
-                            <GridColumn Field="EndTime" HeaderText="EndTime" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
+                            <GridColumn Field="Subject" HeaderText="@L["msgUploadSubject"]" Width="120px"></GridColumn>
+                            <GridColumn Field="Location" HeaderText="@L["lblLocalArquivo"]" Width="120px"></GridColumn>
+                            <GridColumn Field="StartTime" HeaderText="@L["TituloInicio"]" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
+                            <GridColumn Field="EndTime" HeaderText="@L["TituloFim"]" Width="120px" Format="g" Type="ColumnType.DateTime"></GridColumn>
                         </GridColumns>
                     </SfGrid>
                 }
@@ -69,49 +69,49 @@ else
             <div class="col-lg-3 property-section property-customization">
                 <br>
                 <div class="property-panel-section">
-                    <div class="property-panel-header header-customization" style="width: 100%;"><b>Search by all event fields</b></div>
+                    <div class="property-panel-header header-customization" style="width: 100%;"><b>@L["TituloAgendaPesquisaTodosCampos"]</b></div>
                     <div class="property-panel-content">
-                        <SfTextBox ID="events-search" Placeholder='Enter the Search text' @bind-Value="@SearchValue" OnChange="@OnEventSearch"></SfTextBox>
+                        <SfTextBox ID="events-search" Placeholder='@L["TituloAgendaTextoPesquisar"]' @bind-Value="@SearchValue" OnChange="@OnEventSearch"></SfTextBox>
                     </div>
                     <div class="event-search mt-2">
-                        <div class="property-panel-header header-customization" style="width: 100%;"><b>Search by specific event fields</b></div>
+                        <div class="property-panel-header header-customization" style="width: 100%;"><b>@L["TituloAgendaPesquisaCamposEspecificos"]</b></div>
                         <table id="property-specific" style="width:100%">
                             <tbody>
                                 <tr class="row">
                                     <td class="property-panel-content" colspan="2">
                                         <div>
-                                            <SfTextBox ID="searchEventName" @bind-Value="@SubjectValue" Placeholder="Subject"></SfTextBox>
+                                            <SfTextBox ID="searchEventName" @bind-Value="@SubjectValue" Placeholder="@L["msgUploadSubject"]"></SfTextBox>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr class="row" style="height: 45px">
                                     <td class="property-panel-content" colspan="2">
                                         <div>
-                                            <SfTextBox ID="searchEventLocation" @bind-Value="@LocationValue" Placeholder="Location"></SfTextBox>
+                                            <SfTextBox ID="searchEventLocation" @bind-Value="@LocationValue" Placeholder="@L["lblLocalArquivo"]"></SfTextBox>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr class="row" style="height: 45px">
                                     <td class="property-panel-content" colspan="2">
                                         <div>
-                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateStart" Placeholder="Start Date"></SfDatePicker>
+                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateStart" Placeholder="@L["TituloDataInicio"]"></SfDatePicker>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr class="row" style="height: 45px">
                                     <td class="property-panel-content" colspan="2">
                                         <div>
-                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateEnd" Placeholder="End Date"></SfDatePicker>
+                                            <SfDatePicker TValue="DateTime?" @bind-Value="@DateEnd" Placeholder="@L["TituloDataFim"]"></SfDatePicker>
                                         </div>
                                     </td>
                                 </tr>
                                 <div class="d-flex justify-content-around align-items-center mt-1">
                                     <hr />
                                     <div>
-                                        <SfButton CssClass="e-btn e-primary e-outline e-round-corner" IconCss="fa fa-search" Content="Search" OnClick="@OnSearchClick"></SfButton>
+                                        <SfButton CssClass="e-btn e-primary e-outline e-round-corner" IconCss="fa fa-search" Content="@L["btnPesquisar"]" OnClick="@OnSearchClick"></SfButton>
                                     </div>
                                     <div>
-                                        <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fa fa-times" Content="Clear" OnClick="@OnClearClick"></SfButton>
+                                        <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fa fa-times" Content="@L["btnLimpar"]" OnClick="@OnClearClick"></SfButton>
                                     </div>
                                 </div>
                             </tbody>
@@ -145,9 +145,11 @@ else
     [Inject] protected ILogger<App>? logger { get; set; }
 
     private SfSchedule<AppointmentVM>? ScheduleRef;
+    private SfToast? ToastObj;
+
     private AppointmentVM SelectedAppointment { get; set; } = new();
     private List<AppointmentVM> dataSource = new();
-    private List<AppointmentVM>? gridDataSource = new List<AppointmentVM>();
+    private List<AppointmentVM> gridDataSource = new List<AppointmentVM>();
 
     private DateTime CurrentDate = DateTime.Now;
     private bool ShowSchedule { get; set; } = true;
@@ -161,7 +163,6 @@ else
 
     private List<ResourceData>? ApptResources { get; set; } = new();
 
-    private SfToast? ToastObj; // { get; set; }
     private string? ToastTitle;
     private string? ToastContent;
     private string? ToastCssClass;
@@ -206,11 +207,11 @@ else
         DeleteCaption = string.Empty;
         ShowSchedule = true;
         SearchValue = string.Empty;
-        SearchValue  = string.Empty;
-        SubjectValue  = string.Empty;
-        LocationValue  = string.Empty;
+        SearchValue = string.Empty;
+        SubjectValue = string.Empty;
+        LocationValue = string.Empty;
         DateStart = DateTime.Now;
-        DateEnd  = DateTime.Now;
+        DateEnd = DateTime.Now;
     }
 
     private List<ResourceData> CreateSchedulerResources()
@@ -304,12 +305,6 @@ else
         DateStart = DateEnd = null;
     }
 
-    protected async Task OnDataBound(Syncfusion.Blazor.Schedule.DataBoundEventArgs<AppointmentVM> args)
-    {
-        string startWkgHour = ApptStartAppt.ToShortTimeString();
-        await ScheduleRef!.ScrollToAsync(startWkgHour, DateTime.Now);
-    }
-
     protected async void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
     {
         if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange)
@@ -396,11 +391,11 @@ else
             return new();
         }
     }
-    void IDisposable.Dispose()
-    {
-        ScheduleRef?.Dispose();
-        ToastObj?.Dispose();
-    }
+    // void IDisposable.Dispose()
+    // {
+    //     ScheduleRef?.Dispose();
+    //     ToastObj?.Dispose();
+    // }
 
 }
 <style>

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
-using PropertyManagerFL.Application.ViewModels.Logs;
 using PropertyManagerFL.Core.Entities;
+using Syncfusion.Blazor.Schedule.Internal;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -92,6 +92,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     }
                     else
                     {
+                        await Task.Delay(1000);
                         return Enumerable.Empty<ExpensesSummaryData>();
                     }
 
@@ -102,6 +103,63 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
                 _logger.LogError(exc, "Erro ao pesquisar API (AppLog)");
                 return Enumerable.Empty<ExpensesSummaryData>();
+            }
+        }
+
+        public async Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByType()
+        {
+            try
+            {
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetTotalExpenses_ByType"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsStringAsync();
+                        var output = JsonConvert.DeserializeObject<IEnumerable<ExpensesSummaryDataByType>>(data);
+                        return output.ToList();
+                    }
+                    else
+                    {
+                        return Enumerable.Empty<ExpensesSummaryDataByType>();
+                    }
+
+                }
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API (Stats/GetTotalExpenses_ByTypeAndYear)");
+                return Enumerable.Empty<ExpensesSummaryDataByType>();
+            }
+
+        }
+
+        public async Task<IEnumerable<ExpensesSummaryDataByType>> GetTotalExpenses_ByTypeAndYear(int year)
+        {
+            try
+            {
+
+                using (HttpResponseMessage response = await _httpClient.GetAsync($"{_uri}/GetTotalExpenses_ByTypeAndYear/{year}"))
+                {
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var data = await response.Content.ReadAsStringAsync();
+                        var output = JsonConvert.DeserializeObject<IEnumerable<ExpensesSummaryDataByType>>(data);
+                        return output.ToList();
+                    }
+                    else
+                    {
+                        return Enumerable.Empty<ExpensesSummaryDataByType>();
+                    }
+
+                }
+
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API (Stats/GetTotalExpenses_ByTypeAndYear)");
+                return Enumerable.Empty<ExpensesSummaryDataByType>();
             }
         }
 
@@ -128,7 +186,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (AppLog)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Stats/GetTotalExpenses_ByYear)");
                 return Enumerable.Empty<ExpensesSummaryData>();
             }
         }
@@ -156,7 +214,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc, "Erro ao pesquisar API (AppLog)");
+                _logger.LogError(exc, "Erro ao pesquisar API (Stats/GetTotalPayments)");
                 return Enumerable.Empty<PaymentsSummaryData>();
             }
         }
