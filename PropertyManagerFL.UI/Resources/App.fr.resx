@@ -2615,4 +2615,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloCalcular" xml:space="preserve">
     <value>Calculer</value>
   </data>
+  <data name="TituloCalculadoras" xml:space="preserve">
+    <value>Calculatrices</value>
+  </data>
 </root>

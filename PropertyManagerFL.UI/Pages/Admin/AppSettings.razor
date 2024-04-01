@@ -5,6 +5,7 @@
 @using PropertyManagerFL.UI.Pages.Arrendamentos
 @using PropertyManagerFL.UI.Pages.Proprietario
 @using PropertyManagerFL.UI.Pages.Simuladores
+@using PropertyManagerFL.UI.Pages.LetterTemplates
 
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Buttons
@@ -146,6 +147,12 @@ else
                     <HeaderTemplate>@L["TituloMenuCoeficientesRendas"] IMI</HeaderTemplate>
                     <ContentTemplate>
                         <GestaoCoeficientesIMI />
+                    </ContentTemplate>
+                </TabItem>
+                <TabItem>
+                    <HeaderTemplate>@L["TituloModelosMenu"]</HeaderTemplate>
+                    <ContentTemplate>
+                        <LetterTemplates />
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>

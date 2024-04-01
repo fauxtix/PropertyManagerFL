@@ -72,11 +72,11 @@
                                     <i class="fa fa-file-contract" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
                                 </NavLink>
                             </BlazoredMenuItem>
-                                        <BlazoredMenuItem Css="nav-item px-3">
-                                            <NavLink href="updaterentsletter">
-                                                <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
-                                            </NavLink>
-                                        </BlazoredMenuItem>
+                            <BlazoredMenuItem Css="nav-item px-3">
+                                <NavLink href="updaterentsletter">
+                                    <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuAtualizacaoRendas"]
+                                </NavLink>
+                            </BlazoredMenuItem>
                         </MenuTemplate>
                     </BlazoredSubMenu>
                 }
@@ -134,6 +134,28 @@
                     </BlazoredMenuItem>
                 </MenuTemplate>
             </BlazoredSubMenu>
+            <BlazoredMenuItem>
+                <div>
+                    <p class="dropdown-divider m-0" />
+                </div>
+            </BlazoredMenuItem>
+            <BlazoredSubMenu Header="@L["TituloCalculadoras"]">
+                <HeaderTemplate>
+                    <i class="fas fa-calculator position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloCalculadoras"]
+                </HeaderTemplate>
+                <MenuTemplate>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/CalculadoraIMI">
+                            <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;IMI
+                        </NavLink>
+                    </BlazoredMenuItem>
+                    <BlazoredMenuItem Css="nav-item px-3">
+                        <NavLink href="/CalculadoraVPT">
+                            <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;VPT
+                        </NavLink>
+                    </BlazoredMenuItem>
+                </MenuTemplate>
+            </BlazoredSubMenu>
 
             <BlazoredMenuItem>
                 <div>
@@ -175,31 +197,6 @@
                     <i class="fas fa-calendar" aria-hidden="true" />&nbsp;&nbsp;Agenda
                 </NavLink>
             </BlazoredMenuItem>
-            <BlazoredMenuItem>
-                <div>
-                    <p class="dropdown-divider m-0" />
-                </div>
-            </BlazoredMenuItem>
-            <BlazoredMenuItem Css="nav-item px-3">
-                <NavLink href="/lettertemplates">
-                    <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;@L["TituloModelosMenu"]
-                </NavLink>
-            </BlazoredMenuItem>
-            <BlazoredMenuItem>
-                <div>
-                    <p class="dropdown-divider m-0" />
-                </div>
-            </BlazoredMenuItem>
-            <BlazoredMenuItem Css="nav-item px-3">
-                <NavLink href="/CalculadoraIMI">
-                    <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;Calculadora IMI
-                </NavLink>
-            </BlazoredMenuItem>
-            <BlazoredMenuItem Css="nav-item px-3">
-                <NavLink href="/CalculadoraVPT">
-                    <i class="fas fa-images" aria-hidden="true" />&nbsp;&nbsp;Calculadora VPT
-                </NavLink>
-            </BlazoredMenuItem>
 
             <BlazoredMenuItem>
                 <div>
@@ -227,22 +224,22 @@
                             <i class="fas fa-cog position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloDefinicoes"]
                         </NavLink>
                     </BlazoredMenuItem>
-@*                     <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="ProprietarioPage">
-                            <i class="fa fa-user" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuProprietario"]
-                        </NavLink>
+                    @*                     <BlazoredMenuItem Css="nav-item px-3">
+                    <NavLink href="ProprietarioPage">
+                    <i class="fa fa-user" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuProprietario"]
+                    </NavLink>
                     </BlazoredMenuItem>
                     <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="updatecoefficients">
-                            <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuCoeficientesRendas"]
-                        </NavLink>
+                    <NavLink href="updatecoefficients">
+                    <i class="fa fa-file" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuCoeficientesRendas"]
+                    </NavLink>
                     </BlazoredMenuItem>
                     <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="/admin/configapptables">
-                            <i class="fas fa-table-list" aria-hidden="true" />&nbsp;&nbsp;@L["menu-admin-lookup-tables"]
-                        </NavLink>
+                    <NavLink href="/admin/configapptables">
+                    <i class="fas fa-table-list" aria-hidden="true" />&nbsp;&nbsp;@L["menu-admin-lookup-tables"]
+                    </NavLink>
                     </BlazoredMenuItem>
- *@                    <BlazoredMenuItem Css="nav-item px-3">
+                    *@                    <BlazoredMenuItem Css="nav-item px-3">
                         <NavLink href="/backupdatabase">
                             <i class="fas fa-database" aria-hidden="true" />&nbsp;&nbsp;@L["mnuBackup"]
                         </NavLink>

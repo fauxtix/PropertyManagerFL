@@ -2599,4 +2599,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloCalcular" xml:space="preserve">
     <value>Calcular</value>
   </data>
+  <data name="TituloCalculadoras" xml:space="preserve">
+    <value>Calculadoras</value>
+  </data>
 </root>

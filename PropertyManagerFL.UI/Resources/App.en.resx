@@ -2607,4 +2607,7 @@
   <data name="TituloCalcular" xml:space="preserve">
     <value>Calculate</value>
   </data>
+  <data name="TituloCalculadoras" xml:space="preserve">
+    <value>Calculators</value>
+  </data>
 </root>

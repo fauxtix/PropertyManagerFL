@@ -1600,4 +1600,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloCalcular" xml:space="preserve">
     <value>Calcular</value>
   </data>
+  <data name="TituloCalculadoras" xml:space="preserve">
+    <value>Calculadoras</value>
+  </data>
 </root>

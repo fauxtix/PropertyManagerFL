@@ -1889,6 +1889,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Calculadoras.
+        /// </summary>
+        public static string TituloCalculadoras {
+            get {
+                return ResourceManager.GetString("TituloCalculadoras", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calcular.
         /// </summary>
         public static string TituloCalcular {
