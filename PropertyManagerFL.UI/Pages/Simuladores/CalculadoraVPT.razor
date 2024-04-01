@@ -1,0 +1,164 @@
+﻿@page "/CalculadoraVPT"
+
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Fracoes
+@using PropertyManagerFL.Application.ViewModels.LookupTables
+@using PropertyManagerFL.Core.Entities
+
+@* O VPT é o valor fiscal do imóvel e calcula-se através da seguinte fórmula:
+
+Vt = Vc x A x Ca x Cl x Cq x Cv
+
+Cada variável do VPT tem o seguinte significado:
+
+Vt: Valor Patrimonial Tributário
+Vc: Valor base dos prédios edificados (preço de construção por metro quadrado)
+A: Área bruta de construção mais a área excedente à área de implantação
+Ca: Coeficiente de afetação (fim a que se destina, por exemplo, habitação)
+Cl: Coeficiente de localização (características da zona envolvente)
+Cq: Coeficiente de qualidade e conforto (funcionalidade, comodidade de utilização e gozo do imóvel)
+Cv: Coeficiente de vetustez (idade do imóvel)
+ *@
+
+<PageTitle>Calculadora VPT</PageTitle>
+<PageTitleComponent PageTitle="Calculadora VPTIMI"></PageTitleComponent>
+
+
+<div class="container-fluid w-50">
+    <div class="card card-block w-100 h-100 my-3 mx-2">
+        <div class="card-header h4 text-center  mt-1">Calcular VPT de cada imóvel</div>
+        <div class="card-content">
+            <div class="row mx-1">
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    Value="@idxProperty" ShowClearButton="true" Enabled="true"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeProperty"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="col-md-6 mt-2">
+                    <SfDropDownList TValue="int" @ref="ddlUnits" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Enabled="@ShowUnitsCombo"
+                                    FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="LookupTableVM">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeUnit"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+            </div>
+            <hr />
+            <div class="row mt-2 mx-1">
+                <div class="col-md-6 mx-1">
+                    <SfNumericTextBox CssClass="form-control"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2"
+                                      Width="200px" @bind-Value="@PrecoConstrucaoMetroQuadrado"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Preço Construção m2" />
+                </div>
+                <div class="col-md-6 mx-1">
+                    <SfNumericTextBox CssClass="form-control" Enabled="false"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2"
+                                      Width="200px" @bind-Value="@AreaBrutaConstrucao"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Área bruta de construção" />
+                </div>
+            </div>
+            <div class="row mx-1">
+                <div class="col-md-6 mx-1">
+                    <SfNumericTextBox CssClass="form-control"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2" Step="0.1"
+                                      Width="200px" @bind-Value="@CoeficienteAfetacao"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Coeficiente Afetação" />
+                </div>
+                <div class="col-md-6 my-2 mx-1 w-50">
+                    <SfNumericTextBox CssClass="form-control"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2" Step="0.1"
+                                      Width="200px" @bind-Value="@CoeficienteLocalizacao"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Coeficiente Localização" />
+                </div>
+            </div>
+            <div class="row mx-1">
+                <div class="col-md-6 mx-1">
+                    <SfNumericTextBox CssClass="form-control"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2" Step="0.1"
+                                      Width="200px" @bind-Value="@CoeficienteQualidadeConforto"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Coeficiente Qualidade Conforto" />
+                </div>
+                <div class="col-md-6 mx-1">
+                    <SfNumericTextBox CssClass="e-field"
+                                      ShowSpinButton="true" class="text-align-right"
+                                      Decimals="2" Step="0.1"
+                                      Width="200px" @bind-Value="@CoeficienteVetustez"
+                                      FloatLabelType="FloatLabelType.Auto"
+                                      Placeholder="Coeficiente Vetustez" />
+                </div>
+            </div>
+
+            @if (!HideResults && ValorPatrimonialTributario > 0)
+            {
+                <div>
+                    <div class="card-header h4 text-center  mt-1">@L["TituloResultado"]</div>
+                    <div class="card-body">
+                        <div class="row mx-1">
+                            <div class="col-md-6">
+                                <SfMessage>Valor Calculado</SfMessage>
+                            </div>
+                            <div class="col-md-6">
+                                <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
+                                           Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@(ValorPatrimonialTributario.ToString("#,##0.00"))€</SfMessage>
+                            </div>
+                        </div>
+                        <div class="row mx-1 my-1">
+                            <div class="col-md-6">
+                                <SfMessage>Valor existente (@AnoAvaliacao)</SfMessage>
+                            </div>
+                            <div class="col-md-6">
+                                <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
+                                           Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@(ValorPatrimonio.ToString("#,##0.00"))€</SfMessage>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <hr />
+            <div class="d-flex justify-content-end gap-3 my-2 mx-2">
+                <SfButton CssClass="e-btn e-success e-round-corner pl-2 pr-2"
+                          Disabled="@(!ShowCalculateButton)"
+                          IconCss="fa fa-calculator" OnClick="Calculate" Content="@L["TituloCalcular"]" />
+                <SfButton CssClass="e-btn e-outline e-primary e-round-corner pl-2 pr-2" IconCss="fa fa-eraser" OnClick="Clear" Content="@L["btnLimpar"]" />
+                <SfButton CssClass="e-btn e-outline e-danger e-round-corner pl-2 pr-2" IconCss="fa fa-times" OnClick="GoBack" Content="@L["BtnSalir"]" />
+            </div>
+            <hr />
+
+        </div>
+    </div>
+</div>
+
+<style type="text/css" scoped>
+    .card {
+        height: 100%;
+    }
+
+    .e-round-corner {
+        border-radius: 12px;
+    }
+
+    .text-align-right. {
+        text-align: end;
+    }
+</style>

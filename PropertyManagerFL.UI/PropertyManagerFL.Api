@@ -1864,6 +1864,11 @@
               Looks up a localized string similar to Backup de outros ficheiros.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloCalcular">
+            <summary>
+              Looks up a localized string similar to Calcular.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloCampo2Utilizadores">
             <summary>
               Looks up a localized string similar to Último acesso.

@@ -120,11 +120,11 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
                 contrato.Inicio.ToShortDateString(),
                 contrato.Inicio.ToString("dd"),
-                contrato.Inicio.ToString("MMM"),
+                contrato.Inicio.ToString("MMMM").ToTitleCase(),
                 contrato.Inicio.ToString("yyyy"),
 
                 contrato.Valor_Renda.ToString(),
-                contrato.Valor_Renda_Extenso
+                contrato.Valor_Renda_Extenso!
             };
 
             try
@@ -143,7 +143,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                         Referral = true
                     };
 
-                    var result = await _MailMergeSvc.MailMergeLetter(mergeModel); // returns the file full path generated (docx)
+                    var result = await _MailMergeSvc.MailMergeLetter(mergeModel); // returns the full path of the generated file (docx)
 
                     return result; ;
                 }

@@ -55,8 +55,7 @@ public class FracaoValidator : AbstractValidator<FracaoVM>
             .GreaterThan(p => p.AreaBrutaDependente).WithMessage("Área Bruta Privativa deverá ser maior que a Área Bruta Dependente");
         RuleFor(p => p.AreaBrutaDependente) // area bruta dependente
             .NotNull()
-            .NotEmpty().WithMessage("Deve preencher Área Bruta Dependente")
-            .GreaterThan(0).WithMessage("Área Bruta Dependente deve ter um valor positivo")
+            .GreaterThanOrEqualTo(0).WithMessage("Área Bruta Dependente não pode ter valor negativo")
             .LessThan(p => p.AreaBrutaPrivativa).WithMessage("Área Bruta Dependente deverá ser menor que a Área Bruta Privativa");
         RuleFor(p => p.ValorUltAvaliacao)
             .NotNull().NotEmpty().GreaterThan(0).WithMessage("Valor da Avaliação inválido");

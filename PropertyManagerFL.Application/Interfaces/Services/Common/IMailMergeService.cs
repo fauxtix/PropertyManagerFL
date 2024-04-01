@@ -1,5 +1,4 @@
 ﻿using PropertyManagerFL.Application.ViewModels.MailMerge;
-using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Application.Interfaces.Services.Common
 {

@@ -1,5 +1,6 @@
 ﻿@page "/CalculadoraIMI"
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels
 @using PropertyManagerFL.Application.ViewModels.Fracoes
 @using PropertyManagerFL.Application.ViewModels.LookupTables
 @using PropertyManagerFL.Core.Entities
@@ -7,7 +8,7 @@
 <PageTitle>Calculadora IMI</PageTitle>
 <PageTitleComponent PageTitle="Calculadora IMI"></PageTitleComponent>
 
-@if (Distritos is null || !Distritos.Any())
+@if (Distritos is null  || PropertiesLookup is null || UnitsLookup is null)
 {
     <LoadingData />
 }
@@ -74,12 +75,12 @@ else
                         </SfDropDownList>
                     </div>
                     <div hidden="@(idxDistrito == 0)" class="col-md-6">
-                        <SfDropDownList TValue="int" TItem="Concelho" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                        <SfDropDownList TValue="int" TItem="DistritoConcelho" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                         ShowClearButton="true" Width="250px"
                                         Value="@idxConcelho"
                                         FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                         Placeholder="Concelho" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
-                            <DropDownListTemplates TItem="Concelho">
+                            <DropDownListTemplates TItem="DistritoConcelho">
                             </DropDownListTemplates>
                             <DropDownListEvents TValue="int" TItem="Concelho" ValueChange="OnChangeConcelho"></DropDownListEvents>
                             <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>

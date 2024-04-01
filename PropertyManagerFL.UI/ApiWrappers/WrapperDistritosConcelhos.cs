@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
 
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.ViewModels;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
-using PropertyManagerFL.Core.Entities;
+using System.Text;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 
@@ -23,7 +24,7 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         _apiUri = $"{_env["BaseUrl"]}/DistritosConcelhos";
 
     }
-    public async Task<IEnumerable<Concelho>> GetConcelhos()
+    public async Task<IEnumerable<DistritoConcelho>> GetConcelhos()
     {
         try
         {
@@ -33,34 +34,34 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
                 if (response.IsSuccessStatusCode)
                 {
                     var data = await response.Content.ReadAsStringAsync();
-                    var output = JsonConvert.DeserializeObject<IEnumerable<Concelho>>(data);
+                    var output = JsonConvert.DeserializeObject<IEnumerable<DistritoConcelho>>(data);
                     return output!;
                 }
 
-                return Enumerable.Empty<Concelho>();
+                return Enumerable.Empty<DistritoConcelho>();
             }
         }
         catch (Exception exc)
         {
             _logger.LogError(exc, "Erro ao pesquisar API (Concelhos/GetConcelhos)");
-            return Enumerable.Empty<Concelho>();
+            return Enumerable.Empty<DistritoConcelho>();
         }
     }
 
-    public async Task<IEnumerable<Concelho>> GetConcelhosByDistrito(int id)
+    public async Task<IEnumerable<DistritoConcelho>> GetConcelhosByDistrito(int id)
     {
         try
         {
-            var output = await _httpClient.GetFromJsonAsync<IEnumerable<Concelho>>($"{_apiUri}/ConcelhosByDistrito/{id}");
+            var output = await _httpClient.GetFromJsonAsync<IEnumerable<DistritoConcelho>>($"{_apiUri}/ConcelhosByDistrito/{id}");
             if (output!.Any())
                 return output!;
 
-            return Enumerable.Empty<Concelho>();
+            return Enumerable.Empty<DistritoConcelho>();
         }
         catch (Exception exc)
         {
             _logger.LogError(exc, "Erro ao pesquisar API (ConcelhosByDistrito)");
-            return Enumerable.Empty<Concelho>();
+            return Enumerable.Empty<DistritoConcelho>();
         }
     }
 
@@ -85,6 +86,34 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         {
             _logger.LogError(exc, "Erro ao pesquisar API (Distritos/GetDistritos)");
             return Enumerable.Empty<LookupTableVM>();
+        }
+    }
+
+    public async Task<bool> UpdateCoeficienteIMI(int Id, float coeficienteIMI)
+    {
+        try
+        {
+            var content = new StringContent(coeficienteIMI.ToString(), Encoding.UTF8, "application/json");
+
+            var response = await _httpClient.PatchAsync($"{_apiUri}/updatecoeficienteIMI/{Id}", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return (true);
+            }
+            else
+            {
+                return (false);
+            }
+
+        }
+        catch (HttpRequestException httpEx)
+        {
+            return false;
+        }
+        catch (Exception ex)
+        {
+            return false;
         }
     }
 }

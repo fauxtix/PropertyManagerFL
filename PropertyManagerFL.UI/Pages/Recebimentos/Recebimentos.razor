@@ -71,7 +71,9 @@ else
                     <GridGroupSettings ShowUngroupButton="true" />
                     <GridEvents OnRecordDoubleClick="PaymentDoubleClickHandler"
                                 RowDataBound="RowBound"
-                                OnToolbarClick="ToolbarClickHandler" CommandClicked="OnTransactionCommandClicked" TValue="RecebimentoVM" />
+                                OnToolbarClick="ToolbarClickHandler" 
+                                CommandClicked="OnTransactionCommandClicked" 
+                                TValue="RecebimentoVM" />
                     <GridColumns>
                         <GridColumn Field=@nameof(RecebimentoVM.Id)
                                     HeaderText=" # "

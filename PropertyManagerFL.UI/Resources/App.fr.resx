@@ -2612,4 +2612,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloModelosMenu" xml:space="preserve">
     <value>Modèles de lettres</value>
   </data>
+  <data name="TituloCalcular" xml:space="preserve">
+    <value>Calculer</value>
+  </data>
 </root>

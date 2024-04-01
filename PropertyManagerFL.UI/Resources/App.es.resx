@@ -2596,4 +2596,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloModelosMenu" xml:space="preserve">
     <value>Modelos de cartas</value>
   </data>
+  <data name="TituloCalcular" xml:space="preserve">
+    <value>Calcular</value>
+  </data>
 </root>

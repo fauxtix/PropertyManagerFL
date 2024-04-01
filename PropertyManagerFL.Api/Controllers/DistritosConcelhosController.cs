@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Application.Formatting;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
-using PropertyManagerFL.Infrastructure.Repositories;
+using System.Globalization;
 
 namespace PropertyManagerFL.Api.Controllers;
 [Route("api/[controller]")]
@@ -98,6 +99,47 @@ public class DistritosConcelhosController : ControllerBase
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
+
+
+    /// <summary>
+    /// Altera coeficiente IMI
+    /// </summary>
+    /// <returns></returns>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    [HttpPatch("updatecoeficienteIMI/{Id:Int}")]
+    public async Task<IActionResult> UpdateCoeficienteIMI(int Id, [FromBody] string coeficienteToUpdate)
+    {
+        var location = GetControllerActionNames();
+        float coef;
+        try
+        {
+            coef = float.Parse(coeficienteToUpdate, CultureInfo.InvariantCulture.NumberFormat);
+
+            if (!DataFormat.IsNumeric(coef))
+            {
+                string msg = "Coeficiente com formato inválido (Api DistritosConcelhos)";
+                _logger.LogWarning(msg);
+                return BadRequest(msg);
+            }
+
+            var concelho = await _repo.GetConcelho_ById(Id);
+            if (concelho == null)
+                return NotFound();
+
+            await _repo.UpdateCoeficienteIMI(Id, coef);
+            return NoContent();
+        }
+
+        catch (Exception e)
+        {
+            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+        }
+    }
+
 
     private string GetControllerActionNames()
     {

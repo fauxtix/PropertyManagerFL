@@ -1,0 +1,107 @@
+﻿@page "/ManutencaoCoeficientesIMI"
+
+@using PropertyManagerFL.Application.ViewModels
+@using PropertyManagerFL.Application.ViewModels.LookupTables
+@using PropertyManagerFL.Core.Entities
+
+<PageTitle>Coeficientes IMI</PageTitle>
+<PageTitleComponent PageTitle="Coeficientes IMI"></PageTitleComponent>
+
+
+@{
+    var Tool = (new List<object>() {
+        "Search",
+        "PdfExport",
+        "ExcelExport",
+     new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+     "Edit",
+     "Update",
+    "Cancel"
+    });
+}
+
+@if (Distritos is null || !Distritos.Any())
+{
+    <LoadingData />
+}
+else
+{
+    <div class="container-fluid">
+        <div>
+            <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                            ShowClearButton="true" Width="250px"
+                            Value="@idxDistrito"
+                            FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                            Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
+                <DropDownListTemplates TItem="LookupTableVM">
+                </DropDownListTemplates>
+                <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeDistrito"></DropDownListEvents>
+                <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+            </SfDropDownList>
+        </div>
+        <hr />
+        <div class="w-75">
+            <SfGrid ID="CoeficientesConcelhos_Grid"
+                @ref=coefsGridObj
+                    Height="auto"
+                    Toolbar="@Tool"
+                    EnableStickyHeader="true"
+                    EnableAltRow="true"
+                    EnableHover="true"
+                    DataSource="@Concelhos"
+                    AllowFiltering="true"
+                    AllowGrouping="false"
+                    AllowPaging="true"
+                    AllowSorting="true"
+                    AllowPdfExport="true"
+                    AllowExcelExport="true"
+                    RowHeight="32"
+                    AllowSelection="true">
+                <GridPageSettings PageSize="12" PageCount="12" PageSizes="true" />
+                <GridEditSettings AllowAdding="false"
+                                  AllowEditing="true"
+                                  AllowDeleting="false"
+                                  Mode="EditMode.Normal" />
+                <GridEvents 
+                            CommandClicked="OnCommandClicked"
+                            OnToolbarClick="ToolbarClickHandler_Coef"
+                            OnActionBegin="CoefficientActionBeginHandler"
+                            OnActionComplete="ActionComplete"
+                            TValue="DistritoConcelho" />
+                <GridColumns>
+                    <GridColumn Field=@nameof(Concelho.Id)
+                                HeaderText="Id" Width="60"
+                                Visible="false"
+                                IsPrimaryKey="true" IsIdentity="true" />
+                    <GridColumn Field=@nameof(DistritoConcelho.CodConcelho) AllowEditing="false"
+                                HeaderText="Id" Width="60" />
+                    <GridColumn Field=@nameof(DistritoConcelho.Distrito)
+                                HeaderText="Distrito" Width="280" AllowEditing="false" />
+                    <GridColumn Field=@nameof(DistritoConcelho.Descricao)
+                                HeaderText="Concelho" Width="280" AllowEditing="false" />
+                    <GridColumn Field=@nameof(DistritoConcelho.Coeficiente)
+                                HeaderText="Coeficiente" Width="100" />
+                </GridColumns>
+            </SfGrid>
+        </div>
+    </div>
+
+    <SfToast  @ref="ToastObj" ShowProgressBar=true
+             Title="@ToastTitle" Icon="@ToastIcon" 
+             Content="@ToastMessage"
+             CssClass="@ToastCss" Timeout="2000"
+             ShowCloseButton="true">
+        <ToastAnimationSettings>
+            <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
+            <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        </ToastAnimationSettings>
+        <ToastButtons>
+            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+        </ToastButtons>
+        <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+    </SfToast>
+
+}

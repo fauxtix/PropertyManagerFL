@@ -215,6 +215,7 @@ else
     [Inject] public IStatsService? statsService { get; set; }
     [Inject] public IStringLocalizer<App> L { get; set; }
     protected ExpPieChart? PieChartRef { get; set; } = null;
+
     protected IEnumerable<DespesaVM>? expensesList { get; set; }
     protected IEnumerable<DespesaVM>? last5Transactions { get; set; }
     protected IEnumerable<ExpensesSummaryData>? CategoriesWithMoreSpending { get; set; }
@@ -303,9 +304,10 @@ else
 
             Expenses_ByType = (await statsService.GetTotalExpenses_ByType()).ToList();
             CategoriesSummaryCurrentYear = Expenses_ByType
-            .Where(p => p.YearOfExpenses == DateTime.Now.Year);
+                .Where(p => p.YearOfExpenses == DateTime.Now.Year);
             CategoriesSummaryPreviousYear = Expenses_ByType
-            .Where(p => p.YearOfExpenses == DateTime.Now.Year - 1);
+                .Where(p => p.YearOfExpenses == DateTime.Now.Year - 1);
+
         }
         catch (Exception)
         {

@@ -1597,4 +1597,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloModelosMenu" xml:space="preserve">
     <value>Modelos de cartas</value>
   </data>
+  <data name="TituloCalcular" xml:space="preserve">
+    <value>Calcular</value>
+  </data>
 </root>

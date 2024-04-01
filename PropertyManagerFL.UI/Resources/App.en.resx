@@ -2604,4 +2604,7 @@
   <data name="TituloModelosMenu" xml:space="preserve">
     <value>Letters templates</value>
   </data>
+  <data name="TituloCalcular" xml:space="preserve">
+    <value>Calculate</value>
+  </data>
 </root>

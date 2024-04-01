@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.ViewModels;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Core.Entities;
@@ -26,7 +27,7 @@ public partial class CalculadoraIMI
     protected List<FracaoVM>? Units { get; set; } = new();
 
     protected IEnumerable<LookupTableVM>? Distritos { get; set; }
-    protected IEnumerable<Concelho>? Concelhos { get; set; }
+    protected IEnumerable<DistritoConcelho>? Concelhos { get; set; }
     protected bool distritoSelected;
     protected int idxDistrito;
     protected int idxConcelho;
@@ -141,7 +142,6 @@ public partial class CalculadoraIMI
         var unit = await FracoesService!.GetFracao_ById(args.Value);
         // ao escolher uma fração, guarda valor tributável
         valorPatrimonio = unit.ValorUltAvaliacao;
-
     }
 
     protected void Clear()
