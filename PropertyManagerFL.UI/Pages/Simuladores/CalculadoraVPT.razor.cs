@@ -125,13 +125,15 @@ public partial class CalculadoraVPT
         return output;
     }
 
-    protected void Clear()
+    protected async Task Clear()
     {
         idxProperty = 0;
         ShowUnitsCombo = false;
         HideResults = true;
         ValorPatrimonio = 0;
         ShowCalculateButton = false;
+        await ddlUnits!.ClearAsync();
+
     }
     protected void GoBack()
     {

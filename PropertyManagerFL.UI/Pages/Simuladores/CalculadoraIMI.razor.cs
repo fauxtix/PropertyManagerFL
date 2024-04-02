@@ -4,7 +4,6 @@ using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
-using PropertyManagerFL.Core.Entities;
 using Syncfusion.Blazor.DropDowns;
 
 namespace PropertyManagerFL.UI.Pages.Simuladores;
@@ -21,6 +20,8 @@ public partial class CalculadoraIMI
     [Inject] public IFracaoService? FracoesService { get; set; }
     [Inject] public IDistritosConcelhosService? DistritosConcelhosService { get; set; }
     [Inject] public IStringLocalizer<App> L { get; set; }
+    [Inject] public NavigationManager? navigation { get; set; }
+
 
     protected IEnumerable<LookupTableVM>? PropertiesLookup { get; set; }
     protected List<LookupTableVM>? UnitsLookup { get; set; } = new();
@@ -46,7 +47,14 @@ public partial class CalculadoraIMI
     protected bool HideResults = true;
     protected string? coefCaption;
 
+    protected SfDropDownList<int, LookupTableVM>? ddlUnits;
+
     protected int pagamentosFracionados = 1;
+
+    protected bool ShowCalculateButton = false;
+    protected bool ResultVisibility = false;
+    protected string? DescricaoImovel = "";
+    protected string? DescricaoFracao = "";
 
     protected List<LookupTableVM> TiposImovel { get; set; } = new List<LookupTableVM>()
 {
@@ -61,6 +69,7 @@ public partial class CalculadoraIMI
         valorIMI = 0;
         distritoSelected = false;
         Distritos = (await DistritosConcelhosService!.GetDistritos()).ToList();
+        Concelhos = (await DistritosConcelhosService.GetConcelhos()).ToList();
         PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables();
     }
 
@@ -73,7 +82,7 @@ public partial class CalculadoraIMI
         Concelhos = (await DistritosConcelhosService!.GetConcelhosByDistrito(idxDistrito)).ToList();
         StateHasChanged();
     }
-    protected void OnChangeConcelho(ChangeEventArgs<int, Concelho> args)
+    protected void OnChangeConcelho(ChangeEventArgs<int, DistritoConcelho> args)
     {
         if (args.Value == 0) return;
 
@@ -95,8 +104,8 @@ public partial class CalculadoraIMI
     protected async Task OnChangeProperty(ChangeEventArgs<int, LookupTableVM> args)
     {
         idxProperty = args.Value;
-        
-        if(idxProperty == 0) return;
+
+        if (idxProperty == 0) return;
 
         var freguesia = (await ImoveisService.GetImovel_ById(idxProperty)).FreguesiaImovel;
         if (freguesia is not null)
@@ -104,16 +113,18 @@ public partial class CalculadoraIMI
             var concelhos = await DistritosConcelhosService.GetConcelhos();
             Tuple<int, int, float>? codes = concelhos
                 .Where(p => p.Descricao == freguesia)
-                .Select(c => new { c.IdDistrito, c.Id, c.Coeficiente})
+                .Select(c => new { c.IdDistrito, c.Id, c.Coeficiente })
                 .AsEnumerable()
                 .Select(c => new Tuple<int, int, float>(c.IdDistrito, c.Id, c.Coeficiente))
                 .SingleOrDefault();
 
-            if(codes?.Item1 > 0 && codes?.Item2 > 0)
+            if (codes?.Item1 > 0 && codes?.Item2 > 0)
             {
                 idxDistrito = codes.Item1;
                 idxConcelho = codes.Item2;
                 coeficiente = codes.Item3;
+                coeficienteCaption = Math.Round(coeficiente * 100, 2).ToString();
+
             }
             else
             {
@@ -121,6 +132,8 @@ public partial class CalculadoraIMI
                 idxConcelho = 0;
                 coeficiente = 0;
             }
+
+            await ddlUnits!.ClearAsync();
 
             StateHasChanged();
         }
@@ -142,9 +155,15 @@ public partial class CalculadoraIMI
         var unit = await FracoesService!.GetFracao_ById(args.Value);
         // ao escolher uma fração, guarda valor tributável
         valorPatrimonio = unit.ValorUltAvaliacao;
+
+        DescricaoImovel = unit.DescricaoImovel;
+        DescricaoFracao = unit.Descricao;
+
+        ShowCalculateButton = true;
+
     }
 
-    protected void Clear()
+    protected async Task Clear()
     {
         idxProperty = 0;
         idxDistrito = 0;
@@ -154,6 +173,8 @@ public partial class CalculadoraIMI
         valorPatrimonio = 0;
         valorIMI = 0;
         valorPrestacaoIMI = 0;
+        ShowCalculateButton = false;
+        await ddlUnits!.ClearAsync();
     }
 
     protected void Calculate()
@@ -187,7 +208,13 @@ public partial class CalculadoraIMI
         }
 
         valorPrestacaoIMI = valorIMI / pagamentosFracionados;
-        HideResults = false;
+        ResultVisibility = true;
+        // HideResults = false;
+    }
+
+    protected void GoBack()
+    {
+        navigation?.NavigateTo("/");
     }
 
     protected class IMIResults

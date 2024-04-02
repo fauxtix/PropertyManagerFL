@@ -35,7 +35,6 @@ public partial class GestaoCoeficientesIMI
 
     protected SfToast? ToastObj { get; set; }
 
-
     protected SfGrid<DistritoConcelho>? coefsGridObj { get; set; }
 
 
