@@ -314,7 +314,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     {
                         errorMessage = "Período inválido. Verifique, p.f.";
                     }
-                    else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth >= lastPeriodProcessed.Mes + 1)
+                    else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth >= lastPeriodProcessed.Mes + 2)
                     {
                         var dateDecoded = Helpers.DecodeMonthYear(lastMonthProcessed, lastYearProcessed);
                         errorMessage = $"Mês inválido. Último mês processado: {dateDecoded}. Verifique, p.f.";
@@ -348,7 +348,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             try
             {
-                return (await TransactionsService!.GeneratePagamentoRendas(selectedMonth + 1, selectedYear)).ToList();
+                return (await TransactionsService!.GeneratePagamentoRendas(selectedMonth, selectedYear)).ToList();
             }
             catch (Exception ex)
             {

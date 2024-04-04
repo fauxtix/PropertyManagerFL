@@ -90,7 +90,7 @@
     protected SfComboBox<int, string?>? cboMeses { get; set; }
     protected SfComboBox<int, string?>? cboAnos { get; set; }
 
-    protected int SelectedMonth { get; set; } = DateTime.Now.Month + 1;
+    protected int SelectedMonth { get; set; } = DateTime.Now.Month; // + 1;
     protected int SelectedYear { get; set; } = DateTime.Now.Year;
 
     protected List<Mes> MonthList { get; set; } = new();

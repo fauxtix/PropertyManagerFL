@@ -23,6 +23,7 @@
     public class ExpensesSummaryDataByType
     {
         public int YearOfExpenses { get; set; }
+        public int Month { get; set; }
         public string? MonthOfExpenses { get; set; }
         public double TotalOfMonthExpenses { get; set; }
         public string TypeOfExpenses { get; set; } = string.Empty;

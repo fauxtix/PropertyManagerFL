@@ -74,12 +74,12 @@ else
                 <div class="row">
                     <div class="col-lg-6 control-section sb-property-border">
                         <div class="control-section">
-                            <ExpLineChart Expenses="@CategoriesSummaryCurrentYear" />
+                            <ExpLineChart Year="@DateTime.Now.Year.ToString()" Expenses="@CategoriesSummaryCurrentYear" />
                         </div>
                     </div>
                     <div class="col-lg-6 control-section sb-property-border">
                         <div class="control-section">
-                            <ExpLineChart Expenses="@CategoriesSummaryPreviousYear" />
+                            <ExpLineChart Year="@DateTime.Now.AddYears(-1).Year.ToString()"  Expenses="@CategoriesSummaryPreviousYear" />
                         </div>
                     </div>
                 </div>
@@ -106,17 +106,17 @@ else
             </div>
             <div class="col-md-6">
                 <div class="table table-striped">
-                    <AlertMessage Message="IMI Previsto" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
+                    <AlertMessage Message="IMI Previsto" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
                     <SfGrid DataSource="@IMIValues" TValue="IMIResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(IMIResults.Descricao) HeaderText="Descrição"
+                            <GridColumn Field=@nameof(IMIResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"
                                         Width="250"></GridColumn>
-                            <GridColumn Field=@nameof(IMIResults.ValPatrimonio) HeaderText="Valor patrimonial"
+                            <GridColumn Field=@nameof(IMIResults.ValPatrimonio) HeaderText="@L["TituloValorPatrimonial"]"
                                         Format="C2"
                                         TextAlign="TextAlign.Right" Width="150"></GridColumn>
-                            <GridColumn Field=@nameof(IMIResults.ValorPagar) HeaderText="A pagar"
+                            <GridColumn Field=@nameof(IMIResults.ValorPagar) HeaderText="@L["TituloValorPagar"]"
                                         Format="C2"
                                         TextAlign="TextAlign.Right" Width="150"></GridColumn>
                         </GridColumns>
@@ -179,7 +179,7 @@ else
             </div>
             <div class="col-md-6">
                 <div class="table table-striped">
-                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Info">@TituloCategoriaAnoAnterior</SfMessage>
+                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@TituloCategoriaAnoAnterior</SfMessage>
                     <SfGrid DataSource="@CategoriesWithMoreSpendings_ByYear_Prior"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">

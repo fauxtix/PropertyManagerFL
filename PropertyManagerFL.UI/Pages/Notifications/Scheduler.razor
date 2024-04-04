@@ -16,7 +16,7 @@
 <PageTitle>Agenda</PageTitle>
 <PageTitleComponent PageTitle="Agenda" />
 
-@if (dataSource is null || ApptResources is null || gridDataSource is null)
+@if (DataSource is null || ApptResources is null || gridDataSource is null)
 {
     <LoadingData />
 }
@@ -25,7 +25,7 @@ else
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-9 control-section">
-                <SfSchedule TValue="AppointmentVM" @ref="ScheduleRef"
+                <SfSchedule TValue="AppointmentVM" @ref="ScheduleRef" @bind-CurrentView="@CurrentView"
                             Width="100%"
                             CssClass="@(ShowSchedule ? string.Empty : "schedule-hide")"
                             Height="650px" @bind-SelectedDate="@CurrentDate">
@@ -36,13 +36,14 @@ else
                                           ColorField="Color"></ScheduleResource>
                     </ScheduleResources>
                     <ScheduleEvents TValue="AppointmentVM"
+                                    EventRendered="OnEventRendered"
                                     OnActionFailure="OnActionFailure"
                                     OnActionBegin="OnActionBegin" ActionCompleted="OnActionCompleted" />
-                    <ScheduleEventSettings DataSource="@dataSource" EnableIndicator="true">
-                    <ScheduleField>
+                    <ScheduleEventSettings DataSource="@DataSource">
+                        <ScheduleField>
                             <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
                             <FieldDescription Title="@L["lblSinopse"]"></FieldDescription>
-                    </ScheduleField>
+                        </ScheduleField>
                     </ScheduleEventSettings>
                     <ScheduleTemplates>
                         <ScheduleViews>
@@ -124,18 +125,30 @@ else
 }
 
 <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
-         Title="@ToastTitle" Icon="@ToastIcon"
-         Content="@ToastMessage"
+         Target=".e-schedule" NewestOnTop="true"
+         Icon="@ToastIcon"
          CssClass="@ToastCss" Timeout="3000">
+    <ToastTemplates>
+        <Template>
+            <div class="e-toast-template">
+                <div class="e-toast-message">
+                    <div class="e-toast-title">@ToastTitle</div>
+                    <div class="e-toast-content">@ToastMessage</div>
+                </div>
+            </div>
+        </Template>
+    </ToastTemplates>
     <ToastAnimationSettings>
-        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
-        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.SlideRightIn" />
+        <ToastHideAnimationSettings Effect="ToastEffect.SlideRightOut" />
     </ToastAnimationSettings>
     <ToastButtons>
         <ToastButton Content="@L["btnFechar"]" OnClick="@HideToast"></ToastButton>
     </ToastButtons>
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>
+
+
 
 
 @code {
@@ -148,7 +161,7 @@ else
     private SfToast? ToastObj;
 
     private AppointmentVM SelectedAppointment { get; set; } = new();
-    private List<AppointmentVM> dataSource = new();
+    private List<AppointmentVM> DataSource { get; set; } = new();
     private List<AppointmentVM> gridDataSource = new List<AppointmentVM>();
 
     private DateTime CurrentDate = DateTime.Now;
@@ -177,6 +190,9 @@ else
 
     private int AppointmentId;
 
+    public View CurrentView { get; set; } = View.Week;
+
+
     public class ResourceData
     {
         public int Id { get; set; }
@@ -186,9 +202,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        dataSource = await GetAppointments();
         InitializeWorkVariables();
-
+        DataSource = await GetAppointments();
         ApptResources = CreateSchedulerResources();
 
         await Task.Delay(100);
@@ -314,10 +329,24 @@ else
                 SelectedAppointment = args.AddedRecords[0];
                 SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
 
-                var result = await ApptsService!.InsertAsync(SelectedAppointment);
-            }
+                var transactionId = await ApptsService!.InsertAsync(SelectedAppointment);
+                if(transactionId == -1) // error
+                {
+                    ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
+                    ToastCss = "e-schedule-reminder e-toast-danger";
+                    ToastMessage = L["TituloOperacaoComErro"];
+                    ToastIcon = "fas fa-exclamation-triangle";
 
-            if (args.ActionType == ActionType.EventChange)
+                    StateHasChanged();
+                    if (ToastObj is not null)
+                    {
+                        await Task.Delay(200);
+                        await ToastObj.ShowAsync();
+                    }
+                }
+
+            }
+            else if (args.ActionType == ActionType.EventChange)
             {
                 SelectedAppointment = args.ChangedRecords[0];
                 SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
@@ -326,7 +355,8 @@ else
         }
         else if (args.ActionType == ActionType.EventRemove)
         {
-            await ApptsService!.DeleteAsync(args.DeletedRecords[0].Id);
+            if (args.DeletedRecords is not null)
+                await ApptsService!.DeleteAsync(args.DeletedRecords[0].Id);
         }
 
     }
@@ -338,14 +368,14 @@ else
             if (args.ActionType == ActionType.EventCreate)
             {
                 ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-toast-success";
+                ToastCss = "e-schedule-reminder e-toast-success";
                 ToastMessage = L["SuccessInsert"];
                 ToastIcon = "fas fa-check";
             }
             if (args.ActionType == ActionType.EventChange)
             {
                 ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-toast-success";
+                ToastCss = "e-schedule-reminder e-toast-success";
                 ToastMessage = L["RegistoGravadoSucesso"];
                 ToastIcon = "fas fa-check";
             }
@@ -360,7 +390,7 @@ else
         else if (args.ActionType == ActionType.EventRemove)
         {
             ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
-            ToastCssClass = "e-toast-success";
+            ToastCssClass = "e-schedule-reminder e-toast-success";
             ToastContent = L["RegistoAnuladoSucesso"];
             ToastIcon = "fas fa-check";
             StateHasChanged();
@@ -391,6 +421,12 @@ else
             return new();
         }
     }
+
+    public void OnEventRendered(EventRenderedArgs<AppointmentVM> args)
+    {
+        args.Attributes = ScheduleData.ApplyCategoryColor(args.Data.CategoryColor, args.Attributes, CurrentView);
+    }
+
     // void IDisposable.Dispose()
     // {
     //     ScheduleRef?.Dispose();
@@ -415,7 +451,7 @@ else
         display: none;
     }
 
-    @@media (max-width: 441px) {
+     @@media (max-width: 441px) {
         .button-customization {
             padding: 30px !important;
         }

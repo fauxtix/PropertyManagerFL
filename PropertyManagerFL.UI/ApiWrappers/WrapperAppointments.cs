@@ -91,8 +91,11 @@ public class WrapperAppointments : IAppointmentsService
 
             using (HttpResponseMessage result = await _httpClient.PostAsJsonAsync(_appointmentsUri, appointmentToInsert))
             {
-                var success = result.IsSuccessStatusCode;
-                return success ? 1 : 0;
+                var output = await result.Content.ReadAsStringAsync();
+                var appointmentId = JsonConvert.DeserializeObject<int>(output);
+
+                //var success = result.IsSuccessStatusCode;
+                return appointmentId;
             }
         }
         catch (Exception exc)

@@ -34,11 +34,12 @@ public class AppointmentsController : ControllerBase
             var createdId = await _appointmentRepository.InsertAsync(appointmentToInsert);
             var createdAppointment = await _appointmentRepository.GetById_Async(createdId);
             var result = CreatedAtAction(nameof(GetAppointment_ById), new { Id = createdId }, createdAppointment);
-            return result;
+            return Ok(createdId);
         }
         catch (Exception ex)
         {
-            return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
+            _logger.LogError(ex.Message, ex);
+            return BadRequest(ex);
         }
     }
 

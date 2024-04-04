@@ -2610,4 +2610,10 @@
   <data name="TituloCalculadoras" xml:space="preserve">
     <value>Calculators</value>
   </data>
+  <data name="TituloValorPatrimonial" xml:space="preserve">
+    <value>Patrimonial value</value>
+  </data>
+  <data name="TituloTodosRegistos" xml:space="preserve">
+    <value>All records</value>
+  </data>
 </root>

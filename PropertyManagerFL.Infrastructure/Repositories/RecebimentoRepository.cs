@@ -273,7 +273,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                             // Register processed month 
                             var result = await connection.ExecuteAsync("usp_Recebimentos_ProcessamentoRendas_Insert",
-                                new { month = parMonth - 1, year = parYear, TotalRecebido = totalReceived }, // (-1, porquê?) => os movimentos gerados são para o mês seguinte, o mês processado é o escolhido pelo utilizador
+                                new { month = parMonth, year = parYear, TotalRecebido = totalReceived }, // (-1, porquê?) => os movimentos gerados são para o mês seguinte, o mês processado é o escolhido pelo utilizador
                                     commandType: CommandType.StoredProcedure,
                                     transaction: tran);
 
@@ -860,12 +860,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         continue;
                     }
 
-                    // TODO - verificar, quando <não> for o primeiro processamento, se a data do movimento(pagamento) é a correta
+                    // TODO - verificar, quando <não> for o primeiro processamento, se a data do movimento (pagamento) é a correta
                     // motivo: quando há um processamento mensal, e se apaga um registo (inquilino não pagou...)
                     // ao ser gerado novo pagamento, a data correta de movimento deverá ser a do último mês pago + 1 (poderão haver mais pagamentos em falta...), e não a corrente);
-                    // dessa forma, será mais fácil informar que mês(meses) estão em falta para cada inquilino ativo (timespan da última data de pagamento, com a data corrente, p,exº)
-
-
+                    // dessa forma, será mais fácil informar quais os meses que estão em falta para cada inquilino ativo (timespan da última data de pagamento, com a data corrente, p,exº)
 
                     NovoRecebimento recebimentoTemp = new NovoRecebimento()
                     {

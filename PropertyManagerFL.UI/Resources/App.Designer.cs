@@ -4202,6 +4202,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Todos os registos.
+        /// </summary>
+        public static string TituloTodosRegistos {
+            get {
+                return ResourceManager.GetString("TituloTodosRegistos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Totais.
         /// </summary>
         public static string TituloTotais {
@@ -4396,6 +4405,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloValorPagoParcialmente {
             get {
                 return ResourceManager.GetString("TituloValorPagoParcialmente", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Valor patrimonial.
+        /// </summary>
+        public static string TituloValorPatrimonial {
+            get {
+                return ResourceManager.GetString("TituloValorPatrimonial", resourceCulture);
             }
         }
         

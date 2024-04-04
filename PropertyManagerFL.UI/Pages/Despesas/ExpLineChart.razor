@@ -1,7 +1,7 @@
 ﻿@using PropertyManagerFL.Application.Interfaces.Services.Stats;
 @using PropertyManagerFL.Core.Entities;
 @using Syncfusion.Blazor.Charts
-
+@using System.Globalization;
 
 @inject IStringLocalizer<App> localizerApp
 @inject IStatsService statsService
@@ -9,36 +9,50 @@
 
 @attribute [Authorize]
 
-<SfChart Title="@L["TituloTotalDespesas"]">
+<SfChart Title="@chartTitle">
     <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
     </ChartPrimaryXAxis>
-    <ChartPrimaryYAxis Title="@L["TituloTotalDespesas"]" LabelPlacement="LabelPlacement.BetweenTicks"></ChartPrimaryYAxis>
+    <ChartPrimaryYAxis Title="@L["TituloDespesas"]" LabelPlacement="LabelPlacement.OnTicks"></ChartPrimaryYAxis>
     <ChartSeriesCollection>
         @foreach (var monthData in GroupedExpensesData)
         {
-            <ChartSeries DataSource="@monthData"
+            <ChartSeries DataSource="@monthData" 
                          Name="@monthData.Key"
                          XName="MonthOfExpenses" YName="TotalOfMonthExpenses"
                          Type="ChartSeriesType.StackingColumn">
                 <ChartMarker>
                     <ChartDataLabel Visible="true"></ChartDataLabel>
                 </ChartMarker>
-                <ChartSeriesBorder Width="1" Color="#ffffff"></ChartSeriesBorder>
+                <ChartCornerRadius TopLeft="8" TopRight="8"></ChartCornerRadius>
+                <ChartSeriesBorder Width="1" Color="#ffffff"></ChartSeriesBorder>               
             </ChartSeries>
         }
     </ChartSeriesCollection>
+    <ChartTooltipSettings Enable="true" Format="${point.x}<br/>${point.y}"></ChartTooltipSettings>
+    <ChartLegendSettings Visible="false"></ChartLegendSettings>
 </SfChart>
 
 
 @code {
 
+    [Parameter] public string? Year { get; set; } = default;
     [Parameter] public IEnumerable<ExpensesSummaryDataByType>? Expenses { get; set; } = default;
-
+    protected string? chartTitle = "";
     protected List<IGrouping<string, ExpensesSummaryDataByType>>? GroupedExpensesData;
 
     protected override void OnParametersSet()
     {
+        chartTitle = L["TituloTotalDespesas"] + " (" + Year + ")";
+        // GroupedExpensesData = Expenses?.GroupBy(c => c.TypeOfExpenses)
+        //                          .OrderBy(group => group.Min(data => data.Month))
+        //                          .ToList();
+
         GroupedExpensesData = Expenses?.GroupBy(c => c.TypeOfExpenses).ToList();
     }
-
+    private DateTime ParseMonth(string? month)
+    {
+        // Parse month name to a DateTime object
+        var conv = DateTime.ParseExact(month, "MMMM-yyyy", CultureInfo.InvariantCulture);
+        return conv;
+    }
 }

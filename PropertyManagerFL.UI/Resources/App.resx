@@ -1603,4 +1603,10 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloCalculadoras" xml:space="preserve">
     <value>Calculadoras</value>
   </data>
+  <data name="TituloValorPatrimonial" xml:space="preserve">
+    <value>Valor patrimonial</value>
+  </data>
+  <data name="TituloTodosRegistos" xml:space="preserve">
+    <value>Todos os registos</value>
+  </data>
 </root>

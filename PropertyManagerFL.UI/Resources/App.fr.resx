@@ -2618,4 +2618,10 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloCalculadoras" xml:space="preserve">
     <value>Calculatrices</value>
   </data>
+  <data name="TituloValorPatrimonial" xml:space="preserve">
+    <value>Valeur patrimoniale</value>
+  </data>
+  <data name="TituloTodosRegistos" xml:space="preserve">
+    <value>Tous les enregistrements</value>
+  </data>
 </root>

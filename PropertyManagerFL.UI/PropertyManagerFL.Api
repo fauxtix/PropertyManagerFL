@@ -3149,6 +3149,11 @@
               Looks up a localized string similar to Tipo recebimento.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloTodosRegistos">
+            <summary>
+              Looks up a localized string similar to Todos os registos.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloTotais">
             <summary>
               Looks up a localized string similar to Totais.
@@ -3257,6 +3262,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorPagoParcialmente">
             <summary>
               Looks up a localized string similar to Pago parcialmente.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorPatrimonial">
+            <summary>
+              Looks up a localized string similar to Valor patrimonial.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloValorPorConfirmar">
