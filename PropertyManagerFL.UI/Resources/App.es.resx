@@ -2608,4 +2608,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloTodosRegistos" xml:space="preserve">
     <value>Todos los registros</value>
   </data>
+  <data name="TituloDataFim" xml:space="preserve">
+    <value>Fecha final</value>
+  </data>
 </root>

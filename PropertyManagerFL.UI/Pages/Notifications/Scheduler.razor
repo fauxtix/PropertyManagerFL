@@ -16,7 +16,13 @@
 <PageTitle>Agenda</PageTitle>
 <PageTitleComponent PageTitle="Agenda" />
 
-@if (DataSource is null || ApptResources is null || gridDataSource is null)
+<SfSpinner @ref="SpinnerObj"
+           Label="@L["MSG_PreparandoDados"]"
+           Type="SpinnerType.Bootstrap5"
+           CssClass="e-spin-overlay">
+</SfSpinner>
+
+@if (ApptResources?.Count == 0 || DataSource is null)
 {
     <LoadingData />
 }
@@ -35,11 +41,28 @@ else
                                           Field="ApptType" Title="@L["TituloTipo"]" Name="ApptTypes" TextField="Text" IdField="Id"
                                           ColorField="Color"></ScheduleResource>
                     </ScheduleResources>
+
                     <ScheduleEvents TValue="AppointmentVM"
                                     EventRendered="OnEventRendered"
                                     OnActionFailure="OnActionFailure"
-                                    OnActionBegin="OnActionBegin" ActionCompleted="OnActionCompleted" />
-                    <ScheduleEventSettings DataSource="@DataSource">
+                                    OnActionBegin="OnActionBegin"
+                                    ActionCompleted="OnActionCompleted" />
+                    <ScheduleEventSettings TValue="AppointmentVM"
+                                           DataSource="@DataSource">
+
+                        @*
+                    <SfDataManager Url="@_appointmentsUri"
+                    UpdateUrl="@_appointmentsUri_Update"
+                    RemoveUrl="@_appointmentsUri_Delete"
+                    InsertUrl="@_appointmentsUri_Insert"
+                    Adaptor="Adaptors.UrlAdaptor" />
+                    *@
+
+                        @*
+                    <SfDataManager Url="@_appointmentsUri"
+                    Adaptor="@Syncfusion.Blazor.Adaptors.WebApiAdaptor"/>
+                    *@
+
                         <ScheduleField>
                             <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
                             <FieldDescription Title="@L["lblSinopse"]"></FieldDescription>
@@ -55,6 +78,7 @@ else
                         </ScheduleViews>
                     </ScheduleTemplates>
                 </SfSchedule>
+
                 @if (!ShowSchedule)
                 {
                     <SfGrid DataSource="gridDataSource" Width="auto" Height="505px">
@@ -67,6 +91,8 @@ else
                     </SfGrid>
                 }
             </div>
+
+            @* Search events panel *@
             <div class="col-lg-3 property-section property-customization">
                 <br>
                 <div class="property-panel-section">
@@ -106,17 +132,18 @@ else
                                         </div>
                                     </td>
                                 </tr>
-                                <div class="d-flex justify-content-around align-items-center mt-1">
-                                    <hr />
-                                    <div>
-                                        <SfButton CssClass="e-btn e-primary e-outline e-round-corner" IconCss="fa fa-search" Content="@L["btnPesquisar"]" OnClick="@OnSearchClick"></SfButton>
-                                    </div>
-                                    <div>
-                                        <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fa fa-times" Content="@L["btnLimpar"]" OnClick="@OnClearClick"></SfButton>
-                                    </div>
-                                </div>
                             </tbody>
                         </table>
+                        <div class="d-flex justify-content-end gap-2 mt-1">
+                            <hr />
+                            <div>
+                                <SfButton CssClass="e-btn e-primary e-outline e-round-corner" IconCss="fa fa-search" Content="@L["btnPesquisar"]" OnClick="@OnSearchClick"></SfButton>
+                            </div>
+                            <div>
+                                <SfButton CssClass="e-btn e-outline e-round-corner" IconCss="fa fa-times" Content="@L["btnLimpar"]" OnClick="@OnClearClick"></SfButton>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -148,292 +175,10 @@ else
     <ToastPosition X="Right" Y="Bottom"></ToastPosition>
 </SfToast>
 
+<ValidateErrorComponent Visible="@WarningVisibility"
+                        ValidationMessages="@ValidationsMessages"
+                        OnCloseDialog="@(()=>WarningVisibility = false)" />
 
-
-
-@code {
-
-    [Inject] public IAppointmentsService? ApptsService { get; set; }
-    [Inject] protected IStringLocalizer<App>? L { get; set; }
-    [Inject] protected ILogger<App>? logger { get; set; }
-
-    private SfSchedule<AppointmentVM>? ScheduleRef;
-    private SfToast? ToastObj;
-
-    private AppointmentVM SelectedAppointment { get; set; } = new();
-    private List<AppointmentVM> DataSource { get; set; } = new();
-    private List<AppointmentVM> gridDataSource = new List<AppointmentVM>();
-
-    private DateTime CurrentDate = DateTime.Now;
-    private bool ShowSchedule { get; set; } = true;
-    private string SearchValue { get; set; } = string.Empty;
-    private string SubjectValue { get; set; } = string.Empty;
-    private string LocationValue { get; set; } = string.Empty;
-    private DateTime? DateStart { get; set; } = DateTime.Now;
-    private DateTime? DateEnd { get; set; } = DateTime.Now;
-
-    private DateTime ApptStartAppt { get; set; } = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 09, 00, 00);
-
-    private List<ResourceData>? ApptResources { get; set; } = new();
-
-    private string? ToastTitle;
-    private string? ToastContent;
-    private string? ToastCssClass;
-
-    private string? ToastMessage;
-    private string? ToastCss;
-    private string? ToastIcon;
-
-    private string? NewCaption;
-    private string? EditCaption;
-    private string? DeleteCaption;
-
-    private int AppointmentId;
-
-    public View CurrentView { get; set; } = View.Week;
-
-
-    public class ResourceData
-    {
-        public int Id { get; set; }
-        public string Text { get; set; } = string.Empty;
-        public string Color { get; set; } = string.Empty;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        InitializeWorkVariables();
-        DataSource = await GetAppointments();
-        ApptResources = CreateSchedulerResources();
-
-        await Task.Delay(100);
-    }
-
-    private void InitializeWorkVariables()
-    {
-        ToastTitle = string.Empty;
-        ToastContent = string.Empty;
-        ToastCssClass = string.Empty;
-        ToastMessage = string.Empty;
-        ToastCss = string.Empty;
-        ToastIcon = string.Empty;
-        NewCaption = string.Empty;
-        EditCaption = string.Empty;
-        DeleteCaption = string.Empty;
-        ShowSchedule = true;
-        SearchValue = string.Empty;
-        SearchValue = string.Empty;
-        SubjectValue = string.Empty;
-        LocationValue = string.Empty;
-        DateStart = DateTime.Now;
-        DateEnd = DateTime.Now;
-    }
-
-    private List<ResourceData> CreateSchedulerResources()
-    {
-        return new List<ResourceData>
-        {
-            new ResourceData{ Text = "IRS", Id= 1, Color = "#df5286" },
-            new ResourceData{ Text = L["TituloIMI"], Id= 2, Color = "#7fa900" }, // events related to council tax
-            new ResourceData{ Text = L["TituloRecibos"], Id= 3, Color = "#ea7a57" }, // events related to rental receipts
-            new ResourceData{ Text = L["TituloFinancas"], Id= 4, Color = "#4682B4" }, // events related to the tax office
-            new ResourceData{ Text = L["TituloCartas"], Id= 5, Color = "#a1d179" }, // Letters that should be sent to tenants
-            new ResourceData{ Text = L["TituloContratos"], Id= 6, Color = "#455275" }, // events relating to lease contracts
-            new ResourceData{ Text = L["TituloCondominios"], Id= 7, Color = "#96ADD5" },// events related to condominium
-            new ResourceData{ Text = L["TituloPessoais"], Id= 8, Color = "#7f89a3" } // Other events (personal)
-        };
-    }
-
-#pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
-    public async Task OnEventSearch()
-    {
-        if (!string.IsNullOrEmpty(SearchValue) && ScheduleRef != null)
-        {
-            Query query = new Query().Search(SearchValue, new List<string> { "Subject", "Location", "Description" }, null, true, true);
-            List<AppointmentVM> eventCollections = await ScheduleRef.GetEventsAsync(null, null, true);
-            object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
-            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
-            if (resultData?.Count > 0)
-            {
-                ShowSchedule = false;
-                gridDataSource = resultData;
-            }
-            else
-            {
-                ShowSchedule = true;
-            }
-        }
-        else
-        {
-            ShowSchedule = true;
-        }
-    }
-
-
-    protected async Task HideToast()
-    {
-        await ToastObj!.HideAsync();
-    }
-
-    protected async Task OnSearchClick() // source: syncfusion demos
-    {
-        DateTime? startDate = null;
-        DateTime? endDate = null;
-        List<WhereFilter> searchObj = new List<WhereFilter>();
-        if (!string.IsNullOrEmpty(SubjectValue))
-        {
-            searchObj.Add(new WhereFilter() { Field = "Subject", Operator = "contains", value = SubjectValue, Condition = "or", IgnoreCase = true });
-        }
-        if (!string.IsNullOrEmpty(LocationValue))
-        {
-            searchObj.Add(new WhereFilter() { Field = "Location", Operator = "contains", value = LocationValue, Condition = "or", IgnoreCase = true });
-        }
-        if (DateStart != null)
-        {
-            startDate = Convert.ToDateTime(DateStart);
-            searchObj.Add(new WhereFilter() { Field = "StartTime", Operator = "greaterthanorequal", value = startDate, Condition = "and", IgnoreCase = false });
-        }
-        if (DateEnd != null)
-        {
-            endDate = (Convert.ToDateTime(DateEnd)).AddDays(1);
-            searchObj.Add(new WhereFilter() { Field = "EndTime", Operator = "lessthanorequal", value = endDate, Condition = "and", IgnoreCase = false });
-        }
-        if (searchObj.Count > 0)
-        {
-            Query query = new Query().Where(new WhereFilter() { Condition = "and", IsComplex = true, predicates = searchObj });
-            List<AppointmentVM>? eventCollections = await ScheduleRef.GetEventsAsync(startDate, endDate, true);
-            object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
-            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
-            gridDataSource = resultData;
-            ShowSchedule = false;
-        }
-        else
-        {
-            ShowSchedule = true;
-        }
-    }
-#pragma warning restore BL0005, CA2000 // Component parameter should not be set outside of its component, Dispose objects before losing scope
-    protected void OnClearClick()
-    {
-        ShowSchedule = true;
-        SearchValue = SubjectValue = LocationValue = string.Empty;
-        DateStart = DateEnd = null;
-    }
-
-    protected async void OnActionBegin(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
-    {
-        if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange)
-        {
-            if (args.ActionType == ActionType.EventCreate)
-            {
-                SelectedAppointment = args.AddedRecords[0];
-                SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
-
-                var transactionId = await ApptsService!.InsertAsync(SelectedAppointment);
-                if(transactionId == -1) // error
-                {
-                    ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
-                    ToastCss = "e-schedule-reminder e-toast-danger";
-                    ToastMessage = L["TituloOperacaoComErro"];
-                    ToastIcon = "fas fa-exclamation-triangle";
-
-                    StateHasChanged();
-                    if (ToastObj is not null)
-                    {
-                        await Task.Delay(200);
-                        await ToastObj.ShowAsync();
-                    }
-                }
-
-            }
-            else if (args.ActionType == ActionType.EventChange)
-            {
-                SelectedAppointment = args.ChangedRecords[0];
-                SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
-                var result = await ApptsService!.UpdateAsync(SelectedAppointment.Id, SelectedAppointment);
-            }
-        }
-        else if (args.ActionType == ActionType.EventRemove)
-        {
-            if (args.DeletedRecords is not null)
-                await ApptsService!.DeleteAsync(args.DeletedRecords[0].Id);
-        }
-
-    }
-    protected async void OnActionCompleted(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
-    {
-
-        if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange)
-        {
-            if (args.ActionType == ActionType.EventCreate)
-            {
-                ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-schedule-reminder e-toast-success";
-                ToastMessage = L["SuccessInsert"];
-                ToastIcon = "fas fa-check";
-            }
-            if (args.ActionType == ActionType.EventChange)
-            {
-                ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-schedule-reminder e-toast-success";
-                ToastMessage = L["RegistoGravadoSucesso"];
-                ToastIcon = "fas fa-check";
-            }
-
-            StateHasChanged();
-            if (ToastObj is not null)
-            {
-                await Task.Delay(200);
-                await ToastObj.ShowAsync();
-            }
-        }
-        else if (args.ActionType == ActionType.EventRemove)
-        {
-            ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
-            ToastCssClass = "e-schedule-reminder e-toast-success";
-            ToastContent = L["RegistoAnuladoSucesso"];
-            ToastIcon = "fas fa-check";
-            StateHasChanged();
-
-            if (ToastObj is not null)
-            {
-                await Task.Delay(200);
-                await ToastObj.ShowAsync();
-            }
-        }
-    }
-
-    public void OnActionFailure(Syncfusion.Blazor.Schedule.ActionEventArgs<AppointmentVM> args)
-    {
-        var actionType = args.ActionType; // for debugging
-        var errors = args.Error;
-    }
-
-    private async Task<List<AppointmentVM>> GetAppointments()
-    {
-        try
-        {
-            return (await ApptsService!.GetAllAsync()).ToList();
-        }
-        catch (Exception ex)
-        {
-            logger?.LogError(ex.Message);
-            return new();
-        }
-    }
-
-    public void OnEventRendered(EventRenderedArgs<AppointmentVM> args)
-    {
-        args.Attributes = ScheduleData.ApplyCategoryColor(args.Data.CategoryColor, args.Attributes, CurrentView);
-    }
-
-    // void IDisposable.Dispose()
-    // {
-    //     ScheduleRef?.Dispose();
-    //     ToastObj?.Dispose();
-    // }
-
-}
 <style>
     .header-customization {
         padding-bottom: 10px;
@@ -451,7 +196,7 @@ else
         display: none;
     }
 
-     @@media (max-width: 441px) {
+    @@media (max-width: 441px) {
         .button-customization {
             padding: 30px !important;
         }

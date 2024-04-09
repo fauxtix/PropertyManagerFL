@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
-using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Core.Entities;
 using System.Data;
 
@@ -10,9 +9,9 @@ namespace PropertyManagerFL.Infrastructure.Repositories;
 public class AppointmentRepository : IAppointmentRepository
 {
     private readonly IDapperContext _context;
-    private readonly ILogger<ContactRepository> _logger;
+    private readonly ILogger<AppointmentRepository> _logger;
 
-    public AppointmentRepository(IDapperContext context, ILogger<ContactRepository> logger)
+    public AppointmentRepository(IDapperContext context, ILogger<AppointmentRepository> logger)
     {
         _context = context;
         _logger = logger;
@@ -44,7 +43,7 @@ public class AppointmentRepository : IAppointmentRepository
         {
             using (var connection = _context.CreateConnection())
             {
-                var contacto = await connection.ExecuteAsync("usp_Appointments_Update",
+                await connection.ExecuteAsync("usp_Appointments_Update",
                      param: appointment, commandType: CommandType.StoredProcedure);
 
                 return true;

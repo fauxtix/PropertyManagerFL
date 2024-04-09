@@ -24,6 +24,46 @@ public class WrapperAppointments : IAppointmentsService
         _mapper = mapper;
     }
 
+    public async Task<int> InsertAsync(AppointmentVM appointment)
+    {
+        try
+        {
+            var appointmentToInsert = _mapper.Map<Appointment>(appointment);
+
+            using (HttpResponseMessage result = await _httpClient.PostAsJsonAsync(_appointmentsUri, appointmentToInsert))
+            {
+                var output = await result.Content.ReadAsStringAsync();
+                var appointmentId = JsonConvert.DeserializeObject<int>(output);
+
+                //var success = result.IsSuccessStatusCode;
+                return appointmentId;
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, $"Erro ao criar marcação {exc.Message}");
+            return 0;
+        }
+    }
+
+    public async Task<bool> UpdateAsync(AppointmentVM appointmentVM)
+    {
+        try
+        {
+
+            using (HttpResponseMessage result = await _httpClient.PutAsJsonAsync(_appointmentsUri, appointmentVM))
+            {
+                var success = result.IsSuccessStatusCode;
+                return success;
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, $"Erro ao atualizar marcação");
+            return false;
+        }
+    }
+
     public async Task DeleteAsync(int Id)
     {
         try
@@ -74,7 +114,9 @@ public class WrapperAppointments : IAppointmentsService
         try
         {
             var appointment = await _httpClient.GetFromJsonAsync<AppointmentVM>($"{_appointmentsUri}/{id}");
-            return appointment;
+            var appointmentDTO = _mapper.Map<AppointmentVM>(appointment);
+
+            return appointmentDTO;
         }
         catch (Exception exc)
         {
@@ -83,44 +125,4 @@ public class WrapperAppointments : IAppointmentsService
         }
     }
 
-    public async Task<int> InsertAsync(AppointmentVM appointment)
-    {
-        try
-        {
-            var appointmentToInsert = _mapper.Map<Appointment>(appointment);
-
-            using (HttpResponseMessage result = await _httpClient.PostAsJsonAsync(_appointmentsUri, appointmentToInsert))
-            {
-                var output = await result.Content.ReadAsStringAsync();
-                var appointmentId = JsonConvert.DeserializeObject<int>(output);
-
-                //var success = result.IsSuccessStatusCode;
-                return appointmentId;
-            }
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc, $"Erro ao criar marcação {exc.Message}");
-            return 0;
-        }
-    }
-
-    public async Task<bool> UpdateAsync(int Id, AppointmentVM appointment)
-    {
-        try
-        {
-            var appointmentToUpdate = _mapper.Map<Appointment>(appointment);
-
-            using (HttpResponseMessage result = await _httpClient.PutAsJsonAsync($"{_appointmentsUri}/{Id}", appointmentToUpdate))
-            {
-                var success = result.IsSuccessStatusCode;
-                return success;
-            }
-        }
-        catch (Exception exc)
-        {
-            _logger.LogError(exc, $"Erro ao atualizar marcação");
-            return false;
-        }
-    }
 }

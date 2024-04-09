@@ -2094,6 +2094,11 @@
               Looks up a localized string similar to Data emissão.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataFim">
+            <summary>
+              Looks up a localized string similar to Data fim.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDataInicio">
             <summary>
               Looks up a localized string similar to Data início.

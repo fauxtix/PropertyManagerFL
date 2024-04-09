@@ -365,7 +365,7 @@ namespace PropertyManagerFLApplication.Utilities
 
 		public static string ToTitleCase(this string str)
 		{
-			var cultureInfo = System.Threading.Thread.CurrentThread.CurrentCulture;
+			var cultureInfo = Thread.CurrentThread.CurrentCulture;
 			return cultureInfo.TextInfo.ToTitleCase(str.ToLower());
 		}
 

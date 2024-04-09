@@ -43,6 +43,7 @@ public static class FluentValidationConfig
                p.RegisterValidatorsFromAssemblyContaining<TipoPropriedadeValidator>();
                p.RegisterValidatorsFromAssemblyContaining<ProprietarioValidator>();
                p.RegisterValidatorsFromAssemblyContaining<TipoRecebimentoValidator>();
+               p.RegisterValidatorsFromAssemblyContaining<ApointmentValidator>();
                p.ValidatorOptions.LanguageManager.Culture = new CultureInfo("pt-PT");
            });
 #pragma warning restore CS0618 // Type or member is obsolete

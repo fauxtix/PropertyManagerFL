@@ -34,6 +34,7 @@ else
                     </ScheduleResources>
                     <ScheduleEvents TValue="AppointmentVM"
                                     OnActionFailure="OnActionFailure"
+                                    DataBound="OnDataBound"
                                     OnActionBegin="OnActionBegin" ActionCompleted="OnActionCompleted" />
                     <ScheduleEventSettings DataSource="@dataSource" />
                     @*                     <ScheduleField>
@@ -143,8 +144,8 @@ else
 
     protected async Task OnDataBound(Syncfusion.Blazor.Schedule.DataBoundEventArgs<AppointmentVM> args)
     {
-        // You can get the entire appointment collections in the EventCollection variable
-        // List<Appointment> eventCollection = await ScheduleObj.GetEvents();
+        //        You can get the entire appointment collections in the EventCollection variable
+        List<AppointmentVM> eventCollection = await ScheduleRef.GetBlockEventsAsync();
 
         string startWkgHour = ApptStartAppt.ToShortTimeString();
         await ScheduleRef!.ScrollToAsync(startWkgHour, DateTime.Now);
@@ -174,8 +175,8 @@ else
                 ToastIcon = "fas fa-check";
 
                 SelectedAppointment = args.ChangedRecords[0];
-                SelectedAppointment.CategoryColor = ApptResources[SelectedAppointment.ApptType - 1].Color;
-                var result = await ApptsService!.UpdateAsync(SelectedAppointment.Id, SelectedAppointment);
+                SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
+                var result = await ApptsService!.UpdateAsync(SelectedAppointment);
             }
 
             StateHasChanged();
@@ -281,6 +282,8 @@ else
             return new();
         }
     }
+
+
 
 }
 <style>

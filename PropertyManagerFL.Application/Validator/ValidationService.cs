@@ -13,6 +13,7 @@ using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Application.ViewModels.TipoDespesa;
+using PropertyManagerFL.Application.ViewModels.Appointments;
 
 namespace PropertyManagerFL.Application.Validator
 {
@@ -28,6 +29,7 @@ namespace PropertyManagerFL.Application.Validator
         private readonly DocumentoValidator _documentsValidator;
         private readonly TipoDespesaValidator _expenseTypeValidator;
         private readonly RecebimentoValidator _transactionsValidator;
+        private readonly ApointmentValidator _apptsValidator;
         private readonly ProprietarioValidator _landlordService;
 
         public ValidationService(InquilinoValidator tenantsValidator,
@@ -41,7 +43,8 @@ namespace PropertyManagerFL.Application.Validator
                                  DocumentoValidator documentsValidator,
                                  FiadorValidator fiadoresValidator,
                                  ProprietarioValidator proprietarioService,
-                                 ProprietarioValidator landlordService)
+                                 ProprietarioValidator landlordService,
+                                 ApointmentValidator apptsValidator)
         {
             _tenantsValidator = tenantsValidator;
             _propertiesValidator = propertiesValidator;
@@ -54,6 +57,7 @@ namespace PropertyManagerFL.Application.Validator
             _documentsValidator = documentsValidator;
             _fiadoresValidator = fiadoresValidator;
             _landlordService = landlordService;
+            _apptsValidator = apptsValidator;
         }
         public List<string> ValidateTenantEntries(InquilinoVMEx SelectedTenant)
         {
@@ -234,6 +238,24 @@ namespace PropertyManagerFL.Application.Validator
             List<string> sValidationErrors = new List<string>();
 
             ValidationResult results = _fiadoresValidator.Validate(selectedFiador);
+            if (!results.IsValid)
+            {
+                foreach (ValidationFailure failure in results.Errors)
+                {
+                    sValidationErrors.Add(failure.ErrorMessage);
+                }
+                return sValidationErrors;
+            }
+            else
+                return null;
+        }
+
+
+        public List<string> ValidateAppointmentEntries(AppointmentVM selectedAppointment)
+        {
+            List<string> sValidationErrors = new List<string>();
+
+            ValidationResult results = _apptsValidator.Validate(selectedAppointment);
             if (!results.IsValid)
             {
                 foreach (ValidationFailure failure in results.Errors)

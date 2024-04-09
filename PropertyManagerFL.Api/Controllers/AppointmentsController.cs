@@ -22,87 +22,70 @@ public class AppointmentsController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> CreateAppointment([FromBody] Appointment appointment)
+    public async Task<int> CreateAppointment([FromBody] Appointment appointment)
     {
         var location = GetControllerActionNames();
         try
         {
-            var appointmentToInsert = _mapper.Map<Appointment>(appointment);
-            var createdId = await _appointmentRepository.InsertAsync(appointmentToInsert);
+            var createdId = await _appointmentRepository.InsertAsync(appointment);
             var createdAppointment = await _appointmentRepository.GetById_Async(createdId);
             var result = CreatedAtAction(nameof(GetAppointment_ById), new { Id = createdId }, createdAppointment);
-            return Ok(createdId);
+            return createdId;
         }
         catch (Exception ex)
         {
             _logger.LogError(ex.Message, ex);
-            return BadRequest(ex);
+            return -1;
         }
     }
 
-    [HttpPut("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UpdateAppointment(int id, [FromBody] AppointmentVM appointmentVM)
+    [HttpPut]
+    public async Task UpdateAppointment([FromBody] AppointmentVM appointmentToUpdate)
     {
         var location = GetControllerActionNames();
         try
         {
-            if (appointmentVM == null || id != appointmentVM.Id)
-                return BadRequest("Parâmetros inválidos. Verifique, p.f.");
+            if (appointmentToUpdate == null)
+                _logger.LogWarning("Appointments - Parâmetros inválidos. Verifique, p.f.");
 
-            if (_appointmentRepository.GetById_Async(id) == null)
+            if (_appointmentRepository.GetById_Async(appointmentToUpdate!.Id) == null)
             {
-                return NotFound("Não encontrado");
+                _logger.LogWarning("Event not found. Check log, please");
             }
 
-            var appointmentToUpdate = _mapper.Map<Appointment>(appointmentVM);
-
-            await _appointmentRepository.UpdateAsync(appointmentToUpdate);
-            return NoContent();
+            var appointment = _mapper.Map<Appointment>(appointmentToUpdate);
+            await _appointmentRepository.UpdateAsync(appointment);
         }
         catch (Exception ex)
         {
-            return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
+            _logger.LogError($"{location}: {ex.Message} - {ex.InnerException}");
         }
     }
 
-    [HttpDelete("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpDelete("{Id:int}")]
 
-    public async Task<IActionResult> DeleteById(int id)
+    public async Task Delete(int Id)
     {
         var location = GetControllerActionNames();
         try
         {
-            if (_appointmentRepository.GetById_Async(id) == null)
+            if (_appointmentRepository.GetById_Async(Id) == null)
             {
-                return NotFound("Não encontrado");
+                _logger.LogWarning("Evento não encontrado. Verifique, p.f.");
             }
 
-            await _appointmentRepository.DeleteAsync(id);
-            return Ok();
+            await _appointmentRepository.DeleteAsync(Id);
 
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message, e);
-            return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
-    public async Task<IActionResult> GetAppointments()
+    public async Task<IEnumerable<AppointmentVM>> GetAppointments()
     {
         var location = GetControllerActionNames();
         try
@@ -111,21 +94,22 @@ public class AppointmentsController : ControllerBase
             if (appointments.Count() > 0)
             {
                 var clientAppointments = _mapper.Map<IEnumerable<AppointmentVM>>(appointments);
-                return Ok(clientAppointments);
+                return clientAppointments;
             }
             else
             {
                 _logger.LogWarning("Api / Appointments - Sem registos para apresentar");
-                return NotFound("Sem registos para apresentar");
+                return Enumerable.Empty<AppointmentVM>();
             }
 
         }
         catch (Exception e)
         {
             _logger.LogError(e.Message, e);
-            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            return Enumerable.Empty<AppointmentVM>();
         }
     }
+
 
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -155,8 +139,6 @@ public class AppointmentsController : ControllerBase
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
-
-
 
     private string GetControllerActionNames()
     {

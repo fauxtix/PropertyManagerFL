@@ -79,7 +79,7 @@ else
                     </div>
                     <div class="col-lg-6 control-section sb-property-border">
                         <div class="control-section">
-                            <ExpLineChart Year="@DateTime.Now.AddYears(-1).Year.ToString()"  Expenses="@CategoriesSummaryPreviousYear" />
+                            <ExpLineChart Year="@DateTime.Now.AddYears(-1).Year.ToString()" Expenses="@CategoriesSummaryPreviousYear" />
                         </div>
                     </div>
                 </div>
@@ -89,21 +89,47 @@ else
         <div class="row card-box">
             <div class="col-md-6">
                 <div class="table table-striped">
-                    <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
-                    <SfGrid DataSource="@last5Transactions"
+                    <AlertMessage Message="IRS Previsto" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+                    <SfGrid DataSource="@IRSValues" TValue="IRSResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
-                                        TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                            <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
-                                        Width="200"></GridColumn>
-                            <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="C2"
-                                        TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                            <GridColumn Field=@nameof(IRSResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"
+                                        Width="250"></GridColumn>
+                            <GridColumn Field=@nameof(IRSResults.ValorRenda) HeaderText="@L["TituloRenda"]"
+                                        Format="C2"
+                                        TextAlign="TextAlign.Right" Width="150"></GridColumn>
+                            <GridColumn Field=@nameof(IRSResults.ValorIRS) HeaderText="@L["TituloValorPagar"]"
+                                        Format="C2"
+                                        TextAlign="TextAlign.Right" Width="150"></GridColumn>
                         </GridColumns>
+                        <GridAggregates>
+                            <GridAggregate>
+                                <GridAggregateColumns>
+                                    <GridAggregateColumn Field=@nameof(IRSResults.ValorRenda) Type="AggregateType.Sum" Format="C2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate?.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                    <GridAggregateColumn Field=@nameof(IRSResults.ValorIRS) Type="AggregateType.Sum" Format="C2">
+                                        <FooterTemplate>
+                                            @{
+                                                var aggregate = (context as AggregateTemplateContext);
+                                                <p class="my-1">@aggregate?.Sum</p>
+                                            }
+                                        </FooterTemplate>
+                                    </GridAggregateColumn>
+                                </GridAggregateColumns>
+                            </GridAggregate>
+                        </GridAggregates>
+
                     </SfGrid>
                 </div>
             </div>
+
             <div class="col-md-6">
                 <div class="table table-striped">
                     <AlertMessage Message="IMI Previsto" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
@@ -206,6 +232,28 @@ else
                 </div>
             </div>
         </div>
+
+        <div class="row card-box">
+            <div class="col-md-6">
+                <div class="table table-striped">
+                    <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
+                    <SfGrid DataSource="@last5Transactions"
+                            RowHeight="28"
+                            GridLines="GridLine.Horizontal">
+                        <GridColumns>
+                            <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
+                                        TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
+                            <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
+                                        Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="C2"
+                                        TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 }
 
@@ -229,6 +277,7 @@ else
 
     protected List<FracaoVM>? AllUnits { get; set; } = new();
     protected List<IMIResults>? IMIValues { get; set; } = new();
+    protected List<IRSResults>? IRSValues { get; set; } = new();
 
     protected decimal ExpensesTotal;
     protected decimal ExpensesThisYear;
@@ -248,6 +297,12 @@ else
         public string? Descricao { get; set; }
         public double Coeficiente { get; set; }
         public decimal ValorPagar { get; set; }
+    }
+    protected class IRSResults
+    {
+        public string? Descricao { get; set; }
+        public decimal ValorRenda { get; set; }
+        public decimal ValorIRS { get; set; }
     }
 
     protected override async Task OnInitializedAsync()
@@ -275,6 +330,17 @@ else
                         ValPatrimonio = unit.ValorUltAvaliacao,
                         ValorPagar = Math.Round(unit.ValorUltAvaliacao * (decimal)0.0033, 2)
                     });
+                if (unit.Situacao == 1)
+                {
+                    IRSValues?.Add(
+                        new IRSResults
+                            {
+                                Descricao = unit.Descricao,
+                                ValorRenda = unit.ValorRenda * 12,
+                                ValorIRS = Math.Round((unit.ValorRenda * 12) * (decimal)0.28, 2)
+                            }
+                        );
+                }
             }
 
             expensesList = await expensesService!.GetAll();
@@ -314,7 +380,7 @@ else
             throw;
         }
     }
-    }
+}
 
 
 <style>

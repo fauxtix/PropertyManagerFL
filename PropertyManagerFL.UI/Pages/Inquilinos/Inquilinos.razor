@@ -126,7 +126,7 @@ else
                                                     <Template Context="CC_ctx">
                                                         @{
                                                             var rec = (CC_ctx as CC_InquilinoVM);
-                                                            var monthTran = rec.DataMovimento.AddMonths(-1).ToString("MMMM").ToTitleCase();
+                                                            var monthTran = rec.DataMovimento.ToString("MMMM").ToTitleCase();
                                                             var yearTran = rec.DataMovimento.ToString("yyyy");
                                                             var caption = $"{monthTran}-{yearTran}";
                                                             <div>@caption</div>

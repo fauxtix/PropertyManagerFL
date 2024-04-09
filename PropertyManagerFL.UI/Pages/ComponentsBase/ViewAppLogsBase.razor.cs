@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Logs;
@@ -17,6 +18,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public ILogService? logService { get; set; }
         [Inject] public ILogger<ViewAppLogsBase>? logger { get; set; }
         [Inject] public IWebHostEnvironment? hostEnvironment { get; set; }
+        [Inject] protected IStringLocalizer<App>? L { get; set; }
 
         [CascadingParameter] protected Task<AuthenticationState>? authenticationStateTask { get; set; }
 
@@ -55,7 +57,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             email = user.Email;
 
 
-            pageBadgeCaption = "Todos os registos";
+            pageBadgeCaption = L["TituloTodosRegistos"];
             await GetAllLogs();
         }
 
@@ -118,7 +120,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             else
             {
                 AlertVisibility = true;
-                pageBadgeCaption = "Todos os registos";
+                pageBadgeCaption = L["TituloTodosRegistos"];
                 WarningMessage = "Não há registos para apagar... Verifique, p.f.";
                 logger?.LogWarning($"Utilizador ({user}) tentou apagar registos com tabela vazia... ");
 
@@ -169,9 +171,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                await Task.Delay(200);
-
                 logger?.LogError(ex.Message, ex);
+                await SpinnerObj!.HideAsync();
             }
         }
 
@@ -244,14 +245,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             else if (args.Item.Id.ToLower() == "deletelogs")
             {
-                pageBadgeCaption = "Apagar";
+                pageBadgeCaption = L["DeleteMsg"];
 
                 await onDeleteLogs();
             }
             else // All Logs
             {
                 await GetAllLogs();
-                pageBadgeCaption = "Todos os registos";
+                pageBadgeCaption = L["TituloTodosRegistos"];
             }
         }
 

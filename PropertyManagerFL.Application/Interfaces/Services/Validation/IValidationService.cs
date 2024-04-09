@@ -1,4 +1,5 @@
-﻿using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+﻿using PropertyManagerFL.Application.ViewModels.Appointments;
+using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Application.ViewModels.Despesas;
 using PropertyManagerFL.Application.ViewModels.Documentos;
@@ -25,6 +26,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.Validation
         List<string> ValidateExpenseTypeEntries(TipoDespesaVM expenseTypeToValidate);
         List<string> ValidateTransactonsEntries(RecebimentoVM transactionToValidate);
         List<string> ValidateDocumentEntries(DocumentoVM documentToValidate);
+        List<string> ValidateAppointmentEntries(AppointmentVM apptToValidate);
         List<string> ValidateLandlordEntry(ProprietarioVM landlordToValidate);
     }
 }

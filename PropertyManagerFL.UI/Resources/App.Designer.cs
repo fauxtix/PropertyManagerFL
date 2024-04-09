@@ -2303,6 +2303,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Data fim.
+        /// </summary>
+        public static string TituloDataFim {
+            get {
+                return ResourceManager.GetString("TituloDataFim", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Data início.
         /// </summary>
         public static string TituloDataInicio {

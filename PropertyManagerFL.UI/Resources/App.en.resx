@@ -2616,4 +2616,7 @@
   <data name="TituloTodosRegistos" xml:space="preserve">
     <value>All records</value>
   </data>
+  <data name="TituloDataFim" xml:space="preserve">
+    <value>End date</value>
+  </data>
 </root>

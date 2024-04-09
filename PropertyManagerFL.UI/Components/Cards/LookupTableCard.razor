@@ -15,8 +15,24 @@
            CssClass="e-spin-overlay">
 </SfSpinner>
 
+<div class="new-cards">
+    <div class="card @CardType">
+        <div class="card__icon"><i class="@CardSymbol"></i></div>
+        <h2 class="card__title" style="font-size:x-large">@cardTitle</h2>
+        <p class="card__apply" style="text-align:center;">
+            <SfButton CssClass="btn e-outline e-round-corner card__link p-2" style="color:white"
+                      IconCss="e-icons e-settings"
+                      @onclick="@(e => NavigateToUrlAsync(tableParam!))" Content="@L["lblManutencao"]">
+            </SfButton>
 
-<SfCard ID="table-card">
+            @* <a class="card__link" href="#">Apply Now <i class="e-icons e-settings"></i></a> *@
+        </p>
+    </div>
+</div>
+
+
+
+@* <SfCard ID="table-card">
     <CardHeader Title="@cardTitle" ImageUrl="images/database-table-icon.png"></CardHeader>
     <CardFooter>
         <CardFooterContent>
@@ -29,7 +45,7 @@
         </CardFooterContent>
     </CardFooter>
 </SfCard>
-
+ *@
 
 <SfDialog Target="#target"
           Width="50%"
@@ -58,118 +74,7 @@
     <DialogAnimationSettings Effect="@Effects" Duration=400></DialogAnimationSettings>
 </SfDialog>
 
-@code {
-    [Parameter] public string? tableParam { get; set; }
-    [Parameter] public string? cardContent { get; set; }
-    [Parameter] public string? cardTitle { get; set; }
-    [Parameter] public string? cardImage { get; set; }
 
-    protected DialogEffect Effects = DialogEffect.Zoom;
-
-    protected Modules modulo { get; set; }
-    protected string? PdfFilePath { get; set; }
-
-    string? PageTitle;
-    string? TableToValidate;
-    string? FkToValidate;
-
-    protected SfSpinner? SpinnerObj;
-
-    protected bool PdfViewerVisibility { get; set; } = false;
-
-
-
-    protected Dictionary<string, object> htmlAttribute = new Dictionary<string, object>()
-{
-        {"overflow", "auto" }
-    };
-
-    // not async, javascript replaced
-    private void NavigateToUrlAsync(string tableName)
-    {
-        string url = GetUrl(tableName);
-        //        await JSRuntime.InvokeAsync<object>("open", url, "_blank");
-        navigationManager.NavigateTo(url);
-    }
-
-    public void CloseEditDialog()
-    {
-        switch (modulo)
-        {
-            case Modules.PdfViewer:
-                PdfViewerVisibility = false;
-                break;
-        }
-    }
-
-
-    private string GetUrl(string tableName)
-    {
-        PageTitle = cardTitle;
-        TableToValidate = "";
-        FkToValidate = "";
-
-        string SqlTable = tableName; // GetDataTableName(tableName);
-
-        switch (tableName.ToLower())
-        {
-            case "estadocivil":
-                TableToValidate = "Proprietarios";
-                FkToValidate = "ID_EstadoCivil";
-                break;
-            case "estadoconservacao":
-                TableToValidate = "Fracoes";
-                FkToValidate = "Conservacao";
-                break;
-            case "formapagamento":
-                TableToValidate = "Recebimentos";
-                FkToValidate = "ID_TipoRecebimento";
-
-                break;
-            case "situacaofracao":
-                TableToValidate = "Fracoes";
-                FkToValidate = "Situacao";
-
-                break;
-            case "tipocontacto":
-                TableToValidate = "Contactos";
-                FkToValidate = "ID_TipoContacto";
-
-                break;
-            case "tipodespesa":
-                TableToValidate = "Despesas";
-                FkToValidate = "ID_TipoDespesa";
-
-                break;
-            case "tipologiafracao":
-                TableToValidate = "Fracoes";
-                FkToValidate = "Tipologia";
-
-                break;
-
-            case "tipopropriedade":
-                TableToValidate = "Fracoes";
-                FkToValidate = "ID_TipoPropriedade";
-
-                break;
-                //case "tiporecebimento":
-                //    TableToValidate = "Recebimentos";
-                //    FkToValidate = "ID_TipoRecebimento";
-
-                //    break;
-        }
-
-        string url = $"/admin/adminpanel?" + $"DataTable={SqlTable}&PageTitle={PageTitle}&" +
-                     $"TableToValidate={TableToValidate}&FieldToValidate={FkToValidate}";
-
-        return url;
-    }
-
-    void IDisposable.Dispose()
-    {
-        SpinnerObj?.Dispose();
-    }
-}
 <style type="text/css" scoped>
 
     #table-card .e-card .e-card-content {
@@ -211,6 +116,105 @@
         display: grid;
         gap: 1rem;
     }
+
+
+    .new-cards {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .card {
+        margin: 20px;
+        padding: 20px;
+        min-height: 200px;
+        display: grid;
+        grid-template-rows: 20px 50px 1fr 50px;
+        border-radius: 10px;
+        box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+        transition: all 0.2s;
+    }
+
+        .card:hover {
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
+        }
+
+    .card__link,
+    .card__exit,
+    .card__icon {
+        position: relative;
+        text-decoration: none;
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+        .card__link::after {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            content: "";
+            width: 0%;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.6);
+            transition: all 0.5s;
+        }
+
+        .card__link:hover::after {
+            width: 100%;
+        }
+
+    .card__exit {
+        grid-row: 1/2;
+        justify-self: end;
+    }
+
+    .card__icon {
+        grid-row: 2/3;
+        font-size: 30px;
+    }
+
+    .card__title {
+        grid-row: 3/4;
+        font-weight: 400;
+        color: #ffffff;
+    }
+
+    .card__apply {
+        grid-row: 4/5;
+        align-self: center;
+    }
+
+    /* CARD BACKGROUNDS */
+
+    .card-1 {
+        background: radial-gradient(#1fe4f5, #3fbafe);
+    }
+
+    .card-2 {
+        background: radial-gradient(#fbc1cc, #fa99b2);
+    }
+
+    .card-3 {
+        background: radial-gradient(#76b2fe, #b69efe);
+    }
+
+    .card-4 {
+        background: radial-gradient(#60efbc, #58d5c9);
+    }
+
+    .card-5 {
+        background: radial-gradient(#f588d8, #c0a3e5);
+    }
+
+    /* RESPONSIVE */
+
+    @@media (max-width: 1600px) {
+        .cards {
+            justify-content: center;
+        }
+    }
+
+
 
     @@media (min-width: 600px) {
         .cards {

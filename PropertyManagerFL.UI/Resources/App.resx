@@ -1609,4 +1609,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloTodosRegistos" xml:space="preserve">
     <value>Todos os registos</value>
   </data>
+  <data name="TituloDataFim" xml:space="preserve">
+    <value>Data fim</value>
+  </data>
 </root>

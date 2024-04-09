@@ -10,8 +10,8 @@ public class Appointment
     public bool IsAllDay { get; set; }
     public string CategoryColor { get; set; } = string.Empty;
     public string RecurrenceRule { get; set; } = string.Empty;
-    public int RecurrenceID { get; set; }
-    public int FollowingID { get; set; }
+    public int? RecurrenceID { get; set; }
+    public int? FollowingID { get; set; }
     public string RecurrenceException { get; set; } = string.Empty;
     public string StartTimezone { get; set; } = string.Empty;
     public string EndTimezone { get; set; } = string.Empty;
