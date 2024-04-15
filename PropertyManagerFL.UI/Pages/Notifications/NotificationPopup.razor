@@ -1,7 +1,7 @@
 ﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos
 
-@if (showPopup && AppAlerts is not null && AppAlerts.Any())
+@* @if (showPopup && AppAlerts is not null && AppAlerts.Any())
 {
     <div class="notification">
         <div class="notification-header">
@@ -19,4 +19,17 @@
             </div>            
         </div>
     </div>
+} *@
+
+@if (showPopup)
+{
+    <div class="floating-popup">
+        <div class="popup-content">
+            @foreach (var item in AppAlerts)
+            {
+                <p class="notification-text">@item</p>
+            }
+        </div>
+    </div>
 }
+

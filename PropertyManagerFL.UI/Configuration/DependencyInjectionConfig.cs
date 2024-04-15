@@ -1,4 +1,5 @@
 ﻿using EmailService;
+using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
@@ -6,6 +7,8 @@ using PropertyManagerFL.Application.Interfaces.Services.Email;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
+using PropertyManagerFL.Infrastructure.Adapters;
+using PropertyManagerFL.Infrastructure.Repositories;
 using PropertyManagerFL.Infrastructure.Services.CommonServices;
 using PropertyManagerFL.UI.ApiWrappers;
 
@@ -63,5 +66,7 @@ public static class DependencyInjectionConfig
 
         services.AddScoped<IAppSettingsService, WrapperAppSettings>();
         services.AddScoped<IAppointmentsService, WrapperAppointments>();
+        services.AddScoped<AppointmentAdaptor>();
+
     }
 }

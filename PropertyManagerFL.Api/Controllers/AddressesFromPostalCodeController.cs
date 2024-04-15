@@ -38,8 +38,6 @@ namespace PropertyManagerFL.Api.Controllers
                     RequestUri = new Uri(endpoint),
                 };
 
-                List<AddressVM> addresses = new();
-
                 using (var response = await _httpClient.SendAsync(request))
                 {
                     var status = response.EnsureSuccessStatusCode();

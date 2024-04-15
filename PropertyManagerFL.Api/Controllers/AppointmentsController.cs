@@ -39,26 +39,44 @@ public class AppointmentsController : ControllerBase
         }
     }
 
-    [HttpPut]
-    public async Task UpdateAppointment([FromBody] AppointmentVM appointmentToUpdate)
+    [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<IActionResult> UpdateAppointment(int id, [FromBody] Appointment? appointmentToUpdate)
     {
         var location = GetControllerActionNames();
+        string msg = "Appointments - Bad parameter. Check log, please";
         try
         {
             if (appointmentToUpdate == null)
-                _logger.LogWarning("Appointments - Parâmetros inválidos. Verifique, p.f.");
-
-            if (_appointmentRepository.GetById_Async(appointmentToUpdate!.Id) == null)
             {
-                _logger.LogWarning("Event not found. Check log, please");
+                _logger.LogWarning(msg);
+                return BadRequest(msg);
             }
 
-            var appointment = _mapper.Map<Appointment>(appointmentToUpdate);
-            await _appointmentRepository.UpdateAsync(appointment);
+            if (id != appointmentToUpdate.Id)
+            {
+                _logger.LogWarning(msg);
+                return BadRequest(msg);
+            }
+            var apptToUpdate = await _appointmentRepository.GetById_Async(id);
+            if (apptToUpdate is null)
+            {
+                msg = $"Appointments - Event not found ({id}). Check log, please";
+                _logger.LogWarning(msg);    
+                return NotFound(msg);
+            }
+
+            var success = await _appointmentRepository.UpdateAsync(appointmentToUpdate);
+            return success? NoContent(): BadRequest("Appointment not updated");
         }
         catch (Exception ex)
         {
             _logger.LogError($"{location}: {ex.Message} - {ex.InnerException}");
+            return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
+
         }
     }
 
@@ -98,7 +116,7 @@ public class AppointmentsController : ControllerBase
             }
             else
             {
-                _logger.LogWarning("Api / Appointments - Sem registos para apresentar");
+                //_logger.LogWarning("Api / Appointments - Sem registos para apresentar");
                 return Enumerable.Empty<AppointmentVM>();
             }
 

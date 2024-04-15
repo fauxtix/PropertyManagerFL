@@ -4,6 +4,7 @@
 
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Appointments
+@using PropertyManagerFL.Infrastructure.Adapters
 @using PropertyManagerFL.UI.Data.Scheduler;
 @using Syncfusion.Blazor
 @using Syncfusion.Blazor.Buttons
@@ -42,26 +43,27 @@ else
                                           ColorField="Color"></ScheduleResource>
                     </ScheduleResources>
 
-                    <ScheduleEvents TValue="AppointmentVM"
+                    @* <ScheduleEvents TValue="AppointmentVM"
                                     EventRendered="OnEventRendered"
                                     OnActionFailure="OnActionFailure"
                                     OnActionBegin="OnActionBegin"
-                                    ActionCompleted="OnActionCompleted" />
-                    <ScheduleEventSettings TValue="AppointmentVM"
-                                           DataSource="@DataSource">
+                                    ActionCompleted="OnActionCompleted" /> *@
+                    @* <ScheduleEventSettings TValue="AppointmentVM">
+                                           DataSource="@DataSource"> *@
 
-                        @*
-                    <SfDataManager Url="@_appointmentsUri"
+                        <ScheduleEventSettings TValue="AppointmentVM">
+                                 <SfDataManager AdaptorInstance="@typeof(AppointmentAdaptor)" Adaptor="Adaptors.CustomAdaptor"/>
+
+
+
+                     @* <SfDataManager Url="@_appointmentsUri"
                     UpdateUrl="@_appointmentsUri_Update"
                     RemoveUrl="@_appointmentsUri_Delete"
                     InsertUrl="@_appointmentsUri_Insert"
-                    Adaptor="Adaptors.UrlAdaptor" />
-                    *@
+                    Adaptor="Adaptors.UrlAdaptor" />*@
 
-                        @*
-                    <SfDataManager Url="@_appointmentsUri"
-                    Adaptor="@Syncfusion.Blazor.Adaptors.WebApiAdaptor"/>
-                    *@
+                     @* <SfDataManager Url="@_appointmentsUri"
+                    Adaptor="@Syncfusion.Blazor.Adaptors.WebApiAdaptor" />*@
 
                         <ScheduleField>
                             <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
@@ -154,7 +156,7 @@ else
 <SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
          Target=".e-schedule" NewestOnTop="true"
          Icon="@ToastIcon"
-         CssClass="@ToastCss" Timeout="3000">
+         CssClass="@ToastCss" Timeout="2000">
     <ToastTemplates>
         <Template>
             <div class="e-toast-template">

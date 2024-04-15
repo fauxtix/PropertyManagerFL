@@ -85,7 +85,7 @@ public class AppointmentRepository : IAppointmentRepository
             {
                 var output = await connection.QueryAsync<Appointment>("usp_Appointments_GetAll",
                     commandType: CommandType.StoredProcedure);
-                return output.ToList();
+                return output;
             }
 
         }

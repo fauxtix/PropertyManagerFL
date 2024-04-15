@@ -28,7 +28,6 @@ public partial class Scheduler
     protected SfSpinner? SpinnerObj { get; set; }
 
 
-    private AppointmentVM? SelectedAppointment { get; set; }
     private IEnumerable<AppointmentVM>? DataSource { get; set; }
     private List<AppointmentVM>? gridDataSource { get; set; }
 
@@ -73,7 +72,6 @@ public partial class Scheduler
     private string? EditCaption;
     private string? DeleteCaption;
 
-    private int AppointmentId;
 
     public View CurrentView { get; set; } = View.Week;
 
@@ -112,9 +110,9 @@ public partial class Scheduler
         DateEnd = DateTime.Now;
 
         _appointmentsUri = $"{_env!["BaseUrl"]}/Appointments";
-        _appointmentsUri_Insert = $"{_env["BaseUrl"]}/Appointments/Insert";
-        _appointmentsUri_Update = $"{_env["BaseUrl"]}/Appointments/Update";
-        _appointmentsUri_Delete = $"{_env["BaseUrl"]}/Appointments/Delete";
+        _appointmentsUri_Insert = $"{_appointmentsUri}/Insert";
+        _appointmentsUri_Update = $"{_appointmentsUri}/Update";
+        _appointmentsUri_Delete = $"{_appointmentsUri}/Delete";
 
     }
 
@@ -133,7 +131,7 @@ public partial class Scheduler
     };
     }
 
-    protected async void OnActionBegin(ActionEventArgs<AppointmentVM> args)
+    protected void OnActionBegin(ActionEventArgs<AppointmentVM> args)
     {
         WarningVisibility = false;
         ValidationsMessages = new();
@@ -146,110 +144,98 @@ public partial class Scheduler
                 {
                     WarningVisibility = true;
                 }
-                else
-                {
-                    foreach (AppointmentVM eventData in args.AddedRecords)
-                    {
-                        SelectedAppointment = eventData;
-                        SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
-
-                        var transactionId = await ApptsService!.InsertAsync(SelectedAppointment);
-                        if (transactionId == -1) // code returned if  error on insertion
-                        {
-                            ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
-                            ToastCss = "e-schedule-reminder e-toast-danger";
-                            ToastMessage = L["TituloOperacaoComErro"];
-                            ToastIcon = "fas fa-exclamation-triangle";
-
-                            StateHasChanged();
-                            if (ToastObj is not null)
-                            {
-                                await Task.Delay(200);
-                                await ToastObj.ShowAsync();
-                            }
-                            return;
-                        }
-                    }
-                }
             }
-
-            if (args.ChangedRecords is not null && args.ChangedRecords.Count > 0)
-            {
-                ValidationsMessages = validatorService!.ValidateAppointmentEntries(args.ChangedRecords[0]);
-                if (ValidationsMessages is not null)
-                {
-                    WarningVisibility = true;
-                }
-                else
-                {
-                    if (args.ActionType == ActionType.EventChange)
-                        foreach (AppointmentVM eventData in args.ChangedRecords)
-                        {
-                            SelectedAppointment = eventData;
-                            SelectedAppointment.CategoryColor = ApptResources![SelectedAppointment.ApptType - 1].Color;
-                            var result = await ApptsService!.UpdateAsync(SelectedAppointment);
-                        }
-                    else if (args.ActionType == ActionType.EventRemove) // may be a 'bug' -- when deleting series in recurrent events, the deleted records array is empty, they're stored in the 'ChangedRecords'...
-                    {
-                        foreach (AppointmentVM eventData in args.ChangedRecords) // <=
-                        {
-                            await ApptsService!.DeleteAsync(eventData.Id);
-                        }
-                    }
-                }
-            }
-
-            if (args.DeletedRecords is not null && args.DeletedRecords.Count > 0)
-            {
-                foreach (AppointmentVM eventData in args.DeletedRecords)
-                {
-                    await ApptsService!.DeleteAsync(eventData.Id);
-                }
-            }
-
-            DataSource = await GetAppointments();
         }
-
     }
+
     protected async void OnActionCompleted(ActionEventArgs<AppointmentVM> args)
     {
-        if(WarningVisibility) return;
+        if (WarningVisibility) return;
 
         ToastIcon = "fas fa-check";
+
+        AppointmentVM apptData = new();
 
         if (args.ActionType == ActionType.EventCreate || args.ActionType == ActionType.EventChange || args.ActionType == ActionType.EventRemove)
         {
             if (args.ActionType == ActionType.EventCreate)
             {
-                ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-schedule-reminder e-toast-success";
-                ToastMessage = L["SuccessInsert"];
-                ToastIcon = "fas fa-check";
+                apptData = args.AddedRecords[0];
+                var apptType = apptData.ApptType ?? 3;
+                apptData.CategoryColor = ApptResources![apptType - 1].Color;
+
+                var transactionId = await ApptsService!.InsertAsync(apptData);
+                if (transactionId == -1) // code returned if  error on insertion
+                {
+                    ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
+                    ToastCss = "e-schedule-reminder e-toast-danger";
+                    ToastMessage = L["TituloOperacaoComErro"];
+                    ToastIcon = "fas fa-exclamation-triangle";
+
+                    StateHasChanged();
+                    if (ToastObj is not null)
+                    {
+                        await Task.Delay(200);
+                        await ToastObj.ShowAsync();
+                    }
+                    return;
+                }
             }
+
+            ToastTitle = $"{L["NewMsg"]} {L["TituloTarefa"]}";
+            ToastCss = "e-schedule-reminder e-toast-success";
+            ToastMessage = L["SuccessInsert"];
+            ToastIcon = "fas fa-check";
+        }
+        if (args.ActionType == ActionType.EventChange || args.ActionType == ActionType.EventRemove)
+        {
+           
+
             if (args.ActionType == ActionType.EventChange)
             {
-                ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
-                ToastCss = "e-schedule-reminder e-toast-success";
-                ToastMessage = L["RegistoGravadoSucesso"];
+                apptData = args.ChangedRecords[0];
+                var apptType = apptData.ApptType ?? 3;
+
+                apptData.CategoryColor = ApptResources![apptType - 1].Color;
+                await ApptsService!.UpdateAsync(apptData.Id, apptData);
+            }
+            else if (args.ActionType == ActionType.EventRemove)
+            {
+                apptData = args.DeletedRecords[0];
+
+                await ApptsService!.DeleteAsync(apptData.Id);
             }
 
-            if (args.ActionType == ActionType.EventRemove)
+            ToastTitle = $"{L["EditMsg"]} {L["TituloTarefa"]}";
+            ToastCss = "e-schedule-reminder e-toast-success";
+            ToastMessage = L["RegistoGravadoSucesso"];
+        }
+
+        if (args.ActionType == ActionType.EventRemove)
+        {
+            apptData = args.DeletedRecords[0];
+
+            if (args.DeletedRecords is not null && args.DeletedRecords.Count > 0)
             {
-                ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
-                ToastCssClass = "e-schedule-reminder e-toast-success";
-                ToastContent = L["RegistoAnuladoSucesso"];
-                ToastIcon = "fas fa-check";
-                StateHasChanged();
+                await ApptsService!.DeleteAsync(apptData.Id);
             }
 
-            StateHasChanged();
-            if (ToastObj is not null)
-            {
-                await Task.Delay(200);
-                await ToastObj.ShowAsync();
-            }
+            ToastTitle = $"{L["DeleteMsg"]} {L["TituloTarefa"]}";
+            ToastCssClass = "e-schedule-reminder e-toast-success";
+            ToastContent = L["RegistoAnuladoSucesso"];
+            ToastIcon = "fas fa-check";
+        }
+
+        DataSource = await GetAppointments();
+
+        StateHasChanged();
+        if (ToastObj is not null && args.ActionType != ActionType.DateNavigate)
+        {
+            await Task.Delay(200);
+            await ToastObj.ShowAsync();
         }
     }
+
 
     public void OnActionFailure(ActionEventArgs<AppointmentVM> args)
     {

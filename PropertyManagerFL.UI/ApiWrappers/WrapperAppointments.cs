@@ -3,6 +3,11 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Appointments;
 using PropertyManagerFL.Core.Entities;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using System.Net.Http.Headers;
+using System.Text;
+using System;
+using PropertyManagerFL.Application.ViewModels;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 
@@ -35,32 +40,37 @@ public class WrapperAppointments : IAppointmentsService
                 var output = await result.Content.ReadAsStringAsync();
                 var appointmentId = JsonConvert.DeserializeObject<int>(output);
 
-                //var success = result.IsSuccessStatusCode;
-                return appointmentId;
+                var success = result.IsSuccessStatusCode;
+                return success ? appointmentId : -1;
             }
         }
         catch (Exception exc)
         {
             _logger.LogError(exc, $"Erro ao criar marcação {exc.Message}");
-            return 0;
+            return -1;
         }
     }
 
-    public async Task<bool> UpdateAsync(AppointmentVM appointmentVM)
+    public async Task UpdateAsync(int Id, AppointmentVM appointment)
     {
         try
         {
+            var updateUrl = $"{_appointmentsUri}/{Id}";
+            var appointmentToUpdate = _mapper.Map<Appointment>(appointment);
 
-            using (HttpResponseMessage result = await _httpClient.PutAsJsonAsync(_appointmentsUri, appointmentVM))
+            var recurrExcpt = appointmentToUpdate.RecurrenceException ?? "";
+            appointmentToUpdate.RecurrenceException = recurrExcpt;
+            using (HttpResponseMessage result = await _httpClient.PutAsJsonAsync(updateUrl, appointmentToUpdate))
             {
-                var success = result.IsSuccessStatusCode;
-                return success;
+                if (!result.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Erro ao atualizar marcação ({result.ReasonPhrase})");
+                }
             }
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc, $"Erro ao atualizar marcação");
-            return false;
+            _logger.LogError(exc.Message, exc);
         }
     }
 
@@ -91,7 +101,7 @@ public class WrapperAppointments : IAppointmentsService
                 {
                     var data = await response.Content.ReadAsStringAsync();
                     var output = JsonConvert.DeserializeObject<IEnumerable<AppointmentVM>>(data);
-                    return output?.ToList() ?? Enumerable.Empty<AppointmentVM>();
+                    return output ?? Enumerable.Empty<AppointmentVM>();
                 }
                 else
                 {
@@ -116,7 +126,7 @@ public class WrapperAppointments : IAppointmentsService
             var appointment = await _httpClient.GetFromJsonAsync<AppointmentVM>($"{_appointmentsUri}/{id}");
             var appointmentDTO = _mapper.Map<AppointmentVM>(appointment);
 
-            return appointmentDTO;
+            return appointmentDTO ?? new();
         }
         catch (Exception exc)
         {
