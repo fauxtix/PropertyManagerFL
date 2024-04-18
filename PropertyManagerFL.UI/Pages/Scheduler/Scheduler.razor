@@ -14,6 +14,8 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor.Schedule
 
+@inject Microsoft.AspNetCore.Components.NavigationManager UriHelper
+
 <PageTitle>Agenda</PageTitle>
 <PageTitleComponent PageTitle="Agenda" />
 
@@ -42,34 +44,6 @@ else
                                           Field="ApptType" Title="@L["TituloTipo"]" Name="ApptTypes" TextField="Text" IdField="Id"
                                           ColorField="Color"></ScheduleResource>
                     </ScheduleResources>
-
-                    @* <ScheduleEvents TValue="AppointmentVM"
-                                    EventRendered="OnEventRendered"
-                                    OnActionFailure="OnActionFailure"
-                                    OnActionBegin="OnActionBegin"
-                                    ActionCompleted="OnActionCompleted" /> *@
-                    @* <ScheduleEventSettings TValue="AppointmentVM">
-                                           DataSource="@DataSource"> *@
-
-                        <ScheduleEventSettings TValue="AppointmentVM">
-                                 <SfDataManager AdaptorInstance="@typeof(AppointmentAdaptor)" Adaptor="Adaptors.CustomAdaptor"/>
-
-
-
-                     @* <SfDataManager Url="@_appointmentsUri"
-                    UpdateUrl="@_appointmentsUri_Update"
-                    RemoveUrl="@_appointmentsUri_Delete"
-                    InsertUrl="@_appointmentsUri_Insert"
-                    Adaptor="Adaptors.UrlAdaptor" />*@
-
-                     @* <SfDataManager Url="@_appointmentsUri"
-                    Adaptor="@Syncfusion.Blazor.Adaptors.WebApiAdaptor" />*@
-
-                        <ScheduleField>
-                            <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
-                            <FieldDescription Title="@L["lblSinopse"]"></FieldDescription>
-                        </ScheduleField>
-                    </ScheduleEventSettings>
                     <ScheduleTemplates>
                         <ScheduleViews>
                             <ScheduleView Option="View.Day"></ScheduleView>
@@ -79,6 +53,44 @@ else
                             <ScheduleView Option="View.Agenda"></ScheduleView>
                         </ScheduleViews>
                     </ScheduleTemplates>
+
+                    <ScheduleEventSettings TValue="AppointmentVM" EnableTooltip="true">
+
+                        <TooltipTemplate>
+                            @{
+                                var eventData = (context as AppointmentVM);
+                                var apptType = eventData?.ApptType;
+                                var res = ApptResources?.SingleOrDefault(d => d.Id == apptType);
+                                var resImage = res?.Image;
+                                var resDescription = res?.Text;
+                                var resColor = res?.Color;
+                                <div class="tooltip-wrap">
+                                    <div class="content-area" style="background-color:@resColor">
+                                        <div class="image">
+                                            <img class="img-thumbnail" src="@resImage"/>
+                                        </div>
+                                        <div class="details">
+                                            <div class="name">@eventData?.Subject</div>
+                                            <div class="name">(@resDescription)</div>
+                                            <div class="time">@eventData?.StartTime</div>
+                                            <div class="time">@eventData?.EndTime</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </TooltipTemplate>
+
+                        <ChildContent>
+                            <ScheduleField>
+                                <FieldSubject Title="@L["msgUploadSubject"]"></FieldSubject>
+                                <FieldDescription Title="@L["lblSinopse"]"></FieldDescription>
+                            </ScheduleField>
+
+                            <SfDataManager AdaptorInstance="@typeof(AppointmentAdaptor)" Adaptor="Adaptors.CustomAdaptor" />
+                        </ChildContent>
+
+                    </ScheduleEventSettings>
+
                 </SfSchedule>
 
                 @if (!ShowSchedule)
@@ -180,27 +192,3 @@ else
 <ValidateErrorComponent Visible="@WarningVisibility"
                         ValidationMessages="@ValidationsMessages"
                         OnCloseDialog="@(()=>WarningVisibility = false)" />
-
-<style>
-    .header-customization {
-        padding-bottom: 10px;
-    }
-
-    .property-customization {
-        padding-right: 5px;
-    }
-
-    .button-customization {
-        padding: 15px 3px;
-    }
-
-    .schedule-hide {
-        display: none;
-    }
-
-    @@media (max-width: 441px) {
-        .button-customization {
-            padding: 30px !important;
-        }
-    }
-</style>

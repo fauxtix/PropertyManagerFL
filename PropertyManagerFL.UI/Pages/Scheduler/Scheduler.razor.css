@@ -1,0 +1,39 @@
+﻿.header-customization {
+    padding-bottom: 10px;
+}
+
+.property-customization {
+    padding-right: 5px;
+}
+
+.schedule-hide {
+    display: none;
+}
+
+.e-schedule-event-tooltip .tooltip-wrap {
+    display: flex;
+    align-items: center;
+}
+
+    .e-schedule-event-tooltip .tooltip-wrap .content-area {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .e-schedule-event-tooltip .tooltip-wrap .image {
+        flex-shrink: 0;
+        margin-right: 10px;
+    }
+
+    .e-schedule-event-tooltip .tooltip-wrap .details {
+        flex-grow: 1;
+        justify-content: start;
+    }
+
+        .e-schedule-event-tooltip .tooltip-wrap .details .name
+        .e-schedule-event-tooltip .tooltip-wrap .details .time {
+            margin:2px 2px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }

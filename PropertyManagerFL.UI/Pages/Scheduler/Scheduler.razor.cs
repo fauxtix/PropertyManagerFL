@@ -9,7 +9,7 @@ using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Schedule;
 using Syncfusion.Blazor.Spinner;
 
-namespace PropertyManagerFL.UI.Pages.Notifications;
+namespace PropertyManagerFL.UI.Pages.Scheduler;
 public partial class Scheduler
 {
     [Inject] public IAppointmentsService? ApptsService { get; set; }
@@ -26,7 +26,6 @@ public partial class Scheduler
     private SfSchedule<AppointmentVM>? ScheduleRef;
     private SfToast? ToastObj;
     protected SfSpinner? SpinnerObj { get; set; }
-
 
     private IEnumerable<AppointmentVM>? DataSource { get; set; }
     private List<AppointmentVM>? gridDataSource { get; set; }
@@ -81,6 +80,7 @@ public partial class Scheduler
         public int Id { get; set; }
         public string Text { get; set; } = string.Empty;
         public string Color { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
     }
 
     protected override async Task OnInitializedAsync()
@@ -120,14 +120,14 @@ public partial class Scheduler
     {
         return new List<ResourceData>
     {
-        new ResourceData{ Text = "IRS", Id= 1, Color = "#df5286" },
-        new ResourceData{ Text = L["TituloIMI"], Id= 2, Color = "#7fa900" }, // events related to council tax
-        new ResourceData{ Text = L["TituloRecibos"], Id= 3, Color = "#ea7a57" }, // events related to rental receipts
-        new ResourceData{ Text = L["TituloFinancas"], Id= 4, Color = "#4682B4" }, // events related to the tax office
-        new ResourceData{ Text = L["TituloCartas"], Id= 5, Color = "#a1d179" }, // Letters that should be sent to tenants
-        new ResourceData{ Text = L["TituloContratos"], Id= 6, Color = "#455275" }, // events relating to lease contracts
-        new ResourceData{ Text = L["TituloCondominios"], Id= 7, Color = "#96ADD5" },// events related to condominium
-        new ResourceData{ Text = L["TituloPessoais"], Id= 8, Color = "#7f89a3" } // Other events (personal)
+        new ResourceData{ Text = "IRS", Id= 1, Color = "#df5286", Image ="icons/people.svg" },
+        new ResourceData{ Text = L["TituloIMI"], Id= 2, Color = "#7fa900", Image ="images/payment.svg"  }, // events related to council tax
+        new ResourceData{ Text = L["TituloRecibos"], Id= 3, Color = "#ea7a57", Image ="images/calendar.png"  }, // events related to rental receipts
+        new ResourceData{ Text = L["TituloFinancas"], Id= 4, Color = "#4682B4", Image ="images/balance.png"  }, // events related to the tax office
+        new ResourceData{ Text = L["TituloCartas"], Id= 5, Color = "#a1d179", Image ="images/people.png"  }, // Letters that should be sent to tenants
+        new ResourceData{ Text = L["TituloContratos"], Id= 6, Color = "#455275", Image ="images/home-owner.png"  }, // events relating to lease contracts
+        new ResourceData{ Text = L["TituloCondominios"], Id= 7, Color = "#96ADD5", Image ="images/payment.png"  },// events related to condominium
+        new ResourceData{ Text = L["TituloPessoais"], Id= 8, Color = "#7f89a3", Image ="images/man_person_icon.png"  } // Other events (personal)
     };
     }
 
@@ -189,7 +189,7 @@ public partial class Scheduler
         }
         if (args.ActionType == ActionType.EventChange || args.ActionType == ActionType.EventRemove)
         {
-           
+
 
             if (args.ActionType == ActionType.EventChange)
             {
@@ -285,7 +285,7 @@ public partial class Scheduler
             Query query = new Query().Search(SearchValue, new List<string> { "Subject", "Location", "Description" }, null, true, true);
             List<AppointmentVM> eventCollections = await ScheduleRef.GetEventsAsync(null, null, true);
             object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
-            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
+            List<AppointmentVM>? resultData = data as List<AppointmentVM>;
             if (resultData?.Count > 0)
             {
                 ShowSchedule = false;
@@ -322,7 +322,7 @@ public partial class Scheduler
         }
         if (DateEnd != null)
         {
-            endDate = (Convert.ToDateTime(DateEnd)).AddDays(1);
+            endDate = Convert.ToDateTime(DateEnd).AddDays(1);
             searchObj.Add(new WhereFilter() { Field = "EndTime", Operator = "lessthanorequal", value = endDate, Condition = "and", IgnoreCase = false });
         }
         if (searchObj.Count > 0)
@@ -330,7 +330,7 @@ public partial class Scheduler
             Query query = new Query().Where(new WhereFilter() { Condition = "and", IsComplex = true, predicates = searchObj });
             List<AppointmentVM>? eventCollections = await ScheduleRef.GetEventsAsync(startDate, endDate, true);
             object data = await new DataManager() { Json = eventCollections }.ExecuteQuery<AppointmentVM>(query);
-            List<AppointmentVM>? resultData = (data as List<AppointmentVM>);
+            List<AppointmentVM>? resultData = data as List<AppointmentVM>;
             gridDataSource = resultData;
             ShowSchedule = false;
         }
