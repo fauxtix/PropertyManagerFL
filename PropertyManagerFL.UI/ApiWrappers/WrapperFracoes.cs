@@ -5,6 +5,7 @@ using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.SituacaoFracao;
+using PropertyManagerFL.Application.ViewModels.Despesas;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -508,5 +509,26 @@ namespace PropertyManagerFL.UI.ApiWrappers
             throw new NotImplementedException();
         }
 
+        public async Task<IEnumerable<InsuranceResults>> GetUnitsInsuranceData()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{_uri}/GetUnits_Insurance_Data");
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var output = JsonConvert.DeserializeObject< IEnumerable<InsuranceResults>>(data);
+                    return output ??  Enumerable.Empty<InsuranceResults>();
+
+                }
+
+                return Enumerable.Empty<InsuranceResults>();
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao pesquisar API de frações - Get units Insurance data");
+                return Enumerable.Empty<InsuranceResults>();
+            }
+        }
     }
 }

@@ -702,6 +702,35 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpGet("GetUnits_Insurance_Data")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+        public async Task<IActionResult> GetUnits_Insurance_Data()
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+
+                var insuranceData = await _repoFracoes.GetUnitsInsuranceData();
+                if (insuranceData is not null)
+                {
+                    return Ok(insuranceData);
+                }
+                else
+                {
+                    return NotFound();
+                }
+            }
+            catch (Exception e)
+            {
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+
         [HttpGet("IsUnitFreeToLease/{id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

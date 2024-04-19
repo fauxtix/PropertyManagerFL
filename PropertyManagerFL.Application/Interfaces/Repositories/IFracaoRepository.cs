@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.SituacaoFracao;
+using PropertyManagerFL.Application.ViewModels.Despesas;
 
 namespace PropertyManagerFL.Application.Interfaces.Repositories
 {
@@ -40,5 +41,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task ApagaApoliceFracao(int id);
         Task<SeguroVM> GetApoliceFracao_ById(int id);
         Task<IEnumerable<SeguroVM>> GetAllApolices();
+        Task<IEnumerable<InsuranceResults>> GetUnitsInsuranceData();
     }
 }

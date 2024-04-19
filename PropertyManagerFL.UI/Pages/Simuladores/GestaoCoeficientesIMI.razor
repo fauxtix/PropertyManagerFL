@@ -77,8 +77,8 @@ else
                                 Visible="false"
                                 IsPrimaryKey="true" IsIdentity="true" />
                     <GridColumn Field=@nameof(DistritoConcelho.CodConcelho) AllowEditing="false"
-                                HeaderText="Id" Width="60" />
-                    <GridColumn Field=@nameof(DistritoConcelho.Distrito)
+                                HeaderText="Id" Width="60" HideAtMedia="(min-width: 900px)" />
+                    <GridColumn Field=@nameof(DistritoConcelho.Distrito) HideAtMedia="(min-width: 900px)"
                                 HeaderText="Distrito" Width="280" AllowEditing="false" />
                     <GridColumn Field=@nameof(DistritoConcelho.Descricao)
                                 HeaderText="Concelho" Width="280" AllowEditing="false" />

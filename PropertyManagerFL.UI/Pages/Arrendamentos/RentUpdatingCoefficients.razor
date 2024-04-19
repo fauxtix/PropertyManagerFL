@@ -67,11 +67,14 @@ else
                     <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Coeficiente) HeaderText="@L["TituloCoeficiente"]"
                             EditorSettings="@CoefficientEditParams"
                             EditType="EditType.NumericEdit"
-                            TextAlign=TextAlign.Right Width="100"></GridColumn>
-                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DiplomaLegal) HeaderText="@L["TituloDiplomaLegal"]" Width="150"></GridColumn>
-                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Lei) HeaderText="@L["TituloLei"]" Width="140" />
-                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DataPublicacao) HeaderText="@L["TituloPublicadoEm"]" Width="120" />
-                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.UrlDiploma) HeaderText="" Width="140">
+                            TextAlign=TextAlign.Right Width="130"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DiplomaLegal) HideAtMedia="(min-width: 900px)"
+                    HeaderText="@L["TituloDiplomaLegal"]" Width="150"></GridColumn>
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.Lei) HideAtMedia="(min-width: 900px)"
+                    HeaderText="@L["TituloLei"]" Width="140" />
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.DataPublicacao) HideAtMedia="(min-width: 900px)"
+                    HeaderText="@L["TituloPublicadoEm"]" Width="120" />
+                    <GridColumn Field=@nameof(CoeficienteAtualizacaoRendas.UrlDiploma) HeaderText="" Width="140" >
                         <Template>
                             @{
                                 var rowData = (context as CoeficienteAtualizacaoRendas);

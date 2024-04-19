@@ -9,6 +9,7 @@ using PropertyManagerFL.Infrastructure.Context;
 
 using System.Data;
 using System.Text;
+using PropertyManagerFL.Application.ViewModels.Despesas;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
 {
@@ -638,6 +639,25 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
         }
 
+        public async Task<IEnumerable<InsuranceResults>> GetUnitsInsuranceData()
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var list = (await connection.QueryAsync<InsuranceResults>("usp_Fracoes_GetInsuranceData",
+                        commandType: CommandType.StoredProcedure))
+                        .ToList();
+                    return list;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
 
         public async Task<bool> MarcaFracaoComoAlugada(int id)
         {
