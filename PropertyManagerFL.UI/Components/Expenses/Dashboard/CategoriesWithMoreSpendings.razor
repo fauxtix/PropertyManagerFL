@@ -1,0 +1,37 @@
+﻿@using PropertyManagerFL.Core.Entities
+
+
+<div class="table table-striped">
+    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@Title</SfMessage>
+    <SfGrid DataSource="@Categories"
+            RowHeight="28"
+            GridLines="GridLine.Horizontal">
+        <GridColumns>
+            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
+            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
+            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
+        </GridColumns>
+        <GridAggregates>
+            <GridAggregate>
+                <GridAggregateColumns>
+                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
+                        <FooterTemplate>
+                            @{
+                                var aggregate = (context as AggregateTemplateContext);
+                                <p class="my-1">@aggregate?.Sum</p>
+                            }
+                        </FooterTemplate>
+                    </GridAggregateColumn>
+                </GridAggregateColumns>
+            </GridAggregate>
+        </GridAggregates>
+    </SfGrid>
+</div>
+
+@code {
+    [Inject] public IStringLocalizer<App> L { get; set; }
+
+    [Parameter] public IEnumerable<ExpensesSummaryData>? Categories { get; set; }
+    [Parameter] public string? Title{ get; set; }
+
+}

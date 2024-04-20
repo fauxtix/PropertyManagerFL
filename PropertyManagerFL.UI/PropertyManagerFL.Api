@@ -1799,6 +1799,11 @@
               Looks up a localized string similar to Aplicar filtro.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloApolice">
+            <summary>
+              Looks up a localized string similar to Apólice.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloAreaDependente">
             <summary>
               Looks up a localized string similar to Área dependente.
@@ -2484,6 +2489,11 @@
               Looks up a localized string similar to Inquilino.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloIRS">
+            <summary>
+              Looks up a localized string similar to IRS.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloIrsAnual">
             <summary>
               Looks up a localized string similar to IRS Anual.
@@ -2929,6 +2939,11 @@
               Looks up a localized string similar to Prazo de resposta de carta de revogação (dias).
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloPremio">
+            <summary>
+              Looks up a localized string similar to Prémio.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloProcessamentoRendas">
             <summary>
               Looks up a localized string similar to Processamento mensal de rendas.
@@ -3057,6 +3072,11 @@
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloSaldoPrevisto">
             <summary>
               Looks up a localized string similar to Saldo previsto.
+            </summary>
+        </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloSeguros">
+            <summary>
+              Looks up a localized string similar to Seguros.
             </summary>
         </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloSelecao">

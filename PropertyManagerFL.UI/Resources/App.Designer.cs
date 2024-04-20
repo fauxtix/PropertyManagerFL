@@ -1772,6 +1772,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Apólice.
+        /// </summary>
+        public static string TituloApolice {
+            get {
+                return ResourceManager.GetString("TituloApolice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Área dependente.
         /// </summary>
         public static string TituloAreaDependente {
@@ -3005,6 +3014,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to IRS.
+        /// </summary>
+        public static string TituloIRS {
+            get {
+                return ResourceManager.GetString("TituloIRS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to IRS Anual.
         /// </summary>
         public static string TituloIrsAnual {
@@ -3806,6 +3824,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Prémio.
+        /// </summary>
+        public static string TituloPremio {
+            get {
+                return ResourceManager.GetString("TituloPremio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Processamento mensal de rendas.
         /// </summary>
         public static string TituloProcessamentoRendas {
@@ -4036,6 +4063,15 @@ namespace PropertyManagerFL.UI.Resources {
         public static string TituloSaldoPrevisto {
             get {
                 return ResourceManager.GetString("TituloSaldoPrevisto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Seguros.
+        /// </summary>
+        public static string TituloSeguros {
+            get {
+                return ResourceManager.GetString("TituloSeguros", resourceCulture);
             }
         }
         

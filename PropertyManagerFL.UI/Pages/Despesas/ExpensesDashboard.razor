@@ -8,6 +8,7 @@
 @using PropertyManagerFL.UI.Components.Cards
 
 @using Microsoft.AspNetCore
+@using PropertyManagerFL.UI.Components.Expenses.Dashboard
 
 <header>
     <div class="module-title">
@@ -16,8 +17,9 @@
     </div>
 </header>
 @if (expensesList is null || last5Transactions is null ||
-CategoriesWithMoreSpending is null || CategoriesWithMoreSpendings_ByYear_Current is null ||
-CategoriesWithMoreSpendings_ByYear_Prior is null)
+  CategoriesWithMoreSpending is null ||
+  CategoriesWithMoreSpendings_ByYear_Current is null ||
+  CategoriesWithMoreSpendings_ByYear_Prior is null)
 {
     <LoadingData />
 }
@@ -43,7 +45,7 @@ else
             @if (expensesList.Any())
             {
                 <div class="row">
-                    <div class="col-lg-6 control-section sb-property-border">
+                    <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
                             <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
                             <ExpPieChart @ref="PieChartRef"
@@ -52,7 +54,7 @@ else
                                          Year="@(DateTime.Today.Year)" />
                         </div>
                     </div>
-                    <div class="col-lg-6 control-section sb-property-border">
+                    <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
                             <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
                             <ExpPieChart @ref="PieChartRef"
@@ -73,12 +75,12 @@ else
         {
             <div class="card-box">
                 <div class="row">
-                    <div class="col-lg-6 control-section sb-property-border">
+                    <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
                             <ExpLineChart Year="@DateTime.Now.Year.ToString()" Expenses="@CategoriesSummaryCurrentYear" />
                         </div>
                     </div>
-                    <div class="col-lg-6 control-section sb-property-border">
+                    <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
                             <ExpLineChart Year="@DateTime.Now.AddYears(-1).Year.ToString()" Expenses="@CategoriesSummaryPreviousYear" />
                         </div>
@@ -88,21 +90,20 @@ else
         }
 
         <div class="row card-box">
-            <div class="col-md-4">
-                <div class="table table-striped">
-                    <AlertMessage Message="IRS Previsto" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+            <div class="col-lg-4 col-md-12">
+                <div class="table table-striped table-responsive-sm">
+                    <AlertMessage Message="@L["TituloIRS"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
                     <SfGrid DataSource="@IRSValues" TValue="IRSResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(IRSResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"
-                                        Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(IRSResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"></GridColumn>
                             <GridColumn Field=@nameof(IRSResults.ValorRenda) HeaderText="@L["TituloRenda"]"
                                         Format="C2"
-                                        TextAlign="TextAlign.Right" Width="150"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                             <GridColumn Field=@nameof(IRSResults.ValorIRS) HeaderText="@L["TituloValorPagar"]"
                                         Format="C2"
-                                        TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                         </GridColumns>
                         <GridAggregates>
                             <GridAggregate>
@@ -131,21 +132,20 @@ else
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="table table-striped">
-                    <AlertMessage Message="IMI Previsto" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+            <div class="col-lg-4 col-md-12">
+                <div class="table table-striped  table-responsive-sm">
+                    <AlertMessage Message="@L["TituloIMI"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
                     <SfGrid DataSource="@IMIValues" TValue="IMIResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(IMIResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"
-                                        Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(IMIResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"></GridColumn>
                             <GridColumn Field=@nameof(IMIResults.ValPatrimonio) HeaderText="@L["TituloValorPatrimonial"]"
                                         Format="C2"
-                                        TextAlign="TextAlign.Right" Width="150"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                             <GridColumn Field=@nameof(IMIResults.ValorPagar) HeaderText="@L["TituloValorPagar"]"
                                         Format="C2"
-                                        TextAlign="TextAlign.Right" Width="120"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                         </GridColumns>
                         <GridAggregates>
                             <GridAggregate>
@@ -174,20 +174,19 @@ else
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <div class="table table-striped">
-                    <AlertMessage Message="Seguros" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
+            <div class="col-lg-4 col-md-12">
+                <div class="table table-striped table-responsive-sm">
+                    <AlertMessage Message="@L["TituloSeguros"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
                     <SfGrid DataSource="@InsuranceValues" TValue="InsuranceResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(InsuranceResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"
-                                        Width="200"></GridColumn>
-                            <GridColumn Field=@nameof(InsuranceResults.Apolice) HeaderText="Apólice"
-                                        TextAlign="TextAlign.Center" Width="150"></GridColumn>
-                            <GridColumn Field=@nameof(InsuranceResults.Premio) HeaderText="Prémio"
+                            <GridColumn Field=@nameof(InsuranceResults.Descricao) HeaderText="@L["lblDescricaoCategoria"]"></GridColumn>
+                            <GridColumn Field=@nameof(InsuranceResults.Apolice) HeaderText="@L["TituloApolice"]"
+                                        TextAlign="TextAlign.Center"></GridColumn>
+                            <GridColumn Field=@nameof(InsuranceResults.Premio) HeaderText="@L["TituloPremio"]"
                                         Format="C2"
-                                        TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                         </GridColumns>
                         <GridAggregates>
                             <GridAggregate>
@@ -208,99 +207,65 @@ else
             </div>
         </div>
         <div class="row card-box">
-            <div class="col-md-6">
-                <div class="table table-striped">
-                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@TituloCategoriaEsteAno</SfMessage>
-                    <SfGrid DataSource="@CategoriesWithMoreSpendings_ByYear_Current"
-                            RowHeight="28"
-                            GridLines="GridLine.Horizontal">
-                        <GridColumns>
-                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
-                        </GridColumns>
-                        <GridAggregates>
-                            <GridAggregate>
-                                <GridAggregateColumns>
-                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
-                                        <FooterTemplate>
-                                            @{
-                                                var aggregate = (context as AggregateTemplateContext);
-                                                <p class="my-1">@aggregate.Sum</p>
-                                            }
-                                        </FooterTemplate>
-                                    </GridAggregateColumn>
-                                </GridAggregateColumns>
-                            </GridAggregate>
-                        </GridAggregates>
-                    </SfGrid>
-                </div>
+            <div class="col-lg-6 col-md-12">
+                <CategoriesWithMoreSpendings Categories="@CategoriesWithMoreSpendings_ByYear_Current"
+                                             Title="@TituloCategoriaEsteAno" />
             </div>
-            <div class="col-md-6">
-                <div class="table table-striped">
-                    <SfMessage Variant="MessageVariant.Text" Severity="MessageSeverity.Success">@TituloCategoriaAnoAnterior</SfMessage>
-                    <SfGrid DataSource="@CategoriesWithMoreSpendings_ByYear_Prior"
-                            RowHeight="28"
-                            GridLines="GridLine.Horizontal">
-                        <GridColumns>
-                            <GridColumn Field=@nameof(ExpensesSummaryData.Descricao) HeaderText="@L["TituloCategoria"]" Width="170" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.NumeroMovimentos) HeaderText="@L["TituloContagem"]" TextAlign="TextAlign.Right" Width="60" />
-                            <GridColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) HeaderText="@L["TituloValor"]" TextAlign="TextAlign.Right" Format="C2" Width="80" />
-                        </GridColumns>
-                        <GridAggregates>
-                            <GridAggregate>
-                                <GridAggregateColumns>
-                                    <GridAggregateColumn Field=@nameof(ExpensesSummaryData.TotalDespesas) Type="AggregateType.Sum" Format="C2">
-                                        <FooterTemplate>
-                                            @{
-                                                var aggregate = (context as AggregateTemplateContext);
-                                                <p class="my-1">@aggregate.Sum</p>
-                                            }
-                                        </FooterTemplate>
-                                    </GridAggregateColumn>
-                                </GridAggregateColumns>
-                            </GridAggregate>
-                        </GridAggregates>
-                    </SfGrid>
-                </div>
+            <div class="col-lg-6 col-md-12">
+
+                <CategoriesWithMoreSpendings Categories="@CategoriesWithMoreSpendings_ByYear_Prior"
+                                             Title="@TituloCategoriaAnoAnterior" />
             </div>
         </div>
 
         <div class="row card-box">
-            <div class="col-md-6">
-                <div class="table table-striped">
+            <div class="col-lg-6 col-md-12">
+                <div class="table table-striped  table-responsive-sm">
                     <AlertMessage Message="@L["TituloCincoUltimosMovimentos"]" MessageType="AppDefinitions.AlertMessageType.Info"></AlertMessage>
                     <SfGrid DataSource="@last5Transactions"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
                             <GridColumn Field=@nameof(DespesaVM.DataMovimento) HeaderText="@L["TituloData"]"
-                                        TextAlign="TextAlign.Center" Format="d" Width="100"></GridColumn>
-                            <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"
-                                        Width="200"></GridColumn>
+                                        TextAlign="TextAlign.Center" Format="d"></GridColumn>
+                            <GridColumn Field=@nameof(DespesaVM.TipoDespesa) HeaderText="@L["TituloCategoria"]"></GridColumn>
                             <GridColumn Field=@nameof(DespesaVM.Valor_Pago) HeaderText="@L["TituloValor"]" Format="C2"
-                                        TextAlign="TextAlign.Right" Width="100"></GridColumn>
+                                        TextAlign="TextAlign.Right"></GridColumn>
                         </GridColumns>
                     </SfGrid>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-lg-6 col-md-12">
                 <AlertMessage Message="@L["TituloResumo"]" MessageType="AppDefinitions.AlertMessageType.Warning"></AlertMessage>
-                <div class="table table-striped w-50">
+                <div class="table table-striped table-responsive-sm">
                     <SfGrid DataSource="@totExpensesList" TValue="ExpenseResults"
                             RowHeight="28"
                             GridLines="GridLine.Horizontal">
                         <GridColumns>
-                            <GridColumn Field=@nameof(ExpenseResults.Description) HeaderText="@L["lblDescricaoCategoria"]"
-                                        Width="200"></GridColumn>
-                            <GridColumn Field=@nameof(ExpenseResults.Value) 
-                                        HeaderText="@L["TituloValorPrevisto"]" TextAlign="TextAlign.Right"
-                                        Width="150">
+                            <GridColumn Field=@nameof(ExpenseResults.Description) HeaderText="@L["lblDescricaoCategoria"]">
                                 <Template>
                                     @{
-                                        var value = (context as ExpenseResults).Value;
-                                        var description = (context as ExpenseResults).Description;
-                                        if (description.ToLower().Contains("total") || description.ToLower().Contains("%"))
+                                        var description = (context as ExpenseResults)?.Description;
+                                        if (description!.ToLower().Contains("total"))
+                                        {
+                                            var output = $"<b>{description:C2}</b>";
+                                            var ms = (MarkupString)output;
+                                            @ms
+                                        }
+                                        else
+                                        {
+                                            @description
+                                        }
+                                    }
+                                </Template>
+                            </GridColumn>
+                            <GridColumn Field=@nameof(ExpenseResults.Value)
+                                        HeaderText="@L["TituloValorPrevisto"]" TextAlign="TextAlign.Right">
+                                <Template>
+                                    @{
+                                        var value = (context as ExpenseResults)?.Value;
+                                        var description = (context as ExpenseResults)?.Description;
+                                        if (description!.ToLower().Contains("total") || description.ToLower().Contains("%"))
                                         {
                                             string output = "";
                                             if (description.ToLower().Contains("total"))
@@ -318,12 +283,32 @@ else
                                         }
                                         else
                                         {
-                                            var boldValue = $"{value:C2}"; 
+                                            var boldValue = $"{value:C2}";
                                             var ms = (MarkupString)boldValue;
                                             @ms
                                         }
                                     }
                                 </Template>
+                            </GridColumn>
+                            <GridColumn Field=@nameof(ExpenseResults.TaxPercent)
+                                        HeaderText="%" TextAlign="TextAlign.Right">
+                                <Template>
+                                    @{
+                                        var value = (context as ExpenseResults)?.TaxPercent;
+                                        var description = (context as ExpenseResults)?.Description;
+                                        if (description!.ToLower().Contains("total"))
+                                        {
+                                            var boldValue = $"<b>{value}</b>";
+                                            var ms = (MarkupString)boldValue;
+                                            @ms
+                                        }
+                                        else
+                                        {
+                                            @value
+                                        }
+                                    }
+                                </Template>
+
                             </GridColumn>
                         </GridColumns>
                     </SfGrid>
@@ -347,4 +332,21 @@ else
         margin-right: -2px;
     }
 
+    .responsive-div {
+        height: auto;
+    }
+
+    /* For screens smaller than 576px (mobile) */
+    @@media only screen and (max-width: 575.98px) {
+        .responsive-div {
+            width: 100%;
+        }
+    }
+
+    /* For screens larger than or equal to 576px (other devices) */
+    @@media only screen and (min-width: 576px) {
+        .responsive-div {
+            width: 80%;
+        }
+    }
 </style>

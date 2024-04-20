@@ -1876,7 +1876,7 @@
     <value>Sudden death</value>
   </data>
   <data name="TituloOutrasPatologias" xml:space="preserve">
-    <value>Others</value>
+    <value>Other</value>
   </data>
   <data name="TituloTumores" xml:space="preserve">
     <value>Tumors</value>
@@ -2581,7 +2581,7 @@
     <value>Finances</value>
   </data>
   <data name="TituloIMI" xml:space="preserve">
-    <value>Property tax</value>
+    <value>Municipal Property Tax</value>
   </data>
   <data name="TituloPessoais" xml:space="preserve">
     <value>Personal</value>
@@ -2618,5 +2618,18 @@
   </data>
   <data name="TituloDataFim" xml:space="preserve">
     <value>End date</value>
+  </data>
+  <data name="TituloApolice" xml:space="preserve">
+    <value>Policy</value>
+    <comment>T</comment>
+  </data>
+  <data name="TituloIRS" xml:space="preserve">
+    <value>PIT</value>
+  </data>
+  <data name="TituloPremio" xml:space="preserve">
+    <value>Premium</value>
+  </data>
+  <data name="TituloSeguros" xml:space="preserve">
+    <value>Insurance</value>
   </data>
 </root>

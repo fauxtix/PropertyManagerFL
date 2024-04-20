@@ -1612,4 +1612,17 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloDataFim" xml:space="preserve">
     <value>Data fim</value>
   </data>
+  <data name="TituloApolice" xml:space="preserve">
+    <value>Apólice</value>
+    <comment>T</comment>
+  </data>
+  <data name="TituloIRS" xml:space="preserve">
+    <value>IRS</value>
+  </data>
+  <data name="TituloPremio" xml:space="preserve">
+    <value>Prémio</value>
+  </data>
+  <data name="TituloSeguros" xml:space="preserve">
+    <value>Seguros</value>
+  </data>
 </root>

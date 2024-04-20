@@ -5,9 +5,6 @@ using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Application.ViewModels.Despesas;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Core.Entities;
-using static PropertyManagerFL.Application.Constants.Storage.StorageConstants;
-using System.Numerics;
-using PropertyManagerFL.Application.ViewModels.LookupTables;
 
 namespace PropertyManagerFL.UI.Pages.Despesas;
 public partial class ExpensesDashboard
@@ -52,11 +49,6 @@ public partial class ExpensesDashboard
     protected decimal totRents;
     protected decimal totExpensesPercent;
 
-    protected class ExpenseResults
-    {
-        public string Description { get; set; } = string.Empty;
-        public decimal Value { get; set; }
-    }
 
     protected List<ExpenseResults> totExpensesList = new();
 
@@ -106,9 +98,6 @@ public partial class ExpensesDashboard
             totInsurance = InsuranceValues!.Sum(i => i.Premio);
             totRents = IRSValues!.Sum(i => i.ValorRenda);
 
-
-
-
             expensesList = await expensesService!.GetAll();
             last5Transactions = expensesList.OrderByDescending(l => l.DataMovimento).ToList().Take(5);
             ExpensesTotal = expensesList.Sum(e => e.Valor_Pago);
@@ -140,16 +129,24 @@ public partial class ExpensesDashboard
             CategoriesSummaryPreviousYear = Expenses_ByType
                 .Where(p => p.YearOfExpenses == DateTime.Now.Year - 1);
 
-            var temp = (totIMI + totIRS + totInsurance + ExpensesThisYear) / totRents;
-            totExpensesPercent = Math.Round(temp * 100, 2);
+            var sumOfExpenses = (totIMI + totIRS + totInsurance + ExpensesThisYear) / totRents;
+            var totIRSPercent = Math.Round((totIRS / totRents) * 100, 2);
+            var totIMIPercent = Math.Round((totIMI / totRents) * 100, 2);
+            var totInsurancePercent = Math.Round((totInsurance / totRents) * 100, 2);
+            var totOthersPercent = Math.Round((ExpensesThisYear / totRents) * 100, 2);
 
+            totExpensesPercent = Math.Round(sumOfExpenses * 100, 2);
+            var titOutrasDespesas = L["TituloOutrasPatologias"] + " " + L["TituloDespesas"];
+            var titSeguros = L["TituloSeguros"];
             totExpensesList = new() {
-                new ExpenseResults { Description = "IRS", Value = totIRS },
-                new ExpenseResults { Description = "IMI", Value = totIMI },
-                new ExpenseResults { Description = "Seguros", Value = totInsurance },
-                new ExpenseResults { Description = "Outras despesas", Value = ExpensesThisYear },
-                new ExpenseResults { Description = "Total", Value = (totIRS + totIMI + totInsurance + ExpensesThisYear)},
-                new ExpenseResults { Description = "% sobre Recebimentos", Value = totExpensesPercent}
+                new ExpenseResults { Description = "IRS", Value = totIRS, TaxPercent = totIRSPercent },
+                new ExpenseResults { Description = "IMI", Value = totIMI, TaxPercent = totIMIPercent },
+                new ExpenseResults { Description = titSeguros, Value = totInsurance, TaxPercent = totInsurancePercent },
+                new ExpenseResults { Description = titOutrasDespesas, Value = ExpensesThisYear , TaxPercent = totOthersPercent},
+                new ExpenseResults { 
+                    Description = "Total", 
+                    Value = (totIRS + totIMI + totInsurance + ExpensesThisYear), 
+                    TaxPercent = (totIRSPercent + totIMIPercent + totInsurancePercent + totOthersPercent)}
                 };
         }
         catch (Exception)

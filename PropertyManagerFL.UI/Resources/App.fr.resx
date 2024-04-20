@@ -2627,4 +2627,17 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloDataFim" xml:space="preserve">
     <value>Date de fin</value>
   </data>
+  <data name="TituloApolice" xml:space="preserve">
+    <value>Contrat</value>
+    <comment>T</comment>
+  </data>
+  <data name="TituloIRS" xml:space="preserve">
+    <value>IRPP</value>
+  </data>
+  <data name="TituloPremio" xml:space="preserve">
+    <value>Prime</value>
+  </data>
+  <data name="TituloSeguros" xml:space="preserve">
+    <value>Assurance</value>
+  </data>
 </root>

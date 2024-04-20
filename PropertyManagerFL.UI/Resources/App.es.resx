@@ -1877,7 +1877,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
     <value>Muerte súbita</value>
   </data>
   <data name="TituloOutrasPatologias" xml:space="preserve">
-    <value>Otros</value>
+    <value>Otras</value>
   </data>
   <data name="TituloTumores" xml:space="preserve">
     <value>Tumores</value>
@@ -2573,7 +2573,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
     <value>Finanzas</value>
   </data>
   <data name="TituloIMI" xml:space="preserve">
-    <value>Impuesto municipal</value>
+    <value>Impuesto sobre Bienes Inmuebles</value>
   </data>
   <data name="TituloPessoais" xml:space="preserve">
     <value>Personal</value>
@@ -2610,5 +2610,18 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   </data>
   <data name="TituloDataFim" xml:space="preserve">
     <value>Fecha final</value>
+  </data>
+  <data name="TituloApolice" xml:space="preserve">
+    <value>Póliza</value>
+    <comment>T</comment>
+  </data>
+  <data name="TituloIRS" xml:space="preserve">
+    <value>IRPF</value>
+  </data>
+  <data name="TituloPremio" xml:space="preserve">
+    <value>Prima</value>
+  </data>
+  <data name="TituloSeguros" xml:space="preserve">
+    <value>Seguros</value>
   </data>
 </root>
