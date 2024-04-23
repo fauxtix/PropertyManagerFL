@@ -49,7 +49,7 @@ It's a simple process to carry out:
 For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) 
 #
 
-**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 6).
+**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
 
 ## 🌟 Contributing
 
