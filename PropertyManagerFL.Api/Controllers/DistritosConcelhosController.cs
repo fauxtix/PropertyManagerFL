@@ -110,26 +110,31 @@ public class DistritosConcelhosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
 
     [HttpPatch("updatecoeficienteIMI/{Id:Int}")]
-    public async Task<IActionResult> UpdateCoeficienteIMI(int Id, [FromBody] string coeficienteToUpdate)
+    public async Task<IActionResult> UpdateCoeficienteIMI(int Id, [FromBody] decimal coeficienteToUpdate)
     {
         var location = GetControllerActionNames();
-        float coef;
+
         try
         {
-            coef = float.Parse(coeficienteToUpdate, CultureInfo.InvariantCulture.NumberFormat);
+            //if (!decimal.TryParse(coeficienteToUpdate, out decimal decimalValue))
+            //{
+            //    string msg = $"Coeficiente {decimalValue} com formato inválido (Api DistritosConcelhos)";
+            //    _logger.LogWarning(msg);
+            //    return BadRequest(msg);
+            //}
 
-            if (!DataFormat.IsNumeric(coef))
-            {
-                string msg = "Coeficiente com formato inválido (Api DistritosConcelhos)";
-                _logger.LogWarning(msg);
-                return BadRequest(msg);
-            }
+            //if (!DataFormat.IsNumeric(coeficienteToUpdate))
+            //{
+            //    string msg = "Coeficiente com formato inválido (Api DistritosConcelhos)";
+            //    _logger.LogWarning(msg);
+            //    return BadRequest(msg);
+            //}
 
             var concelho = await _repo.GetConcelho_ById(Id);
             if (concelho == null)
                 return NotFound();
 
-            await _repo.UpdateCoeficienteIMI(Id, coef);
+            await _repo.UpdateCoeficienteIMI(Id, coeficienteToUpdate);
             return NoContent();
         }
 

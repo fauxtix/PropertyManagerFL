@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels;
+using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using System.Globalization;
 using System.Text;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
@@ -12,17 +15,19 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
     private readonly IConfiguration _env;
     private readonly ILogger<WrapperDistritosConcelhos> _logger;
     private readonly string? _apiUri;
+    private readonly IAppSettingsService _appSettings;
     private readonly HttpClient _httpClient;
 
     public WrapperDistritosConcelhos(IConfiguration env,
                                      ILogger<WrapperDistritosConcelhos> logger,
-                                     HttpClient httpClient)
+                                     HttpClient httpClient,
+                                     IAppSettingsService appSettings)
     {
         _env = env;
         _logger = logger;
         _httpClient = httpClient;
         _apiUri = $"{_env["BaseUrl"]}/DistritosConcelhos";
-
+        _appSettings = appSettings;
     }
     public async Task<IEnumerable<DistritoConcelho>> GetConcelhos()
     {
@@ -89,11 +94,20 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         }
     }
 
-    public async Task<bool> UpdateCoeficienteIMI(int Id, float coeficienteIMI)
+    public async Task<bool> UpdateCoeficienteIMI(int Id, decimal coeficienteIMI)
     {
         try
         {
-            var content = new StringContent(coeficienteIMI.ToString(), Encoding.UTF8, "application/json");
+            IFormatProvider culture;
+            var coefIMI = coeficienteIMI.ToString();
+            var app = await _appSettings.GetSettingsAsync();
+            var appLanguage = app.DefaultLanguage;
+            if ((!appLanguage.ToLower().Contains("en")))
+            {
+                coefIMI = ConvertToUSFormat(coefIMI);
+            }
+
+            var content = new StringContent(coefIMI, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PatchAsync($"{_apiUri}/updatecoeficienteIMI/{Id}", content);
 
@@ -103,17 +117,38 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
             }
             else
             {
+                _logger.LogError($"Erro na atualização do coeficiente IMI (Concelho: {Id} - Coeficiente: {coeficienteIMI})");
                 return (false);
             }
 
         }
         catch (HttpRequestException httpEx)
         {
+            _logger.LogError($"Erro na atualização do coeficiente IMI ({httpEx.Message})");
+
             return false;
         }
         catch (Exception ex)
         {
+            _logger.LogError($"Erro na atualização do coeficiente IMI ({ex.Message})");
             return false;
         }
+    }
+
+    static string ConvertToUSFormat(string decimalString)
+    {
+        // Define Portuguese culture
+        CultureInfo portugueseCulture = CultureInfo.CreateSpecificCulture("pt-PT");
+
+        // Parse the decimal string using Portuguese culture
+        decimal decimalValue = decimal.Parse(decimalString, portugueseCulture);
+
+        // Convert to string using en-US culture (to get the '.' as decimal separator)
+        string usDecimalString = decimalValue.ToString(CultureInfo.InvariantCulture);
+
+        // Parse back to decimal using en-US culture
+        decimal convertedDecimal = decimal.Parse(usDecimalString, CultureInfo.InvariantCulture);
+
+        return usDecimalString;
     }
 }

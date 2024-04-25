@@ -63,8 +63,8 @@
     public async Task uploadFile(MouseEventArgs args)
     {
         //filepath = await ApiImagesWrapper.UploadImage(content):;
-        filepath = await Http.PostAsync("https://localhost:4000/api/Images/Save", content);
-        var filepath2 = await Http.PostAsync("https://localhost:4000/api/Images/Upload", content);
+        filepath = await Http.PostAsync("http://localhost:4300/api/Images/Save", content);
+        var filepath2 = await Http.PostAsync("http://localhost:4300/api/Images/Upload", content);
         this.responseStr = await filepath.Content.ReadAsStringAsync();
     }
 

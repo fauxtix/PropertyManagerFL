@@ -33,7 +33,7 @@ public partial class CalculadoraIMI
     protected int idxDistrito;
     protected int idxConcelho;
     protected int idxTipoImovel;
-    protected double coeficiente;
+    protected decimal coeficiente;
     protected string coeficienteCaption = string.Empty;
     protected decimal valorPatrimonio;
     protected decimal valorIMI;
@@ -111,11 +111,11 @@ public partial class CalculadoraIMI
         if (freguesia is not null)
         {
             var concelhos = await DistritosConcelhosService.GetConcelhos();
-            Tuple<int, int, float>? codes = concelhos
+            Tuple<int, int, decimal>? codes = concelhos
                 .Where(p => p.Descricao == freguesia)
                 .Select(c => new { c.IdDistrito, c.Id, c.Coeficiente })
                 .AsEnumerable()
-                .Select(c => new Tuple<int, int, float>(c.IdDistrito, c.Id, c.Coeficiente))
+                .Select(c => new Tuple<int, int, decimal>(c.IdDistrito, c.Id, c.Coeficiente))
                 .SingleOrDefault();
 
             if (codes?.Item1 > 0 && codes?.Item2 > 0)

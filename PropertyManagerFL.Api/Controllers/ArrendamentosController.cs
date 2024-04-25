@@ -27,7 +27,8 @@ namespace PropertyManagerFL.Api.Controllers
         /// <param name="mapper"></param>
         /// <param name="logger"></param>
         /// <param name="repoInquilinos"></param>
-        /// <param name="environment"></param>
+        /// <param name=
+        /// "></param>
         public ArrendamentosController(IArrendamentoRepository repoArrendamentos,
                                        IMapper mapper,
                                        ILogger<ArrendamentosController> logger,

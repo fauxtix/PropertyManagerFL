@@ -15,9 +15,7 @@ using Syncfusion.Blazor;
 
 
 var builder = WebApplication.CreateBuilder(args);
-
 var connectionString = builder.Configuration.GetConnectionString("PMConnection");
-
 
 #pragma warning disable ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>

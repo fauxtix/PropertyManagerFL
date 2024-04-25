@@ -3,11 +3,6 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Appointments;
 using PropertyManagerFL.Core.Entities;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using System.Net.Http.Headers;
-using System.Text;
-using System;
-using PropertyManagerFL.Application.ViewModels;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 

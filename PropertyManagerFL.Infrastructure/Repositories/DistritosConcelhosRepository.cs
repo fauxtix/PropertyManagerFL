@@ -77,14 +77,14 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
     }
 
-    public async Task UpdateCoeficienteIMI(int Id, float coeficienteIMI)
+    public async Task UpdateCoeficienteIMI(int Id, decimal coeficienteIMI)
     {
         try
         {
             using (var connection = _context.CreateConnection())
             {
                 var result = await connection.ExecuteAsync("usp_CoeficienteIMI_Update",
-                    new { Id,  CoeficienteIMI = coeficienteIMI},
+                    new { IdConcelho = Id,  CoeficienteIMI = coeficienteIMI},
                     commandType: CommandType.StoredProcedure);
                 return;
             }

@@ -11,6 +11,7 @@ namespace PropertyManagerFL.Infrastructure.Context
 		private readonly string? _connectionString;
 		public DapperContext(IConfiguration configuration)
 		{
+
 			_configuration = configuration;
 			_connectionString = _configuration.GetConnectionString("PMConnection");
 		}

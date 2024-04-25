@@ -8,6 +8,6 @@ public interface IDistritosConcelhosRepository
     Task<IEnumerable<Concelho>> GetConcelhosByDistrito(int id);
     Task<IEnumerable<DistritoConcelho>> GetConcelhos();
     Task<IEnumerable<LookupTableVM>> GetDistritos();
-    Task UpdateCoeficienteIMI(int Id, float coeficienteIMI);
+    Task UpdateCoeficienteIMI(int Id, decimal coeficienteIMI);
     Task<Concelho> GetConcelho_ById(int Id);
 }

@@ -115,7 +115,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <returns></returns>
         public async Task<IEnumerable<ImovelVM>> GetAll()
         {
-            // https://localhost:4000/api/Imoveis/GetImoveis
+            // http://localhost:4300/api/Imoveis/GetImoveis
             var endpoint = $"{_uri}/GetImoveis";
             try
             {

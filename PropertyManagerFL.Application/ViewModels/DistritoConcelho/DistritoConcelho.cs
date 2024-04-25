@@ -6,5 +6,5 @@ public class DistritoConcelho
     public string? Descricao { get; set; }
     public int IdDistrito { get; set; }
     public string? Distrito { get; set; }
-    public float Coeficiente { get; set; }
+    public decimal Coeficiente { get; set; }
 }

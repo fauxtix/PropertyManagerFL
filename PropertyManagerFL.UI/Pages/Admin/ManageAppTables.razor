@@ -12,8 +12,16 @@
 
 @*@attribute [Authorize]*@
 
-
-
+<div class="card-box-ico">
+    <SfBreadcrumb>
+        <BreadcrumbItems>
+            <BreadcrumbItem IconCss="e-icons e-home" Url="/" />
+            <BreadcrumbItem IconCss="e-icons e-settings" Url="/admin/appsettings" />
+            <BreadcrumbItem IconCss="e-icons e-table-header" Text="Lookup tables" Url="/admin/adminpanel" />
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+</div>
+<hr />
 <AppConfiguration_Tables ChildTableToValidate="@tableToValidateFk" 
                          ItemsList="@GenericModelList"
                          FkFieldNameToValidate="@fieldToValidateFk"
