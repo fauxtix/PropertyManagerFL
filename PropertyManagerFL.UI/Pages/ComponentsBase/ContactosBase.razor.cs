@@ -5,6 +5,7 @@ using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Contactos;
+using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -22,14 +23,16 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// contacts service
         /// </summary>
         [Inject] public IContactosService? contactsService { get; set; }
+        [Inject] public IInquilinoService? TenantsService { get; set; }
         [Inject] protected IValidationService? validatorService { get; set; }
-        [Inject] protected IStringLocalizer<App>? L{ get; set; }
+        [Inject] protected IStringLocalizer<App>? L { get; set; }
 
 
         /// <summary>
         /// list of Contacts
         /// </summary>
-        protected IEnumerable<ContactoVM> Contacts { get; set; }
+        protected IEnumerable<ContactoVM>? Contacts { get; set; }
+        protected List<ContactoVM>? TenantContacts { get; set; }
         public ContactoVM? SelectedContact { get; set; }
         protected ContactoVM? OriginalContactData { get; set; }
         protected OpcoesRegisto RecordMode { get; set; }
@@ -85,6 +88,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 WarningVisibility = true;
             }
 
+            TenantContacts = await GetAllTenantContacts();
+
         }
 
         /// <summary>
@@ -97,6 +102,30 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             ContactsList.OrderByDescending(p => p.Id).ToList();
             return ContactsList;
         }
+
+        public async Task<List<ContactoVM>> GetAllTenantContacts()
+        {
+            IEnumerable<InquilinoVM> TenantContactsList = await TenantsService!.GetAll();
+            List<ContactoVM> tempContacts = new();
+            TenantContactsList.OrderByDescending(p => p.Id).ToList();
+            foreach (var tenant in TenantContactsList)
+            {
+                tempContacts?.Add(
+                    new ContactoVM
+                    {
+                        Id = tenant.Id,
+                        Contacto = tenant.Contacto1,
+                        eMail = tenant.eMail,
+                        ID_TipoContacto = 17,
+                        Nome = tenant.Nome,
+                        Morada = tenant.Morada,
+                        TipoContacto = "Inquilino",
+                        Notas = tenant.Notas,
+                    });
+            }
+            return tempContacts ?? new();
+        }
+
 
 
         protected async Task OnContactDoubleClickHandler(RecordDoubleClickEventArgs<ContactoVM> args)
@@ -127,7 +156,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 AddEditVisibility = true;
                 EditCaption = $"{L["EditMsg"]} {L["TituloCampo3Editoras"]}";
                 RecordMode = OpcoesRegisto.Gravar;
-                StateHasChanged();                
+                StateHasChanged();
             }
 
             if (args.CommandColumn.Type == CommandButtonType.Delete)
@@ -202,7 +231,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             };
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
-            await contactsGridObj.PdfExport(ExportProperties);
+            await contactsGridObj.ExportToPdfAsync(ExportProperties);
 
         }
 
@@ -217,7 +246,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             WarningMessage = string.Empty;
             WarningVisibility = false;
 
-            ValidationMessages = validatorService.ValidateContactsEntries(SelectedContact!);
+            ValidationMessages = validatorService?.ValidateContactsEntries(SelectedContact!);
 
             if (ValidationMessages == null)
             {
@@ -321,7 +350,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// Fecha diálogo de criação / edição do contacto
         /// Verifica se registo foi alterado
         /// </summary>
-        protected async Task CloseEditDialog()
+        protected void CloseEditDialog()
         {
             IsDirty = false;
 

@@ -114,7 +114,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 alertTitle = "Log Viewer";
                 DeleteLogEntryCaption = $"Marcou {FilteredRecords?.Count()} registos para apagar. Não tem reversão! Backup recomendado antes de continuar";
                 DeleteLogsDialogVisibility = true;
-                logger?.LogWarning($"Utilizador ({user}) apagou {FilteredRecords?.Count()} registos ");
                 StateHasChanged();
             }
             else
@@ -155,7 +154,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (FilteredRecords is not null)
                 {
-                    await logService.DeleteFilteredRecords(FilteredRecords);
+                    await logService!.DeleteFilteredRecords(FilteredRecords);
                 }
                 else
                 {
@@ -167,6 +166,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 await Task.Delay(200);
                 await SpinnerObj!.HideAsync();
                 await LogGrid!.SearchAsync("");
+
+                logger?.LogWarning($"Utilizador ({user}) apagou {FilteredRecords?.Count()} registos ");
+
                 await GetAllLogs();
             }
             catch (Exception ex)

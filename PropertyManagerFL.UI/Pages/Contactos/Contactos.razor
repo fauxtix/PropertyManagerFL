@@ -5,8 +5,8 @@
 @using PropertyManagerFL.Application.ViewModels.Inquilinos
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
-@inject IStringLocalizer<App> L
-
+@* @inject IStringLocalizer<App> L
+ *@
 @inherits ContactosBase
 
 @{
@@ -40,63 +40,109 @@
 }
 else
 {
-    <div class="container-fluid">
-        <div class="source-options">
-            <SfButton CssClass="e-success e-round-corner mx-3 mb-2 pull-left" IconCss="fa fa-plus" Content="@L["NewMsg"]"
-                  @onclick="@onAddContact" IsPrimary="true">
-            </SfButton>
-        </div>
-        <div id="container">
-            <div class="sample flex vertical-center">
-                <div class="padding">
-                    <SfListView ID="list" DataSource="@Contacts" CssClass="e-list-template">
-                        <ListViewFieldSettings Id="Id" Text="Nome" TValue="ContactoVM" GroupBy="TipoContacto"></ListViewFieldSettings>
-                        <ListViewTemplates TValue="ContactoVM">
-                            <Template>
-                                @{
-                                    var contact = (context as ContactoVM);
-                                    <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="@(e => EditContact(contact))">
-                                        <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:#BCBCBC" />
-                                        <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
-                                        <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
-                                        <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
-                                        <span class="e-list-content" style="font-size:13px;">@contact.Notas</span>
-                                    </div>
-                                }
-                            </Template>
-                            <GroupTemplate>
-                                <div>
-                                    <span class="category fs-500 fw-bold" > @L["TituloTipo"]: @context.Text</span>
+    <SfTab>
+        <TabItems>
+            <TabItem>
+                <HeaderTemplate>@L["Site_Menu_Contactos"]</HeaderTemplate>
+                <ContentTemplate>
+
+                    <div class="container-fluid">
+                        <div class="source-options">
+                            <SfButton CssClass="e-success e-round-corner mx-3 my-2 pull-left" IconCss="fa fa-plus" Content="@L["NewMsg"]"
+                                      @onclick="@onAddContact" IsPrimary="true">
+                            </SfButton>
+                        </div>
+                        <div id="container">
+                            <div class="sample flex vertical-center">
+                                <div class="padding">
+                                    <SfListView ID="list" DataSource="@Contacts" CssClass="e-list-template">
+                                        <ListViewFieldSettings Id="Id" Text="Nome" TValue="ContactoVM" GroupBy="TipoContacto"></ListViewFieldSettings>
+                                        <ListViewTemplates TValue="ContactoVM">
+                                            <Template>
+                                                @{
+                                                    var contact = (context as ContactoVM);
+                                                    <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="@(e => EditContact(contact))">
+                                                        <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:#BCBCBC" />
+                                                        <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
+                                                        <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
+                                                        <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
+                                                        <span class="e-list-content" style="font-size:13px;">@contact.Notas</span>
+                                                    </div>
+                                                }
+                                            </Template>
+                                            <GroupTemplate>
+                                                <div>
+                                                    <span class="category fs-500 fw-bold"> @L["TituloTipo"]: @context.Text</span>
+                                                </div>
+                                            </GroupTemplate>
+                                        </ListViewTemplates>
+                                    </SfListView>
                                 </div>
-                            </GroupTemplate>
-                        </ListViewTemplates>
-                    </SfListView>
-                </div>
-            </div>
-        </div>
-    </div>
+                            </div>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <HeaderTemplate>@L["TituloMenuInquilinos"]</HeaderTemplate>
+                <ContentTemplate>
+
+                    <div id="container">
+                        <div class="sample flex vertical-center">
+                            <div class="padding">
+                                <SfListView ID="list" DataSource="@TenantContacts" CssClass="e-list-template">
+                                    <ListViewFieldSettings Id="Id" Text="Nome" TValue="ContactoVM" GroupBy="TipoContacto"></ListViewFieldSettings>
+                                    <ListViewTemplates TValue="ContactoVM">
+                                        <Template>
+                                            @{
+                                                var contact = (context as ContactoVM);
+                                                <div class="e-list-wrapper e-list-multi-line e-list-avatar">
+                                                    <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:#BCBCBC" />
+                                                    <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
+                                                    <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
+                                                    <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Morada</span>
+                                                    <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
+                                                    <span class="e-list-content" style="font-size:13px;">@contact.Notas</span>
+                                                </div>
+                                            }
+                                        </Template>
+                                        <GroupTemplate>
+                                            <div>
+                                                <span class="category fs-500 fw-bold"> @L["TituloTipo"]: @context.Text</span>
+                                            </div>
+                                        </GroupTemplate>
+                                    </ListViewTemplates>
+                                </SfListView>
+                            </div>
+                        </div>
+                    </div>
+                </ContentTemplate>
+            </TabItem>
+
+        </TabItems>
+    </SfTab>
 
     <SfDialog CssClass="responsive-dialog-30"
-          Height="auto"
-          IsModal="true"
-          ShowCloseIcon="false"
-          CloseOnEscape="false"
-          @bind-Visible="AddEditVisibility">
+              Height="auto"
+              IsModal="true"
+              ShowCloseIcon="false"
+              CloseOnEscape="false"
+              @bind-Visible="AddEditVisibility">
         <DialogTemplates>
             <Content>
                 <AddEditContacto Contact="@SelectedContact"
-                             EditMode="@RecordMode"
-                             HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+                                 EditMode="@RecordMode"
+                                 HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
             </Content>
             <FooterTemplate>
                 <div class="text-left" style="float:left">
                     <SfButton CssClass="e-danger e-round-corner" IconCss="fas fa-trash"
                               @onclick="DeleteContact" Content="@L["DeleteMsg"]">
                     </SfButton>
-                    </div>
+                </div>
                 <div class="text-right" style="float:right">
                     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                          @onclick="SaveContactData" Content="@L["btnSalvar"]">
+                              @onclick="SaveContactData" Content="@L["btnSalvar"]">
                     </SfButton>
                     <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
                               @onclick="CloseEditDialog" Content="@L["MSG_GoBack"]">
@@ -109,25 +155,25 @@ else
 
     @*User exited insert/edit action with data changed.*@
     <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
-                   DialogTitle="Dados foram alterados! Confirma cancelamento?"
-                   Message="@SelectedContact?.Nome"
-                   Visible="@IsDirty"
-                   AlertMessage="Ao confirmar, todas as alterações serão perdidas."
-                   OnConfirmationYes="IgnoreChangesAlert"
-                   OnConfirmationNo="ContinueEdit" />
+                       DialogTitle="Dados foram alterados! Confirma cancelamento?"
+                       Message="@SelectedContact?.Nome"
+                       Visible="@IsDirty"
+                       AlertMessage="Ao confirmar, todas as alterações serão perdidas."
+                       OnConfirmationYes="IgnoreChangesAlert"
+                       OnConfirmationNo="ContinueEdit" />
 
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                             DialogTitle="@(L["DeleteMsg"] + " " + L["TituloCampo3Editoras"])"
                             Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
-                        Visible="@DeleteVisibility"
-                        DialogWidth="20%"
-                        DialogHeight="auto"
-                        OnConfirmationYes="ConfirmDeleteYes"
-                        OnConfirmationNo="ConfirmDeleteNo" />
+                            Visible="@DeleteVisibility"
+                            DialogWidth="20%"
+                            DialogHeight="auto"
+                            OnConfirmationYes="ConfirmDeleteYes"
+                            OnConfirmationNo="ConfirmDeleteNo" />
 
     <ValidateErrorComponent Visible="@ErrorVisibility"
-                        ValidationMessages="@ValidationMessages"
-                        OnCloseDialog="CloseValidationErrorBox" />
+                            ValidationMessages="@ValidationMessages"
+                            OnCloseDialog="CloseValidationErrorBox" />
 
 }
 
@@ -161,13 +207,13 @@ else
 
     #list .e-list-group-item {
         /*height: 56px;
-        line-height: 56px;*/
+                    line-height: 56px;*/
 
         overflow: auto;
     }
 
     #container .e-listview .e-list-item {
-        height: 100px;
+        height: 120px;
         width: 50%;
         float: left;
     }
@@ -205,4 +251,5 @@ else
     .margin {
         margin: 10px;
     }
+
 </style>
