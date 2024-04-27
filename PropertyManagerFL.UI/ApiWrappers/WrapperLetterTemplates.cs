@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+﻿using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
-using System;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 
@@ -11,17 +10,17 @@ public class WrapperLetterTemplates : ILetterTemplatesService
     private readonly ILogger<WrapperLetterTemplates> _logger;
     private readonly string? _templatesUri;
     private readonly HttpClient _httpClient;
+    private readonly HttpClientConfigurationService _httpClientConfigService;
 
-    public WrapperLetterTemplates(HttpClient httpClient, IConfiguration env, ILogger<WrapperLetterTemplates> logger)
+
+    public WrapperLetterTemplates(HttpClient httpClient, IConfiguration env, ILogger<WrapperLetterTemplates> logger, HttpClientConfigurationService httpClientConfigService)
     {
         _httpClient = httpClient;
         _env = env;
         _logger = logger;
         _templatesUri = $"{_env["BaseUrl"]}/Templates";
-
-        _httpClient.DefaultRequestHeaders.Accept.Clear();
-        _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-        _httpClient.DefaultRequestHeaders.Add("ApiKey", _env["ApiKey"]);
+        _httpClientConfigService = httpClientConfigService;
+        _httpClientConfigService.ConfigureHttpClient(_httpClient);
     }
 
     public async Task<string> GetTemplateFromServer(string templateName)

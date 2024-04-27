@@ -8,12 +8,14 @@ using Syncfusion.Blazor.Inputs;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using Syncfusion.Blazor.Calendars;
 using PropertyManagerFL.Application.Formatting;
+using PropertyManagerFL.Application.ViewModels;
 
 namespace PropertyManagerFL.UI.Pages.ComponentsBase;
 
 public class AddEditImovelBase : ComponentBase
 {
     [Inject] public ILookupTableService? LookupTablesService { get; set; }
+    [Inject] public IDistritosConcelhosService? DistritosConcelhosService { get; set; }
     [Inject] public IImovelService? imovelService { get; set; }
     [Inject] public IWebHostEnvironment? HostingEnvironment { get; set; }
     [Inject] public IStringLocalizer<App>? L { get; set; }
@@ -34,9 +36,12 @@ public class AddEditImovelBase : ComponentBase
     protected string? propertyImage { get; set; }
 
     protected int idxConservationState;
+    protected int idxFreguesia;
     protected int idxCertificate;
 
     public IEnumerable<LookupTableVM>? ConservationStates { get; set; }
+    public List<LookupTableVM>? FreguesiasLookup { get; set; } = new();
+    public List<DistritoConcelho>? Freguesias { get; set; } = new();
 
     protected SfTextBox? txtPorta { get; set; }
 
@@ -49,6 +54,19 @@ public class AddEditImovelBase : ComponentBase
             {"rows", "4" }
     };
 
+    protected override async Task OnInitializedAsync()
+    {
+        Freguesias= (await DistritosConcelhosService!.GetConcelhos()).ToList();
+        foreach (var freguesia in Freguesias)
+        {
+            FreguesiasLookup?.Add(
+                new LookupTableVM
+                {
+                    Id = freguesia.CodConcelho,
+                    Descricao = freguesia.Descricao,
+                });
+        }
+    }
     protected override async Task OnParametersSetAsync()
     {
         ConservationStates = (await LookupTablesService!.GetLookupTableData("EstadoConservacao")).ToList();
@@ -64,8 +82,9 @@ public class AddEditImovelBase : ComponentBase
                 latitude = result.centro![0];
                 longitude = result.centro![1];
             }
-        }
 
+            idxFreguesia = Freguesias.SingleOrDefault(f => f.Descricao == Property.FreguesiaImovel).CodConcelho;
+        }
         CalcDataProxInspecao();
     }
 
@@ -73,6 +92,11 @@ public class AddEditImovelBase : ComponentBase
     {
         idxConservationState = args.Value;
         Property!.Conservacao = idxConservationState;
+    }
+    protected void OnChangeFreguesia(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, LookupTableVM> args)
+    {
+        idxFreguesia = args.Value;
+        Property!.FreguesiaImovel = args.ItemData.Descricao;
     }
 
     protected void UltDataInspecaoChanged(ChangedEventArgs<DateTime> args)

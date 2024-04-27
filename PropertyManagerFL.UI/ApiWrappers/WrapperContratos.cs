@@ -25,6 +25,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         readonly IMailMergeService _MailMergeSvc;
         readonly ILookupTableService _svcLookupTable;
 
+
         ArrendamentoVM _arrendamento;
 
         public WrapperContratos(ILogger<WrapperContratos> logger,

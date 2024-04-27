@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.TipoDespesa;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -11,19 +12,20 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperTipoDespesa> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         public WrapperTipoDespesa(IConfiguration env,
                                   ILogger<WrapperTipoDespesa> logger,
                                   HttpClient httpClient,
-                                  IMapper mapper)
+                                  HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _logger = logger;
             _httpClient = httpClient;
-            _mapper = mapper;
             _uri = $"{_env["BaseUrl"]}/TipoDespesas";
-
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task<int> Insert(TipoDespesaVM tipoDespesa)

@@ -1,4 +1,4 @@
-﻿using PropertyManagerFL.Application.ViewModels.Imoveis;
+﻿using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -16,6 +16,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperImagens> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         /// <summary>
         /// images wrapper constructor
@@ -23,13 +25,15 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="env"></param>
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
-        public WrapperImagens(IConfiguration env, ILogger<WrapperImagens> logger, HttpClient httpClient)
+        public WrapperImagens(IConfiguration env, ILogger<WrapperImagens> logger, HttpClient httpClient, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Images";
 
             _logger = logger;
             _httpClient = httpClient;
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         /// <summary>

@@ -1,8 +1,8 @@
-﻿using AutoMapper;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Shared.Enums;
 using PropertyManagerFL.Application.ViewModels;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 
@@ -11,18 +11,21 @@ public class WrapperHistoricoEnvioCartas : IHistoricoEnvioCartasService
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _env;
     private readonly ILogger<WrapperHistoricoEnvioCartas> _logger;
-    private readonly IMapper _mapper;
+    private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
     private readonly string? _url;
 
 
-    public WrapperHistoricoEnvioCartas(HttpClient httpClient, ILogger<WrapperHistoricoEnvioCartas> logger, IConfiguration env, IMapper mapper)
+    public WrapperHistoricoEnvioCartas(HttpClient httpClient,
+        ILogger<WrapperHistoricoEnvioCartas> logger, IConfiguration env, HttpClientConfigurationService httpClientConfigService)
     {
         _httpClient = httpClient;
         _logger = logger;
         _env = env;
         _url = $"{_env["BaseUrl"]}/historicoenviocartas";
-        _mapper = mapper;
+        _httpClientConfigService = httpClientConfigService;
+        _httpClientConfigService.ConfigureHttpClient(_httpClient);
     }
 
     public async Task<IEnumerable<HistoricoEnvioCartasVM>> GetLettersSent()

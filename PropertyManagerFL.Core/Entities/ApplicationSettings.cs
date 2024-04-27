@@ -45,5 +45,5 @@ public class ApplicationSettings
     public byte PercentagemMultaPorAtrasoPagamento { get; set; }
     public string? BackupBaseDados { get; set; }
     public string? BackupOutrosFicheiros { get; set; }
-
+    public decimal TaxaIRS { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Contactos;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -14,6 +15,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         /// <summary>
         /// Construtor wrapperContactos
@@ -25,13 +28,17 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public WrapperContactos(IConfiguration env,
                                 ILogger<WrapperContactos> logger,
                                 HttpClient httpClient,
-                                IMapper mapper)
+                                IMapper mapper,
+                                HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Contactos";
             _logger = logger;
             _httpClient = httpClient;
             _mapper = mapper;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -14,9 +15,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly bool AutomaticRentAdjustment;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-
-        public WrapperRecebimentos(IConfiguration env, ILogger<WrapperRecebimentos> logger, HttpClient httpClient, IMapper mapper)
+        public WrapperRecebimentos(IConfiguration env, ILogger<WrapperRecebimentos> logger, HttpClient httpClient, IMapper mapper, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Recebimentos";
@@ -25,6 +26,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _mapper = mapper;
 
             AutomaticRentAdjustment = bool.Parse(_env.GetSection("AppSettings:AutomaticRentAdjustment").Value);
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
         }
 
 
@@ -124,7 +128,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             try
             {
                 var recebimentos = await _httpClient.GetFromJsonAsync<IEnumerable<RecebimentoVM>>($"{_uri}/GetAll");
-                return recebimentos;
+                return recebimentos ?? Enumerable.Empty<RecebimentoVM>();
             }
             catch (Exception exc)
             {

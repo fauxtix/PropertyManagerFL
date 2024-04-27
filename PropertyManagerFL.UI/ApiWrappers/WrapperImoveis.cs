@@ -3,6 +3,7 @@ using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.GeoApi.CodigosPostais;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -18,6 +19,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
 
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         /// <summary>
         /// API Wrapper de Imóveis
@@ -26,10 +29,12 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
         /// <param name="mapper"></param>
+        /// <param name="httpClientConfigService"></param>
         public WrapperImoveis(IConfiguration env,
                               ILogger<WrapperInquilinos> logger,
                               HttpClient httpClient,
-                              IMapper mapper)
+                              IMapper mapper,
+                              HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Imoveis";
@@ -37,6 +42,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _logger = logger;
             _httpClient = httpClient;
             _mapper = mapper;
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
         }
 
         /// <summary>

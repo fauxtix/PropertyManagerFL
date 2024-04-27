@@ -1,11 +1,11 @@
-﻿using AutoMapper;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.SituacaoFracao;
 using PropertyManagerFL.Application.ViewModels.Despesas;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -18,7 +18,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperFracoes> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         /// <summary>
         /// Construtor
@@ -26,18 +27,20 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="env"></param>
         /// <param name="logger"></param>
         /// <param name="httpClient"></param>
-        /// <param name="mapper"></param>
+        /// <param name="httpClientConfigService"></param>
         public WrapperFracoes(IConfiguration env,
                               ILogger<WrapperFracoes> logger,
                               HttpClient httpClient,
-                              IMapper mapper)
+                              HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Fracoes";
 
             _logger = logger;
             _httpClient = httpClient;
-            _mapper = mapper;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Documentos;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -13,8 +14,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperDocumentos(IConfiguration env, ILogger<WrapperDocumentos> logger, HttpClient httpClient, IMapper mapper, IWebHostEnvironment webHostEnvironment)
+
+        public WrapperDocumentos(IConfiguration env, ILogger<WrapperDocumentos> logger, HttpClient httpClient, IMapper mapper, IWebHostEnvironment webHostEnvironment, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Documents";
@@ -22,6 +25,9 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _httpClient = httpClient;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task<bool> InsertDocument(DocumentoVM document)

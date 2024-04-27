@@ -76,6 +76,44 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
             return new();
         }
     }
+    public async Task<string> GetCoeficiente_ByDescription(string description)
+    {
+        try
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<string>("usp_Concelho_GetCoeficienteByDescription",
+                    new { Description = description },
+                    commandType: CommandType.StoredProcedure);
+                return result ?? string.Empty;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return string.Empty;
+        }
+    }
+    public async Task<decimal> GetCoeficiente_ByUnitId(int id)
+    {
+        try
+        {
+            using (var connection = _context.CreateConnection())
+            {
+                var result = await connection.QueryFirstOrDefaultAsync<decimal>("usp_Concelho_GetCoeficienteByFracao",
+                    new { UnitId = id },
+                    commandType: CommandType.StoredProcedure);
+                return result;
+            }
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex.Message, ex);
+            return 0;
+        }
+    }
 
     public async Task UpdateCoeficienteIMI(int Id, decimal coeficienteIMI)
     {

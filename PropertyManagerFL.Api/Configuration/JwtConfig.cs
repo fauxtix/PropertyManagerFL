@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using PropertyManagerFL.Api.Middlewares;
 using PropertyManagerFL.Application.Interfaces.Services.JWT;
 using PropertyManagerFL.Infrastructure.Services.JWT;
 using System.Text;
@@ -57,5 +58,6 @@ public static class JwtConfig
     {
         app.UseAuthentication();
         app.UseAuthorization();
+        app.UseMiddleware<ApiKeyMiddleware>();
     }
 }

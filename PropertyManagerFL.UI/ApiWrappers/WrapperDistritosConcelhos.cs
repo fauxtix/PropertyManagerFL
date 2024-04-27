@@ -1,10 +1,12 @@
-﻿using Newtonsoft.Json;
+﻿using Blazor.AdminLte;
+using Newtonsoft.Json;
 
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.UI.Services.ClientApi;
 using System.Globalization;
 using System.Text;
 
@@ -17,17 +19,23 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
     private readonly string? _apiUri;
     private readonly IAppSettingsService _appSettings;
     private readonly HttpClient _httpClient;
+    private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
     public WrapperDistritosConcelhos(IConfiguration env,
                                      ILogger<WrapperDistritosConcelhos> logger,
                                      HttpClient httpClient,
-                                     IAppSettingsService appSettings)
+                                     IAppSettingsService appSettings,
+                                     HttpClientConfigurationService httpClientConfigService)
     {
         _env = env;
         _logger = logger;
         _httpClient = httpClient;
         _apiUri = $"{_env["BaseUrl"]}/DistritosConcelhos";
         _appSettings = appSettings;
+
+        _httpClientConfigService = httpClientConfigService;
+        _httpClientConfigService.ConfigureHttpClient(_httpClient);
     }
     public async Task<IEnumerable<DistritoConcelho>> GetConcelhos()
     {
@@ -94,6 +102,55 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         }
     }
 
+    public async Task<string> GetCoeficiente_ByDescription(string description)
+    {
+        try
+        {
+
+            using (HttpResponseMessage response = await _httpClient.GetAsync($"{_apiUri}/Coeficiente/{description}"))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var output = JsonConvert.DeserializeObject<string>(data);
+                    return output ?? "";
+                }
+
+                return "";
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, "Erro ao pesquisar API (Distritos/Coeficiente)");
+            return "";
+        }
+    }
+
+    public async Task<decimal> GetCoeficiente_ByUnitId(int id)
+    {
+        try
+        {
+
+            using (HttpResponseMessage response = await _httpClient.GetAsync($"{_apiUri}/CoeficienteByUnitId/{id}"))
+            {
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadAsStringAsync();
+                    var output = JsonConvert.DeserializeObject<decimal>(data);
+                    return output;
+                }
+
+                return 0;
+            }
+        }
+        catch (Exception exc)
+        {
+            _logger.LogError(exc, "Erro ao pesquisar API (Distritos/Coeficiente)");
+            return 0;
+        }
+    }
+
+
     public async Task<bool> UpdateCoeficienteIMI(int Id, decimal coeficienteIMI)
     {
         try
@@ -151,4 +208,5 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
 
         return usDecimalString;
     }
+
 }

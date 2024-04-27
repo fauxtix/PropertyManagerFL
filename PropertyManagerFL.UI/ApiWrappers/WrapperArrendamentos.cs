@@ -10,6 +10,7 @@ using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Services.ClientApi;
 using PropertyManagerFLApplication.Utilities;
 using System.Text;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
@@ -27,6 +28,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _environment;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
 
         readonly IProprietarioService _svcProprietarios;
@@ -53,6 +55,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="mailMergeSvc"></param>
         /// <param name="svcRecebimentos"></param>
         /// <param name="environment"></param>
+        /// <param name="httpClientConfigService"></param>
         public WrapperArrendamentos(IConfiguration env,
                                     ILogger<WrapperArrendamentos> logger,
                                     HttpClient httpClient,
@@ -63,18 +66,14 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                     IFracaoService svcFracoes,
                                     IMailMergeService mailMergeSvc,
                                     IRecebimentoService svcRecebimentos,
-                                    IWebHostEnvironment environment)
+                                    IWebHostEnvironment environment,
+                                    HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Arrendamentos";
 
             _logger = logger;
             _httpClient = httpClient;
-
-            _httpClient.DefaultRequestHeaders.Accept.Clear();
-            _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-            _httpClient.DefaultRequestHeaders.Add("ApiKey", _env["ApiKey"]);
-
 
             _mapper = mapper;
             _svcProprietarios = svcProprietarios;
@@ -84,6 +83,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _MailMergeSvc = mailMergeSvc;
             _svcRecebimentos = svcRecebimentos;
             _environment = environment;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
         }
 
         /// <summary>

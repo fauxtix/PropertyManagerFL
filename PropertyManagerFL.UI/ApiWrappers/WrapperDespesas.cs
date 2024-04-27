@@ -2,6 +2,7 @@
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Despesas;
 using PropertyManagerFL.Application.ViewModels.TipoDespesa;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -12,16 +13,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly string? _uriImoveis;
         private readonly HttpClient _httpClient;
-        private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperDespesas(IConfiguration env, ILogger<WrapperDespesas> logger, HttpClient httpClient, IMapper mapper)
+
+        public WrapperDespesas(IConfiguration env, ILogger<WrapperDespesas> logger, HttpClient httpClient, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Despesas";
             _uriImoveis = $"{_env["BaseUrl"]}/Imoveis";
             _logger = logger;
             _httpClient = httpClient;
-            _mapper = mapper;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task<int> Insert(DespesaVM expense)

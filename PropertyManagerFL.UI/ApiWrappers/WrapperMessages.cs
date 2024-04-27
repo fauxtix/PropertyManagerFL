@@ -1,5 +1,6 @@
 ﻿using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Messages;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -9,13 +10,17 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperMessages> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperMessages(IConfiguration env, ILogger<WrapperMessages> logger, HttpClient httpClient)
+
+        public WrapperMessages(IConfiguration env, ILogger<WrapperMessages> logger, HttpClient httpClient, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Messages";
             _logger = logger;
             _httpClient = httpClient;
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task<bool> Add(ComposeMessageVM messageVM)

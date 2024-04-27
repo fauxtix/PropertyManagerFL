@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Appointments;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
 
@@ -13,8 +14,9 @@ public class WrapperAppointments : IAppointmentsService
     private readonly string? _appointmentsUri;
     private readonly HttpClient _httpClient;
     private readonly IMapper _mapper;
+    private readonly HttpClientConfigurationService _httpClientConfigService;
 
-    public WrapperAppointments(IConfiguration env, ILogger<WrapperAppointments> logger, HttpClient httpClient, IMapper mapper)
+    public WrapperAppointments(IConfiguration env, ILogger<WrapperAppointments> logger, HttpClient httpClient, IMapper mapper, HttpClientConfigurationService httpClientConfigService)
     {
         _env = env;
         _logger = logger;
@@ -22,6 +24,10 @@ public class WrapperAppointments : IAppointmentsService
 
         _httpClient = httpClient;
         _mapper = mapper;
+
+        _httpClientConfigService = httpClientConfigService;
+        _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
     }
 
     public async Task<int> InsertAsync(AppointmentVM appointment)

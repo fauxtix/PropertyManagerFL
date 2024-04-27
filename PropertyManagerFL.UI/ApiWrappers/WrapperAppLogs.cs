@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Logs;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -10,13 +11,17 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperAppLogs> _logger;
         private readonly string? _appLogUri;
         private readonly HttpClient _httpClient;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperAppLogs(IConfiguration env, ILogger<WrapperAppLogs> logger, HttpClient httpClient)
+        public WrapperAppLogs(IConfiguration env, ILogger<WrapperAppLogs> logger, HttpClient httpClient, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _logger = logger;
             _appLogUri = $"{_env["BaseUrl"]}/AppLog";
             _httpClient = httpClient;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task DeleteAll()

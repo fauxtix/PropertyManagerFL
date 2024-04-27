@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Core.Entities;
-using Syncfusion.Blazor.Schedule.Internal;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -11,14 +11,17 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperStats> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperStats(IConfiguration env, ILogger<WrapperStats> logger, HttpClient httpClient)
+
+        public WrapperStats(IConfiguration env, ILogger<WrapperStats> logger, HttpClient httpClient, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _logger = logger;
             _httpClient = httpClient;
             _uri = $"{_env["BaseUrl"]}/Stats";
-
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
 
         }
         public async Task<IEnumerable<ExpensesSummaryData>> GetExpensesCategoriesWithMoreSpending()

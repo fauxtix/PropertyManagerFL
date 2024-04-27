@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -13,15 +14,18 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperProprietario(IConfiguration env, ILogger<WrapperProprietario> logger, HttpClient httpClient, IMapper mapper)
+
+        public WrapperProprietario(IConfiguration env, ILogger<WrapperProprietario> logger, HttpClient httpClient, IMapper mapper, HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Proprietarios";
             _logger = logger;
             _httpClient = httpClient;
             _mapper = mapper;
-
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         public async Task<int> Insert(ProprietarioVM proprietario)

@@ -11,6 +11,7 @@ using PropertyManagerFL.Infrastructure.Adapters;
 using PropertyManagerFL.Infrastructure.Repositories;
 using PropertyManagerFL.Infrastructure.Services.CommonServices;
 using PropertyManagerFL.UI.ApiWrappers;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI;
 
@@ -61,6 +62,7 @@ public static class DependencyInjectionConfig
 
         services.AddTransient<ILetterTemplatesService, WrapperLetterTemplates>();
         services.AddTransient<IDistritosConcelhosService, WrapperDistritosConcelhos>();
+        services.AddTransient<HttpClientConfigurationService>();
 
         services.AddScoped<IEmailSender, EmailSender>();
 

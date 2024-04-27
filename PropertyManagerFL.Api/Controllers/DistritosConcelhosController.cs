@@ -100,6 +100,70 @@ public class DistritosConcelhosController : ControllerBase
         }
     }
 
+    [HttpGet]
+    [Route("Coeficiente/{description}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<IActionResult> GetCoeficienteByDescription(string description)
+    {
+        var location = GetControllerActionNames();
+        try
+        {
+            if (string.IsNullOrEmpty(description))
+            {
+                return BadRequest();
+            }
+            var result = await _repo.GetCoeficiente_ByDescription(description);
+            if (string.IsNullOrEmpty(description))
+            {
+                return Ok(result);
+            }
+
+            return NotFound($"Sem resultados para o concelho {description}");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"Erro no Api (GetCoeficienteByDescription): {e.Message}");
+            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+        }
+    }
+
+    [HttpGet]
+    [Route("CoeficienteByUnitId/{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+
+    public async Task<IActionResult> GetCoeficienteByUnitId(int id)
+    {
+        var location = GetControllerActionNames();
+        try
+        {
+            if (id < 0)
+            {
+                return BadRequest();
+            }
+            var result = await _repo.GetCoeficiente_ByUnitId(id);
+            if (id > 0)
+            {
+                return Ok(result);
+            }
+
+            return NotFound($"Sem resultados para o concelho {id}");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, $"Erro no Api (GetCoeficienteByUnitId): {e.Message}");
+            return InternalError($"{location}: {e.Message} - {e.InnerException}");
+        }
+    }
+
+
+
 
     /// <summary>
     /// Altera coeficiente IMI

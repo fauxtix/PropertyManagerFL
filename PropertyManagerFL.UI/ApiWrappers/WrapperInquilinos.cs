@@ -13,6 +13,7 @@ using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Application.ViewModels.Proprietarios;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.Services.ClientApi;
 using PropertyManagerFLApplication.Utilities;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
@@ -28,6 +29,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
         readonly IProprietarioService _svcProprietarios;
         readonly IImovelService _svcImoveis;
@@ -47,6 +50,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="svcImoveis"></param>
         /// <param name="svcFracoes"></param>
         /// <param name="mailMergeSvc"></param>
+        /// <param name="httpClientConfigService"></param>
         public WrapperInquilinos(IConfiguration env,
                                  ILogger<WrapperInquilinos> logger,
                                  HttpClient httpClient,
@@ -54,7 +58,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                  IProprietarioService svcProprietarios,
                                  IImovelService svcImoveis,
                                  IFracaoService svcFracoes,
-                                 IMailMergeService mailMergeSvc)
+                                 IMailMergeService mailMergeSvc,
+                                 HttpClientConfigurationService httpClientConfigService)
         {
             _httpClient = httpClient;
             _env = env;
@@ -66,6 +71,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _svcImoveis = svcImoveis;
             _svcFracoes = svcFracoes;
             _MailMergeSvc = mailMergeSvc;
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
         }
 
         /// <summary>

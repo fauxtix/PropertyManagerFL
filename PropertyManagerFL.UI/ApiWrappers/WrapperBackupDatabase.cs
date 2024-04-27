@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -10,13 +11,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly ILogger<WrapperBackupDatabase> _logger;
         private readonly string? _uri;
         private readonly HttpClient _httpClient;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
 
-        public WrapperBackupDatabase(ILogger<WrapperBackupDatabase> logger, HttpClient httpClient, IConfiguration env)
+
+        public WrapperBackupDatabase(ILogger<WrapperBackupDatabase> logger, HttpClient httpClient, IConfiguration env, HttpClientConfigurationService httpClientConfigService)
         {
             _logger = logger;
             _httpClient = httpClient;
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Backup";
+
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
         }
 
         public async Task<bool?> BackupDatabase()

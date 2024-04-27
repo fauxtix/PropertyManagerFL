@@ -63,12 +63,24 @@
                                                ValueChange="OnPstChange"
                                                @bind-Value="@Property!.CodPstEx">
                                     </SfTextBox>
-                                    <SfTextBox Enabled="true"
+                                    @* <SfTextBox Enabled="true"
                                                Placeholder="@L["TituloFreguesia"]"
                                                CssClass="e-field"
                                                FloatLabelType="@FloatLabelType.Always"
                                                @bind-Value="@Property!.FreguesiaImovel">
-                                    </SfTextBox>
+                                    </SfTextBox> *@
+                                    <div mt-2>
+                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                                        ShowClearButton="false" PopupWidth="auto" Value="@idxFreguesia"
+                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                        Placeholder="@L["TituloFreguesia"]" DataSource="@FreguesiasLookup" FloatLabelType="FloatLabelType.Always">
+                                            <DropDownListTemplates TItem="LookupTableVM">
+                                            </DropDownListTemplates>
+                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeFreguesia"></DropDownListEvents>
+                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                        </SfDropDownList>
+                                    </div>
+
                                 </div>
                                 <div class="group-box">
                                     <div class="mb-2">

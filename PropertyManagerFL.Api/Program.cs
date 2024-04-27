@@ -1,6 +1,7 @@
 using EmailService;
 using log4net.Config;
 using PropertyManagerFL.Api.Configuration;
+using PropertyManagerFL.Api.Middlewares;
 using PropertyManagerFL.Infrastructure.Context;
 using Serilog;
 using Serilog.Events;
@@ -65,6 +66,7 @@ app.UseDatabaseConfiguration();
 app.UseSwaggerConfiguration();
 app.UseHttpsRedirection();
 app.UseRouting();
+
 app.UseJwtConfiguration();
 
 

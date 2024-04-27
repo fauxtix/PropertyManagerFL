@@ -5,6 +5,7 @@ using Org.BouncyCastle.Crypto.Operators;
 using Org.BouncyCastle.Math.EC;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
+using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI.ApiWrappers
 {
@@ -16,6 +17,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly IMemoryCache _memoryCache;
+        private readonly HttpClientConfigurationService _httpClientConfigService;
+
 
 
         /// <summary>
@@ -26,11 +29,13 @@ namespace PropertyManagerFL.UI.ApiWrappers
         /// <param name="httpClient"></param>
         /// <param name="mapper"></param>
         /// <param name="memoryCache"></param>
+        /// <param name="httpClientConfigService"></param>
         public WrapperLookupTables(IConfiguration env,
                                    ILogger<WrapperLookupTables> logger,
                                    HttpClient httpClient,
                                    IMapper mapper,
-                                   IMemoryCache memoryCache)
+                                   IMemoryCache memoryCache,
+                                   HttpClientConfigurationService httpClientConfigService)
         {
             _env = env;
             _logger = logger;
@@ -38,6 +43,8 @@ namespace PropertyManagerFL.UI.ApiWrappers
             _mapper = mapper;
             _uri = $"{_env["BaseUrl"]}/LookupTables";
             _memoryCache = memoryCache;
+            _httpClientConfigService = httpClientConfigService;
+            _httpClientConfigService.ConfigureHttpClient(_httpClient);
         }
 
         /// <summary>

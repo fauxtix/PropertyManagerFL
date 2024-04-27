@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
+using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Stats;
 using PropertyManagerFL.Application.ViewModels.Despesas;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
@@ -9,6 +11,8 @@ using PropertyManagerFL.Core.Entities;
 namespace PropertyManagerFL.UI.Pages.Despesas;
 public partial class ExpensesDashboard
 {
+    [Inject] public IDistritosConcelhosService? DistritosConcelhosService { get; set; }
+    [Inject] public IAppSettingsService? AppSettingsService { get; set; }
     [Inject] public IFracaoService? fracoesService { get; set; }
     [Inject] public IDespesaService? expensesService { get; set; }
     [Inject] public IStatsService? statsService { get; set; }
@@ -64,18 +68,19 @@ public partial class ExpensesDashboard
         startOfWeek = startOfWeek.AddDays(delta);
 
         DateTime endOfWeek = startOfWeek.AddDays(7);
-
+        var taxaIRS = (await AppSettingsService!.GetSettingsAsync()).TaxaIRS;
         try
         {
             AllUnits = (await fracoesService!.GetAll()).ToList();
             foreach (var unit in AllUnits)
             {
+                var coeficienteIMI = await DistritosConcelhosService!.GetCoeficiente_ByUnitId(unit.Id);
                 IMIValues?.Add(
                 new IMIResults
                 {
                     Descricao = unit.Descricao,
                     ValPatrimonio = unit.ValorUltAvaliacao,
-                    ValorPagar = Math.Round(unit.ValorUltAvaliacao * (decimal)0.0033, 2)
+                    ValorPagar = Math.Round(unit.ValorUltAvaliacao * coeficienteIMI, 2)
                 });
                 if (unit.Situacao == 1)
                 {
@@ -84,7 +89,7 @@ public partial class ExpensesDashboard
                         {
                             Descricao = unit.Descricao,
                             ValorRenda = unit.ValorRenda * 12,
-                            ValorIRS = Math.Round((unit.ValorRenda * 12) * (decimal)0.28, 2)
+                            ValorIRS = Math.Round((unit.ValorRenda * 12) * taxaIRS, 2)
                         }
                         );
                 }

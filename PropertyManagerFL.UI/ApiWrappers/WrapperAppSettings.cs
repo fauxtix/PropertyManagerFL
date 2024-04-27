@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
+using PropertyManagerFL.UI.Services.ClientApi;
 using System.Text;
 
 namespace PropertyManagerFL.UI.ApiWrappers;
@@ -13,9 +14,10 @@ public class WrapperAppSettings : IAppSettingsService
     private readonly string? _otherSettingsUrl;
     private readonly string? _initializeUrl;
     private readonly string? _updateLanguageUrl;
+    private readonly HttpClientConfigurationService _httpClientConfigService;
 
     public WrapperAppSettings(HttpClient httpClient, IConfiguration env,
-                                    ILogger<WrapperAppSettings> logger)
+                                    ILogger<WrapperAppSettings> logger, HttpClientConfigurationService httpClientConfigService)
     {
         _env = env;
         _url = $"{_env["BaseUrl"]}/appsettings/emailsettings";
@@ -25,6 +27,10 @@ public class WrapperAppSettings : IAppSettingsService
         _logger = logger;
 
         _httpClient = httpClient;
+
+        _httpClientConfigService = httpClientConfigService;
+        _httpClientConfigService.ConfigureHttpClient(_httpClient);
+
     }
 
     public async Task<ApplicationSettingsVM> GetSettingsAsync()
