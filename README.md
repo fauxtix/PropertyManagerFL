@@ -151,7 +151,7 @@ Quando contribuir com código, por favor siga o estilo de código existente e su
 
 ## Licença
 
-O código fonte do site está licenciado sob a licença MIT, que pode ser encontrada no ficheiro MIT-LICENSE.txt.
+O código fonte do site está licenciado sob a licença MIT, que pode ser encontrada no ficheiro [MIT-LICENSE.txt].
 
 ## 📞 Contacto
 
