@@ -1,7 +1,7 @@
 using EmailService;
 using log4net.Config;
+using Microsoft.Extensions.Configuration;
 using PropertyManagerFL.Api.Configuration;
-using PropertyManagerFL.Api.Middlewares;
 using PropertyManagerFL.Infrastructure.Context;
 using Serilog;
 using Serilog.Events;
@@ -53,8 +53,8 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 
 var app = builder.Build();
 
-
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE2NjM3MEAzMjM0MmUzMDJlMzBnWFVrR2hOQjJSNUFaNjZPNkU0T1VLYnFRSTZGaEFES3Y0U0xEMGFYdGEwPQ==");
+string? SyncfusionLicenseKey = configuration["SyncfusionLicenseKey"];
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SyncfusionLicenseKey);
 
 if (app.Environment.IsDevelopment())
 {

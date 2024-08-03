@@ -19,7 +19,7 @@
 @attribute [Authorize]
 
 <PageTitle>@L["TituloGestaoTabelas"]</PageTitle>
-<PageTitleComponent PageTitle="@L["TituloGestaoTabelas"]" WithBadge="true" PageSubTitle="@PageTitle"></PageTitleComponent>
+@* <PageTitleComponent PageTitle="@L["TituloGestaoTabelas"]" WithBadge="true" PageSubTitle="@PageTitle"></PageTitleComponent> *@
 
 <ConfigurationTablesView Items="@ItemsList"
                          TItem="TModel"
@@ -32,11 +32,6 @@
                          TextPropertyName="Descricao"
                          ValuePropertyName="Codigo">
 </ConfigurationTablesView>
-
-<div class="mx-auto">
-    <SfButton OnClick="GoBack" Content="Voltar"
-              IconCss="fa fa-arrow-left" CssClass="e-btn e-outline e-round-corner p-1" />
-</div>
 
 <AlertMessage Message="@alertMessage" MessageType="@messageType" />
 

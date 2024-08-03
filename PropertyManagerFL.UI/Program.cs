@@ -122,8 +122,9 @@ app.UseRequestLocalization(localizationOptions);
 
 #endregion
 
+string? SyncfusionLicenseKey = builder.Configuration["SyncfusionLicenseKey"];
+Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SyncfusionLicenseKey);
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("MzE2NjM3MEAzMjM0MmUzMDJlMzBnWFVrR2hOQjJSNUFaNjZPNkU0T1VLYnFRSTZGaEFES3Y0U0xEMGFYdGEwPQ==");
 //app.UseRequestLocalization("pt");
 
 // Configure the HTTP request pipeline.

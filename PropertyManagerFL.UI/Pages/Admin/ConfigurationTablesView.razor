@@ -34,6 +34,19 @@
         </div>
     </header>
 *@
+
+    <div class="card-box-ico">
+        <SfBreadcrumb EnableActiveItemNavigation="true">
+            <BreadcrumbItems>
+                <BreadcrumbItem IconCss="e-icons e-home" Url="/" />
+                @* <BreadcrumbItem IconCss="e-icons e-settings" Text="@L["lblManutencao"]" Url="/admin/appsettings" /> *@
+                <BreadcrumbItem IconCss="e-icons e-table" Text="@L["TituloGestaoTabelas"]" Url="/admin/configapptables" />
+                <BreadcrumbItem IconCss="e-icons e-table-header" Text="@PageTitle" />
+            </BreadcrumbItems>
+        </SfBreadcrumb>
+    </div>
+    <hr />
+
     <hr />
 
     <div class="container-fluid">
@@ -311,6 +324,7 @@
     [Parameter]
     public bool AllowManagement { get; set; } = true; // new => 12/2021
 
+    private Stack<string> navigationHistory = new Stack<string>();
 
     protected string? dialogHeight;
     protected static string? pdfTitle;
@@ -319,6 +333,7 @@
     protected override void OnInitialized()
     {
         PageTitle = L["menu-admin-lookup-tables"];
+        UpdateNavigation();
     }
 
     protected override void OnParametersSet()
@@ -331,7 +346,28 @@
         }
         StateHasChanged();
     }
+    private void NavigateBack()
+    {
+        if (navigationHistory.Count > 0)
+        {
+            var previousComponentUrl = navigationHistory.Pop();
+            NavManager.NavigateTo(previousComponentUrl);
+        }
+        else
+        {
+            // Handle scenario where there is no previous component to navigate back to
+            // You can show a message or perform some other action
+        }
+    }
 
+    private void UpdateNavigationHistory(string componentUrl)
+    {
+        navigationHistory.Push(componentUrl);
+    }
+    private void UpdateNavigation()
+    {
+        UpdateNavigationHistory(NavManager.Uri);
+    }
     protected void onChangeDescription(Microsoft.AspNetCore.Components.ChangeEventArgs args)
     {
         try

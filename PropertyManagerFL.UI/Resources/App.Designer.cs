@@ -2465,6 +2465,15 @@ namespace PropertyManagerFL.UI.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Todas as despesas (previstas e atuais) por Tipo.
+        /// </summary>
+        public static string TituloDespesasPorTipo {
+            get {
+                return ResourceManager.GetString("TituloDespesasPorTipo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Categoria com mais gastos.
         /// </summary>
         public static string TituloDespesasSegundaCategoriaComMaisGastos {

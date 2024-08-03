@@ -2188,6 +2188,11 @@
               Looks up a localized string similar to Despesas por Mês.
             </summary>
         </member>
+        <member name="P:PropertyManagerFL.UI.Resources.App.TituloDespesasPorTipo">
+            <summary>
+              Looks up a localized string similar to Todas as despesas (previstas e atuais) por Tipo.
+            </summary>
+        </member>
         <member name="P:PropertyManagerFL.UI.Resources.App.TituloDespesasSegundaCategoriaComMaisGastos">
             <summary>
               Looks up a localized string similar to Categoria com mais gastos.

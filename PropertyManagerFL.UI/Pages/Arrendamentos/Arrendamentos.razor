@@ -207,12 +207,13 @@ else
                                 monthsToEnd.ToString("00") :
                                 L["TituloContratoTerminado"];
                                 var chipCss = monthsToEnd == 4 ? "e-warning" : monthsToEnd >= 0 && monthsToEnd <= 3 ? "e-danger" : monthsToEnd <= 0 ? "e-outline e-danger" : "e-outline";
-
+                                <SfTooltip Content="@textToDisplay" Position="Syncfusion.Blazor.Popups.Position.BottomRight">
                                 <SfChip>
                                     <ChipItems>
                                         <ChipItem Text="@textToDisplay" CssClass="@chipCss"></ChipItem>
                                     </ChipItems>
                                 </SfChip>
+                                </SfTooltip>
                             }
                         </Template>
                     </GridColumn>

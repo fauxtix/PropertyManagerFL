@@ -2624,4 +2624,7 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloSeguros" xml:space="preserve">
     <value>Seguros</value>
   </data>
+  <data name="TituloDespesasPorTipo" xml:space="preserve">
+    <value>Todos los gastos (previstos y reales) por Tipo</value>
+  </data>
 </root>

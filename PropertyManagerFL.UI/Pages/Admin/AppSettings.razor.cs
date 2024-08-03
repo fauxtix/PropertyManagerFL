@@ -47,7 +47,7 @@ public partial class AppSettings
 
         try
         {
-            settings = await AppSettingsService.GetSettingsAsync();
+            settings = await AppSettingsService!.GetSettingsAsync();
         }
         catch
         {

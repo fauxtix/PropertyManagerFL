@@ -2632,4 +2632,7 @@
   <data name="TituloSeguros" xml:space="preserve">
     <value>Insurance</value>
   </data>
+  <data name="TituloDespesasPorTipo" xml:space="preserve">
+    <value>All expenses (planned and actual) by Type</value>
+  </data>
 </root>

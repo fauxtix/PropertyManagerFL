@@ -1,0 +1,61 @@
+﻿@using PropertyManagerFL.Application.Interfaces.Services.Stats
+@using PropertyManagerFL.Application.ViewModels.Despesas
+@using PropertyManagerFL.Core.Entities;
+@using Syncfusion.Blazor.Charts
+
+@inject IStringLocalizer<App> localizerApp
+@inject IStatsService statsService
+
+<SfAccumulationChart Title="@Title" EnableAnimation="true">
+    <AccumulationChartTooltipSettings Enable="true" />
+    <AccumulationChartLegendSettings Position="Syncfusion.Blazor.Charts.LegendPosition.Bottom" Visible="true" />
+    <AccumulationChartTitleStyle FontFamily="Arial" FontStyle="Normal" FontWeight="bold" Color="#99ccff" Size="20px" />
+    <AccumulationChartSubTitleStyle FontFamily="Arial" FontWeight="regular" Color="#E27F2D" Size="16px" />
+    <AccumulationChartSeriesCollection>
+        <AccumulationChartSeries DataSource="@expensesWithNoTotal"
+                                 XName="Description"
+                                 YName="TaxPercent"
+                                 Radius="@OuterRadius" StartAngle="@StartAngle" EndAngle="@EndAngle"
+                                 InnerRadius="0%" ExplodeIndex="@ExplodeIndex" Explode="true" ExplodeOffset="@ExplodeRadius">
+            <AccumulationDataLabelSettings Visible="true"
+                                           Name="Value"
+                                           Position="AccumulationLabelPosition.Outside">
+                <AccumulationChartDataLabelFont FontFamily="Arial"
+                                                FontStyle="normal"
+                                                FontWeight="Bold"
+                                                Color="#333"
+                                                Size="18px" />
+            </AccumulationDataLabelSettings>
+        </AccumulationChartSeries>
+        <AccumulationChartTooltipSettings Enable="true"></AccumulationChartTooltipSettings>
+    </AccumulationChartSeriesCollection>
+</SfAccumulationChart>
+
+
+@code
+{
+    [Parameter] public int Year { get; set; } = DateTime.Now.Year;
+    [Parameter] public IEnumerable<ExpenseResults>? PieData { get; set; }
+
+    protected string Title = string.Empty;
+    protected double ExplodeIndex { get; set; } = 0;
+    protected string OuterRadius = "70%", ExplodeRadius = "10%";
+    protected int StartAngle = 0, EndAngle = 360;
+
+    protected IEnumerable<ExpenseResults>? expensesWithNoTotal;
+
+    protected override void OnParametersSet()
+     {
+        Title = localizerApp["TituloDespesasPorTipo"];
+
+        try
+        {
+            expensesWithNoTotal = PieData?.Where(e => !e.Description.ToLower().Contains("total"));
+        }
+        catch (Exception ex)
+        {
+            var test = ex.Message;
+            throw;
+        }
+    }
+}

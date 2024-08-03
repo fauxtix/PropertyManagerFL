@@ -2640,4 +2640,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloSeguros" xml:space="preserve">
     <value>Assurance</value>
   </data>
+  <data name="TituloDespesasPorTipo" xml:space="preserve">
+    <value>Toutes les dépenses (prévues et réelles) par Type</value>
+  </data>
 </root>

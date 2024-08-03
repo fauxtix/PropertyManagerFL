@@ -11,7 +11,7 @@
 @using Syncfusion.Blazor.Buttons
 
 <PageTitle>@L["TituloMenuInquilinos"]</PageTitle>
-    <PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]" WithBadge=true PageSubTitle="Resumo"></PageTitleComponent>
+    <PageTitleComponent PageTitle="@L["TituloMenuInquilinos"]" WithBadge=true PageSubTitle="@L["TituloResumo"]"></PageTitleComponent>
 
     <div class="container-fluid mt-5">
         @if (Tenants is null)
@@ -20,6 +20,17 @@
     }
     else
     {
+        <div class="card-box-ico">
+            <SfBreadcrumb>
+                <BreadcrumbItems>
+                    <BreadcrumbItem IconCss="e-icons e-home" Url="/" />
+                    <BreadcrumbItem IconCss="e-icons e-people" Text="@L["TituloMenuInquilinos"]" Url="/inquilinos" />
+                    <BreadcrumbItem IconCss="e-icons e-table-header" Text="@L["TituloResumo"]" Url="/inquilinos/detalhe" />
+                </BreadcrumbItems>
+            </SfBreadcrumb>
+        </div>
+        <hr />
+
         <SfAccordion @ref="@accObj" ID="acc" ExpandMode="ExpandMode.Single">
             <AccordionEvents Expanded="OnExpanded"></AccordionEvents>
             <AccordionItems>
@@ -136,12 +147,9 @@
                             </div>
                         </ContentTemplate>
                     </AccordionItem>
-                }
+                }dminpanel
             </AccordionItems>
         </SfAccordion>
-        <div class="mt-3 d-flex justify-content-center">
-            <SfButton CssClass="e-btn e-primary e-round-corner p-2" IconCss="fa fa-window-close" OnClick="@(()=>nav?.NavigateTo("/inquilinos"))" Content="Voltar"/>
-        </div>
         <SfSpinner @ref="SpinnerObj"
                    Visible="@spinnerVisible"
                    Label="@L["MSG_PreparandoDados"]" Size="50"

@@ -1,7 +1,5 @@
-﻿using FluentValidation;
-using FluentValidation.Results;
+﻿using FluentValidation.Results;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
-using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Application.ViewModels.Despesas;

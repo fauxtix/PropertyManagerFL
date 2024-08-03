@@ -1,9 +1,30 @@
 ﻿@page "/admin/configapptables"
 @inject IStringLocalizer<App> L 
 
+    @inject NavigationManager NavigationManager
+
 @* <PageTitleComponent PageTitle="@L["lblManutencao"]" WithBadge=true PageSubTitle="@L["menu-admin-lookup-tables"]" /> *@
 
+<div class="mt-3">
+    <SfBreadcrumb>
+        <BreadcrumbItems>
+            <BreadcrumbItem IconCss="e-icons e-home" Url="/" />
+            @if (!url.Contains("settings"))
+            {
+                <BreadcrumbItem IconCss="e-icons e-settings" Url="/admin/appsettings" Text="@L["lblManutencao"]" />
+            }
+            <BreadcrumbItem IconCss="e-icons e-table-header" Text="@L["TituloGestaoTabelas"]" />
+        </BreadcrumbItems>
+    </SfBreadcrumb>
+</div>
+<hr />
+
 <DisplayApplicationTables />
-@code {
+@code{
+    string url;
+    protected override void  OnInitialized()
+    {
+        url = NavigationManager.Uri;
+    }
 
 }

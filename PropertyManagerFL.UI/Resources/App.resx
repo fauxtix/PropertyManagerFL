@@ -1625,4 +1625,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloSeguros" xml:space="preserve">
     <value>Seguros</value>
   </data>
+  <data name="TituloDespesasPorTipo" xml:space="preserve">
+    <value>Todas as despesas (previstas e atuais) por Tipo</value>
+  </data>
 </root>
