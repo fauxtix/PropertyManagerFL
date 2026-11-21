@@ -71,7 +71,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
 
@@ -116,7 +116,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -151,7 +151,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError($"{location}: {ex.Message} - {ex.InnerException}");
+                _logger.LogError(ex, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
@@ -177,7 +177,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -196,7 +196,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -229,7 +229,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -261,7 +261,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -293,7 +293,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -320,7 +320,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -377,7 +377,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -409,7 +409,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -434,7 +434,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -484,7 +484,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -508,7 +508,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -532,7 +532,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -564,7 +564,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -589,7 +589,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -621,7 +621,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -646,7 +646,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -667,7 +667,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -710,7 +710,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return false;
             }
         }
@@ -738,7 +738,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -762,7 +762,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -787,7 +787,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -811,7 +811,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -836,7 +836,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -856,7 +856,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -876,7 +876,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -901,7 +901,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -934,7 +934,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
 
@@ -977,7 +977,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -1002,7 +1002,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -1028,7 +1028,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -1056,7 +1056,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -1086,7 +1086,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -1118,7 +1118,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: Operation failed", location);
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }

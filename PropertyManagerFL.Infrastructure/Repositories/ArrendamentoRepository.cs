@@ -721,7 +721,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Error {ex.Message} - Rollback... ");
+                            _logger.LogError(ex, "Operation failed");
                             tran.Rollback();
                             return false;
                         }

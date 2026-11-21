@@ -74,7 +74,7 @@ public class AppointmentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError($"{location}: {ex.Message} - {ex.InnerException}");
+            _logger.LogError(ex, "{Location}: Operation failed", location);
             return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
 
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Formatting;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
@@ -204,7 +204,7 @@ public class DistritosConcelhosController : ControllerBase
 
         catch (Exception e)
         {
-            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            _logger?.LogError(e, "{Location}: Operation failed", location);
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }

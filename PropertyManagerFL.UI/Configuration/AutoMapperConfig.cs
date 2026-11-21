@@ -15,6 +15,7 @@ public static class AutoMapperConfig
     public static void AddAutoMapperConfiguration(this IServiceCollection services)
     {
         services.AddAutoMapper(
+            cfg => { },
             typeof(AppLogMappingProfile),
             typeof(InquilinoMappingProfile),
             typeof(ProprietarioMappingProfile),

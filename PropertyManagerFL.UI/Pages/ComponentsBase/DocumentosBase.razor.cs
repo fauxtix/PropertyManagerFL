@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using ObjectsComparer;
@@ -214,7 +214,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogError($"Abertura de documento em nova página\n ({ex.Message})");
+                        _logger?.LogError(ex, "Operation failed");
                     }
                 }
                 else

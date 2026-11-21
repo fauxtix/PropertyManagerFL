@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET (uses global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore PropertyManagerFL.sln
+
+      - name: Build
+        run: dotnet build PropertyManagerFL.sln --no-restore --configuration Release --nologo -v:q -clp:ErrorsOnly
+
+      - name: Test
+        run: dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj --no-build --configuration Release --nologo

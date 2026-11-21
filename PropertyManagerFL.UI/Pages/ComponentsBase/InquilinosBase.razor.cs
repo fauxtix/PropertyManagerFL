@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -1476,7 +1476,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.");
+                            _logger.LogError(ex, "Operation failed");
                             ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
                             ToastCss = "e-toast-danger";
                         }

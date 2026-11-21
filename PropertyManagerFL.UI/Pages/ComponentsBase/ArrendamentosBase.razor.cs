@@ -1286,7 +1286,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
                         catch (Exception ex)
                         {
-                            _logger?.LogError($"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.");
+                            _logger?.LogError(ex, "Operation failed");
                             ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
                             ToastCss = "e-toast-danger";
                         }
