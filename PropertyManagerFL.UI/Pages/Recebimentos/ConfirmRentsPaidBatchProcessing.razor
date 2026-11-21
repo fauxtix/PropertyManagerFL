@@ -36,7 +36,7 @@
             <GridEditSettings AllowAdding="false" AllowEditing="true" ShowConfirmDialog="true" Mode="EditMode.Batch"></GridEditSettings>
             <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" PersistSelection="true"></GridSelectionSettings>
             <GridEditSettings AllowEditing="true" Mode="EditMode.Batch" ShowConfirmDialog="false"></GridEditSettings>
-            <GridEvents CellSaved="CellSavedHandler" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
+            <GridEvents OnCellSave="CellSavedEvent" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
                         OnToolbarClick="ToolbarClickHandler" TValue="RecebimentoVM" />
             <GridColumns>
                 <GridColumn Field=@nameof(RecebimentoVM.Id) HeaderText="#"
@@ -183,6 +183,9 @@
     [Inject] protected IRecebimentoService paymentsService { get; set; }
 
     protected SfGrid<RecebimentoVM>? gridObj { get; set; }
+
+    private EventCallback<CellSaveArgs<RecebimentoVM>> CellSavedEvent =>
+        EventCallback.Factory.Create<CellSaveArgs<RecebimentoVM>>(this, CellSavedHandler);
 
     protected string currentCulture = CultureInfo.CurrentCulture.Name;
     protected decimal rentValue { get; set; } = 0;

@@ -361,3 +361,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Transient implementation handoff state
+/backup.md
+
+# Generated documents and uploads (may contain tenant PII)
+/PropertyManagerFL.Api/Reports/Docs/Contratos/
+/PropertyManagerFL.Api/Reports/Docs/AtualizacaoRendas/ActR_*
+/PropertyManagerFL.Api/Reports/Docs/AtualizacaoRendas/AlteracaoIBAN_*.docx
+/PropertyManagerFL.Api/Reports/Docs/Atualizacao do arrendamento em curso.docx
+/PropertyManagerFL.Api/Reports/pdfs/
+/PropertyManagerFL.Api/uploads/

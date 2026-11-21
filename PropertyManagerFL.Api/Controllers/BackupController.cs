@@ -20,17 +20,18 @@ namespace PropertyManagerFL.Api.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult BackupDatabase()
+        public async Task<ActionResult> BackupDatabase()
         {
             var location = GetControllerActionNames();
             try
             {
-                var backupResult = _repoBackup.BackupDatabase();
+                var backupResult = await _repoBackup.BackupDatabase();
                 return Ok(backupResult);
             }
             catch (Exception e)
             {
-                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+                _logger.LogError(e, "{Location}: falha ao efetuar backup da base de dados", location);
+                return InternalError(location);
             }
         }
         private string GetControllerActionNames()
@@ -41,10 +42,9 @@ namespace PropertyManagerFL.Api.Controllers
             return $"{controller} - {action}";
         }
 
-        private ObjectResult InternalError(string message)
+        private ObjectResult InternalError(string location)
         {
-            _logger.LogError(message);
-            return StatusCode(500, $"Algo de errado ocorreu ({message}). Contacte o Administrador");
+            return StatusCode(500, $"Algo de errado ocorreu ({location}). Contacte o Administrador");
         }
 
 
