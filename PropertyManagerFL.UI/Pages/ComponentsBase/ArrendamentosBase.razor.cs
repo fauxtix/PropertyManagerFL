@@ -295,7 +295,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                     DateTime leaseStart = SelectedLease.Data_Inicio;
                     DateTime leaseEnd = SelectedLease.Data_Fim;
                     int leaseMonths = Utilitarios.GetMonthDifference(leaseStart, leaseEnd);
-                    if(SelectedLease.Prazo == 1 && leaseMonths > 12)
+                    if (SelectedLease.Prazo == 1 && leaseMonths > 12)
                     {
                         SelectedLease.Prazo_Meses = 36; // contratos com duração de um ano, após a não revogação nesse período passam a ser de 36 meses (Prazo = 3)
                     }
@@ -1219,30 +1219,37 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         {
             // TODO - antes de iniciar procedimento abaixo, verificar se os aumentos já foram feitos para os inquilinos
 
+            decimal ValorRenda = 0;
+            decimal NovoValorRenda = 0;
+
             foreach (var leaseRecord in leases!)
             {
                 var _tenantId = leaseRecord.ID_Inquilino;
 
                 var leaseId = leaseRecord.Id;
                 var tenantRentUpdates = await inquilinosService!.GetRentUpdates_ByTenantId(_tenantId);
+
+                var currentYearAsString = DateTime.Now.Year.ToString();
+                var rentUpdateCoefficientData = (await arrendamentosService!.GetRentUpdatingCoefficients()).ToList();
+
                 if (tenantRentUpdates.Any())
                 {
                     _logger?.LogWarning($"Já foi feito aumento manual de renda para o Inquilino {_tenantId}");
                     continue;
                 }
                 var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
-                if (currentYearUpdateValues is not null)
+                if (currentYearUpdateValues is null)
                 {
                     AlertVisibility = true;
-                    WarningMessage = "Já foi feito aumento de renda para o ano corrente";
+                    WarningMessage = "Não foram configurados dados dos aumentos para o ano corrente";
                     return;
                 }
 
+                ValorRenda = currentYearUpdateValues!.PriorValue;
+                NovoValorRenda = currentYearUpdateValues.UpdatedValue;
+
+
                 InquilinoVM DadosInquilino = await inquilinosService.GetInquilino_ById(_tenantId);
-                var currentYearAsString = DateTime.Now.Year.ToString();
-                var ValorRenda = currentYearUpdateValues!.PriorValue;
-                var NovoValorRenda = currentYearUpdateValues.UpdatedValue;
-                var rentUpdateCoefficientData = (await arrendamentosService!.GetRentUpdatingCoefficients()).ToList();
                 var currentYearRentUpdateCoefficientData = rentUpdateCoefficientData.FirstOrDefault(c => c.Ano == DateTime.Now.Year.ToString());
 
                 var rentUpdateData = await inquilinosService!.GetDadosCartaAtualizacaoInquilino(Lease, currentYearRentUpdateCoefficientData!);

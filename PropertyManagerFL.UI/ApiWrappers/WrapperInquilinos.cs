@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -707,16 +706,19 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     {
                         var jsonData = await response.Content.ReadAsStringAsync();
                         var tenantRentUpdates = JsonConvert.DeserializeObject<IEnumerable<HistoricoAtualizacaoRendasVM>>(jsonData);
-                        return tenantRentUpdates;
+                        if (tenantRentUpdates?.Count() > 0 && tenantRentUpdates is not null)
+                            return tenantRentUpdates;
+                        else
+                            return Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
                     }
                     else
-                        return null;
+                        return Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
                 }
             }
             catch (Exception exc)
             {
                 _logger.LogError(exc, $"Erro ao pesquisar API (RentUpdates_ByTenantId) ({exc.Message})");
-                return null;
+                return Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
             }
         }
 
@@ -807,7 +809,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     AnoAtualizacao = AnoAtualizacao,
                     Coeficiente = percAumento,
                     MatrizPredial = DadosFracao.Matriz,
-                    MoradaInquilino =moradaInquilino, // moradaImovel,                   
+                    MoradaInquilino = moradaInquilino, // moradaImovel,                   
                     Naturalidade = DadosInquilino.Naturalidade,
                     MoradaFracao = moradaFracao,
                     Nome = DadosProprietario.Nome,
@@ -831,7 +833,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         public async Task<string> EmiteCartaAtualizacaoInquilino(CartaAtualizacao DadosAtualizacao)
         {
             string[] aCampos = new string[] {
-                "LocalEmissao", "DataEmissao", 
+                "LocalEmissao", "DataEmissao",
                 "NomeSenhorio", "MoradaSenhorio", "CodigoPostalSenhorio",
                 "NomeInquilino", "MoradaInquilino", "CodigoPostalInquilino",
                 "MoradaFracao",
