@@ -1,5 +1,6 @@
 ﻿using EmailService;
 using PropertyManagerFL.Application.Interfaces.Repositories;
+using PropertyManagerFL.Application.Security;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
@@ -10,6 +11,7 @@ using PropertyManagerFL.Application.Validator;
 using PropertyManagerFL.Infrastructure.Adapters;
 using PropertyManagerFL.Infrastructure.Repositories;
 using PropertyManagerFL.Infrastructure.Services.CommonServices;
+using PropertyManagerFL.Infrastructure.Security;
 using PropertyManagerFL.UI.ApiWrappers;
 using PropertyManagerFL.UI.Services.ClientApi;
 
@@ -27,6 +29,7 @@ public static class DependencyInjectionConfig
     public static void AddServicesDependencyInjectionConfiguration(this IServiceCollection services)
     {
         services.AddTransient<IValidationService, ValidationService>();
+        services.AddScoped<IDataSecurityRepository, DataSecurityRepository>();
         services.AddTransient<ILookupTableService, WrapperLookupTables>();
 
         services.AddTransient<IInquilinoService, WrapperInquilinos>();

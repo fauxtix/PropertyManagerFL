@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Appointments;
@@ -71,7 +71,7 @@ public class WrapperAppointments : IAppointmentsService
         }
         catch (Exception exc)
         {
-            _logger.LogError(exc.Message, exc);
+            _logger.LogError(exc, "Operation failed");
         }
     }
 

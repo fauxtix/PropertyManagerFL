@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
@@ -31,7 +31,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message, ex);
+            _logger?.LogError(ex, "Operation failed");
             return new ApplicationSettings();
         }
     }
@@ -75,7 +75,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message, ex);
+            _logger?.LogError(ex, "Operation failed");
         }
     }
 
@@ -119,7 +119,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message, ex);
+            _logger?.LogError(ex, "Operation failed");
         }
     }
 
@@ -137,7 +137,7 @@ public class AppSettingsRepository : IAppSettingsRepository
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message, ex);
+            _logger?.LogError(ex, "Operation failed");
         }
     }
 

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.GeoApi.CodigosPostais;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
@@ -215,7 +215,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
                 return new GeoApi_CP7()
                 {
                     Localidade = "Código postal não devolveu dados... Inválido?"

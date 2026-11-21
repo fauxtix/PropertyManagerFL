@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Infrastructure.Security;
 using System.Net.Http.Headers;
 
 namespace PropertyManagerFL.UI.Controllers
@@ -8,10 +9,12 @@ namespace PropertyManagerFL.UI.Controllers
     public class UploadTenantDocumentsController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly ILogger<UploadTenantDocumentsController> _logger;
 
-        public UploadTenantDocumentsController(IWebHostEnvironment hostingEnvironment)
+        public UploadTenantDocumentsController(IWebHostEnvironment hostingEnvironment, ILogger<UploadTenantDocumentsController> logger)
         {
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            _logger = logger;
         }
 
         [HttpPost("[action]")]
@@ -42,7 +45,10 @@ namespace PropertyManagerFL.UI.Controllers
                         return BadRequest("Invalid file name detected.");
                     }
 
-                    var filenameToCopy = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", "tenants", filename);
+                    var root = SafePath.CombineContained(
+                        _hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath, "uploads", "tenants");
+                    Directory.CreateDirectory(root);
+                    var filenameToCopy = SafePath.CombineContained(root, SafePath.FileName(filename));
                     size += file.Length;
 
                     if (!System.IO.File.Exists(filenameToCopy))
@@ -73,7 +79,8 @@ namespace PropertyManagerFL.UI.Controllers
                     return BadRequest("No files specified for removal.");
                 }
 
-                var filename = Path.Combine(_hostingEnvironment.ContentRootPath, uploadFiles[0].FileName);
+                var root = Path.Combine(_hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath, "uploads", "tenants");
+                var filename = SafePath.CombineContained(root, SafePath.FileName(uploadFiles[0].FileName));
 
                 if (System.IO.File.Exists(filename))
                 {
@@ -93,6 +100,7 @@ namespace PropertyManagerFL.UI.Controllers
 
         private IActionResult HandleErrorResponse(string reasonPhrase, Exception exception)
         {
+            _logger.LogError(exception, "UploadTenantDocuments: {Reason}", reasonPhrase);
             Response.Clear();
             Response.StatusCode = 500; // Internal Server Error
 
@@ -102,7 +110,7 @@ namespace PropertyManagerFL.UI.Controllers
                 httpResponseFeature.ReasonPhrase = reasonPhrase;
             }
 
-            return Json(new { ErrorMessage = exception.Message });
+            return Json(new { ErrorMessage = reasonPhrase });
         }
     }
 }

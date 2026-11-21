@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
@@ -230,7 +230,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message, ex);
+                _logger?.LogError(ex, "Operation failed");
 
                 ToastCss = "e-toast-danger";
                 ToastMessage = "Erro ao cancelar! Verifique log, p.f.";
@@ -344,7 +344,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message, ex);
+                _logger?.LogError(ex, "Operation failed");
             }
         }
 
@@ -571,7 +571,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message, ex);
+                _logger?.LogError(ex, "Operation failed");
 
                 expenseDeleted = false;
                 ToastCssClass = "e-toast-danger";
@@ -618,7 +618,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex.Message, ex);
+                _logger?.LogError(ex, "Operation failed");
             }
         }
 

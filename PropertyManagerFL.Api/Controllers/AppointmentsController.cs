@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Appointments;
@@ -34,7 +34,7 @@ public class AppointmentsController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return -1;
         }
     }
@@ -97,7 +97,7 @@ public class AppointmentsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, e);
+            _logger.LogError(e, "Operation failed");
         }
     }
 
@@ -123,7 +123,7 @@ public class AppointmentsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, e);
+            _logger.LogError(e, "Operation failed");
             return Enumerable.Empty<AppointmentVM>();
         }
     }
@@ -153,7 +153,7 @@ public class AppointmentsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger.LogError(e.Message, e);
+            _logger.LogError(e, "Operation failed");
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }

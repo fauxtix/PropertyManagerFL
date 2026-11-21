@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
@@ -37,7 +37,7 @@ public class HistoricoEnvioCartasRepository : IHistoricoEnvioCartasRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return -1;
         }
     }
@@ -59,7 +59,7 @@ public class HistoricoEnvioCartasRepository : IHistoricoEnvioCartasRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return false;
         }
     }
@@ -77,7 +77,7 @@ public class HistoricoEnvioCartasRepository : IHistoricoEnvioCartasRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return Enumerable.Empty<HistoricoEnvioCartas>();
         }
     }
@@ -95,7 +95,7 @@ public class HistoricoEnvioCartasRepository : IHistoricoEnvioCartasRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return new();
         }
     }

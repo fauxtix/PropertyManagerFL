@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Infrastructure.Security;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,10 +14,12 @@ namespace PropertyManagerFL.UI.Controllers
     public class UploadUnitsController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly ILogger<UploadUnitsController> _logger;
 
-        public UploadUnitsController(IWebHostEnvironment hostingEnvironment)
+        public UploadUnitsController(IWebHostEnvironment hostingEnvironment, ILogger<UploadUnitsController> logger)
         {
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            _logger = logger;
         }
 
         [HttpPost("[action]")]
@@ -47,7 +50,10 @@ namespace PropertyManagerFL.UI.Controllers
                         return BadRequest("Invalid file name detected.");
                     }
 
-                    var filenameToCopy = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", "unit_images", filename);
+                    var root = SafePath.CombineContained(
+                        _hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath, "uploads", "unit_images");
+                    Directory.CreateDirectory(root);
+                    var filenameToCopy = SafePath.CombineContained(root, SafePath.FileName(filename));
                     size += file.Length;
 
                     if (!System.IO.File.Exists(filenameToCopy))
@@ -78,7 +84,8 @@ namespace PropertyManagerFL.UI.Controllers
                     return BadRequest("No files specified for removal.");
                 }
 
-                var filename = Path.Combine(_hostingEnvironment.ContentRootPath, uploadFiles[0].FileName);
+                var root = Path.Combine(_hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath, "uploads", "unit_images");
+                var filename = SafePath.CombineContained(root, SafePath.FileName(uploadFiles[0].FileName));
 
                 if (System.IO.File.Exists(filename))
                 {
@@ -98,6 +105,7 @@ namespace PropertyManagerFL.UI.Controllers
 
         private IActionResult HandleErrorResponse(string reasonPhrase, Exception exception)
         {
+            _logger.LogError(exception, "UploadUnits: {Reason}", reasonPhrase);
             Response.Clear();
             Response.StatusCode = 500; // Internal Server Error
 
@@ -113,7 +121,7 @@ namespace PropertyManagerFL.UI.Controllers
                 // You might log this or take some other action based on your application's needs.
             }
 
-            return Json(new { ErrorMessage = exception.Message });
+            return Json(new { ErrorMessage = reasonPhrase });
         }
     }
 }

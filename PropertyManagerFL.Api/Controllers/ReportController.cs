@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Reporting.NETCore;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 
@@ -46,7 +46,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
         }
@@ -77,7 +77,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return null;
             }
         }
@@ -100,7 +100,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
         }

@@ -1,8 +1,9 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Infrastructure.Context;
+using PropertyManagerFL.Infrastructure.Security;
 using System.Text;
 
 namespace PropertyManagerFL.Infrastructure.Repositories
@@ -19,6 +20,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         }
         public async Task<IEnumerable<LookupTableVM>> GetLookupTableData(string tableName)
         {
+            tableName = SafePath.SqlIdentifier(tableName);
             StringBuilder sql = new StringBuilder();
             sql.Append("SELECT Id, Descricao ");
             sql.Append($"FROM {tableName} ");
@@ -32,30 +34,32 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
         public string GetDescription(int id, string tableName)
         {
+            tableName = SafePath.SqlIdentifier(tableName);
             DynamicParameters paramCollection = new DynamicParameters();
             paramCollection.Add("@Id", id);
-            paramCollection.Add("@TableName", tableName);
 
             StringBuilder sql = new StringBuilder();
             sql.Append("SELECT Descricao ");
-            sql.Append("FROM @TableName WHERE Id = @Id ");
+            sql.Append($"FROM {tableName} WHERE Id = @Id ");
             using (var connection = _context.CreateConnection())
             {
-                var result = connection.QueryFirstOrDefault<string>(sql.ToString());
-                result = result.Substring(1, result.Length - 1).Replace("\\\\", "\\");
-                result = result.Substring(0, result.Length - 1);
+                var result = connection.QueryFirstOrDefault<string>(sql.ToString(), paramCollection);
+                if (string.IsNullOrEmpty(result)) return string.Empty;
+                if (result.StartsWith("'") && result.EndsWith("'"))
+                    result = result.Substring(1, result.Length - 1).Replace("\\\\", "\\");
                 return result;
             }
         }
 
         public bool CriaNovoRegisto(LookupTableVM tableRecord)
         {
+            var table = SafePath.SqlIdentifier(tableRecord.Tabela);
             string descricao = "Descricao";
 
             DynamicParameters paramCollection = new DynamicParameters();
             paramCollection.Add("@Descricao", tableRecord.Descricao);
 
-            string Query = $"INSERT INTO {tableRecord.Tabela} ({descricao}) VALUES (@Descricao)";
+            string Query = $"INSERT INTO {table} ({descricao}) VALUES (@Descricao)";
             try
             {
                 using (var connection = _context.CreateConnection())
@@ -66,13 +70,13 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return false;
             }
         }
 
         /// <summary>
-        /// Atualiza Registo - genérico - tabelas auxiliares 
+        /// Atualiza Registo - gen�rico - tabelas auxiliares
         /// </summary>
         /// <param name="Codigo"></param>
         /// <param name="Descricao"></param>
@@ -80,12 +84,13 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         /// <returns></returns>
         public bool ActualizaDetalhes(LookupTableVM tableRecord)
         {
+            var table = SafePath.SqlIdentifier(tableRecord.Tabela);
 
             DynamicParameters paramCollection = new DynamicParameters();
             paramCollection.Add("@Id", tableRecord.Id);
             paramCollection.Add("@Description", tableRecord.Descricao);
 
-            string Query = $"UPDATE {tableRecord.Tabela} SET Descricao = @Description WHERE Id = @Id";
+            string Query = $"UPDATE {table} SET Descricao = @Description WHERE Id = @Id";
 
             try
             {
@@ -97,20 +102,21 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return false;
             }
         }
 
 
         /// <summary>
-        /// Check Registo Exist - genérico - tabelas auxiliares 
+        /// Check Registo Exist - gen�rico - tabelas auxiliares
         /// </summary>
         /// <param name="Descricao"></param>
         /// <param name="Tabela"></param>
         /// <returns></returns>
         public bool CheckRegistoExist(string Descricao, string Tabela)
         {
+            Tabela = SafePath.SqlIdentifier(Tabela);
             string Query = string.Empty;
             int iCnt = 0;
             DynamicParameters paramCollection = new DynamicParameters();
@@ -129,19 +135,21 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return false;
             }
         }
 
         /// <summary>
-        /// Check record Exist in child tables => genérico - tabelas auxiliares 
+        /// Check record Exist in child tables => gen�rico - tabelas auxiliares
         /// </summary>
         /// <param name="Descricao"></param>
         /// <param name="Tabela"></param>
         /// <returns></returns>
         public bool CheckFKInUse(int sourceFk, string fieldToCheck, string tableToCheck)
         {
+            fieldToCheck = SafePath.SqlIdentifier(fieldToCheck);
+            tableToCheck = SafePath.SqlIdentifier(tableToCheck);
             string Query = string.Empty;
             int iCnt = 0;
             DynamicParameters paramCollection = new DynamicParameters();
@@ -158,19 +166,20 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return false;
             }
         }
 
         /// <summary>
-        /// Delete record => genérico - tabelas auxiliares
+        /// Delete record => gen�rico - tabelas auxiliares
         /// </summary>
         /// <param name="Codigo"></param>
         /// <param name="Tabela"></param>
         /// <returns></returns>
         public bool DeleteRegisto(int iCodigo, string Tabela)
         {
+            Tabela = SafePath.SqlIdentifier(Tabela);
             string codigo = "Id";
 
             string Query = $"DELETE {Tabela} WHERE {codigo} = @Codigo";
@@ -188,7 +197,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return false;
             }
         }
@@ -202,6 +211,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
         /// <returns></returns>
         public int GetId(string Descricao, string Tabela)
         {
+            Tabela = SafePath.SqlIdentifier(Tabela);
             string descricao = "Descricao";
             string codigo = "Id";
 
@@ -218,42 +228,47 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return 0;
             }
         }
 
         public int GetCodByDescricao(string sDescr, string sTabela)
         {
+            sTabela = SafePath.SqlIdentifier(sTabela);
             string descricao = "Descricao";
             string codigo = "Id";
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Descricao", sDescr);
 
             StringBuilder sqlCommand = new StringBuilder();
             sqlCommand.Append($"SELECT {codigo} ");
             sqlCommand.Append("FROM " + sTabela);
-            sqlCommand.Append($" WHERE {descricao} LIKE '" + sDescr + "'");
+            sqlCommand.Append($" WHERE {descricao} LIKE @Descricao");
             try
             {
                 using (var connection = _context.CreateConnection())
                 {
-                    return Convert.ToInt32(connection.QueryFirstOrDefault<int>(sqlCommand.ToString()));
+                    return Convert.ToInt32(connection.QueryFirstOrDefault<int>(sqlCommand.ToString(), parameters));
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return 0;
             }
         }
 
         /// <summary>
-        /// Get Descricao - genérico - tabelas auxiliares
+        /// Get Descricao - gen�rico - tabelas auxiliares
         /// </summary>
         /// <param name="Codigo"></param>
         /// <param name="Tabela"></param>
         /// <returns></returns>
         public string GetDescricao(int Codigo, string Tabela)
         {
+            Tabela = SafePath.SqlIdentifier(Tabela);
             string descricao = "Descricao";
             string codigo = "Id";
 
@@ -277,19 +292,20 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return "";
             }
         }
 
         /// <summary>
-        /// Get Descrição with LIKE... (versão 2)
+        /// Get Descri��o with LIKE... (vers�o 2)
         /// </summary>
         /// <param name="Descricao"></param>
-        /// <param name="sTabela">Tabela a pesquisar Descrição</param>
+        /// <param name="sTabela">Tabela a pesquisar Descri��o</param>
         /// <returns></returns>
         public IEnumerable<LookupTableVM> GetDataByDescricao(string sDescricao, string sTabela, bool TemAlertas = false)
         {
+            sTabela = SafePath.SqlIdentifier(sTabela);
             string descricao = "Descricao";
             string codigo = "Id";
 
@@ -316,13 +332,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return null;
             }
         }
 
         public IEnumerable<LookupTableVM> GenericGetAll(string sTabela)
         {
+            sTabela = SafePath.SqlIdentifier(sTabela);
             string descricao = "Descricao";
             string codigo = "Id";
 
@@ -342,39 +359,44 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return null;
             }
         }
 
         public IEnumerable<LookupTableVM> GetDescricaoByDescricao(string sDescricao, string sTabela)
         {
+            sTabela = SafePath.SqlIdentifier(sTabela);
             string descricao = "Descricao";
-            string where = descricao;
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Descricao", $"%{sDescricao}%");
+
             StringBuilder sqlCommand = new StringBuilder();
 
             sqlCommand.Append($"SELECT {descricao} ");
 
             sqlCommand.Append($"FROM {sTabela} ");
-            sqlCommand.Append($"WHERE {descricao} LIKE '%{sDescricao}%' ");
-            sqlCommand.Append("ORDER BY {descricao}");
+            sqlCommand.Append($"WHERE {descricao} LIKE @Descricao ");
+            sqlCommand.Append($"ORDER BY {descricao}");
 
             try
             {
                 using (var connection = _context.CreateConnection())
                 {
-                    return connection.Query<LookupTableVM>(sqlCommand.ToString());
+                    return connection.Query<LookupTableVM>(sqlCommand.ToString(), parameters);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return null;
             }
         }
 
         public IEnumerable<LookupTableVM> GetDataFromTabela(string sTabela, string sDescricao = "")
         {
+            sTabela = SafePath.SqlIdentifier(sTabela);
             string descricao = "Descricao";
             string codigo = "Id";
 
@@ -388,7 +410,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             if (sDescricao != string.Empty)
                 sqlCommand.Append($" WHERE {descricao} LIKE + '%' + @Descricao + '%' ");
 
-            sqlCommand.Append(" ORDER BY {descricao} ");
+            sqlCommand.Append($" ORDER BY {descricao} ");
 
             try
             {
@@ -399,13 +421,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return null;
             }
         }
 
         public int GetLastInsertedId(string tableToCheck)
         {
+            tableToCheck = SafePath.SqlIdentifier(tableToCheck);
             string id = "Id";
 
             StringBuilder sb = new StringBuilder();
@@ -421,13 +444,14 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return 0;
             }
         }
 
         public LookupTableVM GetRecordById(int id, string tableName)
         {
+            tableName = SafePath.SqlIdentifier(tableName);
             DynamicParameters paramCollection = new DynamicParameters();
             paramCollection.Add("@Id", id);
 
@@ -444,7 +468,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Lookup table operation failed");
                 return null;
             }
         }

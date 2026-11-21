@@ -44,7 +44,7 @@ namespace PropertyManagerFL.Api.Controllers
 
         private ObjectResult InternalError(string location)
         {
-            return StatusCode(500, $"Algo de errado ocorreu ({location}). Contacte o Administrador");
+            return StatusCode(500, "Algo de errado ocorreu. Contacte o Administrador");
         }
 
 

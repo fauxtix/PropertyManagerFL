@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
@@ -32,7 +32,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return -1;
         }
     }
@@ -52,7 +52,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return false;
         }
     }
@@ -73,7 +73,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
         }
     }
 
@@ -91,7 +91,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return null!;
         }
     }
@@ -110,7 +110,7 @@ public class AppointmentRepository : IAppointmentRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Operation failed");
             return null!;
         }
     }

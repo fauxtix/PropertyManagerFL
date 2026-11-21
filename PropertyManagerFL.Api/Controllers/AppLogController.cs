@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Logs;
@@ -46,7 +46,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, "Operation failed");
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -75,7 +75,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, "Operation failed");
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -109,7 +109,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, "Operation failed");
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -130,7 +130,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, "Operation failed");
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }
@@ -150,7 +150,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception e)
             {
-                _logger.LogError(e.Message, e);
+                _logger.LogError(e, "Operation failed");
                 return InternalError($"{location}: {e.Message} - {e.InnerException}");
             }
         }

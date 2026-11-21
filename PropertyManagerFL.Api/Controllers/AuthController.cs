@@ -53,9 +53,8 @@ public class AuthenticateController : ControllerBase
                 new ResponseModel { Success = false, Message = "Erro ao criar usuário" }
             );
 
-        var role = model.IsAdmin ? UserRoles.Admin : UserRoles.User;
-
-        await AddToRoleAsync(user, role);
+        // Never allow a caller to self-assign an administrative role.
+        await AddToRoleAsync(user, UserRoles.User);
 
         return Ok(new ResponseModel { Message = "Usuário criado com sucesso!" });
     }
@@ -88,11 +87,11 @@ public class AuthenticateController : ControllerBase
 
     private TokenModel GetToken(List<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+        var authSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]!));
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["JWT:ValidIssuer"],
-            audience: _configuration["JWT:ValidAudience"],
+            issuer: _configuration["JWT:Issuer"],
+            audience: _configuration["JWT:Audience"],
             expires: DateTime.Now.AddHours(1),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

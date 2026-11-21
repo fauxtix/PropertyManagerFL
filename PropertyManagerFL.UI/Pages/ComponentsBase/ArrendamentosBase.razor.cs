@@ -1,4 +1,4 @@
-﻿namespace PropertyManagerFL.UI.Pages.ComponentsBase;
+namespace PropertyManagerFL.UI.Pages.ComponentsBase;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
@@ -213,7 +213,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex.Message, ex);
+            _logger?.LogError(ex, "Operation failed");
             return new List<ArrendamentoVM>();
 
         }
@@ -693,7 +693,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             catch (Exception ex)
             {
                 await HideSpinner();
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
             }
         }
     }

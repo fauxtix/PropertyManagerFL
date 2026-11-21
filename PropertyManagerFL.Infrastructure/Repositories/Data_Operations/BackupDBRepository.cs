@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Repositories.Data_Operations;
@@ -76,7 +76,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories.Data_Operations
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message);
+                _logger.LogError(exc, "Operation failed");
                 throw new ApplicationException(exc.Message);
             }
         }

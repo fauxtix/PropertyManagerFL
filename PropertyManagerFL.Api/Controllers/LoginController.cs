@@ -1,6 +1,7 @@
 ﻿using MediaOrganizerApp.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Api.Models.Auth;
 using PropertyManagerFL.Application.ViewModels.Users;
 using PropertyManagerFL.Infrastructure.Services.SecurityServices;
 
@@ -57,6 +58,8 @@ namespace PropertyManagerFL.Api.Controllers
                 return Conflict(new { message = "Username already taken. Please choose a different username." });
             }
 
+            // Never allow a caller to self-assign an administrative role.
+            userParam.Role = UserRoles.User;
             Users user = await repoUsers.AddUser(userParam.Username, userParam.Password, userParam.Role);
             if (user != null)
             {
@@ -75,8 +78,12 @@ namespace PropertyManagerFL.Api.Controllers
         public async Task<IActionResult> GetUserRole()
         {
             //returns user with xxxx for salt and password, requires id derived through token
-            string IdTokenString = User.FindFirst("sub").Value;
-            int IdTokenInt = Convert.ToInt32(IdTokenString);
+            var IdTokenString = User.FindFirst("sub")?.Value;
+            if (!int.TryParse(IdTokenString, out int IdTokenInt))
+            {
+                return Unauthorized();
+            }
+
             Users censoredUser = await repoUsers.GetUserRoleById(IdTokenInt);
             return Ok(censoredUser);
         }

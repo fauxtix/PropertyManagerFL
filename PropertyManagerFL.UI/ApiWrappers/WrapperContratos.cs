@@ -1,4 +1,4 @@
-﻿using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
 using PropertyManagerFL.Core.Entities;
@@ -155,7 +155,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
                 return "Error";
             }
         }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
@@ -300,7 +300,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
 
@@ -465,7 +465,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
         }
@@ -486,7 +486,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
         }
@@ -825,7 +825,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return null;
             }
         }

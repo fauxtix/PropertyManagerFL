@@ -1,57 +1,61 @@
-﻿using PropertyManagerFL.Application.ViewModels.Security.Models;
+using PropertyManagerFL.Application.ViewModels.Security.Models;
 using System.Security.Cryptography;
 
 namespace PropertyManagerFL.Infrastructure.Services.SecurityServices
 {
     /// <summary>
-    /// The hash provider provides functionality to hash a plain text password and validate
-    /// an existing password against its hash.
+    /// Hashes and verifies passwords with PBKDF2. New hashes use SHA-256 with a
+    /// 16-byte salt and 100,000 iterations; verification still accepts the old
+    /// SHA-1 / 8-byte / 10,000-iteration format so existing accounts keep working.
     /// </summary>
     public class PasswordHasher : IPasswordHasher
     {
-        private const int WorkFactor = 10000;
+        private const int CurrentWorkFactor = 100_000;
+        private const int CurrentSaltSize = 16;
+        private const int CurrentHashSize = 32;
 
-        /// <summary>
-        /// Hashes a plain text password.
-        /// </summary>
-        /// <param name="plainTextPassword"></param>
-        /// <returns></returns>
+        private const int LegacyWorkFactor = 10_000;
+        private const int LegacyHashSize = 20;
+
         public PasswordHash ComputeHash(string plainTextPassword)
         {
-            //Create the hashing provider
-            Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(plainTextPassword, 8, WorkFactor);
+            var salt = RandomNumberGenerator.GetBytes(CurrentSaltSize);
+            var hash = Derive(plainTextPassword, salt, CurrentWorkFactor, HashAlgorithmName.SHA256, CurrentHashSize);
 
-            //Get the Hashed Password
-            byte[] hash = rfc.GetBytes(20);
-
-            //Set the SaltValue
-            string salt = Convert.ToBase64String(rfc.Salt);
-
-            //Return the Hashed Password
-            return new PasswordHash(Convert.ToBase64String(hash), salt);
+            return new PasswordHash(Convert.ToBase64String(hash), Convert.ToBase64String(salt));
         }
 
-        /// <summary>
-        /// Verifies if an existing hashed password matches a plaintext password (+salt).
-        /// </summary>
-        /// <param name="existingHashedPassword">The password we are comparing to.</param>
-        /// <param name="plainTextPassword">The plaintext password being validated.</param>
-        /// <param name="salt">The salt used to get the existing hashed password.</param>
-        /// <returns></returns>
         public bool VerifyHashMatch(string existingHashedPassword, string plainTextPassword, string salt)
         {
-            byte[] saltArray = Convert.FromBase64String(salt);      //gets us the byte[] array representation
+            try
+            {
+                var saltBytes = Convert.FromBase64String(salt);
+                var expectedHash = Convert.FromBase64String(existingHashedPassword);
 
-            //Create the hashing provider
-            Rfc2898DeriveBytes rfc = new Rfc2898DeriveBytes(plainTextPassword, saltArray, WorkFactor);
+                var currentHash = Derive(plainTextPassword, saltBytes, CurrentWorkFactor, HashAlgorithmName.SHA256, expectedHash.Length);
+                if (CryptographicOperations.FixedTimeEquals(currentHash, expectedHash))
+                {
+                    return true;
+                }
 
-            //Get the hashed password
-            byte[] hash = rfc.GetBytes(20);
+                var legacyHash = Derive(plainTextPassword, saltBytes, LegacyWorkFactor, HashAlgorithmName.SHA1, expectedHash.Length);
+                return CryptographicOperations.FixedTimeEquals(legacyHash, expectedHash);
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
 
-            //Compare the hashed password values
-            string newHashedPassword = Convert.ToBase64String(hash);
-
-            return (existingHashedPassword == newHashedPassword);
+        private static byte[] Derive(
+            string password,
+            byte[] salt,
+            int iterations,
+            HashAlgorithmName algorithm,
+            int hashSize)
+        {
+            using var rfc = new Rfc2898DeriveBytes(password, salt, iterations, algorithm);
+            return rfc.GetBytes(hashSize);
         }
     }
 }

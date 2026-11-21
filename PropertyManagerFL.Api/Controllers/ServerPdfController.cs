@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Infrastructure.Security;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -15,19 +16,23 @@ namespace PropertyManagerFL.Api.Controllers
         [HttpGet("Download/{folder}/{filename}"), DisableRequestSizeLimit]
         public IActionResult Download(string folder, string filename)
         {
-            var fileLocation = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs", folder, filename);
+            var fileLocation = BuildPath(folder, filename);
 
             var stream = new FileStream(fileLocation, FileMode.Open);
-            return File(stream, "application/pdf", filename);
+            return File(stream, "application/pdf", SafePath.FileName(filename));
 
         }
 
         [HttpGet("GetServerPdfName/{folder}/{filename}")]
         public string GetFileName(string folder, string filename)
         {
-            var fileLocation = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs", folder, filename);
+            return BuildPath(folder, filename);
+        }
 
-            return fileLocation;
+        private string BuildPath(string folder, string filename)
+        {
+            var root = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs");
+            return SafePath.CombineContained(root, SafePath.FileName(folder), SafePath.FileName(filename));
         }
 
     }

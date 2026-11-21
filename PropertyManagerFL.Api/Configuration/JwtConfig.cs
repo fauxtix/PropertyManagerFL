@@ -19,35 +19,36 @@ public static class JwtConfig
         services.AddScoped<IJwtService, JwtService>();
 
         var secretValue = configuration.GetSection("JWT:Secret")?.Value;
-        if (secretValue != null)
+        if (string.IsNullOrWhiteSpace(secretValue) ||
+            secretValue.StartsWith('<') ||
+            secretValue.Length < 32)
         {
-            var chave = Encoding.ASCII.GetBytes(secretValue);
+            throw new InvalidOperationException("JWT secret must be set in user-secrets or environment configuration.");
+        }
 
-            services.AddAuthentication(p =>
-            {
-                p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(p =>
-            {
-                p.RequireHttpsMetadata = false;
-                p.SaveToken = true;
-                p.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(chave),
-                    ValidateIssuer = true,
-                    ValidIssuer = configuration.GetSection("JWT:Issuer").Value,
-                    ValidateAudience = true,
-                    ValidAudience = configuration.GetSection("JWT:Audience").Value,
-                    ValidateLifetime = true
-                };
-            });
-        }
-        else
+        var chave = Encoding.UTF8.GetBytes(secretValue);
+
+        services.AddAuthentication(p =>
         {
-            throw new InvalidOperationException("JWT secret configuration value is missing.");
-        }
+            p.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            p.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(p =>
+        {
+            p.RequireHttpsMetadata = true;
+            p.SaveToken = true;
+            p.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(chave),
+                ValidateIssuer = true,
+                ValidIssuer = configuration["JWT:Issuer"],
+                ValidateAudience = true,
+                ValidAudience = configuration["JWT:Audience"],
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(1)
+            };
+        });
     }
 
     /// <summary>

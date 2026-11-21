@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
+using PropertyManagerFL.Infrastructure.Security;
 using Syncfusion.DocIO;
 using Syncfusion.DocIO.DLS;
 using Syncfusion.DocIORenderer;
@@ -74,12 +75,12 @@ namespace PropertyManagerFL.Api.Controllers
                 string outputPDF = result + ".pdf";
                 string outputWord = result;
 
-                string sSourceDoc = Path.Combine(sPathDocs, model.WordDocument!);
+                var templateRoot = Path.Combine(_environment.ContentRootPath, "Reports", "Docs");
+                string sSourceDoc = SafePath.CombineContained(templateRoot, SafePath.FileName(model.WordDocument));
                 if (!System.IO.File.Exists(sSourceDoc))
                 {
-                    var notFoundMsg = "File " + sPathDocs + model.WordDocument + " not found.\r\n\r\nVerifique, p.f.";
-                    _logger.LogWarning(notFoundMsg, "Error opening file");
-                    return BadRequest(notFoundMsg);
+                    _logger.LogWarning("MailMerge template ({Template}) not found", SafePath.FileName(model.WordDocument));
+                    return BadRequest("Template do documento não encontrado. Verifique, p.f.");
                 }
 
                 FileStream fileStreamPath = new FileStream(sSourceDoc, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -160,7 +161,7 @@ namespace PropertyManagerFL.Api.Controllers
         private ObjectResult InternalError(string message)
         {
             _logger.LogError(message);
-            return StatusCode(500, $"Algo de errado ocorreu ({message}). Contacte o Administrador");
+            return StatusCode(500, "Algo de errado ocorreu. Contacte o Administrador");
         }
     }
 }

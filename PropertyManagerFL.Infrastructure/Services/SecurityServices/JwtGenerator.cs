@@ -1,4 +1,4 @@
-﻿using Microsoft.IdentityModel.Tokens;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -7,11 +7,15 @@ namespace PropertyManagerFL.Infrastructure.Services.SecurityServices
 {
     public class JwtGenerator : ITokenGenerator
     {
-        private readonly string JwtSecret;
+        private readonly string _jwtSecret;
+        private readonly string _issuer;
+        private readonly string _audience;
 
-        public JwtGenerator(string secret)
+        public JwtGenerator(string secret, string issuer, string audience)
         {
-            JwtSecret = secret;
+            _jwtSecret = secret;
+            _issuer = issuer;
+            _audience = audience;
         }
 
         public string GenerateToken(int userId, string username)
@@ -35,9 +39,13 @@ namespace PropertyManagerFL.Infrastructure.Services.SecurityServices
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
+                Issuer = _issuer,
+                Audience = _audience,
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtSecret)), SecurityAlgorithms.HmacSha256Signature),
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSecret)),
+                    SecurityAlgorithms.HmacSha256),
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();
