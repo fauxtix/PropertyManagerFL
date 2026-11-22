@@ -190,13 +190,37 @@ function Set-WebConfigEnvironment([string] $SitePath, [hashtable] $Values) {
     $xml.Save($webConfig)
 }
 
+function Wait-NoW3wpForPools([string[]] $Pools) {
+    for ($i = 0; $i -lt 40; $i++) {
+        $procs = @(Get-CimInstance Win32_Process -Filter "Name='w3wp.exe'" | Where-Object {
+            $cmdLine = [string] $_.CommandLine
+            foreach ($pool in $Pools) {
+                if ($cmdLine -match ('-ap\s+"?' + [regex]::Escape($pool) + '"?')) { return $true }
+            }
+            return $false
+        })
+        if ($procs.Count -eq 0) { return }
+        Start-Sleep -Milliseconds 500
+    }
+}
+
 function Copy-PublishedFiles([string] $Source, [string] $Destination) {
     if (-not (Test-Path $Source)) {
         throw "Publish folder not found: $Source"
     }
     Ensure-Directory $Destination
     # Overwrite only: never delete the destination (uploaded files may live there).
-    Copy-Item -Path (Join-Path $Source '*') -Destination $Destination -Recurse -Force
+    # A just-stopped w3wp can briefly hold a DLL, so retry the (idempotent) copy.
+    for ($attempt = 0; $attempt -lt 10; $attempt++) {
+        try {
+            Copy-Item -Path (Join-Path $Source '*') -Destination $Destination -Recurse -Force -ErrorAction Stop
+            return
+        }
+        catch {
+            if ($attempt -eq 9) { throw }
+            Start-Sleep -Seconds 1
+        }
+    }
 }
 
 Ensure-Directory $root
@@ -220,6 +244,7 @@ try {
         Stop-AppPool-WithRetry $pool
     }
 
+    Wait-NoW3wpForPools @($apiPool, $uiPool)
     Copy-PublishedFiles $ApiPublishDir $apiPath
     Copy-PublishedFiles $UiPublishDir $uiPath
 
