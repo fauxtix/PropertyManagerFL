@@ -5,6 +5,12 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# The runner service runs as SYSTEM, so it can start IIS if it is stopped.
+$w3svc = Get-Service W3SVC -ErrorAction Stop
+if ($w3svc.Status -ne 'Running') {
+    Start-Service W3SVC -ErrorAction Stop
+}
+
 Import-Module WebAdministration
 
 $root = 'C:\inetpub\wwwroot\PropertyManagerFL'
