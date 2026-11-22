@@ -1,0 +1,26 @@
+name: DIAG3 (temporary)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diag:
+    runs-on: [self-hosted, Windows, iis-propertymanager]
+    steps:
+      - name: Dump recent IIS log lines
+        shell: powershell
+        run: |
+          $out = 'C:\Users\User\pmfl-iis-logs.txt'
+          $lines = @()
+          foreach ($dir in @('C:\inetpub\logs\LogFiles\W3SVC4', 'C:\inetpub\logs\LogFiles\W3SVC5')) {
+            $lines += "=== $dir ==="
+            $f = Get-ChildItem $dir -Filter '*.log' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+            if ($f) {
+              $lines += "file: $($f.Name)"
+              $lines += (Get-Content $f.FullName -Tail 80)
+            } else {
+              $lines += 'no log file'
+            }
+          }
+          Set-Content -Path $out -Value ($lines -join "`n") -Encoding UTF8
+          Write-Host "Wrote $out"
