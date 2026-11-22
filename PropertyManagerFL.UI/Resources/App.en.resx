@@ -3781,4 +3781,55 @@
   <data name="Guardar" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Configuração geral" xml:space="preserve">
+    <value>General settings</value>
+  </data>
+  <data name="Gestão de coeficientes" xml:space="preserve">
+    <value>Coefficients management</value>
+  </data>
+  <data name="Coeficientes de atualização de rendas" xml:space="preserve">
+    <value>Rent update coefficients</value>
+  </data>
+  <data name="Coeficientes de IMI" xml:space="preserve">
+    <value>IMI coefficients</value>
+  </data>
+  <data name="Integrações" xml:space="preserve">
+    <value>Integrations</value>
+  </data>
+  <data name="E-Mail" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="Display Name" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Host" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="SMTP Server" xml:space="preserve">
+    <value>SMTP server</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Hostname" xml:space="preserve">
+    <value>Hostname</value>
+  </data>
+  <data name="Use Ssl" xml:space="preserve">
+    <value>Use SSL</value>
+  </data>
+  <data name="Enable Ssl" xml:space="preserve">
+    <value>Enable SSL</value>
+  </data>
 </root>

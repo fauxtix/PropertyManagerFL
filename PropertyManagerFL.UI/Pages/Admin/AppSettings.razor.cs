@@ -5,28 +5,18 @@ using PropertyManagerFL.Application.ViewModels.AppSettings;
 using Syncfusion.Blazor.Buttons;
 using Syncfusion.Blazor.Notifications;
 
-
-
 namespace PropertyManagerFL.UI.Pages.Admin;
 public partial class AppSettings
 {
-
     [Inject] public IStringLocalizer<App>? L { get; set; }
     [Inject] public ILogger<App>? logger { get; set; }
     [Inject] public IAppSettingsService? AppSettingsService { get; set; }
 
-
     private ApplicationSettingsVM? settings;
-    private SfButton? ToggleBtnObj;
-    private string IconCss = "fa fa-play";
-    private string Content = "Ssl";
-
     private string? culture;
     private string selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
 
-    private string portugues;
     protected SfToast? ToastObj { get; set; }
-
     protected string? ToastTitle;
     protected string? ToastMessage;
     protected string? ToastCss;
@@ -35,15 +25,22 @@ public partial class AppSettings
     private bool InitializationMessageVisibility = false;
     private string InitializationMessage = string.Empty;
 
+    private List<SettingsGroup> SettingsGroups { get; set; } = new();
+    private string SelectedNode { get; set; } = "geral";
+    private readonly HashSet<string> ExpandedGroups = new() { "configuracao" };
+
+    private string SelectedLeafTitle =>
+        SettingsGroups.SelectMany(group => group.Leaves)
+                      .FirstOrDefault(leaf => leaf.Id == SelectedNode)?.ResxKey ?? string.Empty;
+
+    private bool HasEditableSettings => SelectedNode is "geral" or "email";
 
     protected override async Task OnInitializedAsync()
     {
-        portugues = L["TituloIdiomaPortugues"]; // TODO set languages
         ToastTitle = "";
         ToastMessage = "";
         ToastCss = "";
         ToastIcon = "";
-
 
         try
         {
@@ -53,28 +50,65 @@ public partial class AppSettings
         {
             settings = new();
         }
+
+        if (!string.IsNullOrWhiteSpace(settings.DefaultLanguage))
+        {
+            selectedCulture = settings.DefaultLanguage;
+        }
+
+        SettingsGroups = new List<SettingsGroup>
+        {
+            new("configuracao", "TituloDefinicoes", "fa-cog", new List<SettingsLeaf>
+            {
+                new("geral", "Configuração geral", "fa-sliders"),
+                new("proprietario", "TituloMenuProprietario", "fa-user"),
+                new("modelos", "TituloModelosMenu", "fa-file-text-o")
+            }),
+            new("coeficientes", "Gestão de coeficientes", "fa-calculator", new List<SettingsLeaf>
+            {
+                new("coeficientes-rendas", "Coeficientes de atualização de rendas", "fa-line-chart"),
+                new("coeficientes-imi", "Coeficientes de IMI", "fa-percent")
+            }),
+            new("manutencao", "lblManutencao", "fa-wrench", new List<SettingsLeaf>
+            {
+                new("tabelas-apoio", "menu-admin-lookup-tables", "fa-table"),
+                new("inicializar-tabelas", "Inicializar tabelas", "fa-refresh")
+            }),
+            new("integracoes", "Integrações", "fa-plug", new List<SettingsLeaf>
+            {
+                new("email", "E-Mail", "fa-envelope")
+            })
+        };
     }
 
-    public void OnToggleClick()
+    private void ToggleGroup(string id)
     {
-        if (ToggleBtnObj?.Content == "Ssl")
+        if (!ExpandedGroups.Remove(id))
         {
-            settings!.EnableSSL = true; // Hotmail
-            Content = "No Ssl";
-            IconCss = "fa fa-pause";
+            ExpandedGroups.Add(id);
         }
-        else
-        {
-            settings!.EnableSSL = false;
+    }
 
-            Content = "Ssl";
-            IconCss = "fa fa-play";
+    private void SelectNode(string id)
+    {
+        SelectedNode = id;
+    }
+
+    private async Task SaveCurrentSettings()
+    {
+        if (SelectedNode == "email")
+        {
+            await UpdateSettings();
+        }
+        else if (SelectedNode == "geral")
+        {
+            await UpdateOtherSettings();
         }
     }
 
     private async Task UpdateSettings()
     {
-        ToastTitle = "Update email settings";
+        ToastTitle = L["E-Mail"];
 
         try
         {
@@ -83,7 +117,6 @@ public partial class AppSettings
             ToastMessage = $"{L["SuccessUpdate"]}";
             ToastIcon = "fas fa-check";
             await ShowToastMessage();
-
         }
         catch (Exception ex)
         {
@@ -97,7 +130,7 @@ public partial class AppSettings
 
     private async Task UpdateOtherSettings()
     {
-        ToastTitle = "Update other settings";
+        ToastTitle = L["TituloDefinicoes"];
         try
         {
             await AppSettingsService.UpdateOtherSettingsAsync(settings!);
@@ -119,23 +152,21 @@ public partial class AppSettings
     private void OnSelected(Syncfusion.Blazor.DropDowns.ChangeEventArgs<string, CountryModel> e)
     {
         if (e.Value == null)
+        {
             return;
+        }
 
         culture = e.Value.ToString();
         selectedCulture = culture;
-
         settings!.DefaultLanguage = culture;
-
     }
 
-    private async void InitializeTables()
+    private async Task InitializeTables()
     {
         var processed = await AppSettingsService.InitializeRentProcessingTables();
         InitializationMessage = processed ? L["Processo terminou com sucesso"] : L["Erro na inicialização. Verifique log, p.f."];
         InitializationMessageVisibility = true;
-        StateHasChanged();
     }
-
 
     private async Task ShowToastMessage()
     {
@@ -144,20 +175,18 @@ public partial class AppSettings
         await ToastObj!.ShowAsync();
     }
 
-
     protected async Task HideToast()
     {
         await ToastObj!.HideAsync();
     }
 
-
     public List<CountryModel> CountryData = new List<CountryModel>
-{
-        new CountryModel { ID ="pt-PT", Text = "TituloIdiomaPortugues", Pic = "portugal" },
-        new CountryModel { ID = "es", Text = "TituloIdiomaEspanhol", Pic = "espanha", },
-        new CountryModel { ID ="en-US", Text = "TituloIdiomaIngles", Pic = "american_flag",},
-        new CountryModel { ID ="fr", Text = "TituloIdiomaFrances", Pic = "franca" }
-};
+    {
+        new CountryModel { ID = "pt-PT", Text = "TituloIdiomaPortugues", Pic = "portugal" },
+        new CountryModel { ID = "es", Text = "TituloIdiomaEspanhol", Pic = "espanha" },
+        new CountryModel { ID = "en-US", Text = "TituloIdiomaIngles", Pic = "american_flag" },
+        new CountryModel { ID = "fr", Text = "TituloIdiomaFrances", Pic = "franca" }
+    };
 
     public class CountryModel
     {
@@ -166,5 +195,33 @@ public partial class AppSettings
         public string? Pic { get; set; }
     }
 
+    private sealed class SettingsGroup
+    {
+        public SettingsGroup(string id, string resxKey, string icon, List<SettingsLeaf> leaves)
+        {
+            Id = id;
+            ResxKey = resxKey;
+            Icon = icon;
+            Leaves = leaves;
+        }
 
+        public string Id { get; }
+        public string ResxKey { get; }
+        public string Icon { get; }
+        public List<SettingsLeaf> Leaves { get; }
+    }
+
+    private sealed class SettingsLeaf
+    {
+        public SettingsLeaf(string id, string resxKey, string icon)
+        {
+            Id = id;
+            ResxKey = resxKey;
+            Icon = icon;
+        }
+
+        public string Id { get; }
+        public string ResxKey { get; }
+        public string Icon { get; }
+    }
 }

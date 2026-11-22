@@ -3789,4 +3789,55 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="Guardar" xml:space="preserve">
     <value>Enregistrer</value>
   </data>
+  <data name="Configuração geral" xml:space="preserve">
+    <value>Paramètres généraux</value>
+  </data>
+  <data name="Gestão de coeficientes" xml:space="preserve">
+    <value>Gestion des coefficients</value>
+  </data>
+  <data name="Coeficientes de atualização de rendas" xml:space="preserve">
+    <value>Coefficients de mise à jour des loyers</value>
+  </data>
+  <data name="Coeficientes de IMI" xml:space="preserve">
+    <value>Coefficients IMI</value>
+  </data>
+  <data name="Integrações" xml:space="preserve">
+    <value>Intégrations</value>
+  </data>
+  <data name="E-Mail" xml:space="preserve">
+    <value>Courriel</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="Display Name" xml:space="preserve">
+    <value>Nom affiché</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Mot de passe</value>
+  </data>
+  <data name="Host" xml:space="preserve">
+    <value>Hôte</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>De</value>
+  </data>
+  <data name="SMTP Server" xml:space="preserve">
+    <value>Serveur SMTP</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nom d&apos;utilisateur</value>
+  </data>
+  <data name="Hostname" xml:space="preserve">
+    <value>Nom d&apos;hôte</value>
+  </data>
+  <data name="Use Ssl" xml:space="preserve">
+    <value>Utiliser SSL</value>
+  </data>
+  <data name="Enable Ssl" xml:space="preserve">
+    <value>Activer SSL</value>
+  </data>
 </root>

@@ -1,0 +1,212 @@
+.settings-shell {
+    max-width: 1280px;
+}
+
+.settings-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 8px;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: var(--app-surface);
+}
+
+.settings-group-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--app-text-primary);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color .15s ease;
+}
+
+    .settings-group-header:hover {
+        background: var(--app-surface-hover);
+    }
+
+.settings-group-icon {
+    color: var(--app-text-secondary);
+    width: 18px;
+    text-align: center;
+}
+
+.settings-group-title {
+    flex: 1;
+}
+
+.settings-group-chevron {
+    font-size: 0.7rem;
+    color: var(--app-text-secondary);
+    transition: transform .2s ease;
+}
+
+.settings-group-header.expanded .settings-group-chevron {
+    transform: rotate(180deg);
+}
+
+.settings-group-items {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 2px 0 6px 12px;
+    padding-left: 8px;
+    border-left: 2px solid var(--app-border);
+}
+
+.settings-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--app-text-secondary);
+    font-size: 0.85rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+
+    .settings-item:hover {
+        background: var(--app-surface-hover);
+        color: var(--app-text-primary);
+    }
+
+    .settings-item.active {
+        background: var(--app-primary);
+        border-color: var(--app-primary);
+        color: var(--app-on-primary);
+    }
+
+        .settings-item.active .settings-item-icon {
+            color: var(--app-on-primary);
+        }
+
+.settings-item-icon {
+    color: var(--app-text-secondary);
+    width: 18px;
+    text-align: center;
+}
+
+.settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.card-box {
+    padding: 15px;
+    border-radius: 25px;
+    background-clip: padding-box;
+    margin-bottom: 5px;
+    background-color: var(--app-surface);
+    box-shadow: 0 0 12px 0 rgba(0, 0, 0, 0.06), 0 1px 0 0 rgba(0, 0, 0, 0.02);
+}
+
+.settings-card {
+    padding: 20px;
+}
+
+.settings-card-title {
+    margin: 0 0 14px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--app-text-primary);
+}
+
+.settings-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+    .settings-field .e-control,
+    .settings-field .e-control-wrapper {
+        flex: 1;
+    }
+
+.settings-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+}
+
+.settings-toggle-label {
+    color: var(--app-text-primary);
+    font-size: 0.9rem;
+}
+
+.e-round-corner {
+    border-radius: 10px;
+}
+
+::deep .template.e-popup .e-list-item * {
+    display: block;
+    text-indent: 0;
+}
+
+::deep .e-bigger:not(.bootstrap) .template .e-dropdownbase .e-list-item {
+    line-height: 42px;
+    height: 80px;
+}
+
+::deep .e-bigger:not(.bootstrap) .template.e-popup .empImage {
+    margin: 10px 16px;
+}
+
+::deep .bootstrap4 .template.e-popup .empImage {
+    margin: 0px 16px;
+}
+
+::deep .bootstrap .ename {
+    font-size: 15px;
+    margin-top: 20px;
+    opacity: .87;
+    padding: 3px 0 20px;
+}
+
+::deep .e-bigger.bootstrap .ename {
+    font-size: 12px;
+    padding-bottom: 15px;
+}
+
+::deep .ename {
+    display: block !important;
+    opacity: .87;
+    font-size: 16px;
+    margin-top: 8px;
+}
+
+::deep .name {
+    padding: 5px 42px;
+    opacity: .87;
+    line-height: 1.063em;
+}
+
+::deep .empImage {
+    margin: 6px 16px;
+    float: left;
+    width: 25px;
+    height: 25px;
+}
+
+::deep .value {
+    border-radius: 50%;
+    float: left;
+    margin-top: 2px;
+    margin-left: 2px;
+}

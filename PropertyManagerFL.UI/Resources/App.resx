@@ -2774,4 +2774,55 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="Guardar" xml:space="preserve">
     <value>Guardar</value>
   </data>
+  <data name="Configuração geral" xml:space="preserve">
+    <value>Configuração geral</value>
+  </data>
+  <data name="Gestão de coeficientes" xml:space="preserve">
+    <value>Gestão de coeficientes</value>
+  </data>
+  <data name="Coeficientes de atualização de rendas" xml:space="preserve">
+    <value>Coeficientes de atualização de rendas</value>
+  </data>
+  <data name="Coeficientes de IMI" xml:space="preserve">
+    <value>Coeficientes de IMI</value>
+  </data>
+  <data name="Integrações" xml:space="preserve">
+    <value>Integrações</value>
+  </data>
+  <data name="E-Mail" xml:space="preserve">
+    <value>E-Mail</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Sim</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>Não</value>
+  </data>
+  <data name="Display Name" xml:space="preserve">
+    <value>Nome a apresentar</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Palavra-passe</value>
+  </data>
+  <data name="Host" xml:space="preserve">
+    <value>Servidor</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>De</value>
+  </data>
+  <data name="SMTP Server" xml:space="preserve">
+    <value>Servidor SMTP</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nome de utilizador</value>
+  </data>
+  <data name="Hostname" xml:space="preserve">
+    <value>Nome do servidor</value>
+  </data>
+  <data name="Use Ssl" xml:space="preserve">
+    <value>Usar SSL</value>
+  </data>
+  <data name="Enable Ssl" xml:space="preserve">
+    <value>Ativar SSL</value>
+  </data>
 </root>
