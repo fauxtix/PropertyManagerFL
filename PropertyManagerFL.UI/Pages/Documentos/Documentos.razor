@@ -1,4 +1,4 @@
-﻿@page "/documentos"
+@page "/documentos"
 @using PropertyManagerFL.Application.Shared.Enums
 @using PropertyManagerFL.Application.ViewModels.Contactos
 @using PropertyManagerFL.Application.ViewModels.Documentos
@@ -35,7 +35,7 @@
     }
 
     .e-grid .e-rowcell.e-selectionbackground {
-        background-color: lavender !important;
+        background-color: var(--app-surface-alt) !important;
     }
 </style>
 
@@ -182,7 +182,7 @@ else
                     <SfButton CssClass="e-outline e-round-corner"
                               IconCss="fas fa-times"
                               @onclick="(()=>ShowPdfVisibility = false)">
-                        Voltar
+                        @L["Voltar"]
                     </SfButton>
                 </div>
             </FooterTemplate>

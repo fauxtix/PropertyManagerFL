@@ -20,7 +20,7 @@
 else
 {
     <div hidden="@RecordMode == false">
-        <SfMessage Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=true Variant="MessageVariant.Text">Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento</SfMessage>
+        <SfMessage Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=true Variant="MessageVariant.Text">@L["Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento"]</SfMessage>
     </div>
     <div class="container-fluid">
         <EditForm Model="@Owner" style="margin:auto;padding:5px; font-size:large">
@@ -144,7 +144,7 @@ else
             <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
         </ToastAnimationSettings>
         <ToastButtons>
-            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+            <ToastButton Content="@L["Fechar"]" OnClick="@HideToast"></ToastButton>
         </ToastButtons>
         <ToastPosition X="Right" Y="Bottom"></ToastPosition>
     </SfToast>

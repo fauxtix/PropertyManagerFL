@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.Caching.Memory;
 using Newtonsoft.Json;
 using Org.BouncyCastle.Crypto.Operators;
@@ -177,7 +177,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception exc)
             {
-                _logger.LogError($"Erro ao pesquisar Descrição ({tableName} - {exc.Message})");
+                _logger.LogError(exc, "Operation failed");
                 return false;
             }
         }

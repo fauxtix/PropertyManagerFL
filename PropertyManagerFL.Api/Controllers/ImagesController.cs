@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Infrastructure.Security;
 
 namespace PropertyManagerFL.Api.Controllers
 {
@@ -7,9 +8,12 @@ namespace PropertyManagerFL.Api.Controllers
     public class ImagesController : ControllerBase
     {
         private readonly IWebHostEnvironment environment;
-        public ImagesController(IWebHostEnvironment environment)
+        private readonly ILogger<ImagesController> _logger;
+
+        public ImagesController(IWebHostEnvironment environment, ILogger<ImagesController> logger)
         {
             this.environment = environment;
+            _logger = logger;
         }
 
         /// <summary>
@@ -22,15 +26,20 @@ namespace PropertyManagerFL.Api.Controllers
             string path = string.Empty;
             if (HttpContext.Request.Form.Files.Any())
             {
+                var root = Path.Combine(environment.ContentRootPath, "uploads");
+                Directory.CreateDirectory(root);
+
                 foreach (var file in HttpContext.Request.Form.Files)
                 {
-                    path = Path.Combine(environment.ContentRootPath, "uploads", file.FileName);
+                    var fileName = SafePath.FileName(file.FileName);
+                    path = SafePath.CombineContained(root, fileName);
                     using (var stream = new FileStream(path, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
                 }
             }
+
             byte[] ByteArray = System.IO.File.ReadAllBytes(path);
 
             return Convert.ToBase64String(ByteArray);
@@ -48,20 +57,23 @@ namespace PropertyManagerFL.Api.Controllers
             {
                 try
                 {
-                    if (!Directory.Exists(environment.WebRootPath + "\\uploads\\"))
-                    {
-                        Directory.CreateDirectory(environment.WebRootPath + "\\uploads\\");
-                    }
-                    using (FileStream filestream = System.IO.File.Create(environment.WebRootPath + "\\uploads\\" + arquivo.FileName))
+                    var root = Path.Combine(environment.WebRootPath ?? environment.ContentRootPath, "uploads");
+                    Directory.CreateDirectory(root);
+
+                    var fileName = SafePath.FileName(arquivo.FileName);
+                    var path = SafePath.CombineContained(root, fileName);
+
+                    using (FileStream filestream = System.IO.File.Create(path))
                     {
                         await arquivo.CopyToAsync(filestream);
-                        filestream.Flush();
-                        return "\\uploads\\" + arquivo.FileName;
+                        await filestream.FlushAsync();
+                        return "\\uploads\\" + fileName;
                     }
                 }
                 catch (Exception ex)
                 {
-                    return ex.ToString();
+                    _logger.LogError(ex, "Falha ao guardar imagem");
+                    return "Ocorreu uma falha no envio do arquivo...";
                 }
             }
             else

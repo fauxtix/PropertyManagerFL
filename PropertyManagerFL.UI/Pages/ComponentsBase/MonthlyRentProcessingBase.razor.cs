@@ -308,16 +308,16 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var lastYearProcessed = lastPeriodProcessed.Ano;
                     if (selectedYear < lastPeriodProcessed.Ano)
                     {
-                        errorMessage = $"Período inválido ({selectedMonth}/{selectedYear}). Último processamento: {lastMonthProcessed} / {lastYearProcessed}";
+                        errorMessage = L["Período inválido ({0}/{1}). Último processamento: {2} / {3}", selectedMonth, selectedYear, lastMonthProcessed, lastYearProcessed];
                     }
                     else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth < lastPeriodProcessed.Mes)
                     {
-                        errorMessage = "Período inválido. Verifique, p.f.";
+                        errorMessage = L["Período inválido. Verifique, p.f."];
                     }
                     else if (selectedYear == lastPeriodProcessed.Ano && selectedMonth >= lastPeriodProcessed.Mes + 2)
                     {
                         var dateDecoded = Helpers.DecodeMonthYear(lastMonthProcessed, lastYearProcessed);
-                        errorMessage = $"Mês inválido. Último mês processado: {dateDecoded}. Verifique, p.f.";
+                        errorMessage = L["Mês inválido. Último mês processado: {0}. Verifique, p.f.", dateDecoded];
                     }
                 }
 

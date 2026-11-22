@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Shared.Enums;
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 @using PropertyManagerFL.Application.ViewModels.Recebimentos;
@@ -26,8 +26,8 @@
         <Content>
             @if (!string.IsNullOrEmpty(TenantName))
             {
-                <div class="m-2"> [ <span style="color:black; font-style:italic; font-weight:bold">@TenantName</span> ]</div>
-                <hr style="color:black" />
+                <div class="m-2"> [ <span style="color:var(--app-text-primary); font-style:italic; font-weight:bold">@TenantName</span> ]</div>
+                <hr style="color:var(--app-text-primary)" />
             }
             <div class="row mx-2 mb-2">
                 <div class="col-9">
@@ -38,7 +38,7 @@
                                        Severity=MessageSeverity.Error ShowIcon=false
                                        ShowCloseIcon="false">@WarningMessage</SfMessage>
                         }
-                        <hr style="color:black" />
+                        <hr style="color:var(--app-text-primary)" />
 
                         <SfMessage Severity=@MessageSeverityType ShowIcon="false" ShowCloseIcon="false">@AlertMessage</SfMessage>
 
@@ -113,7 +113,7 @@
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 cssClass = "notify-warning";
-                TitleColor = "#cc3300";
+                TitleColor = "var(--app-danger-text)";
                 OkButtonColor = "e-warning e-round-corner";
                 break;
             case AppDefinitions.AlertMessageType.Info:
@@ -130,22 +130,22 @@
         switch (LetterType)
         {
             case DocumentoEmitido.AtualizacaoRendas:
-                alertMsg = "carta de atualização de rendas?";
+                alertMsg = L["carta de atualização de rendas?"];
                 break;
             case DocumentoEmitido.AtualizacaoManualRenda:
-                alertMsg = "carta de atualização de rendas para o inquilino?";
+                alertMsg = L["carta de atualização de rendas para o inquilino?"];
                 break;
             case DocumentoEmitido.RendasEmAtraso:
-                alertMsg = "carta de aviso de renda(s) em atraso?";
+                alertMsg = L["carta de aviso de renda(s) em atraso?"];
                 break;
             case DocumentoEmitido.ContratoArrendamento:
-                alertMsg = "contrato de arrendamento?";
+                alertMsg = L["contrato de arrendamento?"];
                 break;
             case DocumentoEmitido.OposicaoRenovacaoContrato:
                 if (Lease is null) return;
 
-                alertMsg = "carta de oposição à renovação do contrato?";
-                SubTitle = "Oposição de renovação do contrato";
+                alertMsg = L["carta de oposição à renovação do contrato?"];
+                SubTitle = L["Oposição de renovação do contrato"];
 
                 var monthsToEnd = GetMonthDifference(DateTime.Now, Lease!.Data_Fim);
                 var tenantId = Lease.ID_Inquilino;
@@ -156,29 +156,29 @@
 
                 if (monthsToEnd < 4 && hasDeletedPayments == false)
                 {
-                    WarningMessage += $"Ainda faltam {monthsToEnd} meses para terminar o contrato ";
+                    WarningMessage += L["Ainda faltam {0} meses para terminar o contrato ", monthsToEnd];
                 }
                 if (monthsToEnd > 4 && hasDeletedPayments)
                 {
-                    WarningMessage += $" Há indicação de rendas não pagas, mas ainda faltam {monthsToEnd} meses para terminar o contrato. ";
+                    WarningMessage += L[" Há indicação de rendas não pagas, mas ainda faltam {0} meses para terminar o contrato. ", monthsToEnd];
                 }
                 if (hasDeletedPayments == false)
                 {
-                    WarningMessage += "Não há indicação de rendas por pagar ";
+                    WarningMessage += L["Não há indicação de rendas por pagar "];
                 }
                 if (hasDeletedPayments)
                 {
-                    string dummyText = tenantPayments.Count() == 1 ? "renda não paga" : "rendas não pagas";
+                    string dummyText = tenantPayments.Count() == 1 ? L["renda não paga"] : L["rendas não pagas"];
                     if(tenantPayments.Count() < 3)
                     {
-                        dummyText += " (lei permite 3). Verifique também, se cartas de atraso no pagamento, foram enviadas dentro do prazo";
+                        dummyText += L[" (lei permite 3). Verifique também, se cartas de atraso no pagamento, foram enviadas dentro do prazo"];
                     }
-                    WarningMessage += $"Há indicação de {tenantPayments.Count()} {dummyText}.";
+                    WarningMessage += L["Há indicação de {0} {1}.", tenantPayments.Count(), dummyText];
                 }
                 break;
         }
 
-        AlertMessage = $"Emite {alertMsg}";
+        AlertMessage = L["Emite {0}", alertMsg];
 
     }
 
@@ -214,7 +214,7 @@
         -moz-border-radius: 5px;
         background-clip: padding-box;
         margin-bottom: 0px;
-        background-color: #ffffff;
+        background-color: var(--app-surface);
         box-shadow: 0 0px 12px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
     }
 
@@ -223,7 +223,7 @@
     .notify-info, .notify-success, .notify-warning, .notify-error {
         padding: 5px;
         margin: 6px 4px 6px 4px;
-        box-shadow: 1px 1px 3px #888;
+        box-shadow: var(--app-shadow);
     }
 
         .notify-info:before, .notify-success:before, .notify-warning:before, .notify-error:before {
@@ -261,36 +261,36 @@
         }
 
     .notify-info {
-        color: #00529B;
-        background-color: #BDE5F8;
+        color: var(--app-info-text);
+        background-color: var(--app-info-bg);
     }
 
     .notify-success {
-        color: #4F8A10;
-        background-color: #DFF2BF;
+        color: var(--app-success-text);
+        background-color: var(--app-success-bg);
     }
 
     .notify-warning {
-        color: #9F6000;
-        background-color: #FEEFB3;
+        color: var(--app-warning-text);
+        background-color: var(--app-warning-bg);
     }
 
     .notify-error {
-        color: #D8000C;
-        background-color: #FFD2D2;
+        color: var(--app-danger-text);
+        background-color: var(--app-danger-bg);
     }
 
     /*Syncfusion*/
     .e-btn.e-flat.e-primary, .e-btn.e-flat.e-primary:focus {
-        background-color: #317ab9;
-        border-color: #265f91;
-        color: #fff;
+        background-color: var(--app-primary);
+        border-color: var(--app-primary-hover);
+        color: var(--app-on-primary);
     }
 
         .e-btn.e-flat.e-primary:hover, .e-btn.e-flat.e-primary:active {
-            background-color: #21527d;
-            border-color: #163854;
-            color: #fff;
+            background-color: var(--app-primary-hover);
+            border-color: var(--app-primary);
+            color: var(--app-on-primary);
         }
 
     .close-icon {
@@ -301,7 +301,7 @@
     }
 
     .error-msg {
-        color: #66afe9;
+        color: var(--app-info-text);
         display: inline-block;
         position: relative;
         top: -20px;
@@ -317,18 +317,18 @@
     .e-icons.close-icon.col-lg-2:before {
         content: '\e761';
         font-size: 32px;
-        color: #d9534f;
+        color: var(--app-danger-text);
         position: relative;
         left: 1px;
         bottom: 10px;
     }
 
     .e-dialog .e-footer-content {
-        background-color: #f8f8f8;
+        background-color: var(--app-dialog-footer-bg);
     }
 
     .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content {
-        background-color: #d9edf7;
+        background-color: var(--app-dialog-header-bg);
     }
 
     .e-dialog.e-control.e-popup {

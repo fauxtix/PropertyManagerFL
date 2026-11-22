@@ -49,7 +49,25 @@ It's a simple process to carry out:
 For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) 
 #
 
-**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
+**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.NET 10 LTS).
+
+# Local setup (.NET 10)
+
+The SDK is pinned in `global.json` (10.0.404, `rollForward: latestPatch`). This is a single-user, localhost-only application.
+
+1. **Database**: create `PropertyManagerDB` from the scripts in `PropertyManagerFL.Infrastructure/Database` (or restore a backup to a local SQL Server) and override `ConnectionStrings:PMConnection` locally.
+2. **Secrets** (never commit them), set with `dotnet user-secrets set`:
+   - API (`PropertyManagerFL.Api`): `ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey`, `JWT:Secret` (at least 32 characters), `JWT:Issuer` and `JWT:Audience` (`https://localhost:5001/` in Development), `JWT:ExpiraEmMinutos`.
+   - UI (`PropertyManagerFL.UI`): `ApiKey` (same value as the API), `SyncfusionLicenseKey`, `BaseUrl` = `https://localhost:5001/api`.
+3. In each terminal set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` before starting the apps. User-secrets are not loaded in `Production`.
+4. Start in two terminals: `dotnet run --project PropertyManagerFL.Api` and `dotnet run --project PropertyManagerFL.UI`. URLs: `https://localhost:5001` and `https://localhost:7181`.
+5. Quick check: `GET https://localhost:5001/api/Imoveis/TableHasData` with the `ApiKey` header returns `200` / `true`; the UI redirects to the login page.
+
+# Tests
+
+- `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`
+- Database integration tests are read-only and are no-ops until `PMFL_TEST_CONNECTION` points to a **copy** of the database. Never point it at production or commit the value.
+- `.github/workflows/ci.yml` restores, builds and tests on .NET 10 without a database.
 
 ## 🌟 Contributing
 

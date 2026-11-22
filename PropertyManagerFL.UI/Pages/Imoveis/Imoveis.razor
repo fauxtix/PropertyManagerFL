@@ -1,4 +1,4 @@
-﻿@page "/imoveis"
+@page "/imoveis"
 
 @using PropertyManagerFL.Application.Shared.Enums
 @using PropertyManagerFL.Application.ViewModels.Fracoes
@@ -23,13 +23,13 @@
      new ItemModel()
      {
          Text = L["TituloExpandir"],
-         TooltipText = "Expandir tudo",
+         TooltipText = L["Expandir tudo"],
          PrefixIcon = "e-expand"
      },
      new ItemModel()
      {
          Text = L["TituloRecolher"],
-         TooltipText = "Recolher tudo",
+         TooltipText = L["Recolher tudo"],
          PrefixIcon = "e-collapse"
      }
     });
@@ -59,7 +59,7 @@ else
             <SfMessage Severity="MessageSeverity.Warning" ShowCloseIcon="true"
                        Visible=@WarningVisibility>@WarningMessage</SfMessage>
             </div>
-            <div id="target" class="table table-stripped table-hover" style="background-color:#fefefe">
+            <div id="target" class="table table-stripped table-hover" style="background-color:var(--app-surface)">
                 <SfGrid ID="Properties_Grid"
                         @ref="propertiesGridObj"
                         DataSource="@properties"
@@ -159,11 +159,11 @@ else
                                 <div class="image">
                                     @if (!string.IsNullOrEmpty(propertyRow!.Foto))
                                     {
-                                        <img src="@($"/uploads/properties/{propertyRow!.Foto}")" height="64" width="64" alt="Foto" />
+                                        <img src="@($"/uploads/properties/{propertyRow!.Foto}")" height="64" width="64" alt="@L["Foto"]" />
                                     }
                                     else
                                     {
-                                        <img src="/images/properties/home.jpg" height="64" width="64" alt="Foto" />
+                                        <img src="/images/properties/home.jpg" height="64" width="64" alt="@L["Foto"]" />
                                     }
 
                                 </div>
@@ -297,7 +297,7 @@ else
             <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
         </ToastAnimationSettings>
         <ToastButtons>
-            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+            <ToastButton Content="@L["Fechar"]" OnClick="@HideToast"></ToastButton>
         </ToastButtons>
         <ToastPosition X="Right" Y="Bottom"></ToastPosition>
     </SfToast>

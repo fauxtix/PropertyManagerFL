@@ -1,0 +1,59 @@
+@inject NavigationManager Navigation
+
+<li class="menu-item @(MenuItem.HasChildMenuItems ? "sub-menu" : "") @(MenuItem.IsOpened ? "open" : "") @(IsCurrent ? "active" : "")">
+    @if (MenuItem.HasChildMenuItems)
+    {
+        <button type="button" class="menu-link"
+                @onclick="OnClick"
+                aria-expanded="@MenuItem.IsOpened"
+                aria-controls="@_elementId">
+            <span class="menu-icon"><i class="@MenuItem.Icon" aria-hidden="true"></i></span>
+            <span class="menu-title">@MenuItem.Title</span>
+        </button>
+        <div id="@_elementId" class="sub-menu-list"
+             style="display:block; height:@(MenuItem.CalcSubMenuHeight())px;">
+            <ul>
+                @foreach (var child in MenuItem.ChildMenuItems!)
+                {
+                    <MenuItemComponent MenuItem="child" MenuItemClickCallback="MenuItemClickCallback" />
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <NavLink class="menu-link" href="@MenuItem.Href"
+                 Match="@(MenuItem.Href == "" ? NavLinkMatch.All : NavLinkMatch.Prefix)"
+                 @onclick="OnClick">
+            <span class="menu-icon"><i class="@MenuItem.Icon" aria-hidden="true"></i></span>
+            <span class="menu-title">@MenuItem.Title</span>
+            @if (MenuItem.Suffix is not null)
+            {
+                <span class="menu-suffix">
+                    <span class="badge @MenuItem.Suffix.Class">@MenuItem.Suffix.Title</span>
+                </span>
+            }
+        </NavLink>
+    }
+</li>
+
+@code {
+    private readonly string _elementId = "menu-" + Guid.NewGuid().ToString("N");
+
+    [Parameter, EditorRequired]
+    public MenuItem MenuItem { get; set; } = default!;
+
+    [Parameter]
+    public EventCallback<MenuItem> MenuItemClickCallback { get; set; }
+
+    private bool IsCurrent
+    {
+        get
+        {
+            var relativePath = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?')[0];
+            return MenuItem.MatchesPath(relativePath);
+        }
+    }
+
+    private Task OnClick() => MenuItemClickCallback.InvokeAsync(MenuItem);
+}

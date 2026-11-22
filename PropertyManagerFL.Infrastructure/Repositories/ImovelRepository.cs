@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
@@ -38,7 +38,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return -1;
             }
         }
@@ -189,7 +189,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }

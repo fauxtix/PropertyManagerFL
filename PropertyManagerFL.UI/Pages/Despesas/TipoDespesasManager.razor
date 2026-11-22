@@ -25,7 +25,7 @@
     var Tool = (new List<object>() { "Search",
     new ItemModel() {
         PrefixIcon = "fa fa-times",
-        TooltipText = "Clear",
+        TooltipText = L["Limpar"],
         Align = ItemAlign.Right,
         Id = "Clear" },
     "PdfExport" ,
@@ -186,9 +186,9 @@ else
                             OnCloseDialog="@(()=>ErrorVisibility = false)" />
 
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                            DialogTitle="Apagar Tipo de Despesa"
+                            DialogTitle="@L["Apagar Tipo de Despesa"]"
                             Message="@DeleteCaption"
-                            ConfirmationText="Confirma operação?"
+                            ConfirmationText="@L["Confirma operação?"]"
                             DialogHeight="auto"
                             DialogWidth="20%"
                             Visible="@DeleteConfirmVisibility"
@@ -404,8 +404,8 @@ else
             {
                 AlertVisibility = true;
                 DeleteConfirmVisibility = false;
-                alertTitle = "Imputação de despesas";
-                WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. Existem despesas com esse Tipo. Confirme, p.f.";
+                alertTitle = L["Imputação de despesas"];
+                WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. {L["Existem despesas com esse Tipo. Confirme, p.f."]}";
                 return;
             }
 

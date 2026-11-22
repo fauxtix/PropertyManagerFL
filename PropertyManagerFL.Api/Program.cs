@@ -1,5 +1,7 @@
 using EmailService;
 using log4net.Config;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using PropertyManagerFL.Api.Configuration;
 using PropertyManagerFL.Infrastructure.Context;
@@ -23,8 +25,10 @@ var emailConfig = configuration
 builder.Services.AddSingleton(emailConfig);
 
 builder.Services.AddHttpClient();
+builder.Services.AddDataProtection().SetApplicationName("PropertyManagerFL");
 builder.Services.AddScoped<DapperContext>();
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+builder.Services.AddSignalR();
 builder.Services.AddJwtTConfiguration(configuration);
 builder.Services.AddFluentValidationConfiguration();
 builder.Services.AddAutoMapperConfiguration();
@@ -56,21 +60,34 @@ var app = builder.Build();
 string? SyncfusionLicenseKey = configuration["SyncfusionLicenseKey"];
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense(SyncfusionLicenseKey);
 
-if (app.Environment.IsDevelopment())
+app.UseExceptionHandler(errorApp =>
 {
-    app.UseDeveloperExceptionPage();
-}
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.ContentType = "text/plain; charset=utf-8";
+
+        var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+        if (error is not null)
+        {
+            app.Logger.LogError(error, "Unhandled API exception");
+        }
+
+        await context.Response.WriteAsync("Algo de errado ocorreu. Contacte o Administrador");
+    });
+});
 
 app.UseDatabaseConfiguration();
-
-app.UseSwaggerConfiguration();
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseJwtConfiguration();
 
+// Swagger is served behind the API-key gate.
+app.UseSwaggerConfiguration();
 
 app.MapControllers();
+app.MapHub<PropertyManagerFL.Api.Hubs.NotificationHub>("/hubs/notifications");
 
 //app.UseEndpoints(endpoints => endpoints.MapControllers());
 

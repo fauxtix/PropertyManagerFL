@@ -18,7 +18,7 @@ else
         <SfDialog CssClass="responsive-dialog-30" IsModal="true">
             <DialogTemplates>
                 <Header>
-                    <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;Calcular IMI</span></div>
+                    <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;@L["Calcular IMI"]</span></div>
                 </Header>
                 <Content>
                     <div class="row mx-1">
@@ -56,7 +56,7 @@ else
                                            Enabled="false"
                                            Value="@valorPatrimonio.ToString("C")"
                                            FloatLabelType="FloatLabelType.Auto"
-                                           Placeholder="Valor patrimonial tributável" />
+                                           Placeholder="@L["Valor patrimonial tributável"]" />
                             }
                             else
                             {
@@ -65,7 +65,7 @@ else
                                                   Decimals="0"
                                                   Width="200px" @bind-Value="@valorPatrimonio"
                                                   FloatLabelType="FloatLabelType.Auto"
-                                                  Placeholder="Valor patrimonial tributável" />
+                                                  Placeholder="@L["Valor patrimonial tributável"]" />
                             }
                         </div>
                     </div>
@@ -75,7 +75,7 @@ else
                                             ShowClearButton="true" Width="250px"
                                             Value="@idxDistrito"
                                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
+                                            Placeholder="@L["Distrito"]" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeDistrito"></DropDownListEvents>
@@ -88,7 +88,7 @@ else
                                             ShowClearButton="true" Width="250px" Enabled="@(ShowUnitsCombo)"
                                             Value="@idxConcelho"
                                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Concelho" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
+                                            Placeholder="@L["Concelho"]" DataSource="@Concelhos" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="DistritoConcelho">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="DistritoConcelho" ValueChange="OnChangeConcelho"></DropDownListEvents>
@@ -102,7 +102,7 @@ else
                                             ShowClearButton="true"
                                             Value="@idxTipoImovel"
                                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Tipo de Imóvel" DataSource="@TiposImovel" FloatLabelType="FloatLabelType.Always">
+                                            Placeholder="@L["Tipo de Imóvel"]" DataSource="@TiposImovel" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeTipoImovel"></DropDownListEvents>
@@ -111,16 +111,16 @@ else
                         </div>
                         <div class="col-lg-6 col-sm-12 mt-2">
                             <SfTextBox CssClass="e-field" Width="75px"
-                                       FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="Nº filhos" />
+                                       FloatLabelType="FloatLabelType.Auto" Value="0" Placeholder="@L["Nº filhos"]" />
                         </div>
                     </div>
 
                     <div hidden="@HideResults" class="card card-block w-100 h-100 my-3 mx-2">
-                        <div class="card-header h4 text-center  mt-1">Resultado da simulação</div>
+                        <div class="card-header h4 text-center  mt-1">@L["Resultado da simulação"]</div>
                         <div class="card-body">
                             <div class="row mx-1">
                                 <div class="col-md-6">
-                                    <SfMessage>Montante de IMI a pagar</SfMessage>
+                                    <SfMessage>@L["Montante de IMI a pagar"]</SfMessage>
                                 </div>
                                 <div class="col-md-6">
                                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
@@ -129,7 +129,7 @@ else
                             </div>
                             <div class="row mx-1 my-1">
                                 <div class="col-md-6">
-                                    <SfMessage>Coeficiente</SfMessage>
+                                    <SfMessage>@L["Coeficiente"]</SfMessage>
                                 </div>
                                 <div class="col-md-6">
                                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
@@ -137,7 +137,7 @@ else
                                 </div>
                             </div>
                             <div class="m-2">
-                                <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">Plano de Pagamentos</SfMessage>
+                                <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">@L["Plano de Pagamentos"]</SfMessage>
                             </div>
                             @if (listaCaptionsPrestacoes.Count > 0)
                             {
@@ -176,12 +176,12 @@ else
 <SfDialog Visible="ResultVisibility" CssClass="responsive-dialog-30" IsModal="true">
     <DialogTemplates>
         <Header>
-            <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;Resultado para @DescricaoImovel (@DescricaoFracao)</span></div>
+            <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;@L["Resultado para {0} ({1})", DescricaoImovel, DescricaoFracao]</span></div>
         </Header>
         <Content>
             <div class="row mx-1 my-1">
                 <div class="col-md-6">
-                    <SfMessage>Valor Patrimonial</SfMessage>
+                    <SfMessage>@L["Valor Patrimonial"]</SfMessage>
                 </div>
                 <div class="col-md-6">
                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
@@ -190,7 +190,7 @@ else
             </div>
             <div class="row mx-1 my-1">
                 <div class="col-md-6">
-                    <SfMessage>Coeficiente</SfMessage>
+                    <SfMessage>@L["Coeficiente"]</SfMessage>
                 </div>
                 <div class="col-md-6">
                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
@@ -200,7 +200,7 @@ else
 
             <div class="row mx-1">
                 <div class="col-md-6">
-                    <SfMessage>Montante de IMI a pagar</SfMessage>
+                    <SfMessage>@L["Montante de IMI a pagar"]</SfMessage>
                 </div>
                 <div class="col-md-6">
                     <SfMessage Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Right"
@@ -208,7 +208,7 @@ else
                 </div>
             </div>
             <div class="m-2">
-                <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">Plano de Pagamentos</SfMessage>
+                <SfMessage Variant="MessageVariant.Filled" Severity="MessageSeverity.Info">@L["Plano de Pagamentos"]</SfMessage>
             </div>
             @if (listaCaptionsPrestacoes.Count > 0)
             {

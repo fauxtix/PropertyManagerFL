@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
@@ -24,6 +25,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         [Inject] public IWebHostEnvironment _env { get; set; }
         [Inject] public NavigationManager nav { get; set; }
         [Inject] protected IValidationService validatorService { get; set; }
+        [Inject] protected IStringLocalizer<App>? L { get; set; }
 
 
         /// <summary>
@@ -97,7 +99,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             Guarantors = await GetAllGuarantors();
             if (!Guarantors.Any())
             {
-                WarningMessage = "Sem dados para mostrar";
+                WarningMessage = L["Sem dados para mostrar"];
                 WarningVisibility = true;
             }
 
@@ -122,7 +124,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             SelectedGuarantor = await Fiadoreservice!.GetFiador_ById(guarantorId);
             OriginalGuarantorData = await Fiadoreservice.GetFiador_ById(guarantorId); // TODO should use 'Clone/MemberWise'
-            EditCaption = "Editar dados do Fiador";
+            EditCaption = L["Editar dados do Fiador"];
             RecordMode = OpcoesRegisto.Gravar;
             AddEditVisibility = true;
         }
@@ -142,7 +144,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 AddEditVisibility = true;
-                EditCaption = $"Editar dados do Fiador";
+                EditCaption = L["Editar dados do Fiador"];
                 RecordMode = OpcoesRegisto.Gravar;
                 StateHasChanged();
             }
@@ -178,8 +180,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (!updateOk)
                     {
                         AlertVisibility = true;
-                        alertTitle = "Atualização de dados do Fiador";
-                        WarningMessage = "Erro na na operação!";
+                        alertTitle = L["Atualização de dados do Fiador"];
+                        WarningMessage = L["Erro na na operação!"];
                         return;
                     }
 
@@ -190,8 +192,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (!insertOk)
                     {
                         AlertVisibility = true;
-                        alertTitle = "Atualização de dados do Fiador";
-                        WarningMessage = "Erro na na operação!";
+                        alertTitle = L["Atualização de dados do Fiador"];
+                        WarningMessage = L["Erro na na operação!"];
                         return;
                     }
                 }
@@ -225,7 +227,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddguarantor(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
-            NewCaption = "Novo Fiador";
+            NewCaption = L["Novo Fiador"];
 
             SelectedGuarantor = new FiadorVM()
             {
@@ -280,16 +282,16 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 {
                     AddEditVisibility = false;
                     AlertVisibility = true;
-                    alertTitle = "Tentativa de apagar Fiador";
+                    alertTitle = L["Tentativa de apagar Fiador"];
                     DeleteCaption = SelectedGuarantor.Nome;
-                    WarningMessage = "Fiador tem contrato de arrendamento ativo! Verifique, p.f.";
+                    WarningMessage = L["Fiador tem contrato de arrendamento ativo! Verifique, p.f."];
                 }
             }
             catch (Exception exc)
             {
                 AlertVisibility = true;
-                alertTitle = "Erro ao apagar Fiador";
-                WarningMessage = $"Não foi possível concluir operação. {exc.Message}";
+                alertTitle = L["Erro ao apagar Fiador"];
+                WarningMessage = L["Não foi possível concluir operação. {0}", exc.Message];
             }
             StateHasChanged();
         }

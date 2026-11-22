@@ -1,0 +1,93 @@
+@page "/notifications"
+@using Microsoft.AspNetCore.Components.Authorization
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Notifications
+@using System.Security.Claims
+@inject INotificationService NotificationService
+@inject NavigationManager Navigation
+@inject IStringLocalizer<App> L
+@inject ILogger<Notifications> Logger
+
+<PageTitle>@L["TituloNotificacoes"]</PageTitle>
+
+<div class="notifications-page">
+    <h1 class="notifications-title">@L["TituloNotificacoes"]</h1>
+
+    <div class="notifications-actions">
+        <SfButton CssClass="e-small" Disabled="@(!_items.Any(i => !i.IsRead))" OnClick="MarkAllReadAsync">
+            @L["NotificationsMarkAllRead"]
+        </SfButton>
+    </div>
+
+    <SfTab @bind-SelectedItem="SelectedTab" CssClass="notifications-tabs">
+        <TabItems>
+            <TabItem>
+                <ChildContent><TabHeader Text="@L["NotificationsAll"]"></TabHeader></ChildContent>
+                <ContentTemplate>
+                    @if (!VisibleItems.Any())
+                    {
+                        <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
+                    }
+                    else
+                    {
+                        @foreach (var group in GroupItems(VisibleItems))
+                        {
+                            <div class="notification-group">
+                                <h2 class="notification-group-title">@group.Key</h2>
+                                @foreach (var item in group)
+                                {
+                                    <div class="notification-row @(item.IsRead ? "" : "notification-row-unread")" @onclick="() => OpenItemAsync(item)">
+                                        <span class="notification-row-icon notification-severity-@item.Severity.ToLowerInvariant()">
+                                            <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
+                                        </span>
+                                        <div class="notification-row-body">
+                                            <strong>@item.Title</strong>
+                                            <span>@item.Body</span>
+                                            <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
+                                        </div>
+                                        @if (!item.IsRead)
+                                        {
+                                            <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </ContentTemplate>
+            </TabItem>
+            <TabItem>
+                <ChildContent><TabHeader Text="@L["NotificationsUnread"]"></TabHeader></ChildContent>
+                <ContentTemplate>
+                    @if (!UnreadItems.Any())
+                    {
+                        <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
+                    }
+                    else
+                    {
+                        @foreach (var group in GroupItems(UnreadItems))
+                        {
+                            <div class="notification-group">
+                                <h2 class="notification-group-title">@group.Key</h2>
+                                @foreach (var item in group)
+                                {
+                                    <div class="notification-row notification-row-unread" @onclick="() => OpenItemAsync(item)">
+                                        <span class="notification-row-icon notification-severity-@item.Severity.ToLowerInvariant()">
+                                            <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
+                                        </span>
+                                        <div class="notification-row-body">
+                                            <strong>@item.Title</strong>
+                                            <span>@item.Body</span>
+                                            <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
+                                        </div>
+                                        <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    }
+                </ContentTemplate>
+            </TabItem>
+        </TabItems>
+    </SfTab>
+</div>

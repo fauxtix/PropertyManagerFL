@@ -1,4 +1,4 @@
-﻿@page "/components/lookuptables/{WorkTableName}"
+@page "/components/lookuptables/{WorkTableName}"
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Application.ViewModels.LookupTables;
 @using System.Text;
@@ -15,7 +15,7 @@
 var ToolbarOptions = (new List<object>() {
     "Search",
         new ItemModel()
-            { PrefixIcon = "fa fa-times", TooltipText = "Clear", Align = ItemAlign.Right, Id = "ClearSearch" }
+            { PrefixIcon = "fa fa-times", TooltipText = L["Limpar"], Align = ItemAlign.Right, Id = "ClearSearch" }
 });
 }
 
@@ -160,7 +160,7 @@ var ToolbarOptions = (new List<object>() {
 
         #header .table-title {
             background-color: steelblue;
-            color: white;
+            color: var(--app-on-primary);
             text-align: center;
             font-size: 1.5rem;
             font-weight: bolder;
@@ -169,8 +169,8 @@ var ToolbarOptions = (new List<object>() {
         }
 
         #header .table-option {
-            background-color: #fbfbfb;
-            color: black;
+            background-color: var(--app-surface-alt);
+            color: var(--app-text-primary);
             text-align: center;
             font-size: 1.2rem;
             font-weight: bold;

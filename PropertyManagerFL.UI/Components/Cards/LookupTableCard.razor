@@ -1,4 +1,4 @@
-﻿@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
+@using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 @inject IJSRuntime JSRuntime
 @inject NavigationManager navigationManager
@@ -94,7 +94,7 @@
     #table-card .tile_layout.card-control-section .row .e-card {
         text-align: left;
         margin: 10px;
-        background: radial-gradient(#1fe4f5, #3fbafe);
+        background: radial-gradient(var(--app-info-text), var(--app-primary));
     }
 
     #table-card *, ::after, ::before {
@@ -156,7 +156,7 @@
             content: "";
             width: 0%;
             height: 3px;
-            background-color: rgba(255, 255, 255, 0.6);
+            background-color: var(--app-surface-alt);
             transition: all 0.5s;
         }
 
@@ -188,23 +188,23 @@
     /* CARD BACKGROUNDS */
 
     .card-1 {
-        background: radial-gradient(#1fe4f5, #3fbafe);
+        background: radial-gradient(var(--app-info-text), var(--app-primary));
     }
 
     .card-2 {
-        background: radial-gradient(#fbc1cc, #fa99b2);
+        background: radial-gradient(var(--app-danger-bg), var(--app-danger-text));
     }
 
     .card-3 {
-        background: radial-gradient(#76b2fe, #b69efe);
+        background: radial-gradient(var(--app-primary), var(--app-primary-hover));
     }
 
     .card-4 {
-        background: radial-gradient(#60efbc, #58d5c9);
+        background: radial-gradient(var(--app-success-text), var(--app-accent-green));
     }
 
     .card-5 {
-        background: radial-gradient(#f588d8, #c0a3e5);
+        background: radial-gradient(var(--app-warning-text), var(--app-primary-hover));
     }
 
     /* RESPONSIVE */

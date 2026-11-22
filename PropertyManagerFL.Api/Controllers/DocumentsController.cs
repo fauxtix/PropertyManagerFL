@@ -247,7 +247,7 @@ namespace PropertyManagerFL.Api.Controllers
         private ObjectResult InternalError(string message)
         {
             _logger.LogError(message);
-            return StatusCode(500, $"Algo de errado ocorreu ({message}). contacte o Administrador");
+            return StatusCode(500, "Algo de errado ocorreu. Contacte o Administrador");
         }
     }
 }

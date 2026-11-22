@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
@@ -249,7 +249,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         catch (Exception ex)
                         {
                             tran.Rollback();
-                            _logger.LogError(ex.Message);
+                            _logger.LogError(ex, "Operation failed");
                             return -1;
                         }
                     }
@@ -258,7 +258,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return -1;
             }
         }
@@ -307,7 +307,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -351,7 +351,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         catch (Exception ex)
                         {
                             tran.Rollback();
-                            _logger.LogError(ex.Message, ex);
+                            _logger.LogError(ex, "Operation failed");
                         }
                     }
                 }
@@ -359,7 +359,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
             }
         }
 
@@ -433,7 +433,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
             }
         }
 
@@ -486,7 +486,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
             }
         }
 
@@ -527,7 +527,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return true;
             }
         }
@@ -599,7 +599,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -626,7 +626,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -650,7 +650,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -666,7 +666,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -721,7 +721,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Error {ex.Message} - Rollback... ");
+                            _logger.LogError(ex, "Operation failed");
                             tran.Rollback();
                             return false;
                         }
@@ -731,7 +731,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -748,7 +748,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return false;
             }
         }
@@ -796,7 +796,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex.Message, ex);
+                        _logger.LogError(ex, "Operation failed");
                         tran.Rollback();
                         return false;
                     }
@@ -856,7 +856,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError(ex.Message, ex);
+                        _logger.LogError(ex, "Operation failed");
                         tran.Rollback();
                         return false;
                     }
@@ -1006,7 +1006,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(ex.Message, ex);
+                            _logger.LogError(ex, "Operation failed");
                             tran.Rollback();
                         }
                     }
@@ -1043,7 +1043,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return null!;
             }
         }
@@ -1062,7 +1062,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return DateTime.MinValue;
             }
         }
@@ -1080,7 +1080,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return -1;
             }
         }
@@ -1102,7 +1102,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError(ex.Message);
+                    _logger.LogError(ex, "Operation failed");
                 }
             }
             else
@@ -1142,7 +1142,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                         catch (Exception ex)
                         {
                             tran.Rollback();
-                            _logger.LogError(ex.Message);
+                            _logger.LogError(ex, "Operation failed");
                         }
 
                     }
@@ -1166,7 +1166,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return Enumerable.Empty<LookupTableVM>();
             }
 

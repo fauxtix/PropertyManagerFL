@@ -1,4 +1,4 @@
-﻿@*@attribute [Authorize(Roles = "Admin")]*@
+@*@attribute [Authorize(Roles = "Admin")]*@
 @using PropertyManagerFL.UI.Components.Cards
 
 
@@ -12,11 +12,11 @@
                          CardSymbol="fas fa-battery-half" cardTitle="@EstadoConservacaoTitle" tableParam="EstadoConservacao"></LookupTableCard>
     </div>
     <div class="table-card">
-        <LookupTableCard cardContent="Tabela de Formas de Pagamento" CardType="card-3"
+        <LookupTableCard cardContent="@L["Tabela de Formas de Pagamento"]" CardType="card-3"
                          CardSymbol="fas fa-credit-card" cardTitle="@FormaPagamentoTitle" tableParam="FormaPagamento"></LookupTableCard>
     </div>
     <div class="table-card">
-        <LookupTableCard cardContent="Situação da Fração" CardType="card-1"
+        <LookupTableCard cardContent="@L["Situação da Fração"]" CardType="card-1"
                          CardSymbol="fas fa-square-plus" cardTitle="@SituacaoFracaoTitle" tableParam="SituacaoFracao"></LookupTableCard>
     </div>
     <div class="table-card">
@@ -32,15 +32,15 @@
                          CardSymbol="fas fa-igloo" cardTitle="@TipologiaFracaoTitle" tableParam="TipologiaFracao"></LookupTableCard>
     </div>
     <div class="table-card">
-        <LookupTableCard cardContent="Tipo de Propriedade" CardType="card-2"
+        <LookupTableCard cardContent="@L["Tipo de Propriedade"]" CardType="card-2"
                          CardSymbol="fas fa-house-user" cardTitle="@TipoPropriedadeTitle" tableParam="TipoPropriedade"></LookupTableCard>
     </div>
     <div class="table-card">
-        <LookupTableCard cardContent="Tipo de Recebimento" CardType="card-4"
+        <LookupTableCard cardContent="@L["Tipo de Recebimento"]" CardType="card-4"
                          CardSymbol="fa-regular fa-money-bill-1" cardTitle="@TipoRecebimentoTitle" tableParam="TipoRecebimento"></LookupTableCard>
     </div>
     <div class="table-card">
-        <LookupTableCard cardContent="Certificados Energéticos" CardType="card-5"
+        <LookupTableCard cardContent="@L["Certificados Energéticos"]" CardType="card-5"
                          CardSymbol="fa-regular fa-lightbulb" cardTitle="@TipoCertificadoEnergeticoTitle" tableParam="TipoCertificadoEnergetico"></LookupTableCard>
     </div>
 </div>
@@ -103,7 +103,7 @@
     }
  */
     .table-card-2 {
-        background-color: rgba(255, 255, 255, 0.8);
+        background-color: var(--app-surface);
         border: 2px solid rgba(0, 0, 0, 0.8);
         padding: 10px;
         text-align: center;
@@ -112,12 +112,12 @@
     .grid-container {
         display: grid;
         /*        grid-template-columns: auto;*/
-        background-color: #2196F3;
+        background-color: var(--app-primary);
         padding: 5px;
     }
 
     /*    .card {
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: var(--app-surface);
             border: 1px solid rgba(0, 0, 0, 0.8);
             padding: 10px;
             font-card: 30px;

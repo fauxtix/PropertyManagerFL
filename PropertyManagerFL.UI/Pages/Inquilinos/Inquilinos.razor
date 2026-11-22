@@ -1,4 +1,4 @@
-﻿@page "/inquilinos"
+@page "/inquilinos"
 @using PropertyManagerFL.Application.Shared.Enums
 @using PropertyManagerFL.Application.ViewModels.Fiadores
 @using PropertyManagerFL.UI.Pages.ComponentsBase
@@ -26,13 +26,13 @@
      new ItemModel()
      {
          Text = L["TituloExpandir"],
-         TooltipText = "Expand all",
+         TooltipText = L["Expandir tudo"],
          PrefixIcon = "e-expand"
      },
      new ItemModel()
      {
          Text = L["TituloRecolher"],
-         TooltipText = "Collapse all",
+         TooltipText = L["Recolher tudo"],
          PrefixIcon = "e-collapse"
      },
     new ItemModel()
@@ -43,7 +43,7 @@
      {
          Id = "Resumo",
          Text = L["TituloResumo"],
-         TooltipText = "Expand all",
+         TooltipText = L["Expandir tudo"],
          PrefixIcon = "fa fa-eye"
      },
     });
@@ -380,7 +380,7 @@ else
                             @{
                                 var inquilino = (context as InquilinoVM);
                                 var saldoCorrente = inquilino?.SaldoCorrente;
-                                var color = saldoCorrente < 0 ? "color:red" : "color:black";
+                                var color = saldoCorrente < 0 ? "color:red" : "color:var(--app-text-primary)";
                                 <span style="@color">@inquilino?.SaldoCorrente.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
@@ -392,7 +392,7 @@ else
                                 var inquilino = (context as InquilinoVM);
                                 var saldoCorrente = inquilino?.SaldoCorrente;
                                 var diferenca = inquilino!.SaldoPrevisto > 0 ? inquilino.SaldoPrevisto - inquilino.SaldoCorrente : 0;
-                                var color = diferenca > 0 ? "color:red" : "color:black";
+                                var color = diferenca > 0 ? "color:red" : "color:var(--app-text-primary)";
                                 <span style="@color">@diferenca.ToString("C2", CultureInfo.CreateSpecificCulture("pt-PT"))</span>
                             }
                         </Template>
@@ -566,7 +566,7 @@ else
                 <SfButton CssClass="e-outline e-round-corner"
                           IconCss="fas fa-times"
                           @onclick="(()=>ShowWordDocumentVisibility = false)" Content="@L["MSG_GoBack"]">
-                    Voltar
+                    @L["Voltar"]
                 </SfButton>
             </div>
         </FooterTemplate>

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
@@ -87,7 +87,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            _logger?.LogError(e, "{Location}: Operation failed", location);
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -122,7 +122,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            _logger?.LogError(e, "{Location}: Operation failed", location);
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -155,7 +155,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            _logger?.LogError(e, "{Location}: Operation failed", location);
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }
@@ -192,7 +192,7 @@ public class AppSettingsController : ControllerBase
         }
         catch (Exception e)
         {
-            _logger?.LogError($"{location}: {e.Message} - {e.InnerException}");
+            _logger?.LogError(e, "{Location}: Operation failed", location);
             return InternalError($"{location}: {e.Message} - {e.InnerException}");
         }
     }

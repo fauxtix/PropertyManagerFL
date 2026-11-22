@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Inquilinos
 @using PropertyManagerFL.UI.Pages.ComponentsBase
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
@@ -10,7 +10,7 @@
     <HeaderDialogComponent HeaderCaption="@HeaderCaption"
                            ImageName="home-owner" />
 </div>
-<hr style="color:black" />
+<hr style="color:var(--app-text-primary)" />
 <div>
     <div class="m-2 p-2">
         <SfMessage ShowIcon="true" Severity="MessageSeverity.Info" Variant="MessageVariant.Outlined">@nomeInquilino</SfMessage>

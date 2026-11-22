@@ -1,4 +1,4 @@
-﻿using Blazor.AdminLte;
+using Blazor.AdminLte;
 using Newtonsoft.Json;
 
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -187,7 +187,7 @@ public class WrapperDistritosConcelhos : IDistritosConcelhosService
         }
         catch (Exception ex)
         {
-            _logger.LogError($"Erro na atualização do coeficiente IMI ({ex.Message})");
+            _logger.LogError(ex, "Operation failed");
             return false;
         }
     }

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
@@ -164,7 +164,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
                 return null;
             }
         }
@@ -182,7 +182,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
                 return null;
             }
         }
@@ -199,7 +199,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
             }
         }
 
@@ -217,7 +217,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
             }
         }
 
@@ -238,7 +238,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
             }
         }
 
@@ -256,7 +256,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message, exc);
+                _logger.LogError(exc, "Operation failed");
                 return null;
             }
         }

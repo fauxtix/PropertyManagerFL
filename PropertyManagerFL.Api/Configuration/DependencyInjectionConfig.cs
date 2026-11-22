@@ -1,12 +1,15 @@
 ﻿using EmailService;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
+using PropertyManagerFL.Application.Security;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Repositories.Data_Operations;
+using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
 using PropertyManagerFL.Infrastructure.Context;
 using PropertyManagerFL.Infrastructure.Repositories;
 using PropertyManagerFL.Infrastructure.Repositories.Data_Operations;
+using PropertyManagerFL.Infrastructure.Security;
 
 namespace PropertyManagerFL.Api.Configuration;
 
@@ -23,6 +26,7 @@ public static class DependencyInjectionConfig
     {
         services.AddScoped<IDapperContext, DapperContext>();
         services.AddTransient<IValidationService, ValidationService>();
+        services.AddScoped<IDataSecurityRepository, DataSecurityRepository>();
 
         services.AddScoped<IProprietarioRepository, ProprietarioRepository>();
         services.AddScoped<IImovelRepository, ImovelRepository>();
@@ -60,6 +64,8 @@ public static class DependencyInjectionConfig
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IAppSettingsRepository, AppSettingsRepository>();
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationService, PropertyManagerFL.Infrastructure.Services.NotificationService>();
 
     }
 }

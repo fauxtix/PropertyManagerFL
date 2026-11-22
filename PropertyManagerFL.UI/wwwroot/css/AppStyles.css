@@ -1,13 +1,13 @@
-﻿header .module-title .title {
+header .module-title .title {
     font-weight: bold;
     font-size: 18px;
-    color: #333;
+    color: var(--app-text-primary);
     letter-spacing: 0.54px;
     padding-bottom: 10px;
 }
 
 header .module-title .underline {
-    background: #7575ff;
+    background: var(--app-primary);
     border-radius: 10px;
     width: 100px;
     height: 6px;
@@ -68,7 +68,7 @@ header .module-title .underline {
     height: 0;
     margin: 0.5rem 0;
     overflow: hidden;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid var(--app-border);
 }
 
 .card-title {
@@ -141,21 +141,21 @@ input[type="checkbox"] {
             font-family: Verdana !important;
             font-size: inherit;
             background-color: steelblue;
-            color: white;
+            color: var(--app-on-primary);
         }*/
 
 
 .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap:hover {
-    background: #d1f6d1 !important;
+    background: var(--app-success-bg) !important;
 }
 
 e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
 .e-tab .e-tab-header .e-hor-nav .e-popup-down-icon:hover {
-    background: #d1f6d1 !important;
+    background: var(--app-success-bg) !important;
 }
 
 .e-tab .e-tab-header .e-toolbar-item.e-active {
-    background: #d1f4d1;
+    background: var(--app-success-bg);
 }
 
     .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text,
@@ -164,83 +164,83 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
     }
 
 .e-radio:checked + .e-success::after { /* csslint allow: adjoining-classes */
-    background-color: #689f38;
+    background-color: var(--app-success-text);
 }
 
 .e-radio:checked:focus + .e-success::after, .e-radio:checked + .e-success:hover::after { /* csslint allow: adjoining-classes */
-    background-color: #449d44;
+    background-color: var(--app-accent-green);
 }
 
 .e-radio:checked + .e-success::before {
-    border-color: #689f38;
+    border-color: var(--app-success-text);
 }
 
 .e-radio:checked:focus + .e-success::before, .e-radio:checked + .e-success:hover::before { /* csslint allow: adjoining-classes */
-    border-color: #449d44;
+    border-color: var(--app-accent-green);
 }
 
 .e-radio + .e-success:hover::before {
-    border-color: #b1afaf
+    border-color: var(--app-border)
 }
 
 .e-radio:checked + .e-info::after { /* csslint allow: adjoining-classes */
-    background-color: #2196f3;
+    background-color: var(--app-primary);
 }
 
 .e-radio:checked:focus + .e-info::after, .e-radio:checked + .e-info:hover::after { /* csslint allow: adjoining-classes */
-    background-color: #0b7dda;
+    background-color: var(--app-primary-hover);
 }
 
 .e-radio:checked + .e-info::before {
-    border-color: #2196f3;
+    border-color: var(--app-primary);
 }
 
 .e-radio:checked:focus + .e-info::before, .e-radio:checked + .e-info:hover::before {
-    border-color: #0b7dda;
+    border-color: var(--app-primary-hover);
 }
 
 .e-radio + .e-info:hover::before {
-    border-color: #b1afaf
+    border-color: var(--app-border)
 }
 
 .e-radio:checked + .e-warning::after { /* csslint allow: adjoining-classes */
-    background-color: #ef6c00;
+    background-color: var(--app-warning-text);
 }
 
 .e-radio:checked:focus + .e-warning::after, .e-radio:checked + .e-warning:hover::after { /* csslint allow: adjoining-classes */
-    background-color: #cc5c00;
+    background-color: var(--app-accent-yellow);
 }
 
 .e-radio:checked + .e-warning::before {
-    border-color: #ef6c00;
+    border-color: var(--app-warning-text);
 }
 
 .e-radio:checked:focus + .e-warning::before, .e-radio:checked + .e-warning:hover::before {
-    border-color: #cc5c00;
+    border-color: var(--app-accent-yellow);
 }
 
 .e-radio + .e-warning:hover::before {
-    border-color: #b1afaf
+    border-color: var(--app-border)
 }
 
 .e-radio:checked + .e-danger::after { /* csslint allow: adjoining-classes */
-    background-color: #d84315;
+    background-color: var(--app-danger-text);
 }
 
 .e-radio:checked:focus + .e-danger::after, .e-radio:checked + .e-danger:hover::after { /* csslint allow: adjoining-classes */
-    background-color: #ba330a;
+    background-color: var(--app-danger-text);
 }
 
 .e-radio:checked + .e-danger::before {
-    border-color: #d84315;
+    border-color: var(--app-danger-text);
 }
 
 .e-radio:checked:focus + .e-danger::before, .e-radio:checked + .e-danger:hover::before {
-    border-color: #ba330a;
+    border-color: var(--app-danger-text);
 }
 
 .e-radio + .e-danger:hover::before {
-    border-color: #b1afaf
+    border-color: var(--app-border)
 }
 
 #spinnerContainer {
@@ -461,7 +461,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
     }
 
     .modal-confirm .modal-header {
-        background: #e85e6c;
+        background: var(--app-danger-text);
         border-bottom: none;
         position: relative;
         text-align: center;
@@ -474,7 +474,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
         text-align: center;
         font-size: 24px;
         margin: 10px 0;
-        color: white;
+        color: var(--app-on-primary);
     }
 
     .modal-confirm .form-control, .modal-confirm .btn {
@@ -486,7 +486,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
         position: absolute;
         top: 15px;
         right: 15px;
-        color: #fff;
+        color: var(--app-on-primary);
         text-shadow: none;
         opacity: 0.5;
     }
@@ -502,7 +502,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
         display: inline-block;
         border-radius: 50%;
         z-index: 6;
-        border: 5px solid #000;
+        border: 5px solid var(--app-border);
         padding: 5px;
         text-align: center;
     }
@@ -517,9 +517,9 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
     }
 
     .modal-confirm .btn, .modal-confirm .btn:active {
-        color: #fff;
+        color: var(--app-on-primary);
         border-radius: 4px;
-        background: #eeb711 !important;
+        background: var(--app-warning-bg) !important;
         text-decoration: none;
         transition: all 0.4s;
         line-height: normal;
@@ -531,7 +531,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
     }
 
         .modal-confirm .btn:hover, .modal-confirm .btn:focus {
-            background: #eda645 !important;
+            background: var(--app-warning-text) !important;
             outline: none;
         }
 

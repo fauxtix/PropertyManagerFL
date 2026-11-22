@@ -2627,4 +2627,1462 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloDespesasPorTipo" xml:space="preserve">
     <value>Todos los gastos (previstos y reales) por Tipo</value>
   </data>
+  <data name="LblTheme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="LblThemeLight" xml:space="preserve">
+    <value>Tema claro</value>
+  </data>
+  <data name="LblThemeDark" xml:space="preserve">
+    <value>Tema oscuro</value>
+  </data>
+  <data name="SidebarCollapse" xml:space="preserve">
+    <value>Contraer menú</value>
+  </data>
+  <data name="SidebarNavLabel" xml:space="preserve">
+    <value>Menú principal</value>
+  </data>
+  <data name="SidebarManagement" xml:space="preserve">
+    <value>Gestión</value>
+  </data>
+  <data name="MenuAgenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>Registros</value>
+  </data>
+  <data name="MenuFiles" xml:space="preserve">
+    <value>Archivos</value>
+  </data>
+  <data name="AuthRegister" xml:space="preserve">
+    <value>Registrarse</value>
+  </data>
+  <data name="AuthLogin" xml:space="preserve">
+    <value>Iniciar sesión</value>
+  </data>
+  <data name="carta de atualização de rendas?" xml:space="preserve">
+    <value>¿Carta de actualización de rentas?</value>
+  </data>
+  <data name="carta de atualização de rendas para o inquilino?" xml:space="preserve">
+    <value>¿Carta de actualización de la renta para el inquilino?</value>
+  </data>
+  <data name="carta de aviso de renda(s) em atraso?" xml:space="preserve">
+    <value>¿Carta de aviso de alquiler(es) atrasado(s)?</value>
+  </data>
+  <data name="contrato de arrendamento?" xml:space="preserve">
+    <value>¿Contrato de arrendamiento?</value>
+  </data>
+  <data name="carta de oposição à renovação do contrato?" xml:space="preserve">
+    <value>¿Carta de oposición a la renovación del contrato?</value>
+  </data>
+  <data name="Oposição de renovação do contrato" xml:space="preserve">
+    <value>Oposición a la renovación del contrato</value>
+  </data>
+  <data name="renda não paga" xml:space="preserve">
+    <value>alquiler impagado</value>
+  </data>
+  <data name="rendas não pagas" xml:space="preserve">
+    <value>alquileres impagados</value>
+  </data>
+  <data name="Há indicação de {0} {1}." xml:space="preserve">
+    <value>Hay indicación de {0} {1}.</value>
+  </data>
+  <data name="Emite {0}" xml:space="preserve">
+    <value>Emite {0}</value>
+  </data>
+  <data name="Carrega imagem:" xml:space="preserve">
+    <value>Cargar imagen:</value>
+  </data>
+  <data name="Remover" xml:space="preserve">
+    <value>Remover</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Despesas" xml:space="preserve">
+    <value>Gastos</value>
+  </data>
+  <data name="Agenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="Manutenção" xml:space="preserve">
+    <value>Mantenimiento</value>
+  </data>
+  <data name="país" xml:space="preserve">
+    <value>país</value>
+  </data>
+  <data name="Campo atualizado com sucesso!" xml:space="preserve">
+    <value>¡Campo actualizado correctamente!</value>
+  </data>
+  <data name="Falha ao atualizar o campo." xml:space="preserve">
+    <value>Error al actualizar el campo.</value>
+  </data>
+  <data name="Renda atualizada com sucesso" xml:space="preserve">
+    <value>Renta actualizada correctamente</value>
+  </data>
+  <data name="Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)" xml:space="preserve">
+    <value>Error al buscar en la API (Inquilinos/ActualizarRentaInquilino)</value>
+  </data>
+  <data name="Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino_Manual)" xml:space="preserve">
+    <value>Error al buscar en la API (Inquilinos/ActualizarRentaInquilino_Manual)</value>
+  </data>
+  <data name="Código postal não devolveu dados... Inválido?" xml:space="preserve">
+    <value>El código postal no ha devuelto datos... ¿No es válido?</value>
+  </data>
+  <data name="Ainda faltam {0} meses para terminar o contrato " xml:space="preserve">
+    <value>Aún faltan {0} meses para que finalice el contrato</value>
+  </data>
+  <data name=" Há indicação de rendas não pagas, mas ainda faltam {0} meses para terminar o contrato. " xml:space="preserve">
+    <value>Hay indicios de alquileres impagados, pero aún faltan {0} meses para que finalice el contrato.</value>
+  </data>
+  <data name="Não há indicação de rendas por pagar " xml:space="preserve">
+    <value>No hay indicación de alquileres pendientes de pago</value>
+  </data>
+  <data name=" (lei permite 3). Verifique também, se cartas de atraso no pagamento, foram enviadas dentro do prazo" xml:space="preserve">
+    <value>(La ley permite 3). Compruebe también si las cartas de retraso en el pago se enviaron dentro del plazo.</value>
+  </data>
+  <data name="Necessário envio de carta de atualização ao inquilino {0}" xml:space="preserve">
+    <value>Es necesario enviar una carta de actualización al inquilino {0}</value>
+  </data>
+  <data name="Necessário atualizar renda do inquilino {0} ({1})" xml:space="preserve">
+    <value>Es necesario actualizar la renta del inquilino {0} ({1})</value>
+  </data>
+  <data name=" - não foi enviada carta de atualização!" xml:space="preserve">
+    <value>- ¡No se ha enviado ninguna carta de actualización!</value>
+  </data>
+  <data name="Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano." xml:space="preserve">
+    <value>¡No se han emitido cartas de actualización de rentas para el año en curso! El decreto se publica en octubre; las cartas deben enviarse antes de fin de año.</value>
+  </data>
+  <data name="Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação" xml:space="preserve">
+    <value>El contrato del inquilino {0} ({1}) está a punto de finalizar. Renovar la fecha de finalización o enviar una carta de rescisión</value>
+  </data>
+  <data name="Erro na atualização de Arrendamento" xml:space="preserve">
+    <value>Error al actualizar el alquiler</value>
+  </data>
+  <data name="Atualização de Arrendamento" xml:space="preserve">
+    <value>Actualización del alquiler</value>
+  </data>
+  <data name="Registo atualizado com sucesso" xml:space="preserve">
+    <value>Registro actualizado correctamente</value>
+  </data>
+  <data name="Já existe arrendamento ativo para essa fração" xml:space="preserve">
+    <value>Ya existe un arrendamiento activo para esta vivienda</value>
+  </data>
+  <data name="Verifique, p.f." xml:space="preserve">
+    <value>Por favor, compruébalo.</value>
+  </data>
+  <data name="Erro na criação de Arrendamento" xml:space="preserve">
+    <value>Error al crear el arrendamiento</value>
+  </data>
+  <data name="Criação de Arrendamento" xml:space="preserve">
+    <value>Creación de alquiler</value>
+  </data>
+  <data name="Registo criado com sucesso" xml:space="preserve">
+    <value>Registro creado correctamente</value>
+  </data>
+  <data name="Envio de carta ao inquilino" xml:space="preserve">
+    <value>Envío de carta al inquilino</value>
+  </data>
+  <data name="Inquilino não tem rendas em atraso! Verifique, p.f" xml:space="preserve">
+    <value>¡El inquilino no tiene alquileres pendientes! Compruébelo, por favor.</value>
+  </data>
+  <data name="Confirma operação?" xml:space="preserve">
+    <value>¿Confirmar la operación?</value>
+  </data>
+  <data name="Arrendamento tem pagamentos associados! Operação cancelada." xml:space="preserve">
+    <value>¡El alquiler tiene pagos asociados! Operación cancelada.</value>
+  </data>
+  <data name="Erro ao remover Arrendamento" xml:space="preserve">
+    <value>Error al eliminar el alquiler</value>
+  </data>
+  <data name="Não foi possível concluir operação. {0}" xml:space="preserve">
+    <value>No se ha podido completar la operación. {0}</value>
+  </data>
+  <data name="Atualização do termo do contrato" xml:space="preserve">
+    <value>Actualización de la duración del contrato</value>
+  </data>
+  <data name="Não aplicável. Ver &apos;Settings&apos;" xml:space="preserve">
+    <value>No aplicable. Ver «Ajustes»</value>
+  </data>
+  <data name="Erro ao atualizar data-fim do contrato (Arrendamentos)" xml:space="preserve">
+    <value>Error al actualizar la fecha de finalización del contrato (arrendamientos)</value>
+  </data>
+  <data name="Contrato já foi emitido.&#xD;&#xA;&#xD;&#xA;Verifique, p.f" xml:space="preserve">
+    <value>El contrato ya se ha emitido.&#xD;&#xA;&#xD;&#xA;Por favor, compruébalo.</value>
+  </data>
+  <data name="Fração não está livre para arrendamento..." xml:space="preserve">
+    <value>La vivienda no está disponible para alquilar...</value>
+  </data>
+  <data name="Geração de contrato e criação de documento na ficha do Inquilino" xml:space="preserve">
+    <value>Generación de contrato y creación de documento en la ficha del inquilino</value>
+  </data>
+  <data name="Erro na criação de documento na ficha do Inquilino" xml:space="preserve">
+    <value>Error al crear el documento en la ficha del inquilino</value>
+  </data>
+  <data name="Listagem de arrendamentos" xml:space="preserve">
+    <value>Listado de alquileres</value>
+  </data>
+  <data name="Não há contratos ativos! Verifique, p.f." xml:space="preserve">
+    <value>¡No hay contratos activos! Por favor, compruébalo.</value>
+  </data>
+  <data name="Carta já foi enviada... Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha enviado la carta... Por favor, compruébalo.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... " xml:space="preserve">
+    <value>Proceso de envío cancelado. Ya se ha enviado una carta y el inquilino ha respondido dentro del plazo establecido...</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {0})... Verifique Log , p.f." xml:space="preserve">
+    <value>Proceso de envío cancelado. Ya se ha enviado la carta y el inquilino ha respondido fuera del plazo establecido (límite: {0})... Consulte el registro, por favor.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino" xml:space="preserve">
+    <value>Proceso de envío cancelado. Ya se ha enviado la carta. A la espera de la respuesta del inquilino.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {0})... Verifique, p.f." xml:space="preserve">
+    <value>Proceso de envío cancelado. Ya se ha enviado la carta. El inquilino no ha respondido en el plazo establecido (límite: {0})... Por favor, compruébelo.</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f." xml:space="preserve">
+    <value>Proceso de envío cancelado. ¡Error al obtener los datos para la carta! Consulte el registro, por favor.</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f." xml:space="preserve">
+    <value>Proceso de envío cancelado. Error al generar el PDF... Consulte el registro, por favor.</value>
+  </data>
+  <data name="Carta de oposição à renovação do contrato" xml:space="preserve">
+    <value>Carta de oposición a la renovación del contrato</value>
+  </data>
+  <data name="Operação terminada com sucesso" xml:space="preserve">
+    <value>Operación completada con éxito.</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f." xml:space="preserve">
+    <value>Proceso de envío cancelado. Error al registrar la carta. Compruebe el registro, por favor.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição... Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha enviado una carta de oposición... Por favor, compruébelo.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição e Inquilino já respondeu... Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha enviado una carta de oposición y el inquilino ya ha respondido... Por favor, compruébelo.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição ==&gt; prazo de resposta ultrapassado... Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha enviado una carta de oposición ==&gt; Plazo de respuesta superado... Por favor, compruébelo.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição e Inquilino ainda não respondeu (limite: {0})... Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha enviado una carta de oposición y el inquilino aún no ha respondido (límite: {0})... Por favor, compruébelo.</value>
+  </data>
+  <data name="Leitura de pdf" xml:space="preserve">
+    <value>Lectura de PDF</value>
+  </data>
+  <data name="Ficheiro {0} não existe no local indicado!" xml:space="preserve">
+    <value>¡El archivo {0} no existe en la ubicación indicada!</value>
+  </data>
+  <data name="Ficheiro não existe no local previsto" xml:space="preserve">
+    <value>El archivo no existe en la ubicación prevista</value>
+  </data>
+  <data name="Erro ao abrir contrato para visualização" xml:space="preserve">
+    <value>Error al abrir el contrato para su visualización</value>
+  </data>
+  <data name="Cartas de atualização de rendas" xml:space="preserve">
+    <value>Cartas de actualización de rentas</value>
+  </data>
+  <data name="Não foram configurados dados dos aumentos para o ano corrente" xml:space="preserve">
+    <value>No se han configurado datos de los aumentos para el año en curso</value>
+  </data>
+  <data name="Erro na emissão de carta. Verifique log, p.f." xml:space="preserve">
+    <value>Error al emitir la carta. Compruebe el registro, por favor.</value>
+  </data>
+  <data name="Erro ao registar envio de carta na BD ({0}). Processo terminou com erro! Contacte Administrador, p.f." xml:space="preserve">
+    <value>Error al registrar el envío de la carta en la base de datos ({0}). ¡El proceso ha finalizado con un error! Póngase en contacto con el administrador.</value>
+  </data>
+  <data name="Erro ao obter dados para emissão de carta" xml:space="preserve">
+    <value>Error al obtener los datos para emitir la carta</value>
+  </data>
+  <data name="Envio de carta de atraso no pagamento" xml:space="preserve">
+    <value>Envío de carta de retraso en el pago</value>
+  </data>
+  <data name="Inquilino não tem contrato de arrendamento! Verifique, p.f" xml:space="preserve">
+    <value>¡El inquilino no tiene contrato de alquiler! Por favor, compruébelo.</value>
+  </data>
+  <data name="Envio de carta de revogação" xml:space="preserve">
+    <value>Envío de carta de revocación</value>
+  </data>
+  <data name="Envio de cartas ao inquilino" xml:space="preserve">
+    <value>Envío de cartas al inquilino</value>
+  </data>
+  <data name="Envio de carta de oposição à renovação" xml:space="preserve">
+    <value>Envío de carta de oposición a la renovación</value>
+  </data>
+  <data name="Envio de carta de atualização de renda" xml:space="preserve">
+    <value>Envío de carta de actualización de la renta</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda para o Inquilino" xml:space="preserve">
+    <value>No se ha aplicado ningún aumento de la renta al Arrendatario.</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda para o ano corrente" xml:space="preserve">
+    <value>No se ha aplicado ningún aumento de la renta para el año en curso.</value>
+  </data>
+  <data name="Já foi enviada carta de aumento para o ano corrente.  Verifique histórico, p.f." xml:space="preserve">
+    <value>Ya se ha enviado la carta de aumento para el año en curso.  Consulte el historial, por favor.</value>
+  </data>
+  <data name="Atualizar valor de renda" xml:space="preserve">
+    <value>Actualizar el importe del alquiler</value>
+  </data>
+  <data name="Já foi efetuado o aumento de renda para este inquilino. Verifique histórico, p.f." xml:space="preserve">
+    <value>Ya se ha aplicado el aumento de la renta a este inquilino. Consulte el historial, por favor.</value>
+  </data>
+  <data name="Contrato do inquilino não foi encontrado!" xml:space="preserve">
+    <value>¡No se ha encontrado el contrato del inquilino!</value>
+  </data>
+  <data name="Contrato do inquilino só termina dentro de {0} meses!" xml:space="preserve">
+    <value>¡El contrato del inquilino no termina hasta dentro de {0} meses!</value>
+  </data>
+  <data name="Erro ao ler Api" xml:space="preserve">
+    <value>Error al leer la API</value>
+  </data>
+  <data name="Atualização de dados do inquilino" xml:space="preserve">
+    <value>Actualización de los datos del inquilino</value>
+  </data>
+  <data name="Gravar dados do Fiador " xml:space="preserve">
+    <value>Guardar los datos del avalista</value>
+  </data>
+  <data name="Atualização de dados do Fiador" xml:space="preserve">
+    <value>Actualización de los datos del avalista</value>
+  </data>
+  <data name="Criar Fiador" xml:space="preserve">
+    <value>Crear avalista</value>
+  </data>
+  <data name="Atualizar dados do documento" xml:space="preserve">
+    <value>Actualizar datos del documento</value>
+  </data>
+  <data name="Gravar dados do Documento" xml:space="preserve">
+    <value>Guardar los datos del documento</value>
+  </data>
+  <data name="Criação de documento" xml:space="preserve">
+    <value>Creación de documento</value>
+  </data>
+  <data name="Erro desconhecido (!) ao processar atualização" xml:space="preserve">
+    <value>Error desconocido (!) al procesar la actualización</value>
+  </data>
+  <data name="Inquilino tem contrato de arrendamento ativo! Verifique, p.f." xml:space="preserve">
+    <value>¡El inquilino tiene un contrato de alquiler activo! Compruébalo, por favor.</value>
+  </data>
+  <data name="Erro ao apagar Fiador. Confirme log, p.f." xml:space="preserve">
+    <value>Error al eliminar el avalista. Confirme el registro, por favor.</value>
+  </data>
+  <data name="Erro no processo (Id não existe)... Verifique, p.f." xml:space="preserve">
+    <value>Error en el proceso (el ID no existe)... Por favor, compruébalo.</value>
+  </data>
+  <data name="Carta de aviso - rendas em atraso" xml:space="preserve">
+    <value>Carta de aviso - alquileres atrasados</value>
+  </data>
+  <data name="Inquilino não tem pagamentos em atraso!. Verifique, p.f." xml:space="preserve">
+    <value>¡El inquilino no tiene pagos atrasados! Por favor, compruébalo.</value>
+  </data>
+  <data name="Carta de pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f." xml:space="preserve">
+    <value>¡Ya se ha enviado la carta de pago atrasado (mes {0} de {1})! Por favor, revísela.</value>
+  </data>
+  <data name="Carta de alerta para pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f." xml:space="preserve">
+    <value>¡Ya se ha enviado la carta de aviso de pago atrasado (mes {0} de {1})! Por favor, compruébelo.</value>
+  </data>
+  <data name="Há cartas de aviso que não foram enviadas!. Verifique, p.f." xml:space="preserve">
+    <value>¡Hay cartas de aviso que no se han enviado! Por favor, compruébelo.</value>
+  </data>
+  <data name="Carta de atualização de rendas para o inquilino" xml:space="preserve">
+    <value>Carta de actualización de alquileres para el inquilino</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda" xml:space="preserve">
+    <value>No se ha producido ningún aumento de la renta</value>
+  </data>
+  <data name="Novo valor inválido. Verifique, p.f." xml:space="preserve">
+    <value>El nuevo valor no es válido. Compruébalo, por favor.</value>
+  </data>
+  <data name="Já foi efetuado um aumento de renda para este ano. Verifique, p.f." xml:space="preserve">
+    <value>Ya se ha aplicado un aumento de la renta para este año. Por favor, compruébalo.</value>
+  </data>
+  <data name="Operação terminou com sucesso." xml:space="preserve">
+    <value>La operación se ha completado correctamente.</value>
+  </data>
+  <data name="Operação terminou com erro ({0})" xml:space="preserve">
+    <value>La operación ha finalizado con un error ({0})</value>
+  </data>
+  <data name="Estender prazo do contrato" xml:space="preserve">
+    <value>Ampliar el plazo del contrato</value>
+  </data>
+  <data name="Não foi encontrado o contrato do Inquilino." xml:space="preserve">
+    <value>No se ha encontrado el contrato del inquilino.</value>
+  </data>
+  <data name="Cartas já foram enviadas para os pagamentos em atraso. Verifique, p.f." xml:space="preserve">
+    <value>Ya se han enviado cartas por los pagos atrasados. Por favor, revíselas.</value>
+  </data>
+  <data name="Criar registo de pagamento" xml:space="preserve">
+    <value>Crear registro de pago</value>
+  </data>
+  <data name="Não há registo de Arrendamentos! Verifique, p.f." xml:space="preserve">
+    <value>¡No hay ningún registro de alquileres! Compruébalo, por favor.</value>
+  </data>
+  <data name="Novo pagamento" xml:space="preserve">
+    <value>Nuevo pago</value>
+  </data>
+  <data name="Não é possivel continuar. Não há registo de frações!" xml:space="preserve">
+    <value>No es posible continuar. ¡No hay registro de viviendas!</value>
+  </data>
+  <data name="Error while processings monthly rents! Check log, please." xml:space="preserve">
+    <value>¡Error al procesar los alquileres mensuales! Consulta el registro, por favor.</value>
+  </data>
+  <data name="Error while processings monthly rents! ({0}). Please check log." xml:space="preserve">
+    <value>¡Error al procesar los alquileres mensuales! ({0}). Compruebe el registro.</value>
+  </data>
+  <data name="Cancelamento de Processamento de rendas" xml:space="preserve">
+    <value>Cancelación del procesamiento de rentas</value>
+  </data>
+  <data name="Erro ao cancelar! Verifique log, p.f." xml:space="preserve">
+    <value>¡Error al cancelar! Comprueba el registro, por favor.</value>
+  </data>
+  <data name="Data de pagamento ({0}) inválida. Já existe movimento com data posterior! ({1})" xml:space="preserve">
+    <value>Fecha de pago ({0}) no válida. ¡Ya existe un movimiento con una fecha posterior! ({1})</value>
+  </data>
+  <data name="Erro ao atualizar dados" xml:space="preserve">
+    <value>Error al actualizar los datos</value>
+  </data>
+  <data name="Erro ao inserir pagamento na base de dados" xml:space="preserve">
+    <value>Error al introducir el pago en la base de datos</value>
+  </data>
+  <data name="Exportar pagamentos para Excel" xml:space="preserve">
+    <value>Exportar pagos a Excel</value>
+  </data>
+  <data name="Não há pagamentos para listar. Verifique, p.f." xml:space="preserve">
+    <value>No hay pagos que mostrar. Por favor, compruébalo.</value>
+  </data>
+  <data name="Imóvel" xml:space="preserve">
+    <value>Inmueble</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="Previsto" xml:space="preserve">
+    <value>Previsto</value>
+  </data>
+  <data name="Recebido" xml:space="preserve">
+    <value>Recibido</value>
+  </data>
+  <data name="Em falta" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="Estado" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="Editar dados de pagamento" xml:space="preserve">
+    <value>Editar datos de pago</value>
+  </data>
+  <data name="Valores das cauções não podem ser removidos" xml:space="preserve">
+    <value>Los importes de las fianzas no se pueden eliminar</value>
+  </data>
+  <data name="Esclareça com Administrador da aplicação, p.f." xml:space="preserve">
+    <value>Consulta con el administrador de la aplicación, por favor.</value>
+  </data>
+  <data name="Transação: {0} / {1} " xml:space="preserve">
+    <value>Transacción: {0} / {1}</value>
+  </data>
+  <data name="Transação não terminou com sucesso. Verifique (erro: {0})" xml:space="preserve">
+    <value>La transacción no se ha completado correctamente. Comprobar (error: {0})</value>
+  </data>
+  <data name="Erro ao acertar pagamento. Verifique log, p.f." xml:space="preserve">
+    <value>Error al liquidar el pago. Compruebe el registro, por favor.</value>
+  </data>
+  <data name="Selecione Imóvel, p.f." xml:space="preserve">
+    <value>Selecciona una propiedad, por favor.</value>
+  </data>
+  <data name="Fração" xml:space="preserve">
+    <value>Unidad</value>
+  </data>
+  <data name="Andar" xml:space="preserve">
+    <value>Piso</value>
+  </data>
+  <data name="Lado" xml:space="preserve">
+    <value>Lado</value>
+  </data>
+  <data name="Renda" xml:space="preserve">
+    <value>Renta</value>
+  </data>
+  <data name="Tipo" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="Escolha foto da propriedade, p.f." xml:space="preserve">
+    <value>Elige una foto de la propiedad, por favor.</value>
+  </data>
+  <data name="Não foi possível concluir operação. Imóvel com frações associadas!" xml:space="preserve">
+    <value>No se ha podido completar la operación. ¡Inmueble con fracciones asociadas!</value>
+  </data>
+  <data name="Apagar Fração" xml:space="preserve">
+    <value>Eliminar unidad</value>
+  </data>
+  <data name="Não foi possível concluir operação - Erro: {0}" xml:space="preserve">
+    <value>No se ha podido completar la operación - Error: {0}</value>
+  </data>
+  <data name="Imóveis/Frações" xml:space="preserve">
+    <value>Inmuebles/Unidades</value>
+  </data>
+  <data name="Erro no módulo de Imóveis/Frações: {0}" xml:space="preserve">
+    <value>Error en el módulo de Inmuebles/Fracciones: {0}</value>
+  </data>
+  <data name="Requisitos iniciais não foram preenchidos (Proprietário, Imóvel, Fração / Inquilino e Fiador)." xml:space="preserve">
+    <value>No se cumplieron los requisitos iniciales (propietario, inmueble, vivienda/inquilino y avalista).</value>
+  </data>
+  <data name="Pagamentos em dia" xml:space="preserve">
+    <value>Pagos al día</value>
+  </data>
+  <data name="Saldo corrente do Inquilino" xml:space="preserve">
+    <value>Saldo actual del inquilino</value>
+  </data>
+  <data name="Pagamentos estão dia." xml:space="preserve">
+    <value>Los pagos están al día.</value>
+  </data>
+  <data name=" ({0} meses * " xml:space="preserve">
+    <value> ({0} meses * </value>
+  </data>
+  <data name="Fração não está disponível para arrendamento" xml:space="preserve">
+    <value>La vivienda no está disponible para alquiler</value>
+  </data>
+  <data name="Fiador não foi encontrado. Verifique, p.f." xml:space="preserve">
+    <value>No se ha encontrado al avalista. Por favor, compruébelo.</value>
+  </data>
+  <data name="Criar arrendamento" xml:space="preserve">
+    <value>Crear alquiler</value>
+  </data>
+  <data name="Data inválida ({0}) posterior à data-corrente" xml:space="preserve">
+    <value>Fecha no válida ({0}) posterior a la fecha actual</value>
+  </data>
+  <data name="Data inválida ({0}) deverá ser data mínima" xml:space="preserve">
+    <value>Fecha no válida ({0}) debe ser la fecha mínima</value>
+  </data>
+  <data name="Data-fim inválida (antes: {0}). Corrija, p.f.." xml:space="preserve">
+    <value>Fecha de finalización no válida (antes: {0}). Por favor, corríjala.</value>
+  </data>
+  <data name="Data-início do contrato ou data do último pagamento inválida...." xml:space="preserve">
+    <value>Fecha de inicio del contrato o fecha del último pago no válida....</value>
+  </data>
+  <data name="Data-fim do contrato ou data do último pagamento inválida...." xml:space="preserve">
+    <value>Fecha de finalización del contrato o fecha del último pago no válida....</value>
+  </data>
+  <data name="Data do último pagamento inválida (posterior à data corrente)...." xml:space="preserve">
+    <value>Fecha del último pago no válida (posterior a la fecha actual)....</value>
+  </data>
+  <data name="Informe valor da renda, p.f." xml:space="preserve">
+    <value>Indica el importe de la renta, por favor.</value>
+  </data>
+  <data name="Último ano pago inválido" xml:space="preserve">
+    <value>Último año pagado no válido</value>
+  </data>
+  <data name="Sem dados para mostrar" xml:space="preserve">
+    <value>No hay datos que mostrar</value>
+  </data>
+  <data name="Editar dados do Fiador" xml:space="preserve">
+    <value>Editar los datos del avalista</value>
+  </data>
+  <data name="Erro na na operação!" xml:space="preserve">
+    <value>¡Error en la operación!</value>
+  </data>
+  <data name="Novo Fiador" xml:space="preserve">
+    <value>Nuevo avalista</value>
+  </data>
+  <data name="Tentativa de apagar Fiador" xml:space="preserve">
+    <value>Intento de eliminar al avalista</value>
+  </data>
+  <data name="Fiador tem contrato de arrendamento ativo! Verifique, p.f." xml:space="preserve">
+    <value>¡El avalista tiene un contrato de arrendamiento activo! Compruébelo, por favor.</value>
+  </data>
+  <data name="Erro ao apagar Fiador" xml:space="preserve">
+    <value>Error al eliminar el avalista</value>
+  </data>
+  <data name="Ficheiro não existe no local indicado! Verifique, p.f." xml:space="preserve">
+    <value>¡El archivo no existe en la ubicación indicada! Compruébalo, por favor.</value>
+  </data>
+  <data name="Título" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="Descrição" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Inquilino" xml:space="preserve">
+    <value>Inquilino</value>
+  </data>
+  <data name="Criação de Contacto" xml:space="preserve">
+    <value>Creación de contacto</value>
+  </data>
+  <data name="Período inválido ({0}/{1}). Último processamento: {2} / {3}" xml:space="preserve">
+    <value>Periodo no válido ({0}/{1}). Último procesamiento: {2} / {3}</value>
+  </data>
+  <data name="Período inválido. Verifique, p.f." xml:space="preserve">
+    <value>Periodo no válido. Compruébalo, por favor.</value>
+  </data>
+  <data name="Mês inválido. Último mês processado: {0}. Verifique, p.f." xml:space="preserve">
+    <value>Mes no válido. Último mes procesado: {0}. Por favor, compruébelo.</value>
+  </data>
+  <data name="Visualizar Log" xml:space="preserve">
+    <value>Ver registro</value>
+  </data>
+  <data name="Ver dados da entrada no Log" xml:space="preserve">
+    <value>Ver datos de la entrada en el registro</value>
+  </data>
+  <data name="Log Viewer" xml:space="preserve">
+    <value>Visor de registros</value>
+  </data>
+  <data name="Marcou {0} registos para apagar. Não tem reversão! Backup recomendado antes de continuar" xml:space="preserve">
+    <value>Ha marcado {0} registros para eliminar. ¡No se puede deshacer! Se recomienda hacer una copia de seguridad antes de continuar.</value>
+  </data>
+  <data name="Não há registos para apagar... Verifique, p.f." xml:space="preserve">
+    <value>No hay registros para eliminar... Por favor, compruébalo.</value>
+  </data>
+  <data name="Warnings" xml:space="preserve">
+    <value>Warnings:</value>
+  </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Errores</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Logins" xml:space="preserve">
+    <value>Inicios de sesión</value>
+  </data>
+  <data name="Atualização de renda" xml:space="preserve">
+    <value>Actualización de la renta</value>
+  </data>
+  <data name="2ª tentativa" xml:space="preserve">
+    <value>2.º intento</value>
+  </data>
+  <data name="3ª tentativa" xml:space="preserve">
+    <value>3.er intento</value>
+  </data>
+  <data name="1ª tentativa" xml:space="preserve">
+    <value>1.er intento</value>
+  </data>
+  <data name="Contrato de arrendamento" xml:space="preserve">
+    <value>CONTRATO DE ARRENDAMIENTO</value>
+  </data>
+  <data name="Janeiro" xml:space="preserve">
+    <value>Enero</value>
+  </data>
+  <data name="Fevereiro" xml:space="preserve">
+    <value>Febrero</value>
+  </data>
+  <data name="Março" xml:space="preserve">
+    <value>Marzo</value>
+  </data>
+  <data name="Abril" xml:space="preserve">
+    <value>Abril</value>
+  </data>
+  <data name="Maio" xml:space="preserve">
+    <value>Mayo</value>
+  </data>
+  <data name="Junho" xml:space="preserve">
+    <value>Junio</value>
+  </data>
+  <data name="Julho" xml:space="preserve">
+    <value>Julio</value>
+  </data>
+  <data name="Agosto" xml:space="preserve">
+    <value>Agosto</value>
+  </data>
+  <data name="Setembro" xml:space="preserve">
+    <value>Septiembre</value>
+  </data>
+  <data name="Outubro" xml:space="preserve">
+    <value>Octubre</value>
+  </data>
+  <data name="Novembro" xml:space="preserve">
+    <value>Noviembre</value>
+  </data>
+  <data name="Dezembro" xml:space="preserve">
+    <value>Diciembre</value>
+  </data>
+  <data name="Recebida do inquilino" xml:space="preserve">
+    <value>Recibido del inquilino</value>
+  </data>
+  <data name="Enviada ao inquilino" xml:space="preserve">
+    <value>Enviada al inquilino</value>
+  </data>
+  <data name="Outro Recebimento" xml:space="preserve">
+    <value>Otro ingreso</value>
+  </data>
+  <data name="Outro Envio" xml:space="preserve">
+    <value>Otro envío</value>
+  </data>
+  <data name="Assunto" xml:space="preserve">
+    <value>Asunto</value>
+  </data>
+  <data name="Mensagem" xml:space="preserve">
+    <value>Mensaje</value>
+  </data>
+  <data name="Referência" xml:space="preserve">
+    <value>Referencia</value>
+  </data>
+  <data name="Guarda mensagem" xml:space="preserve">
+    <value>Guardar mensaje</value>
+  </data>
+  <data name="Guarda mensagem e envia email" xml:space="preserve">
+    <value>Guardar mensaje y enviar correo electrónico</value>
+  </data>
+  <data name="Cancelar" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="Receção" xml:space="preserve">
+    <value>Recepción</value>
+  </data>
+  <data name="Remetente" xml:space="preserve">
+    <value>Remitente</value>
+  </data>
+  <data name="Não escolheu opção" xml:space="preserve">
+    <value>No has elegido ninguna opción</value>
+  </data>
+  <data name="Escolha Inquilino" xml:space="preserve">
+    <value>Elegir inquilino</value>
+  </data>
+  <data name="Assunto em falta" xml:space="preserve">
+    <value>Asunto no indicado</value>
+  </data>
+  <data name="Mensagem em falta" xml:space="preserve">
+    <value>Falta el mensaje</value>
+  </data>
+  <data name="Remetente em falta" xml:space="preserve">
+    <value>Falta el remitente</value>
+  </data>
+  <data name="Destinatário em falta" xml:space="preserve">
+    <value>Falta el destinatario</value>
+  </data>
+  <data name="e-mail não informado!" xml:space="preserve">
+    <value>¡Correo electrónico no indicado!</value>
+  </data>
+  <data name="Mensagem enviada com sucesso" xml:space="preserve">
+    <value>Mensaje enviado correctamente</value>
+  </data>
+  <data name="Erro ao criar mensagem. Verifique log, p.f.." xml:space="preserve">
+    <value>Error al crear el mensaje. Compruebe el registro, por favor.</value>
+  </data>
+  <data name="Erro no processo. Contacte Admin." xml:space="preserve">
+    <value>Error en el proceso. Contacta con el administrador.</value>
+  </data>
+  <data name="E-mail não consta dos dados do inquilino..." xml:space="preserve">
+    <value>El correo electrónico no aparece en los datos del inquilino...</value>
+  </data>
+  <data name="e-Mail do Destinatário" xml:space="preserve">
+    <value>Correo electrónico del destinatario</value>
+  </data>
+  <data name="e-Mail do Remetente" xml:space="preserve">
+    <value>Correo electrónico del remitente</value>
+  </data>
+  <data name="Mensagem atualizada com sucesso" xml:space="preserve">
+    <value>Mensaje actualizado correctamente</value>
+  </data>
+  <data name="Erro na atualização da mensagem" xml:space="preserve">
+    <value>Error al actualizar el mensaje</value>
+  </data>
+  <data name="Mensagem apagada com sucesso" xml:space="preserve">
+    <value>Mensaje eliminado correctamente</value>
+  </data>
+  <data name="Erro ao apagar mensagem" xml:space="preserve">
+    <value>Error al eliminar el mensaje</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Acerto" xml:space="preserve">
+    <value>Ajuste</value>
+  </data>
+  <data name="Não paga" xml:space="preserve">
+    <value>No pagada</value>
+  </data>
+  <data name="Editar pagamento de renda" xml:space="preserve">
+    <value>Editar pago de alquiler</value>
+  </data>
+  <data name="Outro recebimento" xml:space="preserve">
+    <value>Otro ingreso</value>
+  </data>
+  <data name="Fechar" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="Valor pago é inferior ao previsto!" xml:space="preserve">
+    <value>¡El importe pagado es inferior al previsto!</value>
+  </data>
+  <data name="Valor corrente {0}" xml:space="preserve">
+    <value>Valor actual {0}</value>
+  </data>
+  <data name="Coeficiente {0} {1}%" xml:space="preserve">
+    <value>Coeficiente {0} {1} %</value>
+  </data>
+  <data name="Valor esperado {0}" xml:space="preserve">
+    <value>Valor esperado {0}</value>
+  </data>
+  <data name="Aumento {0}" xml:space="preserve">
+    <value>Aumento {0}</value>
+  </data>
+  <data name="Aumento de renda" xml:space="preserve">
+    <value>Aumento de la renta</value>
+  </data>
+  <data name="Coeficiente para o ano corrente não foi indicado. Verifique, por favor" xml:space="preserve">
+    <value>No se ha indicado el coeficiente para el año en curso. Por favor, compruébelo.</value>
+  </data>
+  <data name="Alteração do valor da renda" xml:space="preserve">
+    <value>Modificación del importe del alquiler</value>
+  </data>
+  <data name="Valor não foi alterado" xml:space="preserve">
+    <value>El valor no se ha modificado</value>
+  </data>
+  <data name="Valor não pode ser inferior ao corrente" xml:space="preserve">
+    <value>El valor no puede ser inferior al actual</value>
+  </data>
+  <data name="Valor não pode ser superior a 10% do valor corrente" xml:space="preserve">
+    <value>El valor no puede ser superior al 10 % del valor actual</value>
+  </data>
+  <data name="Conta-corrente (10 ultºs movimentos)" xml:space="preserve">
+    <value>Cuenta corriente (10 últimos movimientos)</value>
+  </data>
+  <data name="Valor Pago" xml:space="preserve">
+    <value>Importe pagado</value>
+  </data>
+  <data name="Em dívida" xml:space="preserve">
+    <value>Impagado</value>
+  </data>
+  <data name="Notas" xml:space="preserve">
+    <value>Notas</value>
+  </data>
+  <data name="Sem documentos para mostrar" xml:space="preserve">
+    <value>No hay documentos para mostrar</value>
+  </data>
+  <data name="Aumentos de renda" xml:space="preserve">
+    <value>Aumentos de la renta</value>
+  </data>
+  <data name="Saldo Corrente Inquilino" xml:space="preserve">
+    <value>Saldo actual del inquilino</value>
+  </data>
+  <data name="Dt, Início" xml:space="preserve">
+    <value>Fecha de inicio</value>
+  </data>
+  <data name="Último mês pago" xml:space="preserve">
+    <value>Último mes pagado</value>
+  </data>
+  <data name="Ano" xml:space="preserve">
+    <value>Año</value>
+  </data>
+  <data name="Meses/início" xml:space="preserve">
+    <value>Meses/inicio</value>
+  </data>
+  <data name="Gravar" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name=" anos" xml:space="preserve">
+    <value>años</value>
+  </data>
+  <data name="(em anos)" xml:space="preserve">
+    <value>(en años)</value>
+  </data>
+  <data name="Lei vigente" xml:space="preserve">
+    <value>Legislación vigente</value>
+  </data>
+  <data name="Carta de revogação enviada em {0}" xml:space="preserve">
+    <value>Carta de revocación enviada el {0}</value>
+  </data>
+  <data name="Data de resposta em {0}" xml:space="preserve">
+    <value>Fecha de respuesta: {0}</value>
+  </data>
+  <data name="Novo" xml:space="preserve">
+    <value>Nuevo</value>
+  </data>
+  <data name="carta atualiz. enviada" xml:space="preserve">
+    <value>Carta de actualización enviada</value>
+  </data>
+  <data name="Editar" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="Tabela de Formas de Pagamento" xml:space="preserve">
+    <value>Tabla de formas de pago</value>
+  </data>
+  <data name="Situação da Fração" xml:space="preserve">
+    <value>Situación de la vivienda</value>
+  </data>
+  <data name="Tipo de Propriedade" xml:space="preserve">
+    <value>categoría de la propiedad</value>
+  </data>
+  <data name="Tipo de Recebimento" xml:space="preserve">
+    <value>Tipo de cobro</value>
+  </data>
+  <data name="Certificados Energéticos" xml:space="preserve">
+    <value>Certificados energéticos</value>
+  </data>
+  <data name="Nova entrada - Erro na inserção! Verifique, p.f." xml:space="preserve">
+    <value>Nueva entrada - ¡Error al introducirla! Por favor, compruébalo.</value>
+  </data>
+  <data name="Nova entrada ({0}) já existe na base de dados!" xml:space="preserve">
+    <value>¡La nueva entrada ({0}) ya existe en la base de datos!</value>
+  </data>
+  <data name="Alteração - Entrada já existe na base de dados!" xml:space="preserve">
+    <value>Modificación - ¡La entrada ya existe en la base de datos!</value>
+  </data>
+  <data name="Apagar entrada - Erro ao apagar registo!" xml:space="preserve">
+    <value>Eliminar entrada - ¡Error al eliminar el registro!</value>
+  </data>
+  <data name="Rendas" xml:space="preserve">
+    <value>Alquileres</value>
+  </data>
+  <data name="Inicializar tabelas" xml:space="preserve">
+    <value>Inicializar tablas</value>
+  </data>
+  <data name="Não esquecer de retirar em Produção!" xml:space="preserve">
+    <value>¡No olvides retirarlo de Producción!</value>
+  </data>
+  <data name="Inicializar tabelas de pagamentos" xml:space="preserve">
+    <value>Inicializar tablas de pagos</value>
+  </data>
+  <data name="Processo terminou com sucesso" xml:space="preserve">
+    <value>El proceso ha finalizado correctamente</value>
+  </data>
+  <data name="Erro na inicialização. Verifique log, p.f." xml:space="preserve">
+    <value>Error al iniciar. Comprueba el registro, por favor.</value>
+  </data>
+  <data name="Cria ficheiros Zip de documentos e imagens" xml:space="preserve">
+    <value>Crea archivos Zip de documentos e imágenes</value>
+  </data>
+  <data name="Apagar todos os registos do log!" xml:space="preserve">
+    <value>¡Borrar todos los registros del log!</value>
+  </data>
+  <data name="Apagar registo?" xml:space="preserve">
+    <value>Borrar registro</value>
+  </data>
+  <data name="Opções" xml:space="preserve">
+    <value>Opciones</value>
+  </data>
+  <data name="Exceção encontrada." xml:space="preserve">
+    <value>Se ha encontrado una excepción.</value>
+  </data>
+  <data name="Cartas de atualização de rendas não foram emitidas para o ano corrente" xml:space="preserve">
+    <value>No se han emitido cartas de actualización de rentas para el año en curso</value>
+  </data>
+  <data name="Apagar Tipo de Despesa" xml:space="preserve">
+    <value>Eliminar tipo de gasto</value>
+  </data>
+  <data name="Imputação de despesas" xml:space="preserve">
+    <value>Imputación de gastos</value>
+  </data>
+  <data name="Existem despesas com esse Tipo. Confirme, p.f." xml:space="preserve">
+    <value>Hay gastos de este tipo. Confírmelos, por favor.</value>
+  </data>
+  <data name="Valor patrimonial tributável" xml:space="preserve">
+    <value>Valor patrimonial imponible</value>
+  </data>
+  <data name="Distrito" xml:space="preserve">
+    <value>Provincia</value>
+  </data>
+  <data name="Concelho" xml:space="preserve">
+    <value>Municipio</value>
+  </data>
+  <data name="Tipo de Imóvel" xml:space="preserve">
+    <value>Tipo de inmueble</value>
+  </data>
+  <data name="Nº filhos" xml:space="preserve">
+    <value>N ° de hijos</value>
+  </data>
+  <data name="Calcular VPT" xml:space="preserve">
+    <value>Calcular el valor patrimonial imponible</value>
+  </data>
+  <data name="Preço Construção m2" xml:space="preserve">
+    <value>Precio de construcción por m²</value>
+  </data>
+  <data name="Área bruta de construção" xml:space="preserve">
+    <value>Superficie bruta construida</value>
+  </data>
+  <data name="Coeficiente Afetação" xml:space="preserve">
+    <value>Coeficiente de asignación</value>
+  </data>
+  <data name="Coeficientes IMI" xml:space="preserve">
+    <value>Coeficientes del IMI</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Otros</value>
+  </data>
+  <data name="Licença de Habitação" xml:space="preserve">
+    <value>Licencia de primera ocupación</value>
+  </data>
+  <data name="Imagem" xml:space="preserve">
+    <value>Imagen</value>
+  </data>
+  <data name="Dados do Seguro" xml:space="preserve">
+    <value>Datos del seguro</value>
+  </data>
+  <data name="Prémio anual" xml:space="preserve">
+    <value>Prima anual</value>
+  </data>
+  <data name="Apólice" xml:space="preserve">
+    <value>Póliza</value>
+  </data>
+  <data name="renda" xml:space="preserve">
+    <value>renta</value>
+  </data>
+  <data name="Área Privativa" xml:space="preserve">
+    <value>Superficie privada</value>
+  </data>
+  <data name="Quartos" xml:space="preserve">
+    <value>Habitaciones</value>
+  </data>
+  <data name="Casas banho" xml:space="preserve">
+    <value>Baños</value>
+  </data>
+  <data name="Garagem" xml:space="preserve">
+    <value>Garaje residencial</value>
+  </data>
+  <data name="Contactos" xml:space="preserve">
+    <value>Contactos</value>
+  </data>
+  <data name="Cod. Pst." xml:space="preserve">
+    <value>Cód. Pst.</value>
+  </data>
+  <data name="Gás" xml:space="preserve">
+    <value>Gas</value>
+  </data>
+  <data name="Imagem da propriedade" xml:space="preserve">
+    <value>Imagen de la propiedad</value>
+  </data>
+  <data name="Problema no acesso à API do Google Maps. Ìnternet indisponível?" xml:space="preserve">
+    <value>Problema de acceso a la API de Google Maps. ¿No hay conexión a Internet?</value>
+  </data>
+  <data name="Expandir tudo" xml:space="preserve">
+    <value>Expandir todo</value>
+  </data>
+  <data name="Recolher tudo" xml:space="preserve">
+    <value>Contraer todo</value>
+  </data>
+  <data name="Foto" xml:space="preserve">
+    <value>Foto</value>
+  </data>
+  <data name="Dados foram alterados! Confirma cancelamento?" xml:space="preserve">
+    <value>¡Se han modificado los datos! ¿Confirmas la cancelación?</value>
+  </data>
+  <data name="Ao confirmar, todas as alterações serão perdidas." xml:space="preserve">
+    <value>Al confirmar, se perderán todos los cambios.</value>
+  </data>
+  <data name="Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento" xml:space="preserve">
+    <value>Los datos sobre el arrendador son necesarios para crear un contrato de arrendamiento.</value>
+  </data>
+  <data name="Categoria" xml:space="preserve">
+    <value>Categoria</value>
+  </data>
+  <data name="Url do site" xml:space="preserve">
+    <value>URL de web</value>
+  </data>
+  <data name="Deve preencher Categoria e Tipo de documento" xml:space="preserve">
+    <value>Debes rellenar los campos Categoría y Tipo de documento</value>
+  </data>
+  <data name="Ficheiros" xml:space="preserve">
+    <value>Ficheros</value>
+  </data>
+  <data name="Campo a inserir" xml:space="preserve">
+    <value>Campo que se debe rellenar</value>
+  </data>
+  <data name="Calcular IMI" xml:space="preserve">
+    <value>Calcular el IMI</value>
+  </data>
+  <data name="Resultado da simulação" xml:space="preserve">
+    <value>Resultado de la simulación</value>
+  </data>
+  <data name="Montante de IMI a pagar" xml:space="preserve">
+    <value>Importe del IMI a pagar</value>
+  </data>
+  <data name="Coeficiente" xml:space="preserve">
+    <value>Coeficiente</value>
+  </data>
+  <data name="Plano de Pagamentos" xml:space="preserve">
+    <value>Plan de pagos</value>
+  </data>
+  <data name="Resultado para {0} ({1})" xml:space="preserve">
+    <value>Resultado para {0} ({1})</value>
+  </data>
+  <data name="Valor Patrimonial" xml:space="preserve">
+    <value>Valor patrimonial</value>
+  </data>
+  <data name="Coeficiente Localização" xml:space="preserve">
+    <value>Coeficiente de ubicación</value>
+  </data>
+  <data name="Coeficiente Qualidade Conforto" xml:space="preserve">
+    <value>Coeficiente de calidad y confort</value>
+  </data>
+  <data name="Coeficiente Vetustez" xml:space="preserve">
+    <value>Coeficiente de antigüedad</value>
+  </data>
+  <data name="Valor Calculado" xml:space="preserve">
+    <value>Valor calculado</value>
+  </data>
+  <data name="Valor existente ({0})" xml:space="preserve">
+    <value>Valor existente ({0})</value>
+  </data>
+  <data name="Imagem_{0}" xml:space="preserve">
+    <value>Imagen_{0}</value>
+  </data>
+  <data name="Voltar" xml:space="preserve">
+    <value>Volver</value>
+  </data>
+  <data name="Documentos" xml:space="preserve">
+    <value>Documentos</value>
+  </data>
+  <data name="Nome" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="Antes" xml:space="preserve">
+    <value>Antes</value>
+  </data>
+  <data name="Depois" xml:space="preserve">
+    <value>Después</value>
+  </data>
+  <data name="Acertar" xml:space="preserve">
+    <value>Liquidar</value>
+  </data>
+  <data name="Carta de atraso de renda enviada em {0}" xml:space="preserve">
+    <value>Carta de retraso en el alquiler enviada el {0}</value>
+  </data>
+  <data name="Limpar" xml:space="preserve">
+    <value>Limpiar</value>
+  </data>
+  <data name="Inserir campo" xml:space="preserve">
+    <value>Insertar campo</value>
+  </data>
+  <data name="Image 1" xml:space="preserve">
+    <value>Imagen 1</value>
+  </data>
+  <data name="Image 2" xml:space="preserve">
+    <value>Imagen 2</value>
+  </data>
+  <data name="Image 3" xml:space="preserve">
+    <value>Imagen 3</value>
+  </data>
+  <data name="Image 4" xml:space="preserve">
+    <value>Imagen 4</value>
+  </data>
+  <data name="Image 5" xml:space="preserve">
+    <value>Imagen 5</value>
+  </data>
+  <data name="Image 6" xml:space="preserve">
+    <value>Imagen 6</value>
+  </data>
+  <data name="Image 7" xml:space="preserve">
+    <value>Imagen 7</value>
+  </data>
+  <data name="Image 8" xml:space="preserve">
+    <value>Imagen 8</value>
+  </data>
+  <data name="Image 9" xml:space="preserve">
+    <value>Imagen 9</value>
+  </data>
+  <data name="Guardar" xml:space="preserve">
+    <value>Guardar</value>
+  </data>
+  <data name="Configuração geral" xml:space="preserve">
+    <value>Configuración general</value>
+  </data>
+  <data name="Gestão de coeficientes" xml:space="preserve">
+    <value>Gestión de coeficientes</value>
+  </data>
+  <data name="Coeficientes de atualização de rendas" xml:space="preserve">
+    <value>Coeficientes de actualización de alquileres</value>
+  </data>
+  <data name="Coeficientes de IMI" xml:space="preserve">
+    <value>Coeficientes de IMI</value>
+  </data>
+  <data name="Integrações" xml:space="preserve">
+    <value>Integraciones</value>
+  </data>
+  <data name="E-Mail" xml:space="preserve">
+    <value>Correo electrónico</value>
+  </data>
+  <data name="On" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="Off" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Display Name" xml:space="preserve">
+    <value>Nombre visible</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Contraseña</value>
+  </data>
+  <data name="Host" xml:space="preserve">
+    <value>Host</value>
+  </data>
+  <data name="From" xml:space="preserve">
+    <value>De</value>
+  </data>
+  <data name="SMTP Server" xml:space="preserve">
+    <value>Servidor SMTP</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>Nombre de usuario</value>
+  </data>
+  <data name="Hostname" xml:space="preserve">
+    <value>Nombre de host</value>
+  </data>
+  <data name="Use Ssl" xml:space="preserve">
+    <value>Usar SSL</value>
+  </data>
+  <data name="Enable Ssl" xml:space="preserve">
+    <value>Activar SSL</value>
+  </data>
+  <data name="mf-panel-title" xml:space="preserve">
+    <value>Campos disponibles</value>
+  </data>
+  <data name="mf-search" xml:space="preserve">
+    <value>Buscar campo...</value>
+  </data>
+  <data name="mf-empty" xml:space="preserve">
+    <value>No hay campos para esta plantilla.</value>
+  </data>
+  <data name="mf-toggle" xml:space="preserve">
+    <value>Campos</value>
+  </data>
+  <data name="mf-fullscreen" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="mf-back-menu" xml:space="preserve">
+    <value>Volver al menú</value>
+  </data>
+  <data name="mf-cat-general" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="mf-cat-landlord" xml:space="preserve">
+    <value>Propietario</value>
+  </data>
+  <data name="mf-cat-tenant" xml:space="preserve">
+    <value>Inquilino</value>
+  </data>
+  <data name="mf-cat-property" xml:space="preserve">
+    <value>Inmueble</value>
+  </data>
+  <data name="mf-cat-contract" xml:space="preserve">
+    <value>Contrato</value>
+  </data>
+  <data name="mf-cat-rents" xml:space="preserve">
+    <value>Renta</value>
+  </data>
+  <data name="mf-cat-dates" xml:space="preserve">
+    <value>Fechas</value>
+  </data>
+  <data name="mf-NomeOutorgante_1" xml:space="preserve">
+    <value>Nombre del otorgante 1</value>
+  </data>
+  <data name="mf-NomeOutorgante_2" xml:space="preserve">
+    <value>Nombre del otorgante 2</value>
+  </data>
+  <data name="mf-NomeOutorgante_3" xml:space="preserve">
+    <value>Nombre del otorgante 3</value>
+  </data>
+  <data name="mf-DtNasc_O_1" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 1</value>
+  </data>
+  <data name="mf-DtNasc_O_2" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 2</value>
+  </data>
+  <data name="mf-DtNasc_O_3" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 3</value>
+  </data>
+  <data name="mf-MoradaOutorgante_1" xml:space="preserve">
+    <value>Dirección del otorgante 1</value>
+  </data>
+  <data name="mf-MoradaOutorgante_2" xml:space="preserve">
+    <value>Dirección del otorgante 2</value>
+  </data>
+  <data name="mf-MoradaOutorgante_3" xml:space="preserve">
+    <value>Dirección del otorgante 3</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_1" xml:space="preserve">
+    <value>Naturalidad del otorgante 1</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_2" xml:space="preserve">
+    <value>Naturalidad del otorgante 2</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_3" xml:space="preserve">
+    <value>Naturalidad del otorgante 3</value>
+  </data>
+  <data name="mf-EC_Outorgante_1" xml:space="preserve">
+    <value>Estado civil del otorgante 1</value>
+  </data>
+  <data name="mf-EC_Outorgante_2" xml:space="preserve">
+    <value>Estado civil del otorgante 2</value>
+  </data>
+  <data name="mf-EC_Outorgante_3" xml:space="preserve">
+    <value>Estado civil del otorgante 3</value>
+  </data>
+  <data name="mf-CC_Outorgante_1" xml:space="preserve">
+    <value>DNI del otorgante 1</value>
+  </data>
+  <data name="mf-CC_Outorgante_2" xml:space="preserve">
+    <value>DNI del otorgante 2</value>
+  </data>
+  <data name="mf-CC_Outorgante_3" xml:space="preserve">
+    <value>DNI del otorgante 3</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_1" xml:space="preserve">
+    <value>Validez del DNI del otorgante 1</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_2" xml:space="preserve">
+    <value>Validez del DNI del otorgante 2</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_3" xml:space="preserve">
+    <value>Validez del DNI del otorgante 3</value>
+  </data>
+  <data name="mf-NIF_Outorgante_1" xml:space="preserve">
+    <value>NIF del otorgante 1</value>
+  </data>
+  <data name="mf-NIF_Outorgante_2" xml:space="preserve">
+    <value>NIF del otorgante 2</value>
+  </data>
+  <data name="mf-NIF_Outorgante_3" xml:space="preserve">
+    <value>NIF del otorgante 3</value>
+  </data>
+  <data name="mf-Letra" xml:space="preserve">
+    <value>Letra de la vivienda</value>
+  </data>
+  <data name="mf-Andar" xml:space="preserve">
+    <value>Piso</value>
+  </data>
+  <data name="mf-Lado" xml:space="preserve">
+    <value>Lado</value>
+  </data>
+  <data name="mf-MoradaImovel" xml:space="preserve">
+    <value>Dirección del inmueble</value>
+  </data>
+  <data name="mf-Freguesia" xml:space="preserve">
+    <value>Parroquia</value>
+  </data>
+  <data name="mf-Concelho" xml:space="preserve">
+    <value>Municipio</value>
+  </data>
+  <data name="mf-Artigo" xml:space="preserve">
+    <value>Artículo del registro</value>
+  </data>
+  <data name="mf-LicencaHabitacao" xml:space="preserve">
+    <value>Licencia de habitabilidad</value>
+  </data>
+  <data name="mf-DataLicencaHabitacao" xml:space="preserve">
+    <value>Fecha de la licencia de habitabilidad</value>
+  </data>
+  <data name="mf-Quartos" xml:space="preserve">
+    <value>Número de habitaciones</value>
+  </data>
+  <data name="mf-MoradaFracao" xml:space="preserve">
+    <value>Dirección de la vivienda</value>
+  </data>
+  <data name="mf-MatrizPredial" xml:space="preserve">
+    <value>Referencia catastral</value>
+  </data>
+  <data name="mf-MesesContrato" xml:space="preserve">
+    <value>Duración del contrato (meses)</value>
+  </data>
+  <data name="mf-DataInicioContrato" xml:space="preserve">
+    <value>Fecha de inicio del contrato</value>
+  </data>
+  <data name="mf-DiaInicioContrato" xml:space="preserve">
+    <value>Día de inicio del contrato</value>
+  </data>
+  <data name="mf-MesInicioContrato" xml:space="preserve">
+    <value>Mes de inicio del contrato</value>
+  </data>
+  <data name="mf-AnoInicioContrato" xml:space="preserve">
+    <value>Año de inicio del contrato</value>
+  </data>
+  <data name="mf-InicioContrato" xml:space="preserve">
+    <value>Inicio del contrato</value>
+  </data>
+  <data name="mf-FimContrato" xml:space="preserve">
+    <value>Fin del contrato</value>
+  </data>
+  <data name="mf-ValorRenda" xml:space="preserve">
+    <value>Importe de la renta</value>
+  </data>
+  <data name="mf-ValorRendaExtenso" xml:space="preserve">
+    <value>Importe de la renta en letras</value>
+  </data>
+  <data name="mf-NovoValorRenda" xml:space="preserve">
+    <value>Nuevo importe de la renta</value>
+  </data>
+  <data name="mf-ExtensoNovoValor" xml:space="preserve">
+    <value>Nuevo importe de la renta en letras</value>
+  </data>
+  <data name="mf-Coeficiente" xml:space="preserve">
+    <value>Coeficiente de actualización</value>
+  </data>
+  <data name="mf-Lei" xml:space="preserve">
+    <value>Ley de actualización</value>
+  </data>
+  <data name="mf-MontanteRendasEmAtraso" xml:space="preserve">
+    <value>Importe pendiente</value>
+  </data>
+  <data name="mf-ValorExtenso" xml:space="preserve">
+    <value>Importe pendiente en letras</value>
+  </data>
+  <data name="mf-RendasEmAtraso" xml:space="preserve">
+    <value>Rentas atrasadas</value>
+  </data>
+  <data name="mf-PrazoEmDias" xml:space="preserve">
+    <value>Plazo (días)</value>
+  </data>
+  <data name="mf-NomeSenhorio" xml:space="preserve">
+    <value>Nombre del propietario</value>
+  </data>
+  <data name="mf-MoradaSenhorio" xml:space="preserve">
+    <value>Dirección del propietario</value>
+  </data>
+  <data name="mf-CodigoPostalSenhorio" xml:space="preserve">
+    <value>Código postal del propietario</value>
+  </data>
+  <data name="mf-NomeInquilino" xml:space="preserve">
+    <value>Nombre del inquilino</value>
+  </data>
+  <data name="mf-MoradaInquilino" xml:space="preserve">
+    <value>Dirección del inquilino</value>
+  </data>
+  <data name="mf-CodigoPostalInquilino" xml:space="preserve">
+    <value>Código postal del inquilino</value>
+  </data>
+  <data name="mf-LocalEmissao" xml:space="preserve">
+    <value>Lugar de emisión</value>
+  </data>
+  <data name="mf-DataEmissao" xml:space="preserve">
+    <value>Fecha de emisión</value>
+  </data>
+  <data name="mf-DataPublicacao" xml:space="preserve">
+    <value>Fecha de publicación</value>
+  </data>
+  <data name="mf-DiaAPartirDe" xml:space="preserve">
+    <value>Día a partir de</value>
+  </data>
+  <data name="mf-MesAPartirDe" xml:space="preserve">
+    <value>Mes a partir de</value>
+  </data>
+  <data name="mf-AnoAtualizacao" xml:space="preserve">
+    <value>Año de actualización</value>
+  </data>
+  <data name="mf-AnoPublicacao" xml:space="preserve">
+    <value>Año de publicación</value>
+  </data>
+  <data name="NotificationsTitle" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
+  <data name="NotificationsMarkAllRead" xml:space="preserve">
+    <value>Marcar todas como leÃ­das</value>
+  </data>
+  <data name="NotificationsUnread" xml:space="preserve">
+    <value>Sin leer</value>
+  </data>
+  <data name="NotificationsEmpty" xml:space="preserve">
+    <value>No hay notificaciones</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="NotificationsViewAll" xml:space="preserve">
+    <value>Ver todas</value>
+  </data>
+  <data name="NotificationsAll" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="NotificationsMarkedAllRead" xml:space="preserve">
+    <value>Notificaciones marcadas como leÃ­das</value>
+  </data>
 </root>

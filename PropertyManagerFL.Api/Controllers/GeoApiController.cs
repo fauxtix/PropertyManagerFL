@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.ViewModels.GeoApi.CodigosPostais;
 using PropertyManagerFL.Application.ViewModels.GeoApi.Municipios;
 using static SkiaSharp.HarfBuzz.SKShaper;
@@ -68,7 +68,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
@@ -107,7 +107,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
@@ -135,7 +135,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
@@ -163,7 +163,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }
@@ -191,7 +191,7 @@ namespace PropertyManagerFL.Api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message);
+                _logger.LogError(ex, "Operation failed");
                 return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
             }
         }

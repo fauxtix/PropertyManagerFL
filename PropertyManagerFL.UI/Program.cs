@@ -1,4 +1,5 @@
 using EmailService;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -38,6 +39,8 @@ builder.Host.ConfigureAppConfiguration((hostingContext, config) =>
 #pragma warning restore ASP0013 // Suggest switching from using Configure methods to WebApplicationBuilder.Configuration
 
 
+builder.Services.AddDataProtection().SetApplicationName("PropertyManagerFL");
+
 builder.Services.AddMemoryCache(options =>
 {
     // Set cache size limit (in bytes)
@@ -49,8 +52,6 @@ builder.Services.AddMemoryCache(options =>
     // Set cache expiration scan frequency
     options.ExpirationScanFrequency = TimeSpan.FromMinutes(5); // 5 minutes
 });
-
-builder.Services.AddCors();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString!));
@@ -77,7 +78,7 @@ builder.Services.AddServicesDependencyInjectionConfiguration();
 
 
 
-// força a abertura da página de login no arranque da aplicação
+// forï¿½a a abertura da pï¿½gina de login no arranque da aplicaï¿½ï¿½o
 //builder.Services.AddAuthorization(options =>
 //{
 //    options.FallbackPolicy = options.DefaultPolicy;
@@ -146,14 +147,6 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-
-app.UseCors(builder =>
-{
-    builder.WithOrigins("*")
-    .AllowAnyMethod()
-    .AllowAnyHeader();
-
-});
 
 app.UseAuthentication();
 app.UseAuthorization();

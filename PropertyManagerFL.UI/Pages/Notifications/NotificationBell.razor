@@ -1,0 +1,125 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Notifications
+@using PropertyManagerFL.UI.Services
+@using System.Security.Claims
+@inject INotificationService Notifications
+@inject NotificationClientService NotificationClient
+@inject NavigationManager Navigation
+@inject IStringLocalizer<App> L
+@inject ILogger<NotificationBell> Logger
+
+<div class="notification-shell" @onkeydown="HandleKeyDown">
+    @if (ShowPanel)
+    {
+        @* Light dismiss: o primeiro clique fora fecha o painel sem ativar o controlo por baixo. *@
+        <div class="notification-dismiss-overlay" @onclick="ClosePanel" aria-hidden="true"></div>
+    }
+
+    <button type="button"
+            class="notification-trigger"
+            id="notificationButton"
+            title="@L["TituloNotificacoes"]"
+            aria-label="@L["TituloNotificacoes"]"
+            aria-expanded="@ShowPanel.ToString().ToLowerInvariant()"
+            @onclick="TogglePanelAsync">
+        <i class="oi oi-bell" aria-hidden="true"></i>
+        @if (UnseenCount > 0)
+        {
+            <span class="e-badge e-badge-danger e-badge-pill notification-count" aria-hidden="true">
+                @(UnseenCount > 9 ? "9+" : UnseenCount.ToString())
+            </span>
+        }
+    </button>
+
+    @if (ShowPanel)
+    {
+        <div class="notification-panel" role="dialog" aria-label="@L["TituloNotificacoes"]">
+            <div class="notification-panel-header">
+                <span class="notification-panel-title">@L["TituloNotificacoes"]</span>
+                <button type="button" class="notification-close" title="@L["Close"]" @onclick="ClosePanel">×</button>
+            </div>
+
+            <SfTab @bind-SelectedItem="SelectedTab" CssClass="notification-tabs">
+                <TabItems>
+                    <TabItem>
+                        <ChildContent><TabHeader Text="@L["NotificationsAll"]"></TabHeader></ChildContent>
+                        <ContentTemplate>
+                            @if (!VisibleItems.Any())
+                            {
+                                <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
+                            }
+                            else
+                            {
+                                <div class="notification-list e-list e-list-template">
+                                    @foreach (var item in VisibleItems)
+                                    {
+                                        <div class="e-list-wrapper notification-item @(item.IsRead ? "" : "notification-item-unread")"
+                                             @onclick="() => OpenItemAsync(item)">
+                                            <span class="notification-item-icon notification-severity-@item.Severity.ToLowerInvariant()">
+                                                <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
+                                            </span>
+                                            <div class="e-list-content notification-item-body">
+                                                <span class="notification-item-title">@item.Title</span>
+                                                @if (!string.IsNullOrWhiteSpace(item.Body))
+                                                {
+                                                    <span class="notification-item-text">@item.Body</span>
+                                                }
+                                                <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
+                                            </div>
+                                            @if (!item.IsRead)
+                                            {
+                                                <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </ContentTemplate>
+                    </TabItem>
+                    <TabItem>
+                        <ChildContent><TabHeader Text="@L["NotificationsUnread"]"></TabHeader></ChildContent>
+                        <ContentTemplate>
+                            @if (!UnreadItems.Any())
+                            {
+                                <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
+                            }
+                            else
+                            {
+                                <div class="notification-list e-list e-list-template">
+                                    @foreach (var item in UnreadItems)
+                                    {
+                                        <div class="e-list-wrapper notification-item notification-item-unread"
+                                             @onclick="() => OpenItemAsync(item)">
+                                            <span class="notification-item-icon notification-severity-@item.Severity.ToLowerInvariant()">
+                                                <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
+                                            </span>
+                                            <div class="e-list-content notification-item-body">
+                                                <span class="notification-item-title">@item.Title</span>
+                                                @if (!string.IsNullOrWhiteSpace(item.Body))
+                                                {
+                                                    <span class="notification-item-text">@item.Body</span>
+                                                }
+                                                <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
+                                            </div>
+                                            <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </ContentTemplate>
+                    </TabItem>
+                </TabItems>
+            </SfTab>
+
+            <div class="notification-panel-footer">
+                <SfButton CssClass="e-small e-flat" Disabled="@(UnreadCount == 0)" OnClick="MarkAllReadAsync">
+                    @L["NotificationsMarkAllRead"]
+                </SfButton>
+                <a href="/notifications" class="notification-view-all" @onclick="ClosePanel">@L["NotificationsViewAll"]</a>
+            </div>
+        </div>
+    }
+</div>
+
+<SfToast @ref="ToastObj" CssClass="e-toast-success" Title="@ToastTitle" Content="@ToastMessage"></SfToast>

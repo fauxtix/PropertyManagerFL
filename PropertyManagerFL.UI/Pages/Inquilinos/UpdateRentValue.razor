@@ -1,11 +1,11 @@
-﻿@page "/updaterentvalue/{Id:int}"
+@page "/updaterentvalue/{Id:int}"
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Core.Entities
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
 <div>
     <HeaderDialogComponent HeaderCaption="@L["TituloAtualizacaoRendas"]" ImageName="payment" />
-    <hr style="color:black">
+    <hr style="color:var(--app-text-primary)">
 </div>
 
 <div class="container-fluid">
@@ -16,14 +16,14 @@
         Value=@TenantName></SfTextBox>
         *@
         </div>
-        <hr style="color:black;" />
+        <hr style="color:var(--app-text-primary);" />
         <div class="d-flex justify-content-between align-items-center gap-2">
-            <SfMessage CssClass="text-center" Severity="MessageSeverity.Normal" Variant="MessageVariant.Outlined" ShowIcon="false">Valor corrente @CurrentRentValue.ToString("C")</SfMessage>
-            <SfMessage CssClass="text-center" Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="false">Coeficiente @DateTime.Now.Year.ToString() @coefficient%</SfMessage>
-            <SfMessage CssClass="text-center" Severity="MessageSeverity.Success" Variant="MessageVariant.Outlined" ShowIcon="false">Valor esperado @expecteRentValueAfterIncrease.ToString("C")</SfMessage>
-            <SfMessage CssClass="text-center" Severity="MessageSeverity.Warning" Variant="MessageVariant.Filled" ShowIcon="false">Aumento @((NewRentValue - CurrentRentValue).ToString("C"))</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Normal" Variant="MessageVariant.Outlined" ShowIcon="false">@L["Valor corrente {0}", CurrentRentValue.ToString("C")]</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Info" Variant="MessageVariant.Text" ShowIcon="false">@L["Coeficiente {0} {1}%", DateTime.Now.Year.ToString(), coefficient]</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Success" Variant="MessageVariant.Outlined" ShowIcon="false">@L["Valor esperado {0}", expecteRentValueAfterIncrease.ToString("C")]</SfMessage>
+            <SfMessage CssClass="text-center" Severity="MessageSeverity.Warning" Variant="MessageVariant.Filled" ShowIcon="false">@L["Aumento {0}", (NewRentValue - CurrentRentValue).ToString("C")]</SfMessage>
         </div>
-        <hr style="color:black;" />
+        <hr style="color:var(--app-text-primary);" />
 
         <div class="e-amounts">
             <div class="form-group mt-2 mb-4 fs-5">
@@ -39,7 +39,7 @@
             </div>
 
         </div>
-        <hr class="my-2" style="color:black" />
+        <hr class="my-2" style="color:var(--app-text-primary)" />
         <div class="flex-buttons-right">
             <SfButton Disabled="@disableSaveButton" CssClass="e-primary e-round-corner" IconCss="fas fa-save"
                       @onclick="InvokeSave" Content="@L["btnSalvar"]">
@@ -96,8 +96,8 @@
         coefficient = await GetRentncreasingCoefficient();
         if (coefficient == -1)
         {
-            AlertTitle = "Aumento de renda";
-            WarningMessage = "Coeficiente para o ano corrente não foi indicado. Verifique, por favor";
+            AlertTitle = L["Aumento de renda"];
+            WarningMessage = L["Coeficiente para o ano corrente não foi indicado. Verifique, por favor"];
             AlertVisibility = true;
             disableSaveButton = true;
         }
@@ -131,11 +131,11 @@
 
     private async Task InvokeSave()
     {
-        AlertTitle = "Alteração do valor da renda";
+        AlertTitle = L["Alteração do valor da renda"];
         if (InputAmount == 0)
         {
             AlertVisibility = true;
-            WarningMessage = "Valor não foi alterado";
+            WarningMessage = L["Valor não foi alterado"];
             StateHasChanged();
             return;
         }
@@ -143,7 +143,7 @@
         if (InputAmount < CurrentRentValue)
         {
             AlertVisibility = true;
-            WarningMessage = "Valor não pode ser inferior ao corrente";
+            WarningMessage = L["Valor não pode ser inferior ao corrente"];
             StateHasChanged();
             return;
         }
@@ -151,7 +151,7 @@
         if (NewRentValue > maxValueAllowed)
         {
             AlertVisibility = true;
-            WarningMessage = "Valor não pode ser superior a 10% do valor corrente";
+            WarningMessage = L["Valor não pode ser superior a 10% do valor corrente"];
             StateHasChanged();
             return;
         }

@@ -1,9 +1,11 @@
-﻿<div class="col-lg-4 col-md-4 col-sm-4">
+﻿@inject IStringLocalizer<App> L
+
+<div class="col-lg-4 col-md-4 col-sm-4">
     <div class="e-card card day-events-container">
         <div class="e-card-content">
             <span class="card-text label-text">@CardTitle</span>
             <div class="count-container">
-                <span class="@CardIconClass"><img src="css/appointment/assets/Icons/@CardIcon" alt="Total" /></span>
+                <span class="@CardIconClass"><img src="css/appointment/assets/Icons/@CardIcon" alt="@L["Total"]" /></span>
                 <span class="@CardContentClass">@CardContent</span>
             </div>
         </div>

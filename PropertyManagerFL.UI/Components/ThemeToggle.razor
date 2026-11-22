@@ -1,0 +1,70 @@
+@inject IJSRuntime JS
+@inject IStringLocalizer<App> Loc
+@inject PropertyManagerFL.UI.Services.ThemeStateService ThemeState
+@implements IDisposable
+
+@{
+    var actionLabel = _isDark ? Loc["LblThemeLight"] : Loc["LblThemeDark"];
+    // Um único nó de texto estável: o Blazor atualiza o valor sem adicionar/remover elementos.
+    // ☀ (modo escuro) / ☾ (modo claro) — apenas o ícone é visível, sem texto.
+    var icon = _isDark ? "\u2600" : "\u263D";
+}
+
+<button type="button" class="theme-toggle-btn" @onclick="ToggleTheme"
+        title="@actionLabel" aria-label="@actionLabel">
+    <span class="theme-toggle-icon" aria-hidden="true">@icon</span>
+</button>
+
+@code {
+    // O tema padrão é Dark; o script inline em _Layout.cshtml já o aplicou no cliente.
+    private bool _isDark = true;
+
+    protected override void OnInitialized()
+    {
+        ThemeState.Changed += OnThemeChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        try
+        {
+            var theme = await JS.InvokeAsync<string>("getCurrentTheme");
+            ThemeState.Set(theme != "light");
+            _isDark = ThemeState.IsDark;
+        }
+        catch (JSException)
+        {
+            // JS interop indisponível: mantemos o tema padrão aplicado no <head>.
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        try
+        {
+            var theme = await JS.InvokeAsync<string>("toggleTheme");
+            ThemeState.Set(theme != "light");
+            _isDark = ThemeState.IsDark;
+        }
+        catch (JSException)
+        {
+            // Não altera o estado local se o tema não pôde ser alternado.
+        }
+    }
+
+    private void OnThemeChanged()
+    {
+        _isDark = ThemeState.IsDark;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        ThemeState.Changed -= OnThemeChanged;
+    }
+}

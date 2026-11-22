@@ -1,0 +1,52 @@
+name: CD (IIS)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: pwsh
+
+jobs:
+  deploy-iis:
+    # Register a runner in THIS repository with the custom label iis-propertymanager.
+    # Runners are repo-scoped: a runner registered for another app will not pick this up.
+    runs-on: [self-hosted, Windows, iis-propertymanager]
+
+    env:
+      PM_API_KEY: ${{ secrets.PM_API_KEY }}
+      PM_SYNCFUSION_LICENSE: ${{ secrets.PM_SYNCFUSION_LICENSE }}
+      PM_PMCONNECTION: ${{ secrets.PM_PMCONNECTION }}
+      PM_UI_CERT_THUMBPRINT: ${{ secrets.PM_UI_CERT_THUMBPRINT }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore, build and test
+        run: |
+          dotnet restore PropertyManagerFL.sln
+          dotnet build PropertyManagerFL.sln --no-restore -c Release --nologo
+          dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj --no-build -c Release --nologo
+
+      - name: Publish API and UI
+        run: |
+          $apiOut = Join-Path $env:RUNNER_TEMP 'PropertyManagerFL-Api'
+          $uiOut = Join-Path $env:RUNNER_TEMP 'PropertyManagerFL-UI'
+          # Do not use --no-build here: PropertyManagerFL.Logging has no source files,
+          # so a solution build produces no DLL for it and publish --no-build fails MSB3030.
+          dotnet publish PropertyManagerFL.Api/PropertyManagerFL.Api.csproj -c Release -o $apiOut --nologo
+          dotnet publish PropertyManagerFL.UI/PropertyManagerFL.UI.csproj -c Release -o $uiOut --nologo
+          "API_PUBLISH_DIR=$apiOut" >> $env:GITHUB_ENV
+          "UI_PUBLISH_DIR=$uiOut" >> $env:GITHUB_ENV
+
+      - name: Deploy to IIS (API 4300 HTTP / UI 4310 HTTPS)
+        run: ./.github/scripts/deploy-iis.ps1 -ApiPublishDir $env:API_PUBLISH_DIR -UiPublishDir $env:UI_PUBLISH_DIR

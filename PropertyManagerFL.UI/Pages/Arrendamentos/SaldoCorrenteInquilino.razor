@@ -1,13 +1,14 @@
 ﻿@page "/saldocorrenteinquilino"
-<h3>Saldo Corrente Inquilino</h3>
+<h3>@L["Saldo Corrente Inquilino"]</h3>
 @using System.Globalization;
 @using PropertyManagerFLApplication.Utilities;
+@inject IStringLocalizer<App> L
 
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-6">
             <div>
-                <SfDatePicker Enabled="true" Placeholder="Dt, Início" Width="160px"
+                <SfDatePicker Enabled="true" Placeholder="@L["Dt, Início"]" Width="160px"
                               CssClass="e-align-middle e-corner"
                               FloatLabelType="FloatLabelType.Always"
                               @bind-Value="@dInicioContrato">
@@ -16,19 +17,19 @@
             <div class="group-box">
                 <SfComboBox TValue="int" TItem="Mes"
                             ShowClearButton="false" FloatLabelType="FloatLabelType.Always"
-                            Placeholder="Último mês pago" Value="comboValue" DataSource="@DataSource">
+                            Placeholder="@L["Último mês pago"]" Value="comboValue" DataSource="@DataSource">
                     <ComboBoxFieldSettings Text="Descricao" Value="Id"></ComboBoxFieldSettings>
                     <ComboBoxEvents TValue="int" TItem="Mes" Created="onCreated"></ComboBoxEvents>
                 </SfComboBox>
                 <SfNumericTextBox Enabled="true" ShowSpinButton="false" Width="33%"
-                                  Placeholder="Ano"
+                                  Placeholder="@L["Ano"]"
                                   Max="@DateTime.Now.Year"
                                   Step="1"
                                   CssClass="e-field  e-corner"
                                   FloatLabelType="@FloatLabelType.Always"
                                   @bind-Value="@UltimoAnoPago">
                 </SfNumericTextBox>
-                <SfTextBox Placeholder="Meses/início"
+                <SfTextBox Placeholder="@L["Meses/início"]"
                            CssClass="e-field e-corner custom-class" Width="150px"
                            FloatLabelType="FloatLabelType.Always"
                            @bind-Value="@MesesDesdeInicio">
@@ -38,7 +39,7 @@
         </div>
     </div>
     <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-              @onclick="CalculaTotais" Content="Gravar">
+              @onclick="CalculaTotais" Content="@L["Gravar"]">
     </SfButton>
 
 </div>
@@ -64,6 +65,22 @@
     List<Mes> DataSource = new List<Mes>();
     protected override void OnInitialized()
     {
+        Meses.AddRange(new[]
+        {
+            new Mes { Id = 1, Descricao = L["Janeiro"] },
+            new Mes { Id = 2, Descricao = L["Fevereiro"] },
+            new Mes { Id = 3, Descricao = L["Março"] },
+            new Mes { Id = 4, Descricao = L["Abril"] },
+            new Mes { Id = 5, Descricao = L["Maio"] },
+            new Mes { Id = 6, Descricao = L["Junho"] },
+            new Mes { Id = 7, Descricao = L["Julho"] },
+            new Mes { Id = 8, Descricao = L["Agosto"] },
+            new Mes { Id = 9, Descricao = L["Setembro"] },
+            new Mes { Id = 10, Descricao = L["Outubro"] },
+            new Mes { Id = 11, Descricao = L["Novembro"] },
+            new Mes { Id = 12, Descricao = L["Dezembro"] }
+        });
+
         UltimoAnoPago = DateTime.Now.Year;
     }
 
@@ -105,20 +122,7 @@
         public int Id { get; set; }
     }
 
-    List<Mes> Meses = new() {
-        new Mes{ Id =1, Descricao= "Janeiro"},
-        new Mes{ Id =2, Descricao= "Fevereiro"},
-        new Mes{ Id =3, Descricao= "Março"},
-        new Mes{ Id =4, Descricao= "Abril"},
-        new Mes{ Id =5, Descricao= "Maio"},
-        new Mes{ Id =6, Descricao= "Junho"},
-        new Mes{ Id =7, Descricao= "Julho"},
-        new Mes{ Id =8, Descricao= "Agosto"},
-        new Mes{ Id =9, Descricao= "Setembro"},
-        new Mes{ Id =10, Descricao= "Outubro"},
-        new Mes{ Id =11, Descricao= "Novembro"},
-        new Mes{ Id =12, Descricao= "Dezembro"}
-    };
+    List<Mes> Meses = new();
 
     private void CalculaTotais()
     {
@@ -142,7 +146,7 @@
 
         if (decTotRendasAPagar == decTotRendasUltPag)
         {
-            DiferencaSaldos = "Pagamentos em dia";
+            DiferencaSaldos = L["Pagamentos em dia"];
             SaldoCorrente = "0";
         }
         else

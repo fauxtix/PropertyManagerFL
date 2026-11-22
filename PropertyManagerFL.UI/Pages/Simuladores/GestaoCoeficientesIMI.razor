@@ -4,8 +4,8 @@
 @using PropertyManagerFL.Application.ViewModels.LookupTables
 @using PropertyManagerFL.Core.Entities
 
-<PageTitle>Coeficientes IMI</PageTitle>
-<PageTitleComponent PageTitle="Coeficientes IMI"></PageTitleComponent>
+<PageTitle>@L["Coeficientes IMI"]</PageTitle>
+<PageTitleComponent PageTitle="@L["Coeficientes IMI"]"></PageTitleComponent>
 
 
 @{
@@ -35,7 +35,7 @@ else
                             ShowClearButton="true" Width="250px"
                             Value="@idxDistrito"
                             FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                            Placeholder="Distrito" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
+                            Placeholder="@L["Distrito"]" DataSource="@Distritos" FloatLabelType="FloatLabelType.Always">
                 <DropDownListTemplates TItem="LookupTableVM">
                 </DropDownListTemplates>
                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="OnChangeDistrito"></DropDownListEvents>
@@ -79,11 +79,11 @@ else
                     <GridColumn Field=@nameof(DistritoConcelho.CodConcelho) AllowEditing="false"
                                 HeaderText="Id" Width="60" HideAtMedia="(min-width: 900px)" />
                     <GridColumn Field=@nameof(DistritoConcelho.Distrito) HideAtMedia="(min-width: 900px)"
-                                HeaderText="Distrito" Width="280" AllowEditing="false" />
+                                HeaderText="@L["Distrito"]" Width="280" AllowEditing="false" />
                     <GridColumn Field=@nameof(DistritoConcelho.Descricao)
-                                HeaderText="Concelho" Width="280" AllowEditing="false" />
+                                HeaderText="@L["Concelho"]" Width="280" AllowEditing="false" />
                     <GridColumn Field=@nameof(DistritoConcelho.Coeficiente)
-                                HeaderText="Coeficiente" Width="100" />
+                                HeaderText="@L["Coeficiente"]" Width="100" />
                 </GridColumns>
             </SfGrid>
         </div>
@@ -99,7 +99,7 @@ else
             <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
         </ToastAnimationSettings>
         <ToastButtons>
-            <ToastButton Content="Fechar" OnClick="@HideToast"></ToastButton>
+            <ToastButton Content="@L["Fechar"]" OnClick="@HideToast"></ToastButton>
         </ToastButtons>
         <ToastPosition X="Right" Y="Bottom"></ToastPosition>
     </SfToast>

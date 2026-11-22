@@ -1,12 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-PropertyManagerFL.UI-2861831a-0603-4e08-9ae8-2b0d1838799b</UserSecretsId>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>PropertyManagerFL.Api</DocumentationFile>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <AnalysisLevel>none</AnalysisLevel>
   </PropertyGroup>
@@ -23,15 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Pages\Notifications\NotificationPopup.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="appsettings.Production.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Pages\Notifications\NotificationPopup.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,46 +31,45 @@
     <PackageReference Include="Blazorized.AdminLte" Version="0.1.8" />
     <PackageReference Include="Blazorized.AdminLte.Content" Version="3.0.7" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="6.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.11" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.13" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.26" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.13" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.13">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="10.0.15" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.15" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
-    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.17" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="10.0.15" />
+    <PackageReference Include="ReportViewerCore.NETCore" Version="15.1.33" />
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="5.0.1" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.4.0" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="6.2.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.2" />
-    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Cards" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Charts" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.CircularGauge" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Core" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Data" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.FileManager.PhysicalFileProvider" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Grid" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Lists" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Popups" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.Themes" Version="24.2.9" />
-    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="24.2.9" />
+    <PackageReference Include="Syncfusion.Blazor.Buttons" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Calendars" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Cards" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Charts" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.CircularGauge" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Core" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Data" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.DropDowns" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.FileManager.PhysicalFileProvider" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Grid" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Inputs" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Lists" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Navigations" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Notifications" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Popups" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.ProgressBar" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Schedule" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.SfPdfViewer" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Spinner" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="35.2.12" />
+    <PackageReference Include="Syncfusion.Blazor.WordProcessor" Version="35.2.12" />
   </ItemGroup>
 
   <ItemGroup>

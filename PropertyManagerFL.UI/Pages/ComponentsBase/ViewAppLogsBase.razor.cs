@@ -68,7 +68,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             SelectedAppLog = await logService.GetLog_ById(LogId);
 
             ViewLogVisibility = true;
-            ViewLogCaption = "Visualizar Log";
+            ViewLogCaption = L["Visualizar Log"];
             StateHasChanged();
         }
 
@@ -78,7 +78,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             LogId = args.Data.Id;
             SelectedAppLog = await logService!.GetLog_ById(LogId);
             ViewLogVisibility = true;
-            ViewLogCaption = "Visualizar Log";
+            ViewLogCaption = L["Visualizar Log"];
             StateHasChanged();
         }
 
@@ -91,7 +91,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 ViewLogVisibility = true;
-                ViewLogCaption = "Ver dados da entrada no Log";
+                ViewLogCaption = L["Ver dados da entrada no Log"];
                 StateHasChanged();
             }
             else if (args.CommandColumn.Type == CommandButtonType.Delete)
@@ -111,8 +111,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var result = FilteredRecords?.ToList();
             if (result is not null && result.Any())
             {
-                alertTitle = "Log Viewer";
-                DeleteLogEntryCaption = $"Marcou {FilteredRecords?.Count()} registos para apagar. Não tem reversão! Backup recomendado antes de continuar";
+                alertTitle = L["Log Viewer"];
+                DeleteLogEntryCaption = L["Marcou {0} registos para apagar. Não tem reversão! Backup recomendado antes de continuar", FilteredRecords?.Count()];
                 DeleteLogsDialogVisibility = true;
                 StateHasChanged();
             }
@@ -120,7 +120,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 AlertVisibility = true;
                 pageBadgeCaption = L["TituloTodosRegistos"];
-                WarningMessage = "Não há registos para apagar... Verifique, p.f.";
+                WarningMessage = L["Não há registos para apagar... Verifique, p.f."];
                 logger?.LogWarning($"Utilizador ({user}) tentou apagar registos com tabela vazia... ");
 
                 return;
@@ -219,7 +219,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var warnings = from record in Logs
                                where record.Level.ToLower() == "warning"
                                select record;
-                pageBadgeCaption = "Warnings";
+                pageBadgeCaption = L["Warnings"];
                 Logs = warnings.ToList();
 
             }
@@ -228,7 +228,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var errors = from record in Logs
                              where record.Level.ToLower() == "error"
                              select record;
-                pageBadgeCaption = "Errors";
+                pageBadgeCaption = L["Errors"];
                 Logs = errors.ToList();
             }
             else if (args.Item.Id.ToLower() == "infologs")
@@ -236,12 +236,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var infos = from record in Logs
                             where record.Level.ToLower() == "information"
                             select record;
-                pageBadgeCaption = "Info";
+                pageBadgeCaption = L["Info"];
                 Logs = infos.ToList();
             }
             else if (args.Item.Id.ToLower() == "loginlogs")
             {
-                pageBadgeCaption = "Logins";
+                pageBadgeCaption = L["Logins"];
 
                 Logs = (await logService!.ViewLogins()).ToList();
             }

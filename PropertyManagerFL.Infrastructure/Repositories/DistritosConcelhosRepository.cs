@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Interfaces.Repositories;
@@ -32,7 +32,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return Enumerable.Empty<DistritoConcelho>();
         }
     }
@@ -52,7 +52,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return Enumerable.Empty<Concelho>();
         }
     }
@@ -72,7 +72,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return new();
         }
     }
@@ -91,7 +91,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return string.Empty;
         }
     }
@@ -110,7 +110,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return 0;
         }
     }
@@ -130,7 +130,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return;
         }
     }
@@ -148,7 +148,7 @@ public class DistritosConcelhosRepository : IDistritosConcelhosRepository
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message, ex);
+            _logger.LogError(ex, "Operation failed");
             return Enumerable.Empty<LookupTableVM>();
         }
     }

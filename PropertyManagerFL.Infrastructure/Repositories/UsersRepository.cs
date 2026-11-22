@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using MediaOrganizerApp.Application.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -259,7 +259,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             }
             catch (Exception exc)
             {
-                _logger.LogError(exc.Message);
+                _logger.LogError(exc, "Operation failed");
                 return "";
             }
         }

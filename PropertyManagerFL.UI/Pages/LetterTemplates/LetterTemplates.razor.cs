@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Components;
+ï»¿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Core.Helpers;
 using Syncfusion.Blazor.DocumentEditor;
 using Syncfusion.Blazor.Inputs;
 using System.Globalization;
@@ -35,10 +36,6 @@ public partial class LetterTemplates
     protected bool AlertVisibility { get; set; } = false;
     protected string? WarningMessage { get; set; }
 
-    bool isDialogVisible = false;
-
-
-    string fieldName = "";
     AlertMessageType AlertMessageType = AlertMessageType.Warning;
     OpcoesRegisto OpcoesRegisto = OpcoesRegisto.Warning;
     private ApplicationSettingsVM? appSettings;
@@ -46,10 +43,17 @@ public partial class LetterTemplates
     protected int idxFileSelected;
 
     private string? selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
+    private string? currentTemplateName;
+
+    [Inject] public NavigationManager? NavManager { get; set; }
+
+    protected bool IsFullScreen { get; private set; }
+    protected bool FieldPanelVisible { get; set; }
+    protected IReadOnlyList<MergeField> AvailableFields =>
+        MergeFieldCatalog.GetFieldsForTemplate(currentTemplateName);
 
 
-    protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"},  "Undo",
-        new CustomToolbarItemModel(){ Id="insertfield", Text="Insert Field", PrefixIcon="fa fa-user fa-lg"},
+    protected List<Object> Items => new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text=L?["Guardar"] ?? "Save", PrefixIcon="saveIcon"},  "Undo",
         "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "Header",
         "Footer", "PageSetup", "PageNumber", "Find", "LocalClipboard", "RestrictEditing"
     };
@@ -58,6 +62,9 @@ public partial class LetterTemplates
 
     protected override async Task OnInitializedAsync()
     {
+        string relativeUrl = NavManager?.ToBaseRelativePath(NavManager.Uri) ?? string.Empty;
+        IsFullScreen = relativeUrl.StartsWith("LetterTemplates", StringComparison.OrdinalIgnoreCase);
+
         formatType = ImportFormatType.Docx;
         idxFileSelected = 0;
         AlertVisibility = false;
@@ -78,6 +85,7 @@ public partial class LetterTemplates
 
         idxFileSelected = 0;
         filePath = FileList[0];
+        currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
 
         StateHasChanged();
     }
@@ -88,6 +96,7 @@ public partial class LetterTemplates
         string? base64 = action.FileData.RawFile.ToString();
         fileName = action.FileData.Name;
         filePath = await documentsSevice!.GetTemplateFromServer(fileName);
+        currentTemplateName = Path.GetFileNameWithoutExtension(fileName);
         ext = Path.GetExtension(fileName);
         if (ext.ToLower() == ".doc")
         {
@@ -174,16 +183,6 @@ public partial class LetterTemplates
                     }
                 }
                 break;
-            case "insertfield":
-                try
-                {
-                    ShowInsertFieldDialog();
-                }
-                catch (Exception ex)
-                {
-                    DisplayResult("Insert merge field", $"{ex.Message}");
-                }
-                break;
         }
     }
 
@@ -209,33 +208,30 @@ public partial class LetterTemplates
 
 
 
-    void ShowInsertFieldDialog()
+    async Task InsertMergeField(string fieldName)
     {
-        isDialogVisible = true;
+        if (string.IsNullOrWhiteSpace(fieldName) || container?.DocumentEditor is null)
+            return;
+
+        string fieldCode = MergeFieldFormat.Code(fieldName);
+        string fieldResult = MergeFieldFormat.Result(fieldName);
+        await container.DocumentEditor.Editor.InsertFieldAsync(fieldCode, fieldResult);
     }
 
-    async void AddField()
-    {
-        if (!string.IsNullOrEmpty(fieldName))
-        {
-            string fieldCode = $"MERGEFIELD  {fieldName}  \\* MERGEFORMAT ";
-            string fieldResult = $"'«{fieldName}»";
-            await container.DocumentEditor.Editor.InsertFieldAsync(fieldCode, fieldResult);
-        }
+    void ToggleFieldPanel() => FieldPanelVisible = !FieldPanelVisible;
 
-        CancelDialog();
-    }
+    void CloseFieldPanel() => FieldPanelVisible = false;
 
-    void CancelDialog()
-    {
-        isDialogVisible = false;
-    }
+    void OpenFullScreen() => NavManager?.NavigateTo("/LetterTemplates");
+
+    void BackToMenu() => NavManager?.NavigateTo("/admin/appsettings");
 
 
     protected void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
     {
         idxFileSelected = args.ItemData.Id;
         filePath = FileList![idxFileSelected];
+        currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
         OnCreated();
 
         StateHasChanged();

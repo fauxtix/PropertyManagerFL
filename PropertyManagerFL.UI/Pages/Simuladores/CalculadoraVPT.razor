@@ -27,7 +27,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
     <SfDialog CssClass="responsive-dialog-30" IsModal="true">
         <DialogTemplates>
             <Header>
-                <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;Calcular VPT</span></div>
+                <div><i class="fas fa-calculator"></i><span style="color:steelblue">&nbsp;&nbsp;@L["Calcular VPT"]</span></div>
             </Header>
 
             <Content>
@@ -63,7 +63,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2"
                                           @bind-Value="@PrecoConstrucaoMetroQuadrado"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Preço Construção m2" />
+                                          Placeholder="@L["Preço Construção m2"]" />
                     </div>
                     <div class="col-lg-6 col-sm-12 mt-2">
                         <SfNumericTextBox CssClass="form-control" Enabled="false"
@@ -71,7 +71,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2"
                                           @bind-Value="@AreaBrutaConstrucao"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Área bruta de construção" />
+                                          Placeholder="@L["Área bruta de construção"]" />
                     </div>
                 </div>
                 <div class="row mx-1">
@@ -81,7 +81,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2" Step="0.1"
                                           @bind-Value="@CoeficienteAfetacao"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Coeficiente Afetação" />
+                                          Placeholder="@L["Coeficiente Afetação"]" />
                     </div>
                     <div class="col-lg-6 col-sm-12 mt-2">
                         <SfNumericTextBox CssClass="form-control"
@@ -89,7 +89,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2" Step="0.1"
                                           @bind-Value="@CoeficienteLocalizacao"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Coeficiente Localização" />
+                                          Placeholder="@L["Coeficiente Localização"]" />
                     </div>
                 </div>
                 <div class="row mx-1">
@@ -99,7 +99,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2" Step="0.1"
                                           @bind-Value="@CoeficienteQualidadeConforto"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Coeficiente Qualidade Conforto" />
+                                          Placeholder="@L["Coeficiente Qualidade Conforto"]" />
                     </div>
                     <div class="col-lg-6 col-sm-12 mt-2">
                         <SfNumericTextBox CssClass="e-field"
@@ -107,7 +107,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                                           Decimals="2" Step="0.1" Enabled="false"
                                           @bind-Value="@CoeficienteVetustez"
                                           FloatLabelType="FloatLabelType.Auto"
-                                          Placeholder="Coeficiente Vetustez" />
+                                          Placeholder="@L["Coeficiente Vetustez"]" />
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                         <div class="card-body">
                             <div class="row mx-1">
                                 <div class="col-lg-6 col-sm-12">
-                                    <SfMessage>Valor Calculado</SfMessage>
+                                    <SfMessage>@L["Valor Calculado"]</SfMessage>
                                 </div>
                                 <div class="col-lg-6 col-sm-12">
                                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"
@@ -127,7 +127,7 @@ Cv: Coeficiente de vetustez (idade do imóvel)
                             </div>
                             <div class="row mx-1 my-1">
                                 <div class="col-lg-6 col-sm-12">
-                                    <SfMessage>Valor existente (@AnoAvaliacao)</SfMessage>
+                                    <SfMessage>@L["Valor existente ({0})", AnoAvaliacao]</SfMessage>
                                 </div>
                                 <div class="col-lg-6 col-sm-12">
                                     <SfMessage Variant="MessageVariant.Outlined" ContentAlignment="HorizontalAlign.Right"

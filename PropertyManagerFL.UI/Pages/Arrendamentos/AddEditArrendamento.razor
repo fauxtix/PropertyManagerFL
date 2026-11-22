@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Formatting;
+@using PropertyManagerFL.Application.Formatting;
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos;
@@ -19,7 +19,7 @@ else
 
     <div class="mt-0">
         <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="home-owner"></HeaderDialogComponent>
-        <hr style="color:black">
+        <hr style="color:var(--app-text-primary)">
     </div>
     <div class="container-fluid">
         <EditForm Model="SelectedLease">
@@ -27,7 +27,7 @@ else
                 <div class="col-md-6 col-sm-12">
                     @if (EditMode == OpcoesRegisto.Gravar)
                     {
-                        var _prazo = SelectedLease?.Prazo.ToString() + " anos";
+                        var _prazo = SelectedLease?.Prazo.ToString() + L[" anos"];
 
                         <div class="group-ckeckbox">
                             <SfCheckBox Label="@L["chkActive"]" Disabled="true" TChecked="bool" @bind-Checked=@SelectedLease!.Ativo
@@ -38,7 +38,7 @@ else
                                        FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDataInicio"]" />
                             <SfTextBox Readonly="true" Value="@_prazo"
                                        CssClass="custom-class" FloatLabelType="FloatLabelType.Always" Placeholder="@L["TituloDuracao"]" />
-                            <span> (em anos)</span>
+                            <span> @L["(em anos)"]</span>
                         </div>
                         <div>
                             <SfTextBox Readonly="true" Value="@SelectedLease.Data_Pagamento.ToShortDateString()"
@@ -184,7 +184,7 @@ else
                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                             ShowClearButton="true"
                                             FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                            Placeholder="Lei vigente" DataSource="@ApplicableLaws" FloatLabelType="FloatLabelType.Always">
+                                            Placeholder="@L["Lei vigente"]" DataSource="@ApplicableLaws" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
                                 </DropDownListTemplates>
                                 <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeApplicableLaw"></DropDownListEvents>
@@ -218,12 +218,12 @@ else
                     }
 
                     <div class="mt-1" hidden="@(SelectedLease.EnvioCartaAtrasoRenda == false)">
-                        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Carta de atraso de renda enviada em @SelectedLease.DataEnvioCartaAtraso.ToShortDateString()</SfMessage>
-                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaAtrasoRenda == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaAtrasoRenda.ToShortDateString()</SfMessage>
+                        <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">@L["Carta de atraso de renda enviada em {0}", SelectedLease.DataEnvioCartaAtraso.ToShortDateString()]</SfMessage>
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaAtrasoRenda == true)" Variant="MessageVariant.Text">@L["Data de resposta em {0}", SelectedLease.DataRespostaCartaAtrasoRenda.ToShortDateString()]</SfMessage>
                         </div>
                         <div class="mt-1" hidden="@(SelectedLease.EnvioCartaRevogacao == false)">
-                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">Carta de revogação enviada em @SelectedLease.DataEnvioCartaRevogacao.ToShortDateString()</SfMessage>
-                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaRevogacao == true)" Variant="MessageVariant.Text">Data de resposta em @SelectedLease.DataRespostaCartaRevogacao.ToShortDateString()</SfMessage>
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Variant="MessageVariant.Text">@L["Carta de revogação enviada em {0}", SelectedLease.DataEnvioCartaRevogacao.ToShortDateString()]</SfMessage>
+                            <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" Visible="@(SelectedLease.RespostaCartaRevogacao == true)" Variant="MessageVariant.Text">@L["Data de resposta em {0}", SelectedLease.DataRespostaCartaRevogacao.ToShortDateString()]</SfMessage>
                         </div>
                     </div>
                 </div>
@@ -251,7 +251,7 @@ else
                     @if (SelectedLease.ArrendamentoNovo == false && EditMode == OpcoesRegisto.Inserir)
                 {
                     <div class="row col-6 mb-1">
-                        <hr style="color:black" />
+                        <hr style="color:var(--app-text-primary)" />
                         <div class="col-md-6 mt-4">
                             <SfCheckBox Label="@L["TituloPagamentosEmDia"]" TChecked="bool" @bind-Checked=@blnPagamentosEmDia
                                         LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before" ValueChange="OnPagamentosEmDia" />
@@ -266,7 +266,7 @@ else
                     @*                if (blnPagamentosEmDia == false)
             {
 
-            <hr style="color:black" />
+            <hr style="color:var(--app-text-primary)" />
             <div class="group-box-shadow m-2">
             <div class="group-box">
             <SfDatePicker Enabled="true" Placeholder="Último Pagamento"
@@ -347,7 +347,7 @@ else
             //width: 126px;
             //height: 40px;
             left: 2px;
-            background-color: #fff;
+            background-color: var(--app-surface);
         }
 
         .e-switch-wrapper.handle-text .e-switch-inner,
@@ -389,7 +389,7 @@ else
             }
 
             .e-switch-wrapper.handle-text .e-switch-inner:after {
-                content: "Novo";
+                content: "@(L["Novo"])";
                 right: 5px;
                 color: #fff;
             }
@@ -403,6 +403,6 @@ else
             }
 
         .e-switch-wrapper.handle-text:not(.e-switch-disabled):hover .e-switch-handle:not(.e-switch-active) {
-            background-color: #fff;
+            background-color: var(--app-surface);
         }
 </style>

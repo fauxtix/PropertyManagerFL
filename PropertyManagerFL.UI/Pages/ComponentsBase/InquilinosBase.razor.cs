@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -327,9 +327,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var hasActiveLease = await TenantHasLease();
                     if (hasActiveLease == false)
                     {
-                        alertTitle = "Envio de carta de atraso no pagamento";
+                        alertTitle = L["Envio de carta de atraso no pagamento"];
                         AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        WarningMessage = L["Inquilino não tem contrato de arrendamento! Verifique, p.f"];
                         await ToggleRow();
                         return;
                     }
@@ -337,9 +337,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var unpaidRents = await TenantHasUnpaidRents();
                     if (unpaidRents == false)
                     {
-                        alertTitle = "Envio de carta de atraso no pagamento";
+                        alertTitle = L["Envio de carta de atraso no pagamento"];
                         AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem rendas em atraso! Verifique, p.f";
+                        WarningMessage = L["Inquilino não tem rendas em atraso! Verifique, p.f"];
                         await ToggleRow();
                         return;
                     }
@@ -352,9 +352,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     hasActiveLease = await TenantHasLease();
                     if (hasActiveLease == false)
                     {
-                        alertTitle = "Envio de carta de revogação";
+                        alertTitle = L["Envio de carta de revogação"];
                         AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                        WarningMessage = L["Inquilino não tem contrato de arrendamento! Verifique, p.f"];
                         await ToggleRow();
                         return;
                     }
@@ -379,9 +379,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var hasActiveLease = await TenantHasLease();
             if (hasActiveLease == false)
             {
-                alertTitle = "Envio de cartas ao inquilino";
+                alertTitle = L["Envio de cartas ao inquilino"];
                 AlertVisibility = true;
-                WarningMessage = "Inquilino não tem contrato de arrendamento! Verifique, p.f";
+                WarningMessage = L["Inquilino não tem contrato de arrendamento! Verifique, p.f"];
                 await ToggleRow();
                 return;
             }
@@ -390,12 +390,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 case "DueRentLetter": // carta de renda em atraso
 
-                    alertTitle = "Envio de carta de atraso no pagamento";
+                    alertTitle = L["Envio de carta de atraso no pagamento"];
                     var unpaidRents = await TenantHasUnpaidRents();
                     if (unpaidRents == false)
                     {
                         AlertVisibility = true;
-                        WarningMessage = "Inquilino não tem rendas em atraso! Verifique, p.f";
+                        WarningMessage = L["Inquilino não tem rendas em atraso! Verifique, p.f"];
                         await ToggleRow();
                         return;
                     }
@@ -418,17 +418,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Lease = (await arrendamentosService!.GetAll())
                         .FirstOrDefault(l => l.ID_Inquilino == TenantId);
 
-                    alertTitle = "Envio de carta de oposição à renovação";
+                    alertTitle = L["Envio de carta de oposição à renovação"];
                     SendingLetterType = DocumentoEmitido.OposicaoRenovacaoContrato;
                     SendLetterDialogVisibility = true;
                     break;
                 case "ManualRentUpdate": // carta de atualização de rendas (do inquilino
-                    alertTitle = "Envio de carta de atualização de renda";
+                    alertTitle = L["Envio de carta de atualização de renda"];
                     var tenantRentUpdates = await inquilinoService!.GetRentUpdates_ByTenantId(TenantId);
                     if (tenantRentUpdates is null)
                     {
                         AlertVisibility = true;
-                        WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
+                        WarningMessage = L["Não foi feito qualquer aumento de renda para o Inquilino"];
                         await ToggleRow();
                         return;
                     }
@@ -438,7 +438,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (currentYearUpdateValues is null)
                     {
                         AlertVisibility = true;
-                        WarningMessage = "Não foi feito qualquer aumento de renda para o ano corrente";
+                        WarningMessage = L["Não foi feito qualquer aumento de renda para o ano corrente"];
                         await ToggleRow();
                         return;
                     }
@@ -448,7 +448,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (tenantLettersSentThisYear.Any())
                     {
                         AlertVisibility = true;
-                        WarningMessage = "Já foi enviada carta de aumento para o ano corrente.  Verifique histórico, p.f.";
+                        WarningMessage = L["Já foi enviada carta de aumento para o ano corrente.  Verifique histórico, p.f."];
                         await ToggleRow();
                         return;
                     }
@@ -467,8 +467,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         var updateAlreadyMade = await inquilinoService.PriorRentUpdates_ThisYear(TenantId);
                         if (updateAlreadyMade)
                         {
-                            alertTitle = "Atualizar valor de renda";
-                            WarningMessage = "Já foi efetuado o aumento de renda para este inquilino. Verifique histórico, p.f.";
+                            alertTitle = L["Atualizar valor de renda"];
+                            WarningMessage = L["Já foi efetuado o aumento de renda para este inquilino. Verifique histórico, p.f."];
                             await ToggleRow();
                             AlertVisibility = true;
                             return;
@@ -478,13 +478,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
                     break;
                 case "ExtendTermLease": // estender prazo do contrato
-                    LeaseTermCaption = "Confirma operação?";
+                    LeaseTermCaption = L["Confirma operação?"];
                     alertMessageType = AlertMessageType.Info;
                     var leases = (await arrendamentoService!.GetAll()).ToList();
                     DateTime? tenantLeaseEndtDate = leases.FirstOrDefault(l => l.ID_Inquilino == SelectedTenant.Id).Data_Fim;
                     if (!tenantLeaseEndtDate.HasValue)
                     {
-                        LeaseTermCaptionNote = $"Contrato do inquilino não foi encontrado!";
+                        LeaseTermCaptionNote = L["Contrato do inquilino não foi encontrado!"];
                         alertMessageType = AlertMessageType.Warning;
                         StateHasChanged();
 
@@ -492,7 +492,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var monthsToEnd = Utilitarios.GetMonthDifference(DateTime.Now, tenantLeaseEndtDate.Value);
                     if (monthsToEnd > 0 && monthsToEnd != 1)
                     {
-                        LeaseTermCaptionNote = $"Contrato do inquilino só termina dentro de {monthsToEnd} meses!";
+                        LeaseTermCaptionNote = L["Contrato do inquilino só termina dentro de {0} meses!", monthsToEnd];
                         alertMessageType = AlertMessageType.Warning;
                         StateHasChanged();
                     }
@@ -557,8 +557,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         {
                             ShowFileVisibility = false;
 
-                            ToastTitle = "Leitura de pdf";
-                            ToastMessage = "Erro ao ler Api";
+                            ToastTitle = L["Leitura de pdf"];
+                            ToastMessage = L["Erro ao ler Api"];
 
                             StateHasChanged();
                             await Task.Delay(100);
@@ -609,7 +609,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     if (!updateOk)
                     {
                         AlertVisibility = true;
-                        alertTitle = "Atualização de dados do inquilino";
+                        alertTitle = L["Atualização de dados do inquilino"];
                         WarningMessage = $"{L["MSG_ApiError"]}";
                     }
                     else
@@ -669,13 +669,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (RecordMode == OpcoesRegisto.Gravar)
                 {
-                    ToastTitle = "Gravar dados do Fiador ";
+                    ToastTitle = L["Gravar dados do Fiador "];
 
                     var updateOk = await FiadorService.AtualizaFiador(SelectedGuarantor!.Id, SelectedGuarantor);
                     if (!updateOk)
                     {
                         AlertVisibility = true;
-                        alertTitle = "Atualização de dados do Fiador";
+                        alertTitle = L["Atualização de dados do Fiador"];
                         WarningMessage = $"{L["MSG_ApiError"]}";
                     }
                     else
@@ -687,7 +687,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else // !editMode (Insert)
                 {
-                    ToastTitle = "Criar Fiador";
+                    ToastTitle = L["Criar Fiador"];
 
                     var insertOk = await FiadorService!.InsereFiador(SelectedGuarantor!);
                     if (insertOk == false)
@@ -725,7 +725,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             if (RecordMode == OpcoesRegisto.Gravar)
             {
-                alertTitle = "Atualizar dados do documento";
+                alertTitle = L["Atualizar dados do documento"];
 
                 bool updateOk = await inquilinoService!.AtualizaDocumentoInquilino(TenantDocument!.Id, TenantDocument!);
                 if (!updateOk)
@@ -736,7 +736,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else
                 {
-                    ToastTitle = "Gravar dados do Documento";
+                    ToastTitle = L["Gravar dados do Documento"];
                     ToastCss = "e-toast-success";
                     ToastMessage = $"{L["SuccessUpdate"]}";
                     ToastIcon = "fas fa-check";
@@ -744,7 +744,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             else
             {
-                ToastTitle = "Criação de documento";
+                ToastTitle = L["Criação de documento"];
 
                 TenantDocumentId = await inquilinoService!.CriaDocumentoInquilino(TenantDocument!);
                 if (TenantDocumentId < 1)
@@ -877,7 +877,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task UpdateRentYes()
         {
-            alertTitle = "Atualização de renda";
+            alertTitle = L["Atualização de renda"];
 
             var updateResult = await inquilinoService.AtualizaRendaInquilino(TenantId);
             if (updateResult != null)
@@ -887,7 +887,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             else
             {
-                WarningMessage = "Erro desconhecido (!) ao processar atualização";
+                WarningMessage = L["Erro desconhecido (!) ao processar atualização"];
             }
 
             ConfirmUpdateRentDialogVisibility = false;
@@ -953,7 +953,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         case Modules.Inquilinos:
                             ToastTitle = L["DeleteMsg"] + " " + L["TituloInquilino"]; ;
                             alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
-                            WarningMessage = "Inquilino tem contrato de arrendamento ativo! Verifique, p.f.";
+                            WarningMessage = L["Inquilino tem contrato de arrendamento ativo! Verifique, p.f."];
                             DeleteCaption = SelectedTenant.Nome;
 
                             resultOk = await inquilinoService!.ApagaInquilino(SelectedTenant!.Id);
@@ -961,7 +961,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                             AddEditTenantVisibility = false;
                             break;
                         case Modules.Fiadores:
-                            WarningMessage = "Erro ao apagar Fiador. Confirme log, p.f.";
+                            WarningMessage = L["Erro ao apagar Fiador. Confirme log, p.f."];
                             alertTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
                             ToastTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
                             DeleteCaption = SelectedGuarantor?.Nome;
@@ -1022,7 +1022,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     AlertVisibility = true;
                     alertTitle = L["DeleteMsg"] + " " + L["TituloDocumento"];
                     DeleteCaption = TenantDocument.Descricao;
-                    WarningMessage = "Inquilino tem contrato de arrendamento ativo! Verifique, p.f.";
+                    WarningMessage = L["Inquilino tem contrato de arrendamento ativo! Verifique, p.f."];
                 }
             }
             catch (Exception exc)
@@ -1030,7 +1030,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 DeleteDocumentVisibility = false;
                 AlertVisibility = true;
                 alertTitle = L["FalhaAnulacaoRegisto"];
-                WarningMessage = $"Não foi possível concluir operação. {exc.Message}";
+                WarningMessage = L["Não foi possível concluir operação. {0}", exc.Message];
             }
 
         }
@@ -1167,7 +1167,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 SendLetterDialogVisibility = false;
                 alertTitle = ToastTitle; ;
-                WarningMessage = "Erro no processo (Id não existe)... Verifique, p.f.";
+                WarningMessage = L["Erro no processo (Id não existe)... Verifique, p.f."];
                 AlertVisibility = true;
                 return;
             }
@@ -1178,7 +1178,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 SendLetterDialogVisibility = false;
                 alertTitle = ToastTitle; ;
-                WarningMessage = "Carta já foi enviada... Verifique, p.f.";
+                WarningMessage = L["Carta já foi enviada... Verifique, p.f."];
 
                 var dateSent = Lease.DataEnvioCartaRevogacao;
                 var answerDateExpected = dateSent.AddDays(10); // estão a ser assumidos 10 dias para prazo de resposta. Configurar?
@@ -1190,11 +1190,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     // Verifica se a data-limite da resposta foi ultrapassada
                     if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
                     {
-                        WarningMessage = "Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... ";
+                        WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... "];
                     }
                     else // prazo ultrapassado
                     {
-                        WarningMessage = $"Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {answerDateExpected.ToShortDateString()})... Verifique Log , p.f.";
+                        WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {0})... Verifique Log , p.f.", answerDateExpected.ToShortDateString()];
                     }
                 }
                 else // Carta enviada ==> sem registo de resposta
@@ -1202,11 +1202,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     // Verifica se data-limite da resposta foi ultrapassada
                     if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
                     {
-                        WarningMessage = "Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino";
+                        WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino"];
                     }
                     else // Inquilino não respondeu no prazo definido como limite
                     {
-                        WarningMessage = $"Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {answerDateExpected.ToShortDateString()})... Verifique, p.f.";
+                        WarningMessage = L["Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {0})... Verifique, p.f.", answerDateExpected.ToShortDateString()];
                     }
                 }
 
@@ -1220,7 +1220,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var oppositionLetterData = await arrendamentosService!.GetDadosCartaOposicaoRenovacaoContrato(Lease!);
             if (oppositionLetterData is null)
             {
-                ToastMessage = $"Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f.";
+                ToastMessage = L["Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f."];
                 ToastCss = "e-toast-danger";
 
                 await ShowToastMessage();
@@ -1234,7 +1234,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 {
                     // erro ao gerar carta (pdf), alerta e sai 
 
-                    ToastMessage = $"Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f.";
+                    ToastMessage = L["Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f."];
                     ToastCss = "e-toast-danger";
 
                     await ShowToastMessage();
@@ -1242,7 +1242,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else // carta gerada, regista ocorrência na BD
                 {
-                    ToastTitle = "Carta de oposição à renovação do contrato";
+                    ToastTitle = L["Carta de oposição à renovação do contrato"];
 
                     var documentoARegistar = docGerado.Replace(".docx", ".pdf");
 
@@ -1250,13 +1250,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     // verifica se processo de registo (final, onde tabelas são alteradas) terminou com sucesso
                     if (registerOk)
                     {
-                        ToastMessage = "Operação terminada com sucesso";
+                        ToastMessage = L["Operação terminada com sucesso"];
                         ToastCss = "e-toast-success";
                     }
                     else
                     {
                         // TODO - erro no processo atualização da BD; como os documentos já foram gerados (pdf + docx), haverá necessidade de os remover
-                        ToastMessage = "Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f.";
+                        ToastMessage = L["Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f."];
                         ToastCss = "e-toast-danger";
                     }
 
@@ -1271,7 +1271,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             DateTime? referralDate = null;
             string tentativa = "";
-            ToastTitle = "Carta de aviso - rendas em atraso";
+            ToastTitle = L["Carta de aviso - rendas em atraso"];
             await Task.Delay(10);
             await SpinnerObj!.ShowAsync();
 
@@ -1283,8 +1283,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 var tenantDuePayments = tenantPayments.Where(p => p.ID_Inquilino == TenantId && p.ValorEmFalta > 0);
                 if (tenantDuePayments is not null && tenantDuePayments.Any() == false)
                 {
-                    alertTitle = "Envio de carta ao inquilino";
-                    WarningMessage = "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
+                    alertTitle = L["Envio de carta ao inquilino"];
+                    WarningMessage = L["Inquilino não tem pagamentos em atraso!. Verifique, p.f."];
                     await Task.Delay(10);
                     await SpinnerObj!.HideAsync();
 
@@ -1308,8 +1308,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         {
                             var monthAsString = tenantDueLettersSent.Select(ds => ds.CreationDate.ToString("MMMM").ToTitleCase());
                             var yearAsString = tenantDueLettersSent.Select(ds => ds.CreationDate.ToString("yyyy"));
-                            alertTitle = "Envio de carta ao inquilino";
-                            WarningMessage = $"Carta de pagamento em atraso (mês {monthAsString}  de {yearAsString}) já foi enviada!. Verifique, p.f.";
+                            alertTitle = L["Envio de carta ao inquilino"];
+                            WarningMessage = L["Carta de pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f.", monthAsString, yearAsString];
                             AlertVisibility = true;
                             return;
                         }
@@ -1320,20 +1320,20 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         var lastPaymentDue = tenantDuePayments.FirstOrDefault()?.DataMovimento; // get the date of the last due payment
                         var nextAttempt = tenantDueLettersSent.Count + 1;
 
-                        tentativa = nextAttempt == 2 ? "2ª tentativa" : "3ª tentativa";
+                        tentativa = nextAttempt == 2 ? L["2ª tentativa"] : L["3ª tentativa"];
 
                     }
                     else // 1ª tentativa (no letter sent yet)
                     {
-                        tentativa = "1ª tentativa";
+                        tentativa = L["1ª tentativa"];
                     }
 
                     if (tenantDueLettersSent?.Count > 0 && tenantDueLettersSent.Count == dueMonths)
                     {
                         var monthAsString = dueLettersSent.Select(ds => ds.Date.ToString("MMMM").ToTitleCase());
                         var yearAsString = dueLettersSent.Select(ds => ds.Date.ToString("yyyy"));
-                        alertTitle = "Envio de carta ao inquilino";
-                        WarningMessage = $"Carta de alerta para pagamento em atraso (mês {monthAsString}  de {yearAsString}) já foi enviada!. Verifique, p.f.";
+                        alertTitle = L["Envio de carta ao inquilino"];
+                        WarningMessage = L["Carta de alerta para pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f.", monthAsString, yearAsString];
                         await Task.Delay(10);
                         await SpinnerObj!.HideAsync();
                         AlertVisibility = true;
@@ -1342,8 +1342,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                     if (dueMonths > 2 && tenantDueLettersSent?.Count < dueMonths - 1)
                     {
-                        alertTitle = "Envio de carta ao inquilino";
-                        WarningMessage = "Há cartas de aviso que não foram enviadas!. Verifique, p.f.";
+                        alertTitle = L["Envio de carta ao inquilino"];
+                        WarningMessage = L["Há cartas de aviso que não foram enviadas!. Verifique, p.f."];
                         AlertVisibility = true;
                         await Task.Delay(10);
                         await SpinnerObj!.HideAsync();
@@ -1364,7 +1364,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var docGerado = await arrendamentosService.EmiteCartaRendasAtraso(latePaymentLetterData);
                     if (string.IsNullOrEmpty(docGerado))
                     {
-                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastMessage = L["Erro na emissão de carta. Verifique log, p.f."];
                         ToastCss = "e-toast-danger";
                     }
                     else
@@ -1377,7 +1377,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 }
                 else
                 {
-                    var _errorMessage = "Erro ao obter dados para emissão de carta";
+                    var _errorMessage = L["Erro ao obter dados para emissão de carta"];
                     _logger?.LogError(_errorMessage);
 
                     ToastMessage = _errorMessage;
@@ -1402,7 +1402,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             DateTime? referralDate = null;
             string tentativa = "";
-            ToastTitle = "Carta de atualização de rendas para o inquilino";
+            ToastTitle = L["Carta de atualização de rendas para o inquilino"];
             alertTitle = ToastTitle;
 
             try
@@ -1417,7 +1417,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 if (allrentUpdates == null)
                 {
                     AlertVisibility = true;
-                    WarningMessage = "Não foi feito qualquer aumento de renda";
+                    WarningMessage = L["Não foi feito qualquer aumento de renda"];
                     return;
                 }
 
@@ -1425,14 +1425,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 if (tenantRentUpdates is null)
                 {
                     AlertVisibility = true;
-                    WarningMessage = "Não foi feito qualquer aumento de renda para o Inquilino";
+                    WarningMessage = L["Não foi feito qualquer aumento de renda para o Inquilino"];
                     return;
                 }
                 var currentYearUpdateValues = tenantRentUpdates.FirstOrDefault(r => r.DateProcessed.Year == DateTime.Now.Year);
                 if (currentYearUpdateValues is null)
                 {
                     AlertVisibility = true;
-                    WarningMessage = "Não foi feito qualquer aumento de renda para o ano corrente";
+                    WarningMessage = L["Não foi feito qualquer aumento de renda para o ano corrente"];
                     return;
                 }
 
@@ -1454,7 +1454,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     var docGerado = await inquilinoService.EmiteCartaAtualizacaoInquilino(rentUpdateData);
                     if (string.IsNullOrEmpty(docGerado))
                     {
-                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastMessage = L["Erro na emissão de carta. Verifique log, p.f."];
                         ToastCss = "e-toast-danger";
                     }
                     else
@@ -1476,15 +1476,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError($"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.");
-                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                            _logger.LogError(ex, "Operation failed");
+                            ToastMessage = L["Erro ao registar envio de carta na BD ({0}). Processo terminou com erro! Contacte Administrador, p.f.", ex.Message];
                             ToastCss = "e-toast-danger";
                         }
                     }
                 }
                 else
                 {
-                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    ToastMessage = L["Erro ao obter dados para emissão de carta"];
                     ToastCss = "e-toast-danger";
                 }
 
@@ -1537,16 +1537,16 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var oldRentValue = await inquilinoService.GetTenantRent(TenantId);
             if (NewRentUpdated == 0)
             {
-                alertTitle = "Atualizar valor de renda";
-                WarningMessage = "Novo valor inválido. Verifique, p.f.";
+                alertTitle = L["Atualizar valor de renda"];
+                WarningMessage = L["Novo valor inválido. Verifique, p.f."];
                 return;
             }
 
             var updateAlreadyMade = await inquilinoService.PriorRentUpdates_ThisYear(TenantId);
             if (updateAlreadyMade)
             {
-                alertTitle = "Atualizar valor de renda";
-                WarningMessage = "Já foi efetuado um aumento de renda para este ano. Verifique, p.f.";
+                alertTitle = L["Atualizar valor de renda"];
+                WarningMessage = L["Já foi efetuado um aumento de renda para este ano. Verifique, p.f."];
                 return;
             }
 
@@ -1555,14 +1555,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var resultAsAString = await inquilinoService.AtualizaRendaInquilino_Manual(TenantId, oldRentValueAsString, newRentValueAsString);
             if (string.IsNullOrEmpty(resultAsAString)) // sucesso; se preenchido, devolve erro
             {
-                alertTitle = "Atualizar valor de renda";
-                WarningMessage = "Operação terminou com sucesso.";
+                alertTitle = L["Atualizar valor de renda"];
+                WarningMessage = L["Operação terminou com sucesso."];
                 alertMessageType = AlertMessageType.Info;
             }
             else
             {
-                alertTitle = "Atualizar valor de renda";
-                WarningMessage = $"Operação terminou com erro ({resultAsAString})";
+                alertTitle = L["Atualizar valor de renda"];
+                WarningMessage = L["Operação terminou com erro ({0})", resultAsAString];
                 alertMessageType = AlertMessageType.Error;
             }
 
@@ -1576,8 +1576,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             int? tenantId = leases?.FirstOrDefault(l => l.ID_Inquilino == SelectedTenant.Id).ID_Inquilino;
             if (!tenantId.HasValue)
             {
-                alertTitle = "Estender prazo do contrato";
-                WarningMessage = "Não foi encontrado o contrato do Inquilino.";
+                alertTitle = L["Estender prazo do contrato"];
+                WarningMessage = L["Não foi encontrado o contrato do Inquilino."];
                 alertMessageType = AlertMessageType.Error;
             }
 
@@ -1586,7 +1586,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (resultOk)
             {
                 LeaseTermVisibility = false;
-                ToastTitle = "Atualização do termo do contrato";
+                ToastTitle = L["Atualização do termo do contrato"];
                 ToastMessage = L["RegistoGravadoSucesso"];
                 ToastCss = "e-toast-success";
                 await InvokeAsync(StateHasChanged);
@@ -1604,7 +1604,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             if (!tenantDuePayments.Any())
             {
-                return "Inquilino não tem pagamentos em atraso!. Verifique, p.f.";
+                return L["Inquilino não tem pagamentos em atraso!. Verifique, p.f."];
             }
 
             var tenantDocuments = await inquilinoService!.GetDocumentosInquilino(TenantId);
@@ -1624,7 +1624,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 if (result.Any())
                 {
-                    return "Cartas já foram enviadas para os pagamentos em atraso. Verifique, p.f.";
+                    return L["Cartas já foram enviadas para os pagamentos em atraso. Verifique, p.f."];
                 }
             }
 

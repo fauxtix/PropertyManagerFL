@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+using AutoMapper;
+using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.GeoApi.CodigosPostais;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
@@ -20,6 +21,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly HttpClientConfigurationService _httpClientConfigService;
+        private readonly IStringLocalizer<App> _localizer;
 
 
         /// <summary>
@@ -34,8 +36,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
                               ILogger<WrapperInquilinos> logger,
                               HttpClient httpClient,
                               IMapper mapper,
-                              HttpClientConfigurationService httpClientConfigService)
+                              HttpClientConfigurationService httpClientConfigService,
+                              IStringLocalizer<App> localizer)
         {
+            _localizer = localizer;
             _env = env;
             _uri = $"{_env["BaseUrl"]}/Imoveis";
             _uriGeoApi = $"{_env["BaseUrl"]}/GeoApi";
@@ -215,10 +219,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
                 return new GeoApi_CP7()
                 {
-                    Localidade = "Código postal não devolveu dados... Inválido?"
+                    Localidade = _localizer["Código postal não devolveu dados... Inválido?"].Value
                 };
             }
         }

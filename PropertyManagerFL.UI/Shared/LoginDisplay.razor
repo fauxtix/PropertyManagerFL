@@ -1,12 +1,21 @@
-﻿<AuthorizeView>
+﻿@inject IStringLocalizer<App> L
+
+<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
-        <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        <div class="topbar-user">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <span>@context.User.Identity?.Name</span>
+        </div>
+        <ThemeToggle />
+        <form method="post" action="Identity/Account/LogOut" class="m-0">
+            <button type="submit" class="topbar-action" title="@L["btnSair_error"]" aria-label="@L["btnSair_error"]">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                <span>@L["btnCancelar"]</span>
+            </button>
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <a class="topbar-action" href="Identity/Account/Register">@L["AuthRegister"]</a>
+        <a class="topbar-action" href="Identity/Account/Login">@L["AuthLogin"]</a>
     </NotAuthorized>
 </AuthorizeView>

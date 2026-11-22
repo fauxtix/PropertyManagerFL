@@ -14,18 +14,47 @@
 }
 else
 {
-    <div class="container-fluid">
-        <div class="control-section">
-            <SfDocumentEditorContainer @ref="container" Height="80%" ToolbarItems="Items">
-                <DocumentEditorContainerEvents Created="OnCreated" OnToolbarClick="onItemClick"></DocumentEditorContainerEvents>
-            </SfDocumentEditorContainer>
+    <div class="letter-templates @(IsFullScreen ? "lt-full" : "lt-embedded")">
+        <div class="lt-topbar">
+            @if (IsFullScreen)
+            {
+                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="BackToMenu">
+                    <i class="fa fa-arrow-left" aria-hidden="true"></i> @L["mf-back-menu"]
+                </button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="ToggleFieldPanel">
+                    <i class="fa fa-list" aria-hidden="true"></i> @L["mf-toggle"]
+                </button>
+                <button type="button" class="btn btn-sm btn-outline-primary" @onclick="OpenFullScreen">
+                    <i class="fa fa-expand" aria-hidden="true"></i> @L["mf-fullscreen"]
+                </button>
+            }
+        </div>
+
+        <div class="lt-body">
+            <div class="lt-editor control-section">
+                <SfDocumentEditorContainer @ref="container" Height="80%" ToolbarItems="Items">
+                    <DocumentEditorContainerEvents Created="OnCreated" OnToolbarClick="onItemClick"></DocumentEditorContainerEvents>
+                </SfDocumentEditorContainer>
+            </div>
+            @if (IsFullScreen || FieldPanelVisible)
+            {
+                <div class="lt-fields">
+                    <MergeFieldPanel Fields="AvailableFields"
+                                     OnFieldSelected="InsertMergeField"
+                                     ShowCloseButton="@(!IsFullScreen)"
+                                     OnClose="CloseFieldPanel" />
+                </div>
+            }
         </div>
         <div class="row control-section mt-2">
             <div class="col-md-5">
                 <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                 ShowClearButton="true" Width="250px" Index="@idxFileSelected"
                                 FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="Ficheiros" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
+                                Placeholder="@L["Ficheiros"]" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
                     <DropDownListTemplates TItem="TemplateFileName">
                     </DropDownListTemplates>
                     <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
@@ -40,22 +69,6 @@ else
                 </SfUploader>
             </div>
         </div>
-
-        <SfDialog Id="dialog" Width="320px" Height="auto"
-                  Target="#target" Header="Merge Field" @bind-Visible="@isDialogVisible" ShowCloseIcon="true">
-            <DialogTemplates>
-                <Content>
-                    <div>
-                        <SfTextBox ID="InVal" class="form-control" Placeholder="Campo a inserir" @bind-Value=@fieldName />
-                    </div>
-                </Content>
-                <FooterTemplate>
-                    <SfButton IconCss="fa fa-check" CssClass="e-btn e-success p-2 e-round-corner" Content="OK" OnClick="AddField" />
-                    <SfButton IconCss="fa fa-times" CssClass="e-btn e-ouline p-2 e-round-corner" Content="Cancelar" OnClick="CancelDialog" />
-                </FooterTemplate>
-
-            </DialogTemplates>
-        </SfDialog>
 
         <AlertUserComponent AlertMessageType="@AlertMessageType"
                             Title="@AlertTitle"

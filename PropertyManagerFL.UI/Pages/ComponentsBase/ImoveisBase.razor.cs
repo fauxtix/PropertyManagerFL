@@ -344,7 +344,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             else
             {
-                WarningMessage = "Selecione Imóvel, p.f.";
+                WarningMessage = L["Selecione Imóvel, p.f."];
                 WarningVisibility = true;
                 return;
             }
@@ -358,11 +358,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             ExportProperties.Columns = new List<GridColumn>()
             {
                 #pragma warning disable BL0005
-                new GridColumn(){ Field="Descricao", HeaderText="Fração", TextAlign=TextAlign.Left, Width="200"},
-                new GridColumn(){ Field="Andar", HeaderText="Andar",   TextAlign=TextAlign.Center, Width="50"},
-                new GridColumn(){ Field="Lado", HeaderText="Lado",   TextAlign=TextAlign.Center, Width="50"},
-                new GridColumn(){ Field="ValorRenda", HeaderText="Renda", TextAlign=TextAlign.Right, Width="60"},
-                new GridColumn(){ Field="TipoPropriedade", HeaderText="Tipo", TextAlign=TextAlign.Left, Width="150"}
+                new GridColumn(){ Field="Descricao", HeaderText=L["Fração"], TextAlign=TextAlign.Left, Width="200"},
+                new GridColumn(){ Field="Andar", HeaderText=L["Andar"],   TextAlign=TextAlign.Center, Width="50"},
+                new GridColumn(){ Field="Lado", HeaderText=L["Lado"],   TextAlign=TextAlign.Center, Width="50"},
+                new GridColumn(){ Field="ValorRenda", HeaderText=L["Renda"], TextAlign=TextAlign.Right, Width="60"},
+                new GridColumn(){ Field="TipoPropriedade", HeaderText=L["Tipo"], TextAlign=TextAlign.Left, Width="150"}
             };
 
             await propertiesGridObj!.ExportToPdfAsync(ExportProperties);
@@ -494,7 +494,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     ToastTitle = L["NewMsg"] + " " + L["TituloImovel"];
                     if (string.IsNullOrEmpty(SelectedProperty.Foto))
                     {
-                        ValidationsMessages = new List<string> { "Escolha foto da propriedade, p.f." };
+                        ValidationsMessages = new List<string> { L["Escolha foto da propriedade, p.f."] };
                         ErrorVisibility = true;
                         return;
 
@@ -808,12 +808,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         else
                         {
                             ToastCss = "e-toast-danger";
-                            ToastMessage = "Não foi possível concluir operação. Imóvel com frações associadas!";
+                            ToastMessage = L["Não foi possível concluir operação. Imóvel com frações associadas!"];
                             ToastIcon = "fas fa-exclamation";
                         }
                         break;
                     case Modules.Fracoes:
-                        ToastTitle = "Apagar Fração";
+                        ToastTitle = L["Apagar Fração"];
                         try
                         {
                             // todo - delete images references, insurance and condominium data
@@ -828,7 +828,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         catch (Exception ex)
                         {
                             ToastCss = "e-toast-danger";
-                            ToastMessage = $"Não foi possível concluir operação - Erro: {ex.Message}";
+                            ToastMessage = L["Não foi possível concluir operação - Erro: {0}", ex.Message];
                             ToastIcon = "fas fa-exclamation";
                         }
                         break;
@@ -842,9 +842,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             catch (Exception exc)
             {
-                ToastTitle = "Imóveis/Frações";
+                ToastTitle = L["Imóveis/Frações"];
                 ToastCss = "e-toast-danger";
-                ToastMessage = $"Erro no módulo de Imóveis/Frações: {exc.Message}";
+                ToastMessage = L["Erro no módulo de Imóveis/Frações: {0}", exc.Message];
                 ToastIcon = "fas fa-exclamation";
 
                 StateHasChanged();

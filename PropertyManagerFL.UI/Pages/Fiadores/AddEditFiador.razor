@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Core.Entities;
 @using PropertyManagerFL.Application.ViewModels.EstadoCivil;
@@ -18,7 +18,7 @@
 else
 {
     <div class="container-fluid">
-        <hr style="color:black" >
+        <hr style="color:var(--app-text-primary)" >
         <EditForm Model="@L["TituloFiador"]" style="margin:auto">
             <div class="row">
                 <div class="col-sm-12">

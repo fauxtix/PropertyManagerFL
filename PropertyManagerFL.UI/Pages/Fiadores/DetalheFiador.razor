@@ -1,5 +1,6 @@
 ﻿@using PropertyManagerFL.Application.ViewModels.LookupTables;
 @using PropertyManagerFL.Application.ViewModels.Fiadores;
+@inject IStringLocalizer<App> L
 
 @*<EditForm Model="SelectedFiador" style="margin:auto;padding:10px;">
     <div class="row">
@@ -111,7 +112,7 @@
     <div class="pink"></div>
     <div>
         <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-edit"
-                  @onclick="EditFiadorClick" Content="Editar">
+                  @onclick="EditFiadorClick" Content="@L["Editar"]">
         </SfButton>
     </div>
 </div>

@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Recebimentos
 @using System.Globalization
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
@@ -15,7 +15,7 @@
 <div class="container-fluid">
     <div>
         <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
-        <hr style="color:black" />
+        <hr style="color:var(--app-text-primary)" />
     </div>
     <div class="w-100">
         <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" ContentAlignment="HorizontalAlign.Center">@L["TituloOperacaoBatch"]</SfMessage>
@@ -36,7 +36,7 @@
             <GridEditSettings AllowAdding="false" AllowEditing="true" ShowConfirmDialog="true" Mode="EditMode.Batch"></GridEditSettings>
             <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Cell" PersistSelection="true"></GridSelectionSettings>
             <GridEditSettings AllowEditing="true" Mode="EditMode.Batch" ShowConfirmDialog="false"></GridEditSettings>
-            <GridEvents CellSaved="CellSavedHandler" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
+            <GridEvents OnCellSave="CellSavedEvent" OnBatchSave="BatchSaveHandler" CellSelected="CellSelectHandler"
                         OnToolbarClick="ToolbarClickHandler" TValue="RecebimentoVM" />
             <GridColumns>
                 <GridColumn Field=@nameof(RecebimentoVM.Id) HeaderText="#"
@@ -183,6 +183,9 @@
     [Inject] protected IRecebimentoService paymentsService { get; set; }
 
     protected SfGrid<RecebimentoVM>? gridObj { get; set; }
+
+    private EventCallback<CellSaveArgs<RecebimentoVM>> CellSavedEvent =>
+        EventCallback.Factory.Create<CellSaveArgs<RecebimentoVM>>(this, CellSavedHandler);
 
     protected string currentCulture = CultureInfo.CurrentCulture.Name;
     protected decimal rentValue { get; set; } = 0;

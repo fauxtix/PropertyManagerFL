@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
+using PropertyManagerFL.Infrastructure.Security;
 using System.Net.Http.Headers;
 
 namespace PropertyManagerFL.UI.Controllers
@@ -8,10 +9,12 @@ namespace PropertyManagerFL.UI.Controllers
     public class UploadController : Controller
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly ILogger<UploadController> _logger;
 
-        public UploadController(IWebHostEnvironment hostingEnvironment)
+        public UploadController(IWebHostEnvironment hostingEnvironment, ILogger<UploadController> logger)
         {
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
+            _logger = logger;
         }
 
         [HttpPost("[action]")]
@@ -20,6 +23,10 @@ namespace PropertyManagerFL.UI.Controllers
             long size = 0;
             try
             {
+                var root = SafePath.CombineContained(
+                    _hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath, "uploads", "xxx");
+                Directory.CreateDirectory(root);
+
                 foreach (var file in uploadFiles)
                 {
                     var contentDisposition = ContentDispositionHeaderValue.Parse(file.ContentDisposition);
@@ -29,8 +36,8 @@ namespace PropertyManagerFL.UI.Controllers
                         var fileName = contentDisposition.FileName;
                         if (!string.IsNullOrEmpty(fileName))
                         {
-                            var filename = fileName.Trim('"');
-                            var filenameToCopy = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", "xxx", filename);
+                            var filename = SafePath.FileName(fileName.Trim('"'));
+                            var filenameToCopy = SafePath.CombineContained(root, filename);
                             size += file.Length;
 
                             if (!System.IO.File.Exists(filenameToCopy))
@@ -62,7 +69,8 @@ namespace PropertyManagerFL.UI.Controllers
 
                     if (!string.IsNullOrEmpty(fileName))
                     {
-                        var filePath = Path.Combine(_hostingEnvironment.ContentRootPath, fileName);
+                        var root = Path.Combine(_hostingEnvironment.ContentRootPath, "uploads");
+                        var filePath = SafePath.CombineContained(root, SafePath.FileName(fileName));
 
                         if (System.IO.File.Exists(filePath))
                         {
@@ -92,6 +100,11 @@ namespace PropertyManagerFL.UI.Controllers
                     return BadRequest("Invalid folder specified.");
                 }
 
+                var root = SafePath.CombineContained(
+                    _hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath,
+                    "uploads", SafePath.FileName(folder));
+                Directory.CreateDirectory(root);
+
                 long size = 0;
                 foreach (var file in uploadFiles)
                 {
@@ -110,7 +123,7 @@ namespace PropertyManagerFL.UI.Controllers
                         return BadRequest("Invalid file name detected.");
                     }
 
-                    var filenameToCopy = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", folder, filename);
+                    var filenameToCopy = SafePath.CombineContained(root, SafePath.FileName(filename));
                     size += file.Length;
 
                     if (!System.IO.File.Exists(filenameToCopy))
@@ -138,33 +151,32 @@ namespace PropertyManagerFL.UI.Controllers
             {
                 if (file != null)
                 {
-                    var fileName = Path.GetFileName(file.FileName);
-                    var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", folder, fileName);
+                    var root = SafePath.CombineContained(
+                        _hostingEnvironment.WebRootPath ?? _hostingEnvironment.ContentRootPath,
+                        "uploads", SafePath.FileName(folder));
+                    var filePath = SafePath.CombineContained(root, SafePath.FileName(file.FileName));
 
                     if (System.IO.File.Exists(filePath))
                     {
                         System.IO.File.Delete(filePath);
-                        // Additional logic as needed
                         return Json(new { success = true, message = "File removed successfully" });
                     }
-                    else
-                    {
-                        return Json(new { success = false, message = "File not found" });
-                    }
+
+                    return Json(new { success = false, message = "File not found" });
                 }
-                else
-                {
-                    return Json(new { success = false, message = "No file provided" });
-                }
+
+                return Json(new { success = false, message = "No file provided" });
             }
-            catch 
+            catch (Exception e)
             {
-                // Handle exceptions
+                _logger.LogError(e, "Falha ao remover ficheiro");
                 return Json(new { success = false, message = "File removal failed" });
             }
         }
+
         private void HandleException(Exception exception, string reasonPhrase)
         {
+            _logger.LogError(exception, "Upload: {Reason}", reasonPhrase);
             Response.Clear();
             Response.StatusCode = 204;
 
@@ -172,14 +184,13 @@ namespace PropertyManagerFL.UI.Controllers
             if (httpResponseFeature != null)
             {
                 httpResponseFeature.ReasonPhrase = reasonPhrase;
-                httpResponseFeature.ReasonPhrase = exception.Message;
             }
         }
+
         private IActionResult HandleErrorResponse(string message, Exception exception)
         {
-            // Your error handling logic, you might want to log the exception
-            // and provide a meaningful error response to the client.
-            return BadRequest($"{message}. Error Details: {exception.Message}");
+            _logger.LogError(exception, "Upload: {Message}", message);
+            return BadRequest(message);
         }
     }
 }

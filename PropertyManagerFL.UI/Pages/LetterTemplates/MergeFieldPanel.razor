@@ -1,0 +1,38 @@
+<div class="merge-field-panel">
+    <div class="mfp-header">
+        <span class="mfp-title">@L["mf-panel-title"]</span>
+        @if (ShowCloseButton)
+        {
+            <button type="button" class="mfp-close" title="@L["btnFechar"]" @onclick="ClosePanel">
+                <i class="fa fa-times" aria-hidden="true"></i>
+            </button>
+        }
+    </div>
+
+    <div class="mfp-search">
+        <input type="search" class="form-control form-control-sm" placeholder="@L["mf-search"]"
+               value="@SearchText" @oninput="OnSearchInput" />
+    </div>
+
+    <div class="mfp-list">
+        @foreach (var group in GroupedFields)
+        {
+            <div class="mfp-group">
+                <div class="mfp-group-title">@L[group.Key]</div>
+                @foreach (var field in group)
+                {
+                    <button type="button" class="mfp-item" title="@field.Code"
+                            @onclick="() => SelectField(field.Code)">
+                        <span class="mfp-label">@L[field.LabelKey]</span>
+                        <span class="mfp-code">@field.Code</span>
+                    </button>
+                }
+            </div>
+        }
+
+        @if (!GroupedFields.Any())
+        {
+            <div class="mfp-empty">@L["mf-empty"]</div>
+        }
+    </div>
+</div>

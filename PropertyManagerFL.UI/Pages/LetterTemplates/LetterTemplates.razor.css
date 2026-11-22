@@ -1,0 +1,46 @@
+.letter-templates {
+    width: 100%;
+}
+
+.lt-topbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.lt-body {
+    position: relative;
+    display: flex;
+    gap: 12px;
+    min-height: 520px;
+}
+
+.lt-editor {
+    flex: 1;
+    min-width: 0;
+    min-height: 520px;
+}
+
+.lt-fields {
+    flex: 0 0 290px;
+    width: 290px;
+    min-height: 0;
+}
+
+/* Vista incorporada nas definições: o painel abre como gaveta sobre o editor. */
+.lt-embedded .lt-fields {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+    border-radius: 10px;
+    box-shadow: -6px 0 18px rgba(0, 0, 0, 0.14);
+}
+
+/* Rota /LetterTemplates: editor e painel lado a lado, aproveitando a largura toda. */
+.lt-full .lt-body,
+.lt-full .lt-editor {
+    min-height: calc(100vh - 230px);
+}

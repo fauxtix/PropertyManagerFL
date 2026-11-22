@@ -50,7 +50,30 @@ O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma v
 Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) na [pasta de scripts da base de dados](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database).
 #
 
-**Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.Net 7).
+**Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.NET 10 LTS).
+
+# Configuração local (.NET 10)
+
+O SDK está fixado em `global.json` (10.0.404, `rollForward: latestPatch`). A aplicação destina-se a uma única utilização em `localhost`.
+
+1. **Base de dados**: criar `PropertyManagerDB` com os scripts em `PropertyManagerFL.Infrastructure/Database` (ou restaurar um backup num SQL Server local) e sobrepor `ConnectionStrings:PMConnection` com a ligação local.
+2. **Segredos** (nunca os incluir no repositório), definidos com `dotnet user-secrets set`:
+   - API (`PropertyManagerFL.Api`): `ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey`, `JWT:Secret` (mínimo 32 caracteres), `JWT:Issuer` e `JWT:Audience` (`https://localhost:5001/` em Development), `JWT:ExpiraEmMinutos`.
+   - UI (`PropertyManagerFL.UI`): `ApiKey` (mesmo valor da API), `SyncfusionLicenseKey`, `BaseUrl` = `https://localhost:5001/api`.
+3. Em cada terminal, definir `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes de arrancar as aplicações. Em `Production` os user-secrets não são carregados.
+4. Arrancar em dois terminais:
+   ```
+   dotnet run --project PropertyManagerFL.Api
+   dotnet run --project PropertyManagerFL.UI
+   ```
+   API em `https://localhost:5001`; UI em `https://localhost:7181`.
+5. Verificação rápida: `GET https://localhost:5001/api/Imoveis/TableHasData` com o cabeçalho `ApiKey` deve devolver `200` / `true`; a UI deve redirecionar para a página de login.
+
+# Testes
+
+- `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`
+- Os testes de integração com a base de dados são apenas de leitura e ficam desativados até definir `PMFL_TEST_CONNECTION` com a ligação para uma **cópia** da base de dados. Nunca apontar essa variável para a base de dados de produção nem a colocar num ficheiro versionado.
+- O workflow `.github/workflows/ci.yml` executa restore/build/test em .NET 10 sem necessitar de base de dados.
 
 # Imagens da aplicação
 

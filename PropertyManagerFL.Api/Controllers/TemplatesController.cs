@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Infrastructure.Security;
 using System.IO;
 
 namespace PropertyManagerFL.Api.Controllers;
@@ -30,7 +31,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -52,7 +53,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -63,7 +64,8 @@ public class TemplatesController : ControllerBase
         try
         {
 
-            var fileLocation = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs", templateName);
+            var root = Path.Combine(_webHostEnvironment.ContentRootPath, "reports", "docs");
+            var fileLocation = SafePath.CombineContained(root, SafePath.FileName(templateName));
             if (!System.IO.File.Exists(fileLocation))
             {
                 _logger.LogWarning($"Templates Api - ficheiro ({templateName}) não encontrado)");
@@ -79,7 +81,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return "";
         }
     }
@@ -101,7 +103,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return new List<string>();
         }
     }
@@ -118,7 +120,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return StatusCode(500, "Internal Server Error");
         }
     }
@@ -149,7 +151,7 @@ public class TemplatesController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex.Message);
+            _logger.LogError(ex, "Templates API error");
             return StatusCode(500, "Internal Server Error");
         }
     }

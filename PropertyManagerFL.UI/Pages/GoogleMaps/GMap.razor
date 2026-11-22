@@ -1,4 +1,4 @@
-﻿@page "/gmap"
+@page "/gmap"
 
 @using GoogleMapsComponents
 
@@ -43,9 +43,9 @@
     }
 
     .marker {
-        color: white;
-        background-color: black;
-        border: solid 1px black;
+        color: var(--app-on-primary);
+        background-color: var(--app-text-primary);
+        border: solid 1px var(--app-border);
         font-weight: 900;
         padding: 4px;
         top: -8px;
@@ -58,12 +58,12 @@
             left: 50%;
             transform: translate(-50%, 0%);
             border: solid 8px transparent;
-            border-top-color: black;
+            border-top-color: var(--app-text-primary);
         }
 
     .map-marker-label {
         position: absolute;
-        color: blue;
+        color: var(--app-primary);
         font-size: 16px;
         font-weight: bold;
         background: blueviolet

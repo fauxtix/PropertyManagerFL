@@ -1,4 +1,4 @@
-﻿using PropertyManagerFL.Application.Interfaces.Services.Common;
+using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.UI.Services.ClientApi;
@@ -38,7 +38,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.Message, ex);
+                _logger.LogError(ex, "Operation failed");
                 return "";
             }
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
 using ObjectsComparer;
@@ -105,7 +105,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             Documents = await GetAllDocuments();
             if (!Documents.Any())
             {
-                WarningMessage = "Sem dados para mostrar";
+                WarningMessage = L["Sem dados para mostrar"];
                 WarningVisibility = true;
             }
 
@@ -214,7 +214,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     }
                     catch (Exception ex)
                     {
-                        _logger?.LogError($"Abertura de documento em nova página\n ({ex.Message})");
+                        _logger?.LogError(ex, "Operation failed");
                     }
                 }
                 else
@@ -224,8 +224,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     {
                         ShowPdfVisibility = false;
 
-                        ToastTitle = "Leitura de pdf";
-                        ToastMessage = "Ficheiro não existe no local indicado! Verifique, p.f.";
+                        ToastTitle = L["Leitura de pdf"];
+                        ToastMessage = L["Ficheiro não existe no local indicado! Verifique, p.f."];
                         ToastCss = "e-toast-danger";
                         ShowPdfVisibility = false;
                         StateHasChanged();
@@ -328,8 +328,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 #pragma warning disable BL0005 // Component parameter should not be set outside of its component.
             ExportProperties.Columns = new List<GridColumn>()
             {
-                new GridColumn(){ Field="Title", HeaderText="Título", Width="250"},
-                new GridColumn(){ Field="Description", HeaderText="Descrição", Width="250"},
+                new GridColumn(){ Field="Title", HeaderText=L["Título"], Width="250"},
+                new GridColumn(){ Field="Description", HeaderText=L["Descrição"], Width="250"},
             };
 #pragma warning restore BL0005 // Component parameter should not be set outside of its component.
 
@@ -516,7 +516,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             catch (Exception exc)
             {
 
-                ToastTitle = "Error";
+                ToastTitle = L["Error"];
                 ToastCss = "e-toast-danger";
                 ToastMessage = L["MSG_ApiError"];
                 ToastIcon = "fas fa-exclamation";

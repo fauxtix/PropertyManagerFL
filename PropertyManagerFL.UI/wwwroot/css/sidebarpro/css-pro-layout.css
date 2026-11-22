@@ -1,0 +1,84 @@
+/* =========================================================================
+   css-pro-layout 1.1.0 — subset vendored locally.
+   Source: https://unpkg.com/css-pro-layout@1.1.0/dist/css/css-pro-layout.css
+   Only the rules used by the sidebar shell are kept. Original library is MIT.
+   Loaded AFTER site.css so it wins over the old 250px sticky sidebar rules.
+   ========================================================================= */
+
+.layout {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    overflow-x: hidden; /* fallback */
+    /* "clip" não cria contentor de scroll, por isso o sidebar sticky continua
+       a funcionar contra o scroll da página. */
+    overflow-x: clip;
+}
+
+    .layout.has-sidebar {
+        flex-direction: row;
+    }
+
+    .layout .content {
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .layout .overlay {
+        position: fixed;
+        inset: 64px 0 0 0;
+        background-color: rgba(0, 0, 0, 0.35);
+        z-index: 99;
+        display: none;
+    }
+
+    .layout .sidebar-toggler {
+        display: none;
+    }
+
+/* The sidebar and the content area both sit below the fixed 64px top bar. */
+.layout.fixed-sidebar .sidebar {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.layout.fixed-header .main {
+    padding-top: 64px;
+}
+
+/* ----------------------------- Mobile drawer ---------------------------- */
+@media (max-width: 768px) {
+    .layout .sidebar.break-point-md {
+        position: fixed;
+        left: -300px;
+        top: 64px;
+        height: calc(100vh - 64px);
+        z-index: 100;
+        transition: left 0.25s ease;
+    }
+
+        .layout .sidebar.break-point-md.collapsed {
+            left: -80px;
+        }
+
+        .layout .sidebar.break-point-md.toggled {
+            left: 0;
+        }
+
+            /* The overlay is a sibling of the <aside> in MainLayout, so the
+               original "~ .overlay" selector works without a workaround. */
+            .layout .sidebar.break-point-md.toggled ~ .overlay {
+                display: block;
+            }
+
+    .layout .sidebar-toggler.break-point-md {
+        display: inline-flex;
+    }
+
+    .layout.has-sidebar .main {
+        width: 100%;
+    }
+}
