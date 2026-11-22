@@ -69,7 +69,8 @@ function Ensure-HttpsBinding([string] $Site, [int] $Port, [string] $Thumbprint) 
 
     $bindings = @(Get-WebBinding -Name $Site -Protocol https -Port $Port)
     if ($bindings.Count -eq 0) {
-        New-WebBinding -Name $Site -Protocol https -Port $Port -SslFlags 1 | Out-Null
+        # SNI (SslFlags=1) requires a host header in bindingInformation.
+        New-WebBinding -Name $Site -Protocol https -Port $Port -HostHeader localhost -SslFlags 1 | Out-Null
         $bindings = @(Get-WebBinding -Name $Site -Protocol https -Port $Port)
     }
     foreach ($binding in $bindings) {
