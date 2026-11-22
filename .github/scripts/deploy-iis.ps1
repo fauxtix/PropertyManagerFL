@@ -107,9 +107,10 @@ function Set-WebConfigEnvironment([string] $SitePath, [hashtable] $Values) {
         if ([string]::IsNullOrWhiteSpace($value)) {
             throw "Missing deployment value for $key"
         }
-        $node = $variables.SelectSingleNode("add[@name='$key']")
+        # ANCM schema uses <environmentVariable>, not <add>.
+        $node = $variables.SelectSingleNode("environmentVariable[@name='$key']")
         if ($null -eq $node) {
-            $node = $xml.CreateElement('add')
+            $node = $xml.CreateElement('environmentVariable')
             [void] $variables.AppendChild($node)
         }
         $node.SetAttribute('name', $key)

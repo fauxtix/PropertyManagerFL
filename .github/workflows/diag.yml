@@ -1,0 +1,31 @@
+name: DIAG (temporary)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diag:
+    runs-on: [self-hosted, Windows, iis-propertymanager]
+    steps:
+      - name: Dump IIS state
+        shell: powershell
+        run: |
+          Import-Module WebAdministration
+          $out = 'C:\Users\User\pmfl-iis-diag.txt'
+          $lines = @()
+          $lines += '=== SITES ==='
+          $lines += (Get-Website | Where-Object { $_.Name -like 'PropertyManagerFL*' } | Format-List Name,ID,State,PhysicalPath,ApplicationPool | Out-String)
+          $lines += '=== UI BINDINGS ==='
+          $lines += (Get-WebBinding -Name 'PropertyManagerFL.UI' | Format-List protocol,bindingInformation,sslFlags,hostHeader | Out-String)
+          $lines += '=== API BINDINGS ==='
+          $lines += (Get-WebBinding -Name 'PropertyManagerFL.Api' | Format-List protocol,bindingInformation,sslFlags,hostHeader | Out-String)
+          $lines += '=== POOLS ==='
+          $lines += (Get-WebAppPoolState -Name 'PropertyManagerFL.UI' | Out-String)
+          $lines += (Get-WebAppPoolState -Name 'PropertyManagerFL.Api' | Out-String)
+          $lines += '=== NETSH ==='
+          $lines += (netsh http show servicestate | Select-String '4300|4310' | Out-String)
+          $lines += '=== APPLICATIONHOST ==='
+          $config = 'C:\Windows\System32\inetsrv\config\applicationHost.config'
+          $lines += (Select-String -Path $config -Pattern 'PropertyManagerFL' -Context 2,8 | Out-String)
+          Set-Content -Path $out -Value ($lines -join "`n") -Encoding UTF8
+          Write-Host "Wrote $out"
