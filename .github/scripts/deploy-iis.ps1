@@ -16,8 +16,10 @@ Import-Module WebAdministration
 $root = 'C:\inetpub\wwwroot\PropertyManagerFL'
 $apiSite = 'PropertyManagerFL.Api'
 $uiSite = 'PropertyManagerFL.UI'
-$apiPool = 'PropertyManagerFL.Api'
-$uiPool = 'PropertyManagerFL.UI'
+# Reuse the pre-existing pools: their ApplicationPoolIdentity accounts already have
+# SQL logins and db_owner on PropertyManagerDB. New pools would fail Integrated Security.
+$apiPool = 'PropertyManagerApi'
+$uiPool = 'PropertyManagerFL'
 $apiPath = Join-Path $root 'Api'
 $uiPath = Join-Path $root 'UI'
 $apiPort = 4300
