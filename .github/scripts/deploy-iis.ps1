@@ -29,6 +29,39 @@ function Ensure-Directory([string] $Path) {
     }
 }
 
+function Start-AppPool-WithRetry([string] $Name) {
+    for ($attempt = 0; $attempt -lt 10; $attempt++) {
+        if ((Get-WebAppPoolState -Name $Name -ErrorAction Stop).Value -eq 'Started') {
+            return
+        }
+        try {
+            Start-WebAppPool -Name $Name -ErrorAction Stop
+            return
+        }
+        catch {
+            if ($attempt -eq 9) { throw }
+            # IIS can briefly reject control messages right after a pool stop.
+            Start-Sleep -Milliseconds 500
+        }
+    }
+}
+
+function Start-Site-WithRetry([string] $Name) {
+    for ($attempt = 0; $attempt -lt 10; $attempt++) {
+        if ((Get-Website -Name $Name -ErrorAction Stop).State -eq 'Started') {
+            return
+        }
+        try {
+            Start-Website -Name $Name -ErrorAction Stop
+            return
+        }
+        catch {
+            if ($attempt -eq 9) { throw }
+            Start-Sleep -Milliseconds 500
+        }
+    }
+}
+
 function Ensure-AppPool([string] $Name) {
     if (-not (Test-Path "IIS:\AppPools\$Name")) {
         New-WebAppPool -Name $Name | Out-Null
@@ -142,9 +175,7 @@ Ensure-HttpsBinding $uiSite $uiPort $env:PM_UI_CERT_THUMBPRINT
 
 # Removing/recreating bindings can leave a site stopped even when its pool is running.
 foreach ($site in @($apiSite, $uiSite)) {
-    if ((Get-Website -Name $site).State -ne 'Started') {
-        Start-Website -Name $site
-    }
+    Start-Site-WithRetry $site
 }
 
 $stoppedPools = @()
@@ -187,6 +218,6 @@ try {
 }
 finally {
     foreach ($pool in $stoppedPools) {
-        Start-WebAppPool -Name $pool
+        Start-AppPool-WithRetry $pool
     }
 }
