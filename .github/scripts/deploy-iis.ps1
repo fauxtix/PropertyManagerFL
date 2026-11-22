@@ -178,12 +178,10 @@ foreach ($site in @($apiSite, $uiSite)) {
     Start-Site-WithRetry $site
 }
 
-$stoppedPools = @()
 try {
     foreach ($pool in @($apiPool, $uiPool)) {
         if ((Get-WebAppPoolState -Name $pool).Value -ne 'Stopped') {
             Stop-WebAppPool -Name $pool
-            $stoppedPools += $pool
         }
     }
 
@@ -217,7 +215,8 @@ try {
     Write-Host "Deployed UI  -> $uiPath (https://localhost:$uiPort)"
 }
 finally {
-    foreach ($pool in $stoppedPools) {
+    # Always leave both pools running, including when a previous run left them stopped.
+    foreach ($pool in @($apiPool, $uiPool)) {
         Start-AppPool-WithRetry $pool
     }
 }
