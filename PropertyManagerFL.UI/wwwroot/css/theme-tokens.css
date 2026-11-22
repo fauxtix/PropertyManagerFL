@@ -1,0 +1,233 @@
+/* =========================================================================
+   TEMAS LIGHT / DARK — tokens e overrides da aplicação
+   Carregado por ÚLTIMO no <head> para ganhar a cascata sobre main.css,
+   site.css, AppStyles.css e businesscard.css.
+   A troca de tema é feita por [data-theme] no <html> (ver themeToggle.js).
+   ========================================================================= */
+
+/* -------------------------- Tema claro (padrão dos tokens) ---------------- */
+:root {
+    color-scheme: light;
+
+    --app-bg: #f8fafc;
+    --app-surface: #ffffff;
+    --app-surface-alt: #f1f5f9;
+    --app-surface-hover: #edf1f7;
+    --app-text-primary: #0f172a;
+    --app-text-secondary: #475569;
+    --app-primary: #2563eb;
+    --app-primary-hover: #1d4ed8;
+    --app-on-primary: #ffffff;
+    --app-border: #e2e8f0;
+    --app-header-bg: #ffffff;
+    --app-header-text: #0f172a;
+    --app-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+    --app-accent-yellow: #f59e0b;
+
+    /* Sidebar/topo: visuais tema-independentes, usados pelo botão de tema. */
+    --sidebar-bg: #1e293b;
+    --sidebar-text-primary: #f8fafc;
+    --sidebar-text-secondary: #94a3b8;
+    --sidebar-border: #334155;
+    --header-text: #f8fafc;
+    --header-hover-bg: #283852;
+}
+
+/* -------------------------- Tema escuro ---------------------------------- */
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --app-bg: #0f172a;
+    --app-surface: #1e293b;
+    --app-surface-alt: #243244;
+    --app-surface-hover: #283852;
+    --app-text-primary: #f8fafc;
+    --app-text-secondary: #94a3b8;
+    --app-primary: #3b82f6;
+    --app-primary-hover: #2563eb;
+    --app-on-primary: #ffffff;
+    --app-border: #334155;
+    --app-header-bg: #1e293b;
+    --app-header-text: #f8fafc;
+    --app-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+    --app-accent-yellow: #fbbf24;
+}
+
+/* ============================ Shell da aplicação ========================= */
+[data-theme="dark"] body {
+    background-color: var(--app-bg) !important;
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] a,
+[data-theme="dark"] .btn-link {
+    color: var(--app-primary);
+}
+
+[data-theme="dark"] a:hover,
+[data-theme="dark"] .btn-link:hover {
+    color: var(--app-primary-hover);
+}
+
+[data-theme="dark"] .main .top-row {
+    background-color: var(--app-surface-alt);
+    border-bottom-color: var(--app-border);
+}
+
+[data-theme="dark"] .sidebar {
+    background-image: none;
+    background-color: var(--sidebar-bg);
+}
+
+[data-theme="dark"] .sidebar .top-row {
+    background-color: var(--sidebar-bg);
+}
+
+[data-theme="dark"] .sidebar .nav-item a {
+    color: var(--sidebar-text-secondary);
+}
+
+[data-theme="dark"] .sidebar .nav-item a.active,
+[data-theme="dark"] .sidebar .nav-item a:hover {
+    background-color: var(--sidebar-border);
+    color: var(--sidebar-text-primary);
+}
+
+[data-theme="dark"] .navbar-toggler {
+    border-color: var(--app-border);
+}
+
+[data-theme="dark"] .bg-white {
+    background-color: var(--app-surface) !important;
+}
+
+[data-theme="dark"] .bg-light {
+    background-color: var(--app-surface-alt) !important;
+}
+
+[data-theme="dark"] .text-dark {
+    color: var(--app-text-primary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--app-text-secondary) !important;
+}
+
+[data-theme="dark"] hr {
+    border-color: var(--app-border);
+}
+
+/* ============================ Bootstrap base ============================= */
+[data-theme="dark"] .card,
+[data-theme="dark"] .card-header,
+[data-theme="dark"] .card-footer,
+[data-theme="dark"] .modal-content {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .table {
+    background-color: var(--app-surface);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    border-top-color: var(--app-border);
+}
+
+[data-theme="dark"] .form-control {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .form-control:focus {
+    background-color: var(--app-surface);
+    border-color: var(--app-primary);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: var(--app-text-secondary);
+}
+
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-primary:hover,
+[data-theme="dark"] .btn-primary:focus {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+    color: var(--app-on-primary);
+}
+
+/* ============================ Syncfusion ================================
+   O tema bootstrap5-dark já cobre a maioria dos componentes; estas regras
+   alinham os pontos com cores fixas nas folhas antigas da aplicação.
+   ======================================================================== */
+
+[data-theme="dark"] .e-tab {
+    background-color: var(--app-surface);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .e-tab .e-tab-header,
+[data-theme="dark"] .e-tab .e-content {
+    background-color: var(--app-surface);
+    border-bottom-color: var(--app-border);
+}
+
+[data-theme="dark"] .e-tab .e-tab-header .e-toolbar-item .e-tab-wrap:hover {
+    background-color: var(--app-surface-hover) !important;
+}
+
+[data-theme="dark"] .e-tab .e-tab-header .e-toolbar-item.e-active {
+    background-color: var(--app-surface) !important;
+}
+
+[data-theme="dark"] .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text,
+[data-theme="dark"] .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-icon {
+    color: var(--app-primary) !important;
+}
+
+[data-theme="dark"] .e-btn.e-primary,
+[data-theme="dark"] .e-css.e-btn.e-primary {
+    background-color: var(--app-primary);
+    border-color: var(--app-primary);
+    color: var(--app-on-primary);
+}
+
+[data-theme="dark"] .e-grid .e-rowcell,
+[data-theme="dark"] .e-grid .e-gridheader .e-headercell,
+[data-theme="dark"] .e-grid .e-toolbar,
+[data-theme="dark"] .e-grid .e-gridpager {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .e-input-group.e-control-wrapper,
+[data-theme="dark"] .e-float-input.e-input-group {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .e-dialog,
+[data-theme="dark"] .e-popup {
+    background-color: var(--app-surface);
+    color: var(--app-text-primary);
+}
+
+[data-theme="dark"] .e-dialog .e-dlg-header-content {
+    border-bottom-color: var(--app-border);
+}
+
+[data-theme="dark"] .e-dialog .e-footer-content {
+    border-top-color: var(--app-border);
+}
+
+[data-theme="dark"] .e-accumulationchart text[id*="datalabel"],
+[data-theme="dark"] .e-accumulationchart text[id*="legend"] {
+    fill: var(--app-text-primary);
+}

@@ -10,7 +10,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="utf-8" />
     <title>Gestão de Propriedades</title>
@@ -32,11 +32,27 @@
     <link href="_content/Blazored.Menu/blazored-menu.css" rel="stylesheet" />
 
 
-    <link href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" />
+    <link id="sfThemeLight" href="_content/Syncfusion.Blazor.Themes/bootstrap5.css" rel="stylesheet" disabled />
+    <link id="sfThemeDark" href="_content/Syncfusion.Blazor.Themes/bootstrap5-dark.css" rel="stylesheet" />
+
+    <script>
+        (function () {
+            var stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (e) { }
+            var dark = stored !== 'light';
+            document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+            var light = document.getElementById('sfThemeLight');
+            var darkLink = document.getElementById('sfThemeDark');
+            if (light) { light.disabled = dark; }
+            if (darkLink) { darkLink.disabled = !dark; }
+        })();
+    </script>
 
     <link href="PropertyManagerFL.UI.styles.css" rel="stylesheet" />
     <link rel="stylesheet" href="/css/AppStyles.css">
     <link rel="stylesheet" href="/css/businesscard.css">
+    @* Carregado por último para ganhar a cascata sobre os CSS anteriores. *@
+    <link rel="stylesheet" href="/css/theme-tokens.css">
 
     <script src="_content/Syncfusion.Blazor.Core/scripts/syncfusion-blazor.min.js" type="text/javascript"></script>
 
@@ -68,6 +84,7 @@
     <script src="_content/BlazorGoogleMaps/js/objectManager.js"></script>
     <script src="js/Utils.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/themeToggle.js"></script>
 
 
 </body>

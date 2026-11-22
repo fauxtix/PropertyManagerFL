@@ -2635,4 +2635,13 @@
   <data name="TituloDespesasPorTipo" xml:space="preserve">
     <value>All expenses (planned and actual) by Type</value>
   </data>
+  <data name="LblTheme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="LblThemeLight" xml:space="preserve">
+    <value>Light theme</value>
+  </data>
+  <data name="LblThemeDark" xml:space="preserve">
+    <value>Dark theme</value>
+  </data>
 </root>

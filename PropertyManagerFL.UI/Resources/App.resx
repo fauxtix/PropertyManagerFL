@@ -1628,4 +1628,13 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="TituloDespesasPorTipo" xml:space="preserve">
     <value>Todas as despesas (previstas e atuais) por Tipo</value>
   </data>
+  <data name="LblTheme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="LblThemeLight" xml:space="preserve">
+    <value>Tema claro</value>
+  </data>
+  <data name="LblThemeDark" xml:space="preserve">
+    <value>Tema escuro</value>
+  </data>
 </root>

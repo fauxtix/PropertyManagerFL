@@ -2627,4 +2627,13 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TituloDespesasPorTipo" xml:space="preserve">
     <value>Todos los gastos (previstos y reales) por Tipo</value>
   </data>
+  <data name="LblTheme" xml:space="preserve">
+    <value>Tema</value>
+  </data>
+  <data name="LblThemeLight" xml:space="preserve">
+    <value>Tema claro</value>
+  </data>
+  <data name="LblThemeDark" xml:space="preserve">
+    <value>Tema oscuro</value>
+  </data>
 </root>

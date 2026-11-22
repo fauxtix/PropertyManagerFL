@@ -2643,4 +2643,13 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TituloDespesasPorTipo" xml:space="preserve">
     <value>Toutes les dépenses (prévues et réelles) par Type</value>
   </data>
+  <data name="LblTheme" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="LblThemeLight" xml:space="preserve">
+    <value>Thème clair</value>
+  </data>
+  <data name="LblThemeDark" xml:space="preserve">
+    <value>Thème sombre</value>
+  </data>
 </root>
