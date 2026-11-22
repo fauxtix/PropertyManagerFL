@@ -20,6 +20,9 @@ $uiSite = 'PropertyManagerFL.UI'
 # SQL logins and db_owner on PropertyManagerDB. New pools would fail Integrated Security.
 $apiPool = 'PropertyManagerApi'
 $uiPool = 'PropertyManagerFL'
+# Pools created by earlier runs can keep w3wp processes (and DLL file locks) alive
+# even after the sites have been reassigned to the pools above.
+$legacyPools = @('PropertyManagerFL.Api', 'PropertyManagerFL.UI')
 $apiPath = Join-Path $root 'Api'
 $uiPath = Join-Path $root 'UI'
 $apiPort = 4300
@@ -211,16 +214,15 @@ function Copy-PublishedFiles([string] $Source, [string] $Destination) {
     Ensure-Directory $Destination
     # Overwrite only: never delete the destination (uploaded files may live there).
     # A just-stopped w3wp can briefly hold a DLL, so retry the (idempotent) copy.
+    $lastError = $null
     for ($attempt = 0; $attempt -lt 10; $attempt++) {
-        try {
-            Copy-Item -Path (Join-Path $Source '*') -Destination $Destination -Recurse -Force -ErrorAction Stop
-            return
-        }
-        catch {
-            if ($attempt -eq 9) { throw }
-            Start-Sleep -Seconds 1
-        }
+        $before = $Error.Count
+        Copy-Item -Path (Join-Path $Source '*') -Destination $Destination -Recurse -Force -ErrorAction SilentlyContinue
+        if ($? -and $Error.Count -eq $before) { return }
+        if ($Error.Count -gt $before) { $lastError = $Error[0] }
+        Start-Sleep -Seconds 1
     }
+    throw "Failed to copy publish files to $Destination : $lastError"
 }
 
 Ensure-Directory $root
@@ -240,11 +242,12 @@ foreach ($site in @($apiSite, $uiSite)) {
 }
 
 try {
-    foreach ($pool in @($apiPool, $uiPool)) {
+    $poolsToStop = @($apiPool, $uiPool) + @($legacyPools | Where-Object { Test-Path "IIS:\AppPools\$_" })
+    foreach ($pool in $poolsToStop) {
         Stop-AppPool-WithRetry $pool
     }
 
-    Wait-NoW3wpForPools @($apiPool, $uiPool)
+    Wait-NoW3wpForPools $poolsToStop
     Copy-PublishedFiles $ApiPublishDir $apiPath
     Copy-PublishedFiles $UiPublishDir $uiPath
 
