@@ -3,6 +3,7 @@ using PropertyManagerFL.Application.Interfaces.DapperContext;
 using PropertyManagerFL.Application.Security;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.Interfaces.Repositories.Data_Operations;
+using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.Validator;
 using PropertyManagerFL.Infrastructure.Context;
@@ -63,6 +64,8 @@ public static class DependencyInjectionConfig
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IAppSettingsRepository, AppSettingsRepository>();
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<INotificationService, PropertyManagerFL.Infrastructure.Services.NotificationService>();
 
     }
 }

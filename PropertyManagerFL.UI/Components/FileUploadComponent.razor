@@ -1,6 +1,7 @@
 ﻿@using PropertyManagerFL.UI.ApiWrappers;
 
 @inject IStringLocalizer<App> L
+@inject IConfiguration Config
 
 <div class="form-row">
     <div class="form-group control-section">
@@ -65,9 +66,9 @@
 
     public async Task uploadFile(MouseEventArgs args)
     {
-        //filepath = await ApiImagesWrapper.UploadImage(content):;
-        filepath = await Http.PostAsync("http://localhost:4300/api/Images/Save", content);
-        var filepath2 = await Http.PostAsync("http://localhost:4300/api/Images/Upload", content);
+        var baseUrl = Config["BaseUrl"]?.TrimEnd('/') ?? string.Empty;
+        filepath = await Http.PostAsync($"{baseUrl}/Images/Save", content);
+        var filepath2 = await Http.PostAsync($"{baseUrl}/Images/Upload", content);
         this.responseStr = await filepath.Content.ReadAsStringAsync();
     }
 

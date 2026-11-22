@@ -74,6 +74,9 @@ public static class DependencyInjectionConfig
         services.AddScoped<IAppointmentsService, WrapperAppointments>();
         services.AddScoped<AppointmentAdaptor>();
         services.AddScoped<ThemeStateService>();
+        services.AddScoped<WrapperNotifications>();
+        services.AddScoped<INotificationService, WrapperNotifications>();
+        services.AddScoped<NotificationClientService>();
 
     }
 }

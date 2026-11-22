@@ -28,6 +28,7 @@ builder.Services.AddHttpClient();
 builder.Services.AddDataProtection().SetApplicationName("PropertyManagerFL");
 builder.Services.AddScoped<DapperContext>();
 builder.Services.AddControllers(options => options.SuppressAsyncSuffixInActionNames = false);
+builder.Services.AddSignalR();
 builder.Services.AddJwtTConfiguration(configuration);
 builder.Services.AddFluentValidationConfiguration();
 builder.Services.AddAutoMapperConfiguration();
@@ -86,6 +87,7 @@ app.UseJwtConfiguration();
 app.UseSwaggerConfiguration();
 
 app.MapControllers();
+app.MapHub<PropertyManagerFL.Api.Hubs.NotificationHub>("/hubs/notifications");
 
 //app.UseEndpoints(endpoints => endpoints.MapControllers());
 

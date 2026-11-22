@@ -10,21 +10,6 @@
     min-width: 0;
 }
 
-.notification-wrapper {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-}
-
-/* The old template centred a blue box here. The popup itself is fixed by
-   NotificationPopup.razor.css; anchor it just below the bell instead. */
-.centered-div {
-    position: absolute;
-    top: 48px;
-    right: 0;
-    background: transparent;
-}
-
 @media (max-width: 768px) {
     .culture-switcher {
         display: none;

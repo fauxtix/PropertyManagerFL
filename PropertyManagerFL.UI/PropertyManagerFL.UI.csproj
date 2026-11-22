@@ -22,15 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Pages\Notifications\NotificationPopup.razor.css" />
-  </ItemGroup>
-
-  <ItemGroup>
     <_ContentIncludedByDefault Remove="appsettings.Production.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Pages\Notifications\NotificationPopup.razor.css" />
   </ItemGroup>
 
   <ItemGroup>

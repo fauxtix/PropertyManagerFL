@@ -7,14 +7,21 @@
 
 ## Commands / verification
 - Build: `dotnet build PropertyManagerFL.sln`
-- Run locally in two terminals: set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` first, then `dotnet run --project PropertyManagerFL.Api` and `dotnet run --project PropertyManagerFL.UI`. The shell may already have `ASPNETCORE_ENVIRONMENT=Production`; in Production the user-secrets are not loaded (API returns 401) and UI uses the stale Production `BaseUrl`.
-- Dev URLs: API `https://localhost:5001` / `http://localhost:5000`; UI `https://localhost:7181` / `http://localhost:5152`.
-- No test projects, CI workflows, lint scripts, or codegen tasks exist. Verification = build + manual smoke test (login, properties/tenants CRUD, payment, letter/PDF, upload).
+- Run locally in two terminals: set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` first, then `dotnet run --project PropertyManagerFL.Api` and `dotnet run --project PropertyManagerFL.UI`. The shell may already have `ASPNETCORE_ENVIRONMENT=Production`; in Production user-secrets are not loaded (API returns 401) — supply values via environment variables instead.
+- URLs: API `http://localhost:4300` (HTTP); UI `https://localhost:4310` (HTTPS). IIS bindings use the same ports in Production. Ports 5000/5001 are deliberately free for another app/Docker.
+- Build + tests: `dotnet build PropertyManagerFL.sln` and `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`. CI is `.github/workflows/ci.yml` (build + test on Ubuntu); CD to IIS is `.github/workflows/cd.yml` (self-hosted runner, `workflow_dispatch`). Verification = build + tests + manual smoke test (login, properties/tenants CRUD, payment, letter/PDF, upload).
+
+## Deployment
+- `ci.yml` does not deploy. `cd.yml` publishes API to `C:\inetpub\wwwroot\PropertyManagerFL\Api` (HTTP 4300) and UI to `C:\inetpub\wwwroot\PropertyManagerFL\UI` (HTTPS 4310), creating the sites/pools if missing.
+- The runner must be registered **in this repository** with the label `iis-propertymanager`; runners are repo-scoped, so a runner registered for another app cannot run these jobs.
+- Required GitHub secrets: `PM_API_KEY` (same value in API and UI), `PM_SYNCFUSION_LICENSE`, `PM_PMCONNECTION`; optional `PM_UI_CERT_THUMBPRINT` selects an existing certificate for the 4310 HTTPS binding (otherwise the workflow creates a self-signed localhost certificate).
+- `Properties/PublishProfiles/FolderProfile.pubxml` are stale (`net7.0`) and are not used by CI/CD.
+- `dotnet publish --no-build` fails with MSB3030: the empty `PropertyManagerFL.Logging` project emits no DLL. Publish with a build (as `cd.yml` does).
 - SDK pinned by `global.json` to 10.0.404 (`rollForward: latestPatch`); `dotnet --version` in this repo returns 10.0.x even though SDK 11 is installed machine-wide. No `Directory.Build.props`, lockfiles or NuGet config. Projects in the solution now target `net10.0`; the 5 orphan `.csproj` outside it still target `net6.0`.
 
 ## Config / environment gotchas
 - Both web projects set `UserSecretsId`; supply real values via user-secrets/env. Checked-in `PMConnection` strings point at `DESKTOP-SLIMNUD\SQLEXPRESS` and must be overridden locally.
-- `BaseUrl` exists only in UI `appsettings.Development/Production`, not the base file. Dev must be `https://localhost:5001/api`; the Production value (`http://localhost:4300/api`) is stale.
+- `BaseUrl` exists only in UI `appsettings.Development/Production`, not the base file. Both environments use `http://localhost:4300/api`; the UI `ApiWrappers/*`, `WrapperNotifications.HubUrl` and `Components/FileUploadComponent.razor` all derive their URLs from it.
 - `ApiKey` is the real API gate: global `ApiKeyMiddleware` checks one header on every request, added by UI via `Services/ClientApi/HttpClientConfigurationService.cs`. JWT is mostly unused/misconfigured (`Issuer` vs `ValidIssuer`); do not assume `[Authorize]` protects endpoints.
 - `SyncfusionLicenseKey` is a placeholder in appsettings but registered in both `Program.cs` files; a valid key is required for the Syncfusion UI.
 - DB setup is manual: `Infrastructure/Database/*.sql` (WorkingTables, LookupTablesWithData, StoredProcedures, Views, UsersAndSchemas) or `SqlData_Script/PropertyManagerDB.sql`. EF migrations are commented out in `Api/Configuration/DataBaseConfig.cs`; local `dotnet-ef` tool manifests exist but are unused.

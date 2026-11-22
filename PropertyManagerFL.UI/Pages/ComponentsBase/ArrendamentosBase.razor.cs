@@ -10,6 +10,7 @@ using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using PropertyManagerFL.Application.ViewModels.Notifications;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Data;
@@ -31,6 +32,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     [Inject] protected IValidationService? validatorService { get; set; }
     [Inject] protected IStringLocalizer<App>? L { get; set; }
     [Inject] protected IAppSettingsService? appSettingsService { get; set; }
+    [Inject] protected INotificationService? notificationService { get; set; }
 
     protected IEnumerable<ArrendamentoVM>? leases { get; set; }
     protected IEnumerable<ArrendamentoVM>? activeLeases { get; set; }
@@ -135,63 +137,39 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         DefaultLeaseTermInYears = AppSettings.PrazoContratoEmAnos;
     }
 
+    /// <summary>
+    /// Alerts are computed once by the server rules engine (the same source used by the inbox).
+    /// This page only applies the localized wording.
+    /// </summary>
     private async Task CheckForAlerts()
     {
         LeaseAlerts.Clear();
-        if (AppSettings?.CartasAumentoAutomaticas == false)
+        var alerts = (await notificationService!.GetAlertsAsync() ?? Enumerable.Empty<NotificationAlertVM>())
+            .Where(a => a.Kind is "RentLetter" or "RentUpdate" or "RentLetters" or "LeaseEnding");
+
+        foreach (var alert in alerts)
         {
-            // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualização de renda' 
-            var tenantDocuments = await inquilinosService!.GetDocumentos();
-            var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
-            if (updateLetterSentCurrentYear.Any())
-            {
-                foreach (var document in tenantDocuments)
-                {
-                    LeaseAlerts.Add(L["Necessário envio de carta de atualização ao inquilino {0}", document.NomeInquilino], 1);
-                }
-            }
-
-            var leasesWhoNeedToUpdateRent = leases?.Where(l => l.Data_Inicio.Month == DateTime.Now.Month + 1);
-            if (leasesWhoNeedToUpdateRent.Count() > 0)
-            {
-                foreach (var item in leasesWhoNeedToUpdateRent)
-                {
-                    string alertMsg = L["Necessário atualizar renda do inquilino {0} ({1})", item.NomeInquilino, item.Fracao];
-                    if (item.EnvioCartaAtualizacaoRenda == false)
-                        alertMsg += L[" - não foi enviada carta de atualização!"];
-
-                    LeaseAlerts.Add(alertMsg, 1);
-                }
-            }
-            else // Cartas de aumento de rendas automáticas
-            {
-                if (leases?.Count() > 0)
-                {
-                    var rentPayments = (await recebimentosService!.GetAll()).ToList().Count();
-                    if (rentPayments > 0)
-                    {
-                        var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
-                        if (UpdateLetterSent == false)
-                        {
-                            LeaseAlerts.Add(L["Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano."], 3);
-                        }
-                    }
-                }
-
-            }
+            var (message, severity) = FormatLeaseAlert(alert);
+            LeaseAlerts[message] = severity;
         }
+    }
 
-        if (AppSettings?.RenovacaoAutomatica == false)
+    private (string Message, int Severity) FormatLeaseAlert(NotificationAlertVM alert)
+    {
+        return alert.Kind switch
         {
-            foreach (var _leaseitem in leases!)
-            {
-                var monthsToEnd = GetMonthDifference(DateTime.Now, _leaseitem.Data_Fim);
-                if (monthsToEnd >= 0 && monthsToEnd <= 4)
-                {
-                    LeaseAlerts.Add(L["Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação", _leaseitem.NomeInquilino, _leaseitem.Fracao], 2);
-                }
-            }
-        }
+            "RentLetter" => (
+                L["Necessário envio de carta de atualização ao inquilino {0}", alert.PrimaryText ?? alert.Body], 1),
+            "RentUpdate" => (
+                L["Necessário atualizar renda do inquilino {0} ({1})", alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty]
+                    + (alert.NeedsAction ? L[" - não foi enviada carta de atualização!"] : string.Empty), 1),
+            "RentLetters" => (
+                L["Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano."], 3),
+            "LeaseEnding" => (
+                L["Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação",
+                    alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty], 2),
+            _ => (alert.Title, 1)
+        };
     }
 
     /// <summary>

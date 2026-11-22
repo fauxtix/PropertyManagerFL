@@ -3824,4 +3824,265 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="Enable Ssl" xml:space="preserve">
     <value>Activar SSL</value>
   </data>
+  <data name="mf-panel-title" xml:space="preserve">
+    <value>Campos disponibles</value>
+  </data>
+  <data name="mf-search" xml:space="preserve">
+    <value>Buscar campo...</value>
+  </data>
+  <data name="mf-empty" xml:space="preserve">
+    <value>No hay campos para esta plantilla.</value>
+  </data>
+  <data name="mf-toggle" xml:space="preserve">
+    <value>Campos</value>
+  </data>
+  <data name="mf-fullscreen" xml:space="preserve">
+    <value>Pantalla completa</value>
+  </data>
+  <data name="mf-back-menu" xml:space="preserve">
+    <value>Volver al menú</value>
+  </data>
+  <data name="mf-cat-general" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="mf-cat-landlord" xml:space="preserve">
+    <value>Propietario</value>
+  </data>
+  <data name="mf-cat-tenant" xml:space="preserve">
+    <value>Inquilino</value>
+  </data>
+  <data name="mf-cat-property" xml:space="preserve">
+    <value>Inmueble</value>
+  </data>
+  <data name="mf-cat-contract" xml:space="preserve">
+    <value>Contrato</value>
+  </data>
+  <data name="mf-cat-rents" xml:space="preserve">
+    <value>Renta</value>
+  </data>
+  <data name="mf-cat-dates" xml:space="preserve">
+    <value>Fechas</value>
+  </data>
+  <data name="mf-NomeOutorgante_1" xml:space="preserve">
+    <value>Nombre del otorgante 1</value>
+  </data>
+  <data name="mf-NomeOutorgante_2" xml:space="preserve">
+    <value>Nombre del otorgante 2</value>
+  </data>
+  <data name="mf-NomeOutorgante_3" xml:space="preserve">
+    <value>Nombre del otorgante 3</value>
+  </data>
+  <data name="mf-DtNasc_O_1" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 1</value>
+  </data>
+  <data name="mf-DtNasc_O_2" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 2</value>
+  </data>
+  <data name="mf-DtNasc_O_3" xml:space="preserve">
+    <value>Fecha de nacimiento del otorgante 3</value>
+  </data>
+  <data name="mf-MoradaOutorgante_1" xml:space="preserve">
+    <value>Dirección del otorgante 1</value>
+  </data>
+  <data name="mf-MoradaOutorgante_2" xml:space="preserve">
+    <value>Dirección del otorgante 2</value>
+  </data>
+  <data name="mf-MoradaOutorgante_3" xml:space="preserve">
+    <value>Dirección del otorgante 3</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_1" xml:space="preserve">
+    <value>Naturalidad del otorgante 1</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_2" xml:space="preserve">
+    <value>Naturalidad del otorgante 2</value>
+  </data>
+  <data name="mf-NaturalidadeOutorgante_3" xml:space="preserve">
+    <value>Naturalidad del otorgante 3</value>
+  </data>
+  <data name="mf-EC_Outorgante_1" xml:space="preserve">
+    <value>Estado civil del otorgante 1</value>
+  </data>
+  <data name="mf-EC_Outorgante_2" xml:space="preserve">
+    <value>Estado civil del otorgante 2</value>
+  </data>
+  <data name="mf-EC_Outorgante_3" xml:space="preserve">
+    <value>Estado civil del otorgante 3</value>
+  </data>
+  <data name="mf-CC_Outorgante_1" xml:space="preserve">
+    <value>DNI del otorgante 1</value>
+  </data>
+  <data name="mf-CC_Outorgante_2" xml:space="preserve">
+    <value>DNI del otorgante 2</value>
+  </data>
+  <data name="mf-CC_Outorgante_3" xml:space="preserve">
+    <value>DNI del otorgante 3</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_1" xml:space="preserve">
+    <value>Validez del DNI del otorgante 1</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_2" xml:space="preserve">
+    <value>Validez del DNI del otorgante 2</value>
+  </data>
+  <data name="mf-ValidadeCC_Outorgante_3" xml:space="preserve">
+    <value>Validez del DNI del otorgante 3</value>
+  </data>
+  <data name="mf-NIF_Outorgante_1" xml:space="preserve">
+    <value>NIF del otorgante 1</value>
+  </data>
+  <data name="mf-NIF_Outorgante_2" xml:space="preserve">
+    <value>NIF del otorgante 2</value>
+  </data>
+  <data name="mf-NIF_Outorgante_3" xml:space="preserve">
+    <value>NIF del otorgante 3</value>
+  </data>
+  <data name="mf-Letra" xml:space="preserve">
+    <value>Letra de la vivienda</value>
+  </data>
+  <data name="mf-Andar" xml:space="preserve">
+    <value>Piso</value>
+  </data>
+  <data name="mf-Lado" xml:space="preserve">
+    <value>Lado</value>
+  </data>
+  <data name="mf-MoradaImovel" xml:space="preserve">
+    <value>Dirección del inmueble</value>
+  </data>
+  <data name="mf-Freguesia" xml:space="preserve">
+    <value>Parroquia</value>
+  </data>
+  <data name="mf-Concelho" xml:space="preserve">
+    <value>Municipio</value>
+  </data>
+  <data name="mf-Artigo" xml:space="preserve">
+    <value>Artículo del registro</value>
+  </data>
+  <data name="mf-LicencaHabitacao" xml:space="preserve">
+    <value>Licencia de habitabilidad</value>
+  </data>
+  <data name="mf-DataLicencaHabitacao" xml:space="preserve">
+    <value>Fecha de la licencia de habitabilidad</value>
+  </data>
+  <data name="mf-Quartos" xml:space="preserve">
+    <value>Número de habitaciones</value>
+  </data>
+  <data name="mf-MoradaFracao" xml:space="preserve">
+    <value>Dirección de la vivienda</value>
+  </data>
+  <data name="mf-MatrizPredial" xml:space="preserve">
+    <value>Referencia catastral</value>
+  </data>
+  <data name="mf-MesesContrato" xml:space="preserve">
+    <value>Duración del contrato (meses)</value>
+  </data>
+  <data name="mf-DataInicioContrato" xml:space="preserve">
+    <value>Fecha de inicio del contrato</value>
+  </data>
+  <data name="mf-DiaInicioContrato" xml:space="preserve">
+    <value>Día de inicio del contrato</value>
+  </data>
+  <data name="mf-MesInicioContrato" xml:space="preserve">
+    <value>Mes de inicio del contrato</value>
+  </data>
+  <data name="mf-AnoInicioContrato" xml:space="preserve">
+    <value>Año de inicio del contrato</value>
+  </data>
+  <data name="mf-InicioContrato" xml:space="preserve">
+    <value>Inicio del contrato</value>
+  </data>
+  <data name="mf-FimContrato" xml:space="preserve">
+    <value>Fin del contrato</value>
+  </data>
+  <data name="mf-ValorRenda" xml:space="preserve">
+    <value>Importe de la renta</value>
+  </data>
+  <data name="mf-ValorRendaExtenso" xml:space="preserve">
+    <value>Importe de la renta en letras</value>
+  </data>
+  <data name="mf-NovoValorRenda" xml:space="preserve">
+    <value>Nuevo importe de la renta</value>
+  </data>
+  <data name="mf-ExtensoNovoValor" xml:space="preserve">
+    <value>Nuevo importe de la renta en letras</value>
+  </data>
+  <data name="mf-Coeficiente" xml:space="preserve">
+    <value>Coeficiente de actualización</value>
+  </data>
+  <data name="mf-Lei" xml:space="preserve">
+    <value>Ley de actualización</value>
+  </data>
+  <data name="mf-MontanteRendasEmAtraso" xml:space="preserve">
+    <value>Importe pendiente</value>
+  </data>
+  <data name="mf-ValorExtenso" xml:space="preserve">
+    <value>Importe pendiente en letras</value>
+  </data>
+  <data name="mf-RendasEmAtraso" xml:space="preserve">
+    <value>Rentas atrasadas</value>
+  </data>
+  <data name="mf-PrazoEmDias" xml:space="preserve">
+    <value>Plazo (días)</value>
+  </data>
+  <data name="mf-NomeSenhorio" xml:space="preserve">
+    <value>Nombre del propietario</value>
+  </data>
+  <data name="mf-MoradaSenhorio" xml:space="preserve">
+    <value>Dirección del propietario</value>
+  </data>
+  <data name="mf-CodigoPostalSenhorio" xml:space="preserve">
+    <value>Código postal del propietario</value>
+  </data>
+  <data name="mf-NomeInquilino" xml:space="preserve">
+    <value>Nombre del inquilino</value>
+  </data>
+  <data name="mf-MoradaInquilino" xml:space="preserve">
+    <value>Dirección del inquilino</value>
+  </data>
+  <data name="mf-CodigoPostalInquilino" xml:space="preserve">
+    <value>Código postal del inquilino</value>
+  </data>
+  <data name="mf-LocalEmissao" xml:space="preserve">
+    <value>Lugar de emisión</value>
+  </data>
+  <data name="mf-DataEmissao" xml:space="preserve">
+    <value>Fecha de emisión</value>
+  </data>
+  <data name="mf-DataPublicacao" xml:space="preserve">
+    <value>Fecha de publicación</value>
+  </data>
+  <data name="mf-DiaAPartirDe" xml:space="preserve">
+    <value>Día a partir de</value>
+  </data>
+  <data name="mf-MesAPartirDe" xml:space="preserve">
+    <value>Mes a partir de</value>
+  </data>
+  <data name="mf-AnoAtualizacao" xml:space="preserve">
+    <value>Año de actualización</value>
+  </data>
+  <data name="mf-AnoPublicacao" xml:space="preserve">
+    <value>Año de publicación</value>
+  </data>
+  <data name="NotificationsTitle" xml:space="preserve">
+    <value>Notificaciones</value>
+  </data>
+  <data name="NotificationsMarkAllRead" xml:space="preserve">
+    <value>Marcar todas como leÃ­das</value>
+  </data>
+  <data name="NotificationsUnread" xml:space="preserve">
+    <value>Sin leer</value>
+  </data>
+  <data name="NotificationsEmpty" xml:space="preserve">
+    <value>No hay notificaciones</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="NotificationsViewAll" xml:space="preserve">
+    <value>Ver todas</value>
+  </data>
+  <data name="NotificationsAll" xml:space="preserve">
+    <value>Todas</value>
+  </data>
+  <data name="NotificationsMarkedAllRead" xml:space="preserve">
+    <value>Notificaciones marcadas como leÃ­das</value>
+  </data>
 </root>

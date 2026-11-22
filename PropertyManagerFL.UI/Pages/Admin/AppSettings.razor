@@ -24,10 +24,10 @@ else
     </SfBreadcrumb>
     <hr />
 
-    <div class="container settings-shell">
+    <div class="container-fluid settings-shell px-0">
         <EditForm Model="@settings">
-            <div class="row">
-                <div class="col-md-3 col-sm-12">
+            <div class="row g-0">
+                <div class="col-lg-2 col-md-3 col-sm-12 pe-md-3">
                     <aside class="settings-sidebar" aria-label="@L["TituloDefinicoes"]">
                         @foreach (var group in SettingsGroups)
                         {
@@ -61,7 +61,7 @@ else
                     </aside>
                 </div>
 
-                <div class="col-md-9 col-sm-12">
+                <div class="col-lg-10 col-md-9 col-sm-12 ps-md-3">
                     <div class="settings-content">
                         <div class="card-box settings-card">
                             <h6 class="settings-card-title">@L[SelectedLeafTitle]</h6>

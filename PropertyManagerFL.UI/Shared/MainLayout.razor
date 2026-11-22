@@ -1,5 +1,5 @@
-@using PropertyManagerFL.UI.Pages.Notifications
 @inherits LayoutComponentBase
+@using PropertyManagerFL.UI.Pages.Notifications
 @inject IStringLocalizer<App> L
 
 <PageTitle>PropertyManagerFL.UI</PageTitle>
@@ -31,26 +31,11 @@
             </div>
 
             <div class="top-navbar-end">
-                <div class="notification-wrapper">
-                    <button class="nav-link btn btn-link text-white position-relative"
-                            @onclick="ToggleNotificationPopup"
-                            id="notificationButton"
-                            title="@L["TituloNotificacoes"]" aria-label="@L["TituloNotificacoes"]">
-                        <i class="oi oi-bell" style="color: var(--app-danger-text); block-size:stretch"></i>
-                        <span class="notification-badge position-absolute top-100 start-100 translate-middle badge rounded-pill bg-warning">
-                            @if (!ShowNotificationPopup)
-                            {
-                                @NotificationCount
-                            }
-                        </span>
-                    </button>
-                    @if (ShowNotificationPopup)
-                    {
-                        <div class="centered-div">
-                            <NotificationPopup showPopup="@ShowNotificationPopup" Alerts="CheckForAlerts" />
-                        </div>
-                    }
-                </div>
+                <AuthorizeView>
+                    <Authorized>
+                        <NotificationBell />
+                    </Authorized>
+                </AuthorizeView>
 
                 <div class="culture-switcher">
                     <CultureSwitcher />
@@ -71,10 +56,6 @@
 @code {
     private SidebarComponent? sideBarComponent;
 
-    private int NotificationCount;
-
-    private bool ShowNotificationPopup { get; set; } = true;
-
     private void ToggleSidebar() => sideBarComponent?.BtnToggleClicked();
 
     private void CloseSidebar() => sideBarComponent?.MouseClickedInOverlay();
@@ -87,16 +68,5 @@
         {
             CloseSidebar();
         }
-    }
-
-    private void ToggleNotificationPopup()
-    {
-        ShowNotificationPopup = !ShowNotificationPopup;
-    }
-
-    private void CheckForAlerts(int numberAlerts)
-    {
-        NotificationCount = numberAlerts;
-        StateHasChanged();
     }
 }
