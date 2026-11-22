@@ -1,4 +1,4 @@
-﻿@page "/Inquilinos/Detalhe"
+@page "/Inquilinos/Detalhe"
 
 @implements IDisposable
 
@@ -42,14 +42,14 @@
                         </HeaderTemplate>
                         <ContentTemplate>
                             <div class="w-75">
-                                <SfMessage>Conta-corrente (10 ultºs movimentos)</SfMessage>
+                                <SfMessage>@L["Conta-corrente (10 ultºs movimentos)"]</SfMessage>
                                 <table class="table table-success table-responsive-md" border="1">
                                     <thead>
                                         <tr>
-                                            <th width="10%">Data</th>
-                                            <th width="15%" align="right">Valor Pago</th>
-                                            <th width="15%" align="right">Em dívida</th>
-                                            <th width="35%" align="center">Notas</th>
+                                            <th width="10%">@L["Data"]</th>
+                                            <th width="15%" align="right">@L["Valor Pago"]</th>
+                                            <th width="15%" align="right">@L["Em dívida"]</th>
+                                            <th width="35%" align="center">@L["Notas"]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -68,13 +68,13 @@
                                 </table>
                             </div>
                             <div class="w-75">
-                                <SfMessage>Documentos</SfMessage>
+                                <SfMessage>@L["Documentos"]</SfMessage>
                                 <table class="table table-success table-responsive-md" border="1">
                                     <thead>
                                         <tr>
-                                            <th width="30%" align="center">Nome</th>
-                                            <th width="30%" align="center">Descrição</th>
-                                            <th width="15%" align="center">Data</th>
+                                            <th width="30%" align="center">@L["Nome"]</th>
+                                            <th width="30%" align="center">@L["Descrição"]</th>
+                                            <th width="15%" align="center">@L["Data"]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -97,7 +97,7 @@
                                                         <SfMessage Variant="MessageVariant.Outlined"
                                                                    Severity="MessageSeverity.Info"
                                                                    ShowCloseIcon=false
-                                                                   ShowIcon=false>Sem documentos para mostrar</SfMessage>
+                                                                   ShowIcon=false>@L["Sem documentos para mostrar"]</SfMessage>
                                                     </td>
                                                 </tr>
                                             }
@@ -106,14 +106,14 @@
                                 </table>
                             </div>
                             <div class="w-75">
-                                <SfMessage>Aumentos de renda</SfMessage>
+                                <SfMessage>@L["Aumentos de renda"]</SfMessage>
                                 <table class="table table-success table-responsive-md" border="1">
                                     <thead>
                                         <tr>
-                                            <th width="10%">Data</th>
-                                            <th width="45%">Fração</th>
-                                            <th width="10%" align="right">Antes</th>
-                                            <th width="10%" align="center">Depois</th>
+                                            <th width="10%">@L["Data"]</th>
+                                            <th width="45%">@L["Fração"]</th>
+                                            <th width="10%" align="right">@L["Antes"]</th>
+                                            <th width="10%" align="center">@L["Depois"]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -137,7 +137,7 @@
                                                         <SfMessage Variant="MessageVariant.Outlined"
                                                                    Severity="MessageSeverity.Info"
                                                                    ShowCloseIcon=false
-                                                                   ShowIcon=false>Sem dados para mostrar</SfMessage>
+                                                                   ShowIcon=false>@L["Sem dados para mostrar"]</SfMessage>
                                                     </td>
                                                 </tr>
                                             }
@@ -237,7 +237,7 @@
 
 @* <style>
     .e-accordion#Acrdn .e-acrdn-item.Item1 .e-acrdn-header:hover {
-        background-color: #97DAF8 !important; /*To Apply the backgroud color while hovering accordion item based on CssClass*/
+        background-color: var(--app-info-bg) !important; /*To Apply the backgroud color while hovering accordion item based on CssClass*/
     }
 
     .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header {
@@ -249,7 +249,7 @@
     }
 
         .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header .e-acrdn-header-content, .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header .e-acrdn-header-content {
-            color: blue !important; /* To Apply the font color to selected accordion header*/
+            color: var(--app-primary) !important; /* To Apply the font color to selected accordion header*/
         }
 
         .e-accordion .e-acrdn-item.e-select.e-selected.e-expand-state > .e-acrdn-header > .e-toggle-icon, .e-accordion .e-acrdn-item.e-select.e-expand-state > .e-acrdn-header > .e-toggle-icon {

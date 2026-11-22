@@ -1,4 +1,4 @@
-﻿@typeparam TItem
+@typeparam TItem
 
 @using PropertyManagerFL.Application.Shared.Enums
 @using Syncfusion.Blazor.Inputs
@@ -23,7 +23,7 @@
     "Search",
     "PdfExport",
         new ItemModel()
-            { PrefixIcon = "fas fa-times", TooltipText = "Clear", Align = ItemAlign.Right, Id = "ClearSearch" },
+            { PrefixIcon = "fas fa-times", TooltipText = L["Limpar"], Align = ItemAlign.Right, Id = "ClearSearch" },
             });
 }
 <div id="TabAux" class="col-lg-12 control-section">
@@ -76,7 +76,7 @@
                     <GridFilterSettings></GridFilterSettings>
                     <GridEvents CommandClicked="OnCommandClicked" OnToolbarClick="OnToolbarClick" TValue="TItem"></GridEvents>
                     <GridColumns>
-                        <GridColumn HeaderText="Opções" Width="120" AllowFiltering="false" AllowSorting="false" TextAlign="TextAlign.Center">
+                        <GridColumn HeaderText="@L["Opções"]" Width="120" AllowFiltering="false" AllowSorting="false" TextAlign="TextAlign.Center">
                             <GridCommandColumns>
                                 @if (AllowManagement)
                                 {
@@ -186,7 +186,7 @@
         <DialogTemplates>
             <Header>
                 <div class="alert-warning">
-                    Exceção encontrada.
+                    @L["Exceção encontrada."]
                 </div>
             </Header>
             <Content>
@@ -747,7 +747,7 @@
 <style>
 
     /*.e-grid .e-altrow {
-                    background-color: #fafafa;
+                    background-color: var(--app-surface-alt);
                 }
 
                 @@media (min-width: 320px) and (max-width:480px) {
@@ -783,7 +783,7 @@
                     .btn {
                         background-color: DodgerBlue;
                         border: none;
-                        color: white;
+                        color: var(--app-on-primary);
                         padding: 12px 16px;
                         font-size: 16px;
                         cursor: pointer;
@@ -848,15 +848,15 @@
                     }
 
                     .e-dialog .e-footer-content {
-                        background-color: #f8f8f8;
+                        background-color: var(--app-dialog-footer-bg);
                     }
 
                     .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content .e-dlg-header {
-                        color: white;
+                        color: var(--app-on-primary);
                     }
 
                         .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content {
-                            background-color: #d9edf7;
+                            background-color: var(--app-dialog-header-bg);
                         }
                 }
 
@@ -864,11 +864,11 @@
                     display: block;
                     width: 115px;
                     height: 25px;
-                    background: #4E9CAF;
+                    background: var(--app-topbar-action-bg);
                     padding: 10px;
                     text-align: center;
                     border-radius: 5px;
-                    color: white;
+                    color: var(--app-on-primary);
                     font-weight: bold;
                     line-height: 25px;
                 }*/
@@ -890,7 +890,7 @@
     }
 
     .dialog-background-color {
-        background-color: #f5f2f2;
+        background-color: var(--app-surface-alt);
     }
 
     .e-Pdf-icon:before {
@@ -902,7 +902,7 @@
         border-radius: 25px;
         -moz-border-radius: 25px;
         margin-bottom: 5px;
-        background-color: #F3F9FC;
+        background-color: var(--app-info-bg);
         box-shadow: 0 0px 24px 0 rgba(0, 0, 0, 0.4), 0 1px 0px 0 rgba(0, 0, 0, 0.4);
     }
 

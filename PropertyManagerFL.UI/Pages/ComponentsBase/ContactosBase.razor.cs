@@ -119,7 +119,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         ID_TipoContacto = 17,
                         Nome = tenant.Nome,
                         Morada = tenant.Morada,
-                        TipoContacto = "Inquilino",
+                        TipoContacto = L["Inquilino"],
                         Notas = tenant.Notas,
                     });
             }
@@ -272,7 +272,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 else // !editMode (Insert)
                 {
-                    ToastTitle = "Criação de Contacto";
+                    ToastTitle = L["Criação de Contacto"];
 
                     var insertOk = await contactsService!.InsereContacto(SelectedContact!);
                     if (insertOk)
@@ -418,7 +418,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             catch (Exception exc)
             {
 
-                ToastTitle = "Error";
+                ToastTitle = L["Error"];
                 ToastCss = "e-toast-danger";
                 ToastMessage = L["FalhaAnulacaoRegisto"];
                 ToastIcon = "fas fa-exclamation";

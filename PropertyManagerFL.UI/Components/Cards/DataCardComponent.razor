@@ -1,4 +1,4 @@
-﻿@page "/components/datacard"
+@page "/components/datacard"
 
 <section class="page-contain">
     <a href="#" class="data-card">
@@ -8,7 +8,7 @@
         <span class="link-text">
             View All Providers
             <svg width="25" height="16" viewBox="0 0 25 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8631 0.929124L24.2271 7.29308C24.6176 7.68361 24.6176 8.31677 24.2271 8.7073L17.8631 15.0713C17.4726 15.4618 16.8394 15.4618 16.4489 15.0713C16.0584 14.6807 16.0584 14.0476 16.4489 13.657L21.1058 9.00019H0.47998V7.00019H21.1058L16.4489 2.34334C16.0584 1.95281 16.0584 1.31965 16.4489 0.929124C16.8394 0.538599 17.4726 0.538599 17.8631 0.929124Z" fill="#753BBD" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8631 0.929124L24.2271 7.29308C24.6176 7.68361 24.6176 8.31677 24.2271 8.7073L17.8631 15.0713C17.4726 15.4618 16.8394 15.4618 16.4489 15.0713C16.0584 14.6807 16.0584 14.0476 16.4489 13.657L21.1058 9.00019H0.47998V7.00019H21.1058L16.4489 2.34334C16.0584 1.95281 16.0584 1.31965 16.4489 0.929124C16.8394 0.538599 17.4726 0.538599 17.8631 0.929124Z" style="fill: var(--app-primary)" />
             </svg>
         </span>
     </a>
@@ -19,7 +19,7 @@
         <span class="link-text">
             View Information
             <svg width="25" height="16" viewBox="0 0 25 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8631 0.929124L24.2271 7.29308C24.6176 7.68361 24.6176 8.31677 24.2271 8.7073L17.8631 15.0713C17.4726 15.4618 16.8394 15.4618 16.4489 15.0713C16.0584 14.6807 16.0584 14.0476 16.4489 13.657L21.1058 9.00019H0.47998V7.00019H21.1058L16.4489 2.34334C16.0584 1.95281 16.0584 1.31965 16.4489 0.929124C16.8394 0.538599 17.4726 0.538599 17.8631 0.929124Z" fill="#753BBD" />
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M17.8631 0.929124L24.2271 7.29308C24.6176 7.68361 24.6176 8.31677 24.2271 8.7073L17.8631 15.0713C17.4726 15.4618 16.8394 15.4618 16.4489 15.0713C16.0584 14.6807 16.0584 14.0476 16.4489 13.657L21.1058 9.00019H0.47998V7.00019H21.1058L16.4489 2.34334C16.0584 1.95281 16.0584 1.31965 16.4489 0.929124C16.8394 0.538599 17.4726 0.538599 17.8631 0.929124Z" style="fill: var(--app-primary)" />
             </svg>
         </span>
     </a>
@@ -41,7 +41,7 @@
         min-height: 100vh;
         align-items: center;
         justify-content: center;
-        background: #E7F3F1;
+        background: var(--app-bg);
         border: .75em solid white;
         padding: 2em;
         font-family: 'Open Sans', sans-serif;
@@ -55,26 +55,26 @@
         overflow: hidden;
         border-radius: .5em;
         text-decoration: none;
-        background: white;
+        background: var(--app-surface);
         margin: 1em;
         padding: 2.75em 2.5em;
-        box-shadow: 0 1.5em 2.5em -.5em rgba(#000000, .1);
+        box-shadow: 0 1.5em 2.5em -.5em var(--app-shadow);
         transition: transform .45s ease, background .45s ease;
     }
 
     h3 {
-        color: #2E3C40;
+        color: var(--app-text-primary);
         font-size: 3.5em;
         font-weight: 600;
         line-height: 1;
         padding-bottom: .5em;
         margin: 0 0 0.142857143em;
-        border-bottom: 2px solid #753BBD;
+        border-bottom: 2px solid var(--app-primary);
         transition: color .45s ease, border .45s ease;
     }
 
     h4 {
-        color: #627084;
+        color: var(--app-text-secondary);
         text-transform: uppercase;
         font-size: 1.125em;
         font-weight: 700;
@@ -86,7 +86,7 @@
 
     p {
         opacity: 0;
-        color: #FFFFFF;
+        color: var(--app-on-primary)FFF;
         font-weight: 600;
         line-height: 1.8;
         margin: 0 0 1.25em;
@@ -96,7 +96,7 @@
 
     .link-text {
         display: block;
-        color: #753BBD;
+        color: var(--app-primary);
         font-size: 1.125em;
         font-weight: 600;
         line-height: 1.2;
@@ -115,7 +115,7 @@
 
 
     &:hover {
-        background: #753BBD;
+        background: var(--app-primary);
         transform: scale(1.02);
 
         @@keyframes point {

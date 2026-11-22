@@ -1,25 +1,28 @@
 @inject IJSRuntime JS
 @inject IStringLocalizer<App> Loc
+@inject PropertyManagerFL.UI.Services.ThemeStateService ThemeState
+@implements IDisposable
 
 @{
     var actionLabel = _isDark ? Loc["LblThemeLight"] : Loc["LblThemeDark"];
+    // Um único nó de texto estável: o Blazor atualiza o valor sem adicionar/remover elementos.
+    // ☀ (modo escuro) / ☾ (modo claro) — apenas o ícone é visível, sem texto.
+    var icon = _isDark ? "\u2600" : "\u263D";
 }
 
 <button type="button" class="theme-toggle-btn" @onclick="ToggleTheme"
         title="@actionLabel" aria-label="@actionLabel">
-    @if (_isDark)
-    {
-        <i class="fas fa-sun" aria-hidden="true"></i>
-    }
-    else
-    {
-        <i class="fas fa-moon" aria-hidden="true"></i>
-    }
+    <span class="theme-toggle-icon" aria-hidden="true">@icon</span>
 </button>
 
 @code {
     // O tema padrão é Dark; o script inline em _Layout.cshtml já o aplicou no cliente.
     private bool _isDark = true;
+
+    protected override void OnInitialized()
+    {
+        ThemeState.Changed += OnThemeChanged;
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -31,12 +34,8 @@
         try
         {
             var theme = await JS.InvokeAsync<string>("getCurrentTheme");
-            var isDark = theme != "light";
-            if (isDark != _isDark)
-            {
-                _isDark = isDark;
-                StateHasChanged();
-            }
+            ThemeState.Set(theme != "light");
+            _isDark = ThemeState.IsDark;
         }
         catch (JSException)
         {
@@ -49,34 +48,23 @@
         try
         {
             var theme = await JS.InvokeAsync<string>("toggleTheme");
-            _isDark = theme != "light";
+            ThemeState.Set(theme != "light");
+            _isDark = ThemeState.IsDark;
         }
         catch (JSException)
         {
             // Não altera o estado local se o tema não pôde ser alternado.
         }
     }
-}
 
-<style>
-    .theme-toggle-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 36px;
-        height: 32px;
-        border: 1px solid var(--app-border);
-        border-radius: 6px;
-        background: transparent;
-        color: var(--app-text-primary);
-        font-size: 1.1rem;
-        cursor: pointer;
-        transition: background 0.2s, color 0.2s, border-color 0.2s;
+    private void OnThemeChanged()
+    {
+        _isDark = ThemeState.IsDark;
+        StateHasChanged();
     }
 
-        .theme-toggle-btn:hover {
-            background-color: var(--app-surface-hover);
-            color: var(--app-accent-yellow);
-            border-color: var(--app-accent-yellow);
-        }
-</style>
+    public void Dispose()
+    {
+        ThemeState.Changed -= OnThemeChanged;
+    }
+}

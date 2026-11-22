@@ -4,12 +4,14 @@
 
 @inject IStringLocalizer<App> localizerApp
 @inject IStatsService statsService
+@inject PropertyManagerFL.UI.Services.ThemeStateService ThemeState
+@implements IDisposable
 
-<SfAccumulationChart Title="@Title" EnableAnimation="true">
+<SfAccumulationChart Title="@Title" EnableAnimation="true" Theme="@ChartTheme" Background="transparent">
     <AccumulationChartTooltipSettings Enable="true" />
     <AccumulationChartLegendSettings Position="Syncfusion.Blazor.Charts.LegendPosition.Bottom" Visible="true" />
-    <AccumulationChartTitleStyle FontFamily="Arial" FontStyle="Normal" FontWeight="bold" Color="#99ccff" Size="20px" />
-    <AccumulationChartSubTitleStyle FontFamily="Arial" FontWeight="regular" Color="#E27F2D" Size="16px" />
+    <AccumulationChartTitleStyle FontFamily="Arial" FontStyle="Normal" FontWeight="bold" Size="20px" />
+    <AccumulationChartSubTitleStyle FontFamily="Arial" FontWeight="regular" Size="16px" />
     <AccumulationChartSeriesCollection>
         <AccumulationChartSeries DataSource="@PieData" XName="Descricao" YName="TotalDespesas" Name="Descricao"
                                  Radius="@OuterRadius" StartAngle="@StartAngle" EndAngle="@EndAngle" 
@@ -27,6 +29,25 @@
     [Parameter] public int Year { get; set; }
     [Parameter] public string? FilterType { get; set; } = "C";  // 'default 'Category'
     [Parameter] public string? Title { get; set; }
+
+    private Syncfusion.Blazor.Theme ChartTheme => ThemeState.IsDark
+        ? Syncfusion.Blazor.Theme.Bootstrap5Dark
+        : Syncfusion.Blazor.Theme.Bootstrap5;
+
+    protected override void OnInitialized()
+    {
+        ThemeState.Changed += OnThemeChanged;
+    }
+
+    private void OnThemeChanged()
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        ThemeState.Changed -= OnThemeChanged;
+    }
 
     protected double ExplodeIndex { get; set; } = 0;
     protected string OuterRadius = "70%", ExplodeRadius = "10%";

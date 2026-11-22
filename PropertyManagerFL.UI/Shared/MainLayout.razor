@@ -1,58 +1,96 @@
-﻿@using PropertyManagerFL.UI.Pages.Notifications
+@using PropertyManagerFL.UI.Pages.Notifications
 @inherits LayoutComponentBase
-@inject NavigationManager navigationManager
 @inject IStringLocalizer<App> L
 
 <PageTitle>PropertyManagerFL.UI</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenuBlazored />
-    </div>
+<div class="layout has-sidebar fixed-sidebar fixed-header" @onkeydown="HandleKeyDown">
+    <AuthorizeView>
+        <Authorized>
+            <SidebarComponent @ref="sideBarComponent" />
+        </Authorized>
+    </AuthorizeView>
 
-    <main>
-        <div class="d-flex gap-3 top-row px-4 auth">
-            <div class="mt-2 d-lg-block">
-                <button class="nav-link btn btn-link text-dark position-relative" @onclick="ToggleNotificationPopup" id="notificationButton">
-                    <i class="oi oi-bell" style="color: red; block-size:stretch"></i> <!-- Icône de notification -->
-                    <span class="notification-badge position-absolute top-100 start-100 translate-middle badge rounded-pill bg-warning">
-                        @if (!ShowNotificationPopup)
-                        {
-                            @NotificationCount <!-- Nombre de notifications -->
-                        }
-                    </span>
+    @* Irmão do <aside>: o selector ".sidebar.toggled ~ .overlay" funciona sem hack. *@
+    <div class="overlay" @onclick="CloseSidebar" aria-hidden="true"></div>
+
+    <div class="main">
+        @* "auth" é necessário: site.css esconde .top-row:not(.auth) em ecrãs pequenos. *@
+        <div class="top-navbar top-row auth">
+            <div class="top-navbar-start">
+                <AuthorizeView>
+                    <Authorized>
+                        <button type="button" class="sidebar-toggler break-point-md"
+                                @onclick="ToggleSidebar"
+                                aria-label="@L["SidebarOpen"]" title="@L["SidebarNavLabel"]">
+                            <i class="fa fa-bars" aria-hidden="true"></i>
+                        </button>
+                    </Authorized>
+                </AuthorizeView>
+                <a class="navbar-brand" href="">Property Manager</a>
+            </div>
+
+            <div class="top-navbar-end">
+                <div class="notification-wrapper">
+                    <button class="nav-link btn btn-link text-white position-relative"
+                            @onclick="ToggleNotificationPopup"
+                            id="notificationButton"
+                            title="@L["TituloNotificacoes"]" aria-label="@L["TituloNotificacoes"]">
+                        <i class="oi oi-bell" style="color: var(--app-danger-text); block-size:stretch"></i>
+                        <span class="notification-badge position-absolute top-100 start-100 translate-middle badge rounded-pill bg-warning">
+                            @if (!ShowNotificationPopup)
+                            {
+                                @NotificationCount
+                            }
+                        </span>
+                    </button>
                     @if (ShowNotificationPopup)
                     {
                         <div class="centered-div">
                             <NotificationPopup showPopup="@ShowNotificationPopup" Alerts="CheckForAlerts" />
                         </div>
                     }
-                </button>
+                </div>
 
+                <div class="culture-switcher">
+                    <CultureSwitcher />
+                </div>
+
+                <LoginDisplay />
             </div>
-            <div class="mt-2 ml-2 d-md-block">
-                <CultureSwitcher />
-            </div>
-            <div class="mt-2 ml-2 d-md-block">
-                <ThemeToggle />
-            </div>
-            <LoginDisplay />
         </div>
 
-        <article class="content px-4 mb-4">
-            @Body
-        </article>
-    </main>
+        <main class="content" @onclick="CloseSubmenus">
+            <article class="page-content px-4 mb-4">
+                @Body
+            </article>
+        </main>
+    </div>
 </div>
 
 @code {
-    private int NotificationCount = 0; // number of notifications
+    private SidebarComponent? sideBarComponent;
+
+    private int NotificationCount;
 
     private bool ShowNotificationPopup { get; set; } = true;
 
+    private void ToggleSidebar() => sideBarComponent?.BtnToggleClicked();
+
+    private void CloseSidebar() => sideBarComponent?.MouseClickedInOverlay();
+
+    private void CloseSubmenus() => sideBarComponent?.MouseClickedInContent();
+
+    private void HandleKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Escape")
+        {
+            CloseSidebar();
+        }
+    }
+
     private void ToggleNotificationPopup()
     {
-        // Toggle the visibility of the notification popup
         ShowNotificationPopup = !ShowNotificationPopup;
     }
 
@@ -62,22 +100,3 @@
         StateHasChanged();
     }
 }
-
-<style>
-    .navlink-button {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        background-color: #f2f2f2; /* Light gray */
-        color: #333; /* Dark text color for better contrast */
-        text-decoration: none; /* Remove underline */
-        border: none;
-        border-radius: 0.25rem;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-        /* Hover effect */
-        .navlink-button:hover {
-            background-color: #e5e5e5; /* Slightly darker gray on hover */
-        }
-</style>

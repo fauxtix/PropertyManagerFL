@@ -1,7 +1,8 @@
-﻿@page "/fracoes/imagesmanager"
+@page "/fracoes/imagesmanager"
 
 @using PropertyManagerFL.Core.Entities
 @using Syncfusion.Blazor.Navigations
+@inject IStringLocalizer<App> L
 
 <div class="control-container">
     <SfCarousel AnimationEffect="CarouselAnimationEffect.Fade">
@@ -32,30 +33,30 @@
         public string? Text { get; set; }
         public string? ImageName { get; set; }
     }
-    List<CarouselData> CarouselDatas = new List<CarouselData>
+    List<CarouselData> CarouselDatas => new List<CarouselData>
     {
        new CarouselData
        { Items = new List<CarouselItemModel>
           {
-             new CarouselItemModel(){Text = "Image 1" , ImageName="bee-eater.png" },
-             new CarouselItemModel(){Text = "Image 2" , ImageName="cardinal.png" },
-             new CarouselItemModel(){Text = "Image 3" , ImageName="costa-rica.png" }
+             new CarouselItemModel(){Text = L["Image 1"], ImageName="bee-eater.png" },
+             new CarouselItemModel(){Text = L["Image 2"], ImageName="cardinal.png" },
+             new CarouselItemModel(){Text = L["Image 3"], ImageName="costa-rica.png" }
            }
     },
     new CarouselData
        { Items = new List<CarouselItemModel>
           {
-             new CarouselItemModel(){Text = "Image 4" , ImageName="hunei.png" },
-             new CarouselItemModel(){Text = "Image 5" , ImageName="kaohsiung.png" },
-             new CarouselItemModel(){Text = "Image 6" , ImageName="bee-eater.png" }
+             new CarouselItemModel(){Text = L["Image 4"], ImageName="hunei.png" },
+             new CarouselItemModel(){Text = L["Image 5"], ImageName="kaohsiung.png" },
+             new CarouselItemModel(){Text = L["Image 6"], ImageName="bee-eater.png" }
            }
     },
     new CarouselData
        { Items = new List<CarouselItemModel>
           {
-             new CarouselItemModel(){Text = "Image 7" , ImageName="cardinal.png" },
-             new CarouselItemModel(){Text = "Image 8" , ImageName="costa-rica.png" },
-             new CarouselItemModel(){Text = "Image 9" , ImageName="hunei.png" }
+             new CarouselItemModel(){Text = L["Image 7"], ImageName="cardinal.png" },
+             new CarouselItemModel(){Text = L["Image 8"], ImageName="costa-rica.png" },
+             new CarouselItemModel(){Text = L["Image 9"], ImageName="hunei.png" }
            }
         }
     };
@@ -68,7 +69,7 @@
 }
 <style>
     .control-container {
-        background-color: #e5e5e5;
+        background-color: var(--app-surface-hover);
         height: 200px;
         margin: 0 auto;
         width: 500px;

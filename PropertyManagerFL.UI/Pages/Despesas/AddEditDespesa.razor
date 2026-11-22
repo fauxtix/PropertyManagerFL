@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Core.Entities;
 @using PropertyManagerFL.Application.ViewModels.Despesas;
@@ -10,7 +10,7 @@
 <div class="container">
     <div>
         <HeaderDialogComponent HeaderCaption="@HeaderCaption" ImageName="payment" />
-        <hr style="color:black" />
+        <hr style="color:var(--app-text-primary)" />
     </div>
     <EditForm Model="SelectedExpense">
         <div class="group-box justify-content-around p-3">

@@ -134,8 +134,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (canContinue == false)
             {
                 AlertVisibility = true;
-                alertTitle = "Criar registo de pagamento";
-                WarningMessage = "Não há registo de Arrendamentos! Verifique, p.f.";
+                alertTitle = L["Criar registo de pagamento"];
+                WarningMessage = L["Não há registo de Arrendamentos! Verifique, p.f."];
                 return;
             }
 
@@ -143,12 +143,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (canContinue == false)
             {
                 AlertVisibility = true;
-                alertTitle = "Novo pagamento";
-                WarningMessage = "Não é possivel continuar. Não há registo de frações!";
+                alertTitle = L["Novo pagamento"];
+                WarningMessage = L["Não é possivel continuar. Não há registo de frações!"];
                 return;
             }
 
-            NewCaption = "Novo pagamento";
+            NewCaption = L["Novo pagamento"];
             editRecord = false;
             SelectedTransation = new()
             {
@@ -187,13 +187,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 else
                 {
                     ToastCss = "e-toast-danger";
-                    ToastMessage = "Error while processings monthly rents! Check log, please.";
+                    ToastMessage = L["Error while processings monthly rents! Check log, please."];
                     ToastIcon = "fas fa-exclamation";
                 }
             }
             catch (Exception ex)
             {
-                var _errorMessage = $"Error while processings monthly rents! ({ex.Message}). Please check log.";
+                var _errorMessage = L["Error while processings monthly rents! ({0}). Please check log.", ex.Message];
                 _logger?.LogError(_errorMessage);
                 ToastCss = "e-toast-danger";
                 ToastMessage = _errorMessage;
@@ -215,7 +215,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task HandleCancelBatchTransaction()
         {
-            ToastTitle = "Cancelamento de Processamento de rendas";
+            ToastTitle = L["Cancelamento de Processamento de rendas"];
             try
             {
                 // Lê pagamentos (temp) criados
@@ -233,7 +233,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 _logger?.LogError(ex, "Operation failed");
 
                 ToastCss = "e-toast-danger";
-                ToastMessage = "Erro ao cancelar! Verifique log, p.f.";
+                ToastMessage = L["Erro ao cancelar! Verifique log, p.f."];
                 ToastIcon = "fas fa-exclamation";
             }
             finally
@@ -274,7 +274,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                             {
                                 ValidationsMessages = new List<string>
                             {
-                                $"Data de pagamento ({SelectedTransation.DataMovimento.ToShortDateString()}) inválida. Já existe movimento com data posterior! ({lastPayment.ToShortDateString()})" };
+                                L["Data de pagamento ({0}) inválida. Já existe movimento com data posterior! ({1})", SelectedTransation.DataMovimento.ToShortDateString(), lastPayment.ToShortDateString()] };
                                 ErrorVisibility = true;
                                 return;
                             }
@@ -302,7 +302,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                             _logger?.LogError("Erro ao atualizar dados da transação (Recebimentos");
 
                             ToastCss = "e-toast-danger";
-                            ToastMessage = "Erro ao atualizar dados";
+                            ToastMessage = L["Erro ao atualizar dados"];
                             ToastIcon = "fas fa-exclamation";
                         }
 
@@ -322,7 +322,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                         {
                             _logger?.LogError("Erro ao inserir pagamento na base de dados");
                             ToastCss = "e-toast-danger";
-                            ToastMessage = "Erro ao inserir pagamento na base de dados";
+                            ToastMessage = L["Erro ao inserir pagamento na base de dados"];
                             ToastIcon = "fas fa-exclamation";
                         }
                     }
@@ -453,24 +453,24 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 if (canContinue == false)
                 {
                     AlertVisibility = true;
-                    alertTitle = "Exportar pagamentos para Excel";
-                    WarningMessage = "Não há pagamentos para listar. Verifique, p.f.";
+                    alertTitle = L["Exportar pagamentos para Excel"];
+                    WarningMessage = L["Não há pagamentos para listar. Verifique, p.f."];
                     return;
                 }
 
                 ExcelExportProperties excelExportProperties = new ExcelExportProperties();
                 List<GridColumn> ExportColumns = new List<GridColumn>();
 #pragma warning disable BL0005
-                ExportColumns.Add(new GridColumn() { Field = "Imovel", HeaderText = "Imóvel", Width = "200" });
-                ExportColumns.Add(new GridColumn() { Field = "DataMovimento", HeaderText = "Data", Width = "120", Format = "d" });
-                ExportColumns.Add(new GridColumn() { Field = "ValorPrevisto", HeaderText = "Previsto", Width = "120", Format = "C2", TextAlign = TextAlign.Right });
-                ExportColumns.Add(new GridColumn() { Field = "ValorRecebido", HeaderText = "Recebido", Width = "120", Format = "C2", TextAlign = TextAlign.Right });
-                ExportColumns.Add(new GridColumn() { Field = "ValorEmFalta", HeaderText = "Em falta", Width = "120", Format = "C2", TextAlign = TextAlign.Right });
+                ExportColumns.Add(new GridColumn() { Field = "Imovel", HeaderText = L["Imóvel"], Width = "200" });
+                ExportColumns.Add(new GridColumn() { Field = "DataMovimento", HeaderText = L["Data"], Width = "120", Format = "d" });
+                ExportColumns.Add(new GridColumn() { Field = "ValorPrevisto", HeaderText = L["Previsto"], Width = "120", Format = "C2", TextAlign = TextAlign.Right });
+                ExportColumns.Add(new GridColumn() { Field = "ValorRecebido", HeaderText = L["Recebido"], Width = "120", Format = "C2", TextAlign = TextAlign.Right });
+                ExportColumns.Add(new GridColumn() { Field = "ValorEmFalta", HeaderText = L["Em falta"], Width = "120", Format = "C2", TextAlign = TextAlign.Right });
                 ExportColumns.Add(
                     new GridColumn()
                     {
                         Field = "Estado",
-                        HeaderText = "Estado",
+                        HeaderText = L["Estado"],
                         Width = "150"
                     });
 #pragma warning restore BL0005
@@ -490,7 +490,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             SelectedTransation = await transactionsService.GetRecebimento_ById(transactionId);
             OriginalSelectedTransaction = await transactionsService.GetRecebimento_ById(transactionId);
             EditTransationDialogVisibility = true;
-            EditCaption = $"Editar dados de pagamento";
+            EditCaption = L["Editar dados de pagamento"];
             RecordMode = OpcoesRegisto.Gravar;
         }
 
@@ -508,7 +508,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 EditTransationDialogVisibility = true;
-                EditCaption = $"Editar dados de pagamento";
+                EditCaption = L["Editar dados de pagamento"];
                 RecordMode = OpcoesRegisto.Gravar;
                 StateHasChanged();
             }
@@ -517,8 +517,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (SelectedTransation.ID_TipoRecebimento == 13) // Caução
                 {
-                    alertTitle = "Valores das cauções não podem ser removidos";
-                    WarningMessage = "Esclareça com Administrador da aplicação, p.f.";
+                    alertTitle = L["Valores das cauções não podem ser removidos"];
+                    WarningMessage = L["Esclareça com Administrador da aplicação, p.f."];
                     AlertVisibility = true;
                     return;
                 }
@@ -531,7 +531,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             // TODO - ao regularizar, texto da 'Nota' deveria passar a 'regularizado'
             if (args.CommandColumn.Type == CommandButtonType.None) // Acertar pagamento
             {
-                WarningMessage = $"Transação: {SelectedTransation.DataMovimento.ToShortDateString()} / {SelectedTransation.ValorEmFalta} ";
+                WarningMessage = L["Transação: {0} / {1} ", SelectedTransation.DataMovimento.ToShortDateString(), SelectedTransation.ValorEmFalta];
                 StateHasChanged();
                 SettlePaymentConfirmVisibility = true;
             }
@@ -575,7 +575,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
                 expenseDeleted = false;
                 ToastCssClass = "e-toast-danger";
-                ToastContent = $"Transação não terminou com sucesso. Verifique (erro: {ex.Message})";
+                ToastContent = L["Transação não terminou com sucesso. Verifique (erro: {0})", ex.Message];
                 await Task.Delay(200);
                 await ToastObj!.ShowAsync();
             }
@@ -602,7 +602,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 {
                     _logger?.LogError("Erro ao acertar pagamento. Verifique log, p.f");
                     ToastCssClass = "e-toast-danger";
-                    ToastContent = $"Erro ao acertar pagamento. Verifique log, p.f.";
+                    ToastContent = L["Erro ao acertar pagamento. Verifique log, p.f."];
                 }
                 else
                 {

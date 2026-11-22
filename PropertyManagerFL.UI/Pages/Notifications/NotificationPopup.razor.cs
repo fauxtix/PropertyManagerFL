@@ -59,14 +59,14 @@ public partial class NotificationPopup
 
         if (AppSettings?.CartasAumentoAutomaticas == false)
         {
-            // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualizaÁ„o de renda' 
+            // envio de carta de aumento Manual ==> Tipo de documento = 16 => 'Carta de atualizaÔøΩÔøΩo de renda'
             var tenantDocuments = await TenantsService!.GetDocumentos();
             var updateLetterSentCurrentYear = tenantDocuments.Where(td => td.DocumentType == 16 && td.CreationDate.Year < DateTime.Now.Year);
             if (updateLetterSentCurrentYear.Any())
             {
                 foreach (var document in tenantDocuments)
                 {
-                    AppAlerts.Add($"Necess·rio envio de carta de atualizaÁ„o ao inquilino {document.NomeInquilino}");
+                    AppAlerts.Add(L["Necess√°rio envio de carta de atualiza√ß√£o ao inquilino {0}", document.NomeInquilino]);
                 }
             }
 
@@ -75,14 +75,14 @@ public partial class NotificationPopup
             {
                 foreach (var item in leasesWhoNeedToUpdateRent)
                 {
-                    var alertMsg = $"Necess·rio atualizar renda do inquilino {item.NomeInquilino} ({item.Fracao})";
+                    string alertMsg = L["Necess√°rio atualizar renda do inquilino {0} ({1})", item.NomeInquilino, item.Fracao];
                     if (item.EnvioCartaAtualizacaoRenda == false)
-                        alertMsg += " - n„o foi enviada carta de atualizaÁ„o!";
+                        alertMsg += L[" - n√£o foi enviada carta de atualiza√ß√£o!"];
 
                     AppAlerts.Add(alertMsg);
                 }
             }
-            else // Cartas de aumento de rendas autom·ticas
+            else // Cartas de aumento de rendas automÔøΩticas
             {
                 if (Leases?.Count() > 0)
                 {
@@ -92,7 +92,7 @@ public partial class NotificationPopup
                         var UpdateLetterSent = await LeasesService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
                         if (UpdateLetterSent == false)
                         {
-                            AppAlerts.Add("Cartas de atualizaÁ„o de rendas n„o foram emitidas para o ano corrente");
+                            AppAlerts.Add(L["Cartas de atualiza√ß√£o de rendas n√£o foram emitidas para o ano corrente"]);
                         }
                     }
                 }

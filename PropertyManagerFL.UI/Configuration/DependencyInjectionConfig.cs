@@ -13,6 +13,7 @@ using PropertyManagerFL.Infrastructure.Repositories;
 using PropertyManagerFL.Infrastructure.Services.CommonServices;
 using PropertyManagerFL.Infrastructure.Security;
 using PropertyManagerFL.UI.ApiWrappers;
+using PropertyManagerFL.UI.Services;
 using PropertyManagerFL.UI.Services.ClientApi;
 
 namespace PropertyManagerFL.UI;
@@ -72,6 +73,7 @@ public static class DependencyInjectionConfig
         services.AddScoped<IAppSettingsService, WrapperAppSettings>();
         services.AddScoped<IAppointmentsService, WrapperAppointments>();
         services.AddScoped<AppointmentAdaptor>();
+        services.AddScoped<ThemeStateService>();
 
     }
 }

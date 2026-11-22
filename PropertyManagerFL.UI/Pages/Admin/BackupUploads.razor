@@ -1,4 +1,4 @@
-﻿@page "/backupuploads/{BackupOption:int}"
+@page "/backupuploads/{BackupOption:int}"
 
 @using System.Diagnostics
 @using ICSharpCode.SharpZipLib.Zip
@@ -18,8 +18,8 @@
                        ImageName="zip-icon.png" />
 <hr />
 
-<ConfirmAppWarning AlertMessage="Confirma operação?"
-                   Message="Cria ficheiros Zip de documentos e imagens" 
+<ConfirmAppWarning AlertMessage="@localizerApp["Confirma operação?"]"
+                   Message="@localizerApp["Cria ficheiros Zip de documentos e imagens"]"
                    MessageSeverityType="MessageSeverity.Warning"
                    OnConfirmationYes="ConfirmBackupYes"
                    OnConfirmationNo="ConfirmBackupNo" 
@@ -354,7 +354,7 @@
     .progress-text-align {
         font-family: Roboto-Regular;
         font-size: 14px;
-        color: #3D3E3C;
+        color: var(--app-text-primary);
     }
 
     #reLoad {

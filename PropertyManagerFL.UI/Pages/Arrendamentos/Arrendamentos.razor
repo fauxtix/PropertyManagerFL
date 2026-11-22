@@ -229,7 +229,7 @@ else
                     @if (AppSettings?.CartasAumentoAutomaticas == false)
                     {
                         <GridColumn Field=@nameof(ArrendamentoVM.EnvioCartaAtualizacaoRenda) DisplayAsCheckBox=true
-                                    HeaderText="carta atualiz. enviada" Width="120" TextAlign="TextAlign.Center" />
+                                    HeaderText="@L["carta atualiz. enviada"]" Width="120" TextAlign="TextAlign.Center" />
                     }
 
                     <GridColumn HeaderText="@L["MSG_Opcoes"]" AllowFiltering="false" AllowSorting="false" Width="130">
@@ -329,7 +329,7 @@ else
                 <SfButton CssClass="e-outline e-round-corner"
                           IconCss="fas fa-times"
                           @onclick="(()=>ShowPdfVisibility = false)">
-                    Voltar
+                    @L["Voltar"]
                 </SfButton>
             </div>
         </FooterTemplate>

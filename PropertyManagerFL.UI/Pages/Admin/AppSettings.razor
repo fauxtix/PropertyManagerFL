@@ -1,4 +1,4 @@
-﻿@page "/admin/appsettings"
+@page "/admin/appsettings"
 @using PropertyManagerFL.Application.Interfaces.Services.Common
 @using PropertyManagerFL.Application.ViewModels.AppSettings
 @using PropertyManagerFL.Core.Entities
@@ -99,13 +99,13 @@ else
                                                 <DropDownListTemplates TItem="CountryModel">
                                                     <ItemTemplate Context="langCtx">
                                                         <div>
-                                                            <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="país" />
+                                                            <img class="empImage" src="/images/@((langCtx as CountryModel).Pic).png" alt="@L["país"]" />
                                                             <div class="ename">@L[((langCtx as CountryModel).Text!)] </div>
                                                         </div>
                                                     </ItemTemplate>
                                                     <ValueTemplate Context="ctx">
                                                         <div class="dropdown-width" style="width:100%;height:100%;">
-                                                            <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="país">
+                                                            <img class="value" src="/images/@((ctx as CountryModel).Pic).png" height="26" width="26" alt="@L["país"]">
                                                             <div class="name">@L[((ctx as CountryModel).Text!)] </div>
                                                         </div>
                                                     </ValueTemplate>
@@ -138,7 +138,7 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>@L["TituloMenuCoeficientesRendas"] Rendas</HeaderTemplate>
+                    <HeaderTemplate>@L["TituloMenuCoeficientesRendas"] @L["Rendas"]</HeaderTemplate>
                     <ContentTemplate>
                         <RentUpdatingCoefficients />
                     </ContentTemplate>
@@ -265,17 +265,17 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>Inicializar tabelas</HeaderTemplate>
+                    <HeaderTemplate>@L["Inicializar tabelas"]</HeaderTemplate>
                     <ContentTemplate>
                         <div class="d-block justify-content-center align-items-md-center my-3">
-                            <hr style="color:black" />
+                            <hr style="color:var(--app-text-primary)" />
                             <div>
-                                <h3 class="my-2 text-center">Não esquecer de retirar em Produção!</h3>
+                                <h3 class="my-2 text-center">@L["Não esquecer de retirar em Produção!"]</h3>
                             </div>
-                            <hr style="color:black" />
+                            <hr style="color:var(--app-text-primary)" />
                             <div class="d-flex justify-content-center">
                                 <SfButton CssClass="e-btn e-primary e-round-corner p-1" IconCss="fa fa-check"
-                                          OnClick="InitializeTables">Inicializar tabelas de pagamentos</SfButton>
+                                          OnClick="InitializeTables">@L["Inicializar tabelas de pagamentos"]</SfButton>
                             </div>
                         </div>
                         <SfMessage Visible="@InitializationMessageVisibility"

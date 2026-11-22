@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Recebimentos
 @using System.Globalization
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
@@ -15,7 +15,7 @@
 <div class="container-fluid">
     <div>
         <HeaderDialogComponent HeaderCaption="@L["TituloProcessamentoRendas"]" ImageName="payment" />
-        <hr style="color:black" />
+        <hr style="color:var(--app-text-primary)" />
     </div>
     <div class="w-100">
         <SfMessage Severity="MessageSeverity.Info" ShowIcon="true" ContentAlignment="HorizontalAlign.Center">@L["TituloOperacaoBatch"]</SfMessage>

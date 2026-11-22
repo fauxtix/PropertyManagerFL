@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Core.Entities;
 @using PropertyManagerFL.Application.ViewModels.Despesas;
@@ -10,7 +10,7 @@
 
 <div>
     <HeaderDialogComponent HeaderCaption="@L["TituloPagamentos"]" ImageName="payment" />
-    <hr style="color:black">
+    <hr style="color:var(--app-text-primary)">
 </div>
 <div class="container-fluid">
     <EditForm Model="@SelectedRecord">
@@ -71,7 +71,7 @@
     </EditForm>
     <div class="mt-2" hidden="@HideMessageVisibility">
         <SfMessage Severity="MessageSeverity.Warning" ShowIcon="true"
-                   CssClass="e-warning" Variant="MessageVariant.Filled">Valor pago é inferior ao previsto!</SfMessage>
+                   CssClass="e-warning" Variant="MessageVariant.Filled">@L["Valor pago é inferior ao previsto!"]</SfMessage>
     </div>
 </div>
 
@@ -108,7 +108,7 @@
 
     /* To specify font size and color */
     .e-float-input.e-control-wrapper:not(.e-error) input:valid ~ label.e-float-text, .e-float-input.e-control-wrapper:not(.e-error) input ~ label.e-label-top.e-float-text {
-        color: #343a40;
+        color: var(--app-text-primary);
         font-size: 14px;
     }
 </style>

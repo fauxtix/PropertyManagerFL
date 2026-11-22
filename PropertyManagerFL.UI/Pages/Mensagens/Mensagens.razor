@@ -222,16 +222,16 @@ else
                                 @*<input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" />*@
                                 <div class="group-box g-5">
                                     <div class="mb-1">
-                                        <SfRadioButton Name="options" Label="Recebida do inquilino" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                        <SfRadioButton Name="options" Label="@L["Recebida do inquilino"]" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="Enviada ao inquilino" Value="2" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                        <SfRadioButton Name="options" Label="@L["Enviada ao inquilino"]" Value="2" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="Outro Recebimento" Value="3" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                        <SfRadioButton Name="options" Label="@L["Outro Recebimento"]" Value="3" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="Outro Envio" Value="4" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
+                                        <SfRadioButton Name="options" Label="@L["Outro Envio"]" Value="4" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                        ValueChange="HandleMessageType"
                                                        LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
                                     </div>
@@ -267,20 +267,20 @@ else
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label asp-for="SubjectTitle">Assunto</label>
+                                    <label asp-for="SubjectTitle">@L["Assunto"]</label>
                                     <SfTextBox Type="InputType.Text"
                                                @bind-Value="@_message!.SubjectTitle"
-                                               CssClass="form-control" Placeholder="Assunto" />
+                                               CssClass="form-control" Placeholder="@L["Assunto"]" />
                                 </div>
                                 <div class="my-3">
-                                    <label asp-for="MessageContent">Mensagem</label>
+                                    <label asp-for="MessageContent">@L["Mensagem"]</label>
                                     <SfTextBox Multiline="true" Type="InputType.Text" ID="message"
                                                @bind-Value="@_message!.MessageContent"
-                                               CssClass="form-control" Placeholder="Mensagem" />
+                                               CssClass="form-control" Placeholder="@L["Mensagem"]" />
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="example-label">Referência</label>
+                                    <label class="example-label">@L["Referência"]</label>
                                     <SfAutoComplete TValue="string" TItem="ComposeMessageVM" Placeholder="e.g. Ref#..." DataSource="@_messages" Autofill=true @bind-Value="@_message.ReferenceId">
                                         <AutoCompleteFieldSettings Value="ReferenceId" />
                                     </SfAutoComplete>
@@ -288,11 +288,11 @@ else
                                 <div class="group-box">
                                     <div class="form-group mt-2">
                                         <SfButton CssClass="e-btn e-outline e-success" IconCss="fas fa-save"
-                                                  Content="Guarda mensagem" OnClick="(()=>SendMessage(1))" />
+                                                  Content="@L["Guarda mensagem"]" OnClick="(()=>SendMessage(1))" />
                                         <SfButton CssClass="e-btn e-outline e-warning" IconCss="fas fa-paper-plane"
-                                                  Content="Guarda mensagem e envia email" OnClick="(()=>SendMessage(2))" />
+                                                  Content="@L["Guarda mensagem e envia email"]" OnClick="(()=>SendMessage(2))" />
                                         <SfButton CssClass="e-btn e-outline e-secondary" IconCss="fas fa-times"
-                                                  Content="Cancelar" OnClick="GotoIndex" />
+                                                  Content="@L["Cancelar"]" OnClick="GotoIndex" />
                                     </div>
                                 </div>
                             </EditForm>
@@ -339,8 +339,8 @@ else
                                         <GridColumns>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageReceivedOn) EditType="EditType.DatePickerEdit"
-                                                        HeaderText="Receção" Format="d" Width="90"></GridColumn>
-                                            <GridColumn AllowEditing="false" HeaderText="Inquilino" Width="80" TextAlign="TextAlign.Center">
+                                                        HeaderText="@L["Receção"]" Format="d" Width="90"></GridColumn>
+                                            <GridColumn AllowEditing="false" HeaderText="@L["Inquilino"]" Width="80" TextAlign="TextAlign.Center">
                                                 <Template Context="msgCtx">
                                                     @{
                                                     var msg = (msgCtx as ComposeMessageVM);
@@ -348,10 +348,10 @@ else
                                                 }
                                             </Template>
                                         </GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="Remetente" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="Assunto" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="Mensagem" Width="300"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="Referência" Width="80"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="@L["Remetente"]" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["Assunto"]" Width="200"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["Mensagem"]" Width="300"></GridColumn>
+                                        <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["Referência"]" Width="80"></GridColumn>
                                     </GridColumns>
                                 </SfGrid>
                             </div>
@@ -483,17 +483,17 @@ else
         ResultMessage = "";
 
         if (selectedOption == 0)
-            validationMessages.Add("Não escolheu opção");
+            validationMessages.Add(L["Não escolheu opção"]);
         else if (selectedOption < 3 && _message.TenantId == 0)
-            validationMessages.Add("Escolha Inquilino");
+            validationMessages.Add(L["Escolha Inquilino"]);
         else if (string.IsNullOrEmpty(_message!.SubjectTitle))
-            validationMessages.Add("Assunto em falta");
+            validationMessages.Add(L["Assunto em falta"]);
         else if (string.IsNullOrEmpty(_message!.MessageContent))
-            validationMessages.Add("Mensagem em falta");
+            validationMessages.Add(L["Mensagem em falta"]);
         else if (string.IsNullOrEmpty(_message!.SenderEmail))
-            validationMessages.Add("Remetente em falta");
+            validationMessages.Add(L["Remetente em falta"]);
         else if (string.IsNullOrEmpty(_message!.DestinationEmail))
-            validationMessages.Add("Destinatário em falta");
+            validationMessages.Add(L["Destinatário em falta"]);
 
         {
             if (validationMessages.Any())
@@ -533,7 +533,7 @@ else
                             {
                                 ShowResultMessage = true;
                                 messageSeverity = MessageSeverity.Warning;
-                                ResultMessage = "e-mail não informado!";
+                                ResultMessage = L["e-mail não informado!"];
                                 StateHasChanged();
                                 return;
                             }
@@ -551,20 +551,20 @@ else
                     }
 
 
-                    ResultMessage = "Mensagem enviada com sucesso";
+                    ResultMessage = L["Mensagem enviada com sucesso"];
                     messageSeverity = MessageSeverity.Success;
                     ShowResultMessage = true;
                 }
                 else
                 {
-                    ResultMessage = "Erro ao criar mensagem. Verifique log, p.f..";
+                    ResultMessage = L["Erro ao criar mensagem. Verifique log, p.f.."];
                     messageSeverity = MessageSeverity.Error;
                     ShowResultMessage = true;
                 }
             }
             else
             {
-                ResultMessage = "Erro no processo. Contacte Admin.";
+                ResultMessage = L["Erro no processo. Contacte Admin."];
                 messageSeverity = MessageSeverity.Error;
                 ShowResultMessage = true;
             }
@@ -604,7 +604,7 @@ else
         }
         else
         {
-            TenantEmail = "E-mail não consta dos dados do inquilino...";
+            TenantEmail = L["E-mail não consta dos dados do inquilino..."];
             messageSeverity = MessageSeverity.Warning;
             _message!.SenderEmail = "NoEmailInformed@propertyManager.pt";
             _message.DestinationEmail = email;
@@ -628,7 +628,7 @@ else
         switch (selectedOption)
         {
             case 1:
-                senderReceiverLabel = "e-Mail do Destinatário";
+                senderReceiverLabel = L["e-Mail do Destinatário"];
                 comboPlaceHolder = L["TituloRemetente"];
                 ShowTenantsCombo = true;
                 ShowResultMessage = false;
@@ -636,7 +636,7 @@ else
                 _message!.DestinationEmail = email;
                 break;
             case 2: // enviada ao inquilino
-                senderReceiverLabel = "e-Mail do Destinatário";
+                senderReceiverLabel = L["e-Mail do Destinatário"];
                 comboPlaceHolder = L["TituloDestinatarioMensagem"];
 
                 ShowTenantsCombo = true;
@@ -647,13 +647,13 @@ else
 
                 break;
             case 3:
-                senderReceiverLabel = "e-Mail do Remetente";
+                senderReceiverLabel = L["e-Mail do Remetente"];
                 _message.MessageReceivedOn = DateTime.UtcNow;
                 ShowTenantsCombo = false;
                 _message!.DestinationEmail = email;
                 break;
             case 4:
-                senderReceiverLabel = "e-Mail do Destinatário";
+                senderReceiverLabel = L["e-Mail do Destinatário"];
                 ShowTenantsCombo = false; ;
                 _message.MessageSentOn = DateTime.UtcNow;
                 _message!.DestinationEmail = "";
@@ -708,13 +708,13 @@ else
             var updateOk = await MessagesService!.Save(messageId, data);
             if (updateOk)
             {
-                ResultMessage = "Mensagem atualizada com sucesso";
+                ResultMessage = L["Mensagem atualizada com sucesso"];
                 messageSeverity = MessageSeverity.Success;
                 ShowResultMessage = true;
             }
             else
             {
-                ResultMessage = "Erro na atualização da mensagem";
+                ResultMessage = L["Erro na atualização da mensagem"];
                 messageSeverity = MessageSeverity.Error;
                 ShowResultMessage = true;
                 await GetMessages();
@@ -731,14 +731,14 @@ else
             var deleteOk = await MessagesService!.Delete(messageId);
             if (deleteOk)
             {
-                ResultMessage = "Mensagem apagada com sucesso";
+                ResultMessage = L["Mensagem apagada com sucesso"];
                 messageSeverity = MessageSeverity.Success;
                 ShowResultMessage = true;
                 await GetMessages();
             }
             else
             {
-                ResultMessage = "Erro ao apagar mensagem";
+                ResultMessage = L["Erro ao apagar mensagem"];
                 messageSeverity = MessageSeverity.Error;
                 ShowResultMessage = true;
             }

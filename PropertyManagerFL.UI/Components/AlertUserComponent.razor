@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Shared.Enums;
+@using PropertyManagerFL.Application.Shared.Enums;
 
 @inject IStringLocalizer<App> L
 
@@ -24,7 +24,7 @@
                                        ShowCloseIcon="false">
                                     @MessageNote
                                 </SfMessage>
-                                <hr class="my-2" style="color:black" />
+                                <hr class="my-2" style="color:var(--app-text-primary)" />
                             </div>
                         }
                         <div>
@@ -74,12 +74,12 @@
 
 <style type="text/css" scoped>
     .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content {
-        background-color: #d9edf7;
+        background-color: var(--app-dialog-header-bg);
     }
 
     .e-dialog .e-dlg-content {
-        color: white;
-        background-color: #f8f8f8;
+        color: var(--app-on-primary);
+        background-color: var(--app-dialog-footer-bg);
         font-size: 0.8rem;
         font-weight: normal;
         line-height: normal;

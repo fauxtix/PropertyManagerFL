@@ -147,7 +147,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             {
                 foreach (var document in tenantDocuments)
                 {
-                    LeaseAlerts.Add($"Necessário envio de carta de atualização ao inquilino {document.NomeInquilino}", 1);
+                    LeaseAlerts.Add(L["Necessário envio de carta de atualização ao inquilino {0}", document.NomeInquilino], 1);
                 }
             }
 
@@ -156,9 +156,9 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             {
                 foreach (var item in leasesWhoNeedToUpdateRent)
                 {
-                    var alertMsg = $"Necessário atualizar renda do inquilino {item.NomeInquilino} ({item.Fracao})";
+                    string alertMsg = L["Necessário atualizar renda do inquilino {0} ({1})", item.NomeInquilino, item.Fracao];
                     if (item.EnvioCartaAtualizacaoRenda == false)
-                        alertMsg += " - não foi enviada carta de atualização!";
+                        alertMsg += L[" - não foi enviada carta de atualização!"];
 
                     LeaseAlerts.Add(alertMsg, 1);
                 }
@@ -173,7 +173,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                         var UpdateLetterSent = await arrendamentosService!.CartaAtualizacaoRendasEmitida(DateTime.Now.Year);
                         if (UpdateLetterSent == false)
                         {
-                            LeaseAlerts.Add("Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano.", 3);
+                            LeaseAlerts.Add(L["Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano."], 3);
                         }
                     }
                 }
@@ -188,7 +188,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 var monthsToEnd = GetMonthDifference(DateTime.Now, _leaseitem.Data_Fim);
                 if (monthsToEnd >= 0 && monthsToEnd <= 4)
                 {
-                    LeaseAlerts.Add($"Contrato do inquilino {_leaseitem.NomeInquilino} ({_leaseitem.Fracao}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação", 2);
+                    LeaseAlerts.Add(L["Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação", _leaseitem.NomeInquilino, _leaseitem.Fracao], 2);
                 }
             }
         }
@@ -269,12 +269,12 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 if (!updateOk)
                 {
                     ErrorVisibility = true;
-                    ValidationMessages = new List<string> { "Erro na atualização de Arrendamento" };
+                    ValidationMessages = new List<string> { L["Erro na atualização de Arrendamento"] };
                 }
                 else
                 {
-                    ToastTitle = "Atualização de Arrendamento";
-                    ToastMessage = "Registo atualizado com sucesso";
+                    ToastTitle = L["Atualização de Arrendamento"];
+                    ToastMessage = L["Registo atualizado com sucesso"];
                     ToastCss = "e-toast-success";
 
                     StateHasChanged();
@@ -287,7 +287,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 if (await arrendamentosService!.ArrendamentoExiste(SelectedLease!.ID_Fracao))
                 {
                     ErrorVisibility = true;
-                    ValidationMessages = new List<string> { "Já existe arrendamento ativo para essa fração", "Verifique, p.f." };
+                    ValidationMessages = new List<string> { L["Já existe arrendamento ativo para essa fração"], L["Verifique, p.f."] };
                     _logger?.LogWarning("Criar arrendamento - Já existe arrendamento ativo para fração");
                 }
                 else
@@ -305,7 +305,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                     {
                         ErrorVisibility = true;
                         _logger?.LogError("Criação de arrendamento - Erro no API");
-                        ValidationMessages = new List<string> { "Erro na criação de Arrendamento" };
+                        ValidationMessages = new List<string> { L["Erro na criação de Arrendamento"] };
                     }
                     else
                     {
@@ -322,8 +322,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                             IssueRentalContractVisibility = true;
                         }
 
-                        ToastTitle = "Criação de Arrendamento";
-                        ToastMessage = "Registo criado com sucesso";
+                        ToastTitle = L["Criação de Arrendamento"];
+                        ToastMessage = L["Registo criado com sucesso"];
                         ToastCss = "e-toast-success";
 
                         StateHasChanged();
@@ -369,9 +369,9 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 var unpaidRents = await TenantHasUnpaidRents();
                 if (unpaidRents == false)
                 {
-                    alertTitle = "Envio de carta ao inquilino";
+                    alertTitle = L["Envio de carta ao inquilino"];
                     AlertVisibility = true;
-                    WarningMessage = "Inquilino não tem rendas em atraso! Verifique, p.f";
+                    WarningMessage = L["Inquilino não tem rendas em atraso! Verifique, p.f"];
                     return;
                 }
 
@@ -379,12 +379,12 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 SendLetterDialogVisibility = true;
                 break;
             case "ContractLeaseTerm": // Estender prazo do contrato
-                LeaseTermCaption = "Confirma operação?";
+                LeaseTermCaption = L["Confirma operação?"];
                 alertMessageType = AlertMessageType.Info;
                 LeaseTermVisibility = true;
                 break;
             case "RisingRentsIncreaseLetter": // aumentos de renda
-                LeaseTermCaption = "Confirma operação?";
+                LeaseTermCaption = L["Confirma operação?"];
                 alertMessageType = AlertMessageType.Info;
                 SendingLetterType = DocumentoEmitido.AtualizacaoRendas;
                 SendLetterDialogVisibility = true;
@@ -524,7 +524,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             if (leaseHasPayments)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Arrendamento tem pagamentos associados! Operação cancelada." };
+                ValidationMessages = new List<string> { L["Arrendamento tem pagamentos associados! Operação cancelada."] };
             }
             else
             {
@@ -546,7 +546,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 else
                 {
                     ErrorVisibility = true;
-                    ValidationMessages = new List<string> { "Erro ao remover Arrendamento" };
+                    ValidationMessages = new List<string> { L["Erro ao remover Arrendamento"] };
                 } // delete ok?
             } // are there payments in the leasing?
         }
@@ -555,7 +555,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             _logger.LogError(exc.ToString());
 
             ErrorVisibility = true;
-            ValidationMessages = new List<string> { $"Não foi possível concluir operação. {exc.Message}" };
+            ValidationMessages = new List<string> { L["Não foi possível concluir operação. {0}", exc.Message] };
         }
     }
 
@@ -570,8 +570,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         if (contractAutomaticRenewals == false)
         {
             ShowToolbaContractLeaseTerm = false;
-            ToastTitle = "Atualização do termo do contrato";
-            ToastMessage = "Não aplicável. Ver 'Settings'";
+            ToastTitle = L["Atualização do termo do contrato"];
+            ToastMessage = L["Não aplicável. Ver 'Settings'"];
             ToastCss = "e-toast-warning";
             await InvokeAsync(StateHasChanged);
             return;
@@ -581,7 +581,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         if (resultOk)
         {
             ShowToolbaContractLeaseTerm = false;
-            ToastTitle = "Atualização do termo do contrato";
+            ToastTitle = L["Atualização do termo do contrato"];
             ToastMessage = L["RegistoGravadoSucesso"];
             ToastCss = "e-toast-success";
             await InvokeAsync(StateHasChanged);
@@ -591,7 +591,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         else
         {
             ErrorVisibility = true;
-            ValidationMessages = new List<string> { "Erro ao atualizar data-fim do contrato (Arrendamentos)" };
+            ValidationMessages = new List<string> { L["Erro ao atualizar data-fim do contrato (Arrendamentos)"] };
         }
     }
 
@@ -635,7 +635,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         {
             ErrorVisibility = true;
             IssueRentalContractVisibility = false;
-            ValidationMessages = new List<string> { "Contrato já foi emitido.\r\n\r\nVerifique, p.f" };
+            ValidationMessages = new List<string> { L["Contrato já foi emitido.\r\n\r\nVerifique, p.f"] };
         }
         else
         {
@@ -654,7 +654,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 {
                     await HideSpinner();
                     ErrorVisibility = true;
-                    ValidationMessages = new List<string> { "Fração não está livre para arrendamento..." };
+                    ValidationMessages = new List<string> { L["Fração não está livre para arrendamento..."] };
                 }
                 else
                 {
@@ -672,13 +672,13 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
                     if (creationOk)
                     {
-                        alertTitle = "Geração de contrato e criação de documento na ficha do Inquilino";
+                        alertTitle = L["Geração de contrato e criação de documento na ficha do Inquilino"];
                         WarningMessage = ToastMessage = L["TituloOperacaoOk"];
                         AlertVisibility = true;
                     }
                     else
                     {
-                        alertTitle = "Erro na criação de documento na ficha do Inquilino";
+                        alertTitle = L["Erro na criação de documento na ficha do Inquilino"];
                         WarningMessage = ToastMessage = L["FalhaCriacaoRegisto"];
                         AlertVisibility = true;
 
@@ -781,8 +781,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     {
         if (activeLeases!.Count() == 0)
         {
-            ToastTitle = "Listagem de arrendamentos";
-            ToastMessage = $"Não há contratos ativos! Verifique, p.f.";
+            ToastTitle = L["Listagem de arrendamentos"];
+            ToastMessage = L["Não há contratos ativos! Verifique, p.f."];
             ToastCss = "e-toast-warning";
 
             await ShowToastMessage();
@@ -860,7 +860,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         {
             SendLetterDialogVisibility = false;
             alertTitle = ToastTitle; ;
-            WarningMessage = "Carta já foi enviada... Verifique, p.f.";
+            WarningMessage = L["Carta já foi enviada... Verifique, p.f."];
 
             var dateSent = SelectedLease.DataEnvioCartaRevogacao;
             var answerDateExpected = dateSent.AddDays(10); // estão a ser assumidos 10 dias para prazo de resposta. Configurar?
@@ -872,11 +872,11 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 // Verifica se a data-limite da resposta foi ultrapassada
                 if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
                 {
-                    WarningMessage = "Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... ";
+                    WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... "];
                 }
                 else // prazo ultrapassado
                 {
-                    WarningMessage = $"Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {answerDateExpected.ToShortDateString()})... Verifique Log , p.f.";
+                    WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {0})... Verifique Log , p.f.", answerDateExpected.ToShortDateString()];
                 }
             }
             else // Carta enviada ==> sem registo de resposta
@@ -884,11 +884,11 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 // Verifica se data-limite da resposta foi ultrapassada
                 if (DateTime.Now.Date < answerDateExpected.Date) // dentro do prazo
                 {
-                    WarningMessage = "Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino";
+                    WarningMessage = L["Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino"];
                 }
                 else // Inquilino não respondeu no prazo definido como limite
                 {
-                    WarningMessage = $"Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {answerDateExpected.ToShortDateString()})... Verifique, p.f.";
+                    WarningMessage = L["Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {0})... Verifique, p.f.", answerDateExpected.ToShortDateString()];
                 }
             }
 
@@ -902,7 +902,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         var oppositionLetterData = await arrendamentosService!.GetDadosCartaOposicaoRenovacaoContrato(SelectedLease!);
         if (oppositionLetterData is null)
         {
-            ToastMessage = $"Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f.";
+            ToastMessage = L["Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f."];
             ToastCss = "e-toast-danger";
 
             await ShowToastMessage();
@@ -916,7 +916,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             {
                 // erro ao gerar carta (pdf), alerta e sai 
 
-                ToastMessage = $"Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f.";
+                ToastMessage = L["Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f."];
                 ToastCss = "e-toast-danger";
 
                 await ShowToastMessage();
@@ -924,7 +924,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             }
             else // carta gerada, regista ocorrência na BD
             {
-                ToastTitle = "Carta de oposição à renovação do contrato";
+                ToastTitle = L["Carta de oposição à renovação do contrato"];
 
                 var documentoARegistar = docGerado.Replace(".docx", ".pdf");
 
@@ -932,13 +932,13 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 // verifica se processo de registo (final, onde tabelas são alteradas) terminou com sucesso
                 if (registerOk)
                 {
-                    ToastMessage = "Operação terminada com sucesso";
+                    ToastMessage = L["Operação terminada com sucesso"];
                     ToastCss = "e-toast-success";
                 }
                 else
                 {
                     // TODO - erro no processo atualização da BD; como os documentos já foram gerados (pdf + docx), haverá necessidade de os remover
-                    ToastMessage = "Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f.";
+                    ToastMessage = L["Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f."];
                     ToastCss = "e-toast-danger";
                 }
 
@@ -1029,14 +1029,14 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         var alreadySent = await arrendamentosService!.VerificaSeExisteCartaRevogacao(LeaseId);
         if (alreadySent)
         {
-            ToastMessage = "Já foi enviada uma carta de oposição... Verifique, p.f.";
+            ToastMessage = L["Já foi enviada uma carta de oposição... Verifique, p.f."];
             ToastCss = "e-toast-warning";
 
             // Verificar se carta já foi respondida pelo inquilino
             var letterAnswered = await arrendamentosService.VerificaSeExisteRespostaCartaRevogacao(LeaseId);
             if (letterAnswered)
             {
-                ToastMessage = "Já foi enviada uma carta de oposição e Inquilino já respondeu... Verifique, p.f.";
+                ToastMessage = L["Já foi enviada uma carta de oposição e Inquilino já respondeu... Verifique, p.f."];
                 ToastCss = "e-toast-warning";
             }
             else // inquilino não respondeu 
@@ -1047,12 +1047,12 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
                 if (answerDateExpected < DateTime.Now)
                 {
-                    ToastMessage = "Já foi enviada uma carta de oposição ==> prazo de resposta ultrapassado... Verifique, p.f.";
+                    ToastMessage = L["Já foi enviada uma carta de oposição ==> prazo de resposta ultrapassado... Verifique, p.f."];
                     ToastCss = "e-toast-danger";
                 }
                 else // prazo ultrapassado
                 {
-                    ToastMessage = $"Já foi enviada uma carta de oposição e Inquilino ainda não respondeu (limite: {answerDateExpected.ToShortDateString()})... Verifique, p.f.";
+                    ToastMessage = L["Já foi enviada uma carta de oposição e Inquilino ainda não respondeu (limite: {0})... Verifique, p.f.", answerDateExpected.ToShortDateString()];
                     ToastCss = "e-toast-warning";
                 }
             }
@@ -1074,8 +1074,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             {
                 var documentoARegistar = docGerado.Replace(".docx", ".pdf");
                 await arrendamentosService.RegistaCartaOposicao(LeaseId, documentoARegistar);
-                ToastTitle = "Carta de oposição à renovação do contrato";
-                ToastMessage = "Operação terminada com sucesso";
+                ToastTitle = L["Carta de oposição à renovação do contrato"];
+                ToastMessage = L["Operação terminada com sucesso"];
                 ToastCss = "e-toast-success";
 
                 await ShowToastMessage();
@@ -1133,12 +1133,12 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             {
                 ShowPdfVisibility = false;
 
-                ToastTitle = "Leitura de pdf";
-                ToastMessage = $"Ficheiro {PdfFilePath} não existe no local indicado!";
+                ToastTitle = L["Leitura de pdf"];
+                ToastMessage = L["Ficheiro {0} não existe no local indicado!", PdfFilePath];
                 ToastCss = "e-toast-danger";
                 alertMessageType = AlertMessageType.Warning;
-                WarningMessage = $"Ficheiro não existe no local previsto";
-                alertTitle = "Erro ao abrir contrato para visualização";
+                WarningMessage = L["Ficheiro não existe no local previsto"];
+                alertTitle = L["Erro ao abrir contrato para visualização"];
                 AlertVisibility = true;
 
                 //await ShowToastMessage();
@@ -1212,7 +1212,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     protected async Task SendIncreaseRentsLetter()
     {
-        ToastTitle = "Cartas de atualização de rendas";
+        ToastTitle = L["Cartas de atualização de rendas"];
         alertTitle = ToastTitle;
 
         try
@@ -1241,7 +1241,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                 if (currentYearUpdateValues is null)
                 {
                     AlertVisibility = true;
-                    WarningMessage = "Não foram configurados dados dos aumentos para o ano corrente";
+                    WarningMessage = L["Não foram configurados dados dos aumentos para o ano corrente"];
                     return;
                 }
 
@@ -1263,7 +1263,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                     var docGerado = await inquilinosService.EmiteCartaAtualizacaoInquilino(rentUpdateData);
                     if (string.IsNullOrEmpty(docGerado))
                     {
-                        ToastMessage = "Erro na emissão de carta. Verifique log, p.f.";
+                        ToastMessage = L["Erro na emissão de carta. Verifique log, p.f."];
                         ToastCss = "e-toast-danger";
                     }
                     else
@@ -1287,7 +1287,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                         catch (Exception ex)
                         {
                             _logger?.LogError(ex, "Operation failed");
-                            ToastMessage = $"Erro ao registar envio de carta na BD ({ex.Message}). Processo terminou com erro! Contacte Administrador, p.f.";
+                            ToastMessage = L["Erro ao registar envio de carta na BD ({0}). Processo terminou com erro! Contacte Administrador, p.f.", ex.Message];
                             ToastCss = "e-toast-danger";
                         }
                     }
@@ -1295,7 +1295,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
                 else
                 {
-                    ToastMessage = "Erro ao obter dados para emissão de carta";
+                    ToastMessage = L["Erro ao obter dados para emissão de carta"];
                     ToastCss = "e-toast-danger";
                 }
 
@@ -1317,7 +1317,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         DocumentoInquilinoVM tenantDocument = new()
         {
             CreationDate = DateTime.Now,
-            Descricao = "Contrato de arrendamento",
+            Descricao = L["Contrato de arrendamento"],
             DocumentPath = Path.GetFileName(documentPath).Replace("docx", "pdf"),
             DocumentType = 4,
             TenantId = leaseCreated.Inquilino.Id,

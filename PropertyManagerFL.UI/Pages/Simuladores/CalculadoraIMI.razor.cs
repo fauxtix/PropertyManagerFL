@@ -12,8 +12,8 @@ public partial class CalculadoraIMI
 
     /*
     * Se o valor do IMI for igual ou inferior a 100 euros, tem de ser pago na totalidade, em maio.
-    * Caso o valor do imposto seja superior a 100 euros e inferior a 500 euros, o pagamento é efetuado em duas prestações, em maio e novembro.
-    * A partir de 500 euros, o valor de IMI é pago em três prestações, em maio, agosto e novembro.
+    * Caso o valor do imposto seja superior a 100 euros e inferior a 500 euros, o pagamento ï¿½ efetuado em duas prestaï¿½ï¿½es, em maio e novembro.
+    * A partir de 500 euros, o valor de IMI ï¿½ pago em trï¿½s prestaï¿½ï¿½es, em maio, agosto e novembro.
     */
 
     [Inject] public IImovelService? ImoveisService { get; set; }
@@ -59,7 +59,7 @@ public partial class CalculadoraIMI
     protected List<LookupTableVM> TiposImovel { get; set; } = new List<LookupTableVM>()
 {
     new LookupTableVM{Id = 1, Descricao = "Urbano"},
-    new LookupTableVM{Id = 2, Descricao = "Rústico"}
+    new LookupTableVM{Id = 2, Descricao = "Rï¿½stico"}
 };
     protected override async Task OnInitializedAsync()
     {
@@ -78,7 +78,7 @@ public partial class CalculadoraIMI
         idxDistrito = args.Value;
         distritoSelected = true;
 
-        // ao escolher distrito, devolve concelhos pertencentes a este; permite visualização da respetiva combo (distritoSelected = true)
+        // ao escolher distrito, devolve concelhos pertencentes a este; permite visualizaï¿½ï¿½o da respetiva combo (distritoSelected = true)
         Concelhos = (await DistritosConcelhosService!.GetConcelhosByDistrito(idxDistrito)).ToList();
         StateHasChanged();
     }
@@ -87,7 +87,7 @@ public partial class CalculadoraIMI
         if (args.Value == 0) return;
 
         idxConcelho = args.Value;
-        // ao escolher concelho, determina qual o coeficiente aplicável ao mesmo
+        // ao escolher concelho, determina qual o coeficiente aplicï¿½vel ao mesmo
         coeficiente = args.ItemData.Coeficiente;
 
         // valor em % para apresentar ao utilizador
@@ -146,14 +146,14 @@ public partial class CalculadoraIMI
                  new LookupTableVM { Id = unit.Id, Descricao = unit.Descricao });
         }
 
-        // após escolha do imóvel, e filtragem das frações pertencentes ao mesmo, disponibiliza combo das frações
+        // apï¿½s escolha do imï¿½vel, e filtragem das fraï¿½ï¿½es pertencentes ao mesmo, disponibiliza combo das fraï¿½ï¿½es
         ShowUnitsCombo = true;
     }
     protected async Task OnChangeUnit(ChangeEventArgs<int, LookupTableVM> args)
     {
         if (args.Value < 1) return;
         var unit = await FracoesService!.GetFracao_ById(args.Value);
-        // ao escolher uma fração, guarda valor tributável
+        // ao escolher uma fraï¿½ï¿½o, guarda valor tributï¿½vel
         valorPatrimonio = unit.ValorUltAvaliacao;
 
         DescricaoImovel = unit.DescricaoImovel;
@@ -188,21 +188,21 @@ public partial class CalculadoraIMI
                 pagamentosFracionados = 1;
                 listaCaptionsPrestacoes = new List<string>
             {
-                "Maio"
+                L["Maio"]
             };
                 break;
             case decimal valor when valor < 500:
                 pagamentosFracionados = 2;
                 listaCaptionsPrestacoes = new List<string>
             {
-                "Maio", "Novembro"
+                L["Maio"], L["Novembro"]
             };
                 break;
             case decimal valor when valor >= 500:
                 pagamentosFracionados = 3;
                 listaCaptionsPrestacoes = new List<string>
             {
-                "Maio", "Agosto", "Setembro"
+                L["Maio"], L["Agosto"], L["Setembro"]
             };
                 break;
         }

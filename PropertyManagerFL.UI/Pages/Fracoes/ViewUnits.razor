@@ -3,6 +3,7 @@
 @using PropertyManagerFL.Application.ViewModels.Fracoes;
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 @using Syncfusion.Blazor.Popups
+@inject IStringLocalizer<App> L
 
 <!--/ Property Grid Star /-->
 @if (Units is null)
@@ -36,7 +37,7 @@ else
                                     </div>
                                     <div class="card-body-a">
                                         <div class="price-box d-flex">
-                                            <span class="price-a">renda | @Unit.ValorRenda</span>
+                                            <span class="price-a">@L["renda"] | @Unit.ValorRenda</span>
                                         </div>
                                         <a href="#" class="link-a">
                                             Click here to view
@@ -46,22 +47,22 @@ else
                                     <div class="card-footer-a">
                                         <ul class="card-info d-flex justify-content-around">
                                             <li>
-                                                <h4 class="card-info-title">Área Privativa</h4>
+                                                <h4 class="card-info-title">@L["Área Privativa"]</h4>
                                                 <span>
                                                     @Unit.AreaBrutaPrivativa
                                                     <sup>2</sup>
                                                 </span>
                                             </li>
                                             <li>
-                                                <h4 class="card-info-title">Quartos</h4>
+                                                <h4 class="card-info-title">@L["Quartos"]</h4>
                                                 <span>@GetRooms(Unit.TipologiaFracao)</span>
                                             </li>
                                             <li>
-                                                <h4 class="card-info-title">Casas banho</h4>
+                                                <h4 class="card-info-title">@L["Casas banho"]</h4>
                                                 <span>@Unit.CasasBanho</span>
                                             </li>
                                             <li>
-                                                <h4 class="card-info-title">Garagem</h4>
+                                                <h4 class="card-info-title">@L["Garagem"]</h4>
                                                 <span>@(Unit.Garagem ? "1" : "0")</span>
                                             </li>
                                         </ul>

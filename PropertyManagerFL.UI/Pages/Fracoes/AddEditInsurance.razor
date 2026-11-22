@@ -12,19 +12,19 @@ else
     <SfMessage Severity="MessageSeverity.Info"
                Variant="MessageVariant.Text" ShowCloseIcon="false"
                ShowIcon="true">
-        Dados do Seguro
+        @L["Dados do Seguro"]
     </SfMessage>
     @* <div class="d-flex justify-content-center align-items-center"> *@
     <EditForm Model="@SelectedRecord">
         <div class="group-box mb-2">
             <SfNumericTextBox Enabled="true" ShowSpinButton="true"
-                              Placeholder="Prémio anual"
+                              Placeholder="@L["Prémio anual"]"
                               Width="170px"
                               CssClass="form-control  e-corner"
                               FloatLabelType="@FloatLabelType.Always"
                               @bind-Value="@SelectedRecord.Premio">
             </SfNumericTextBox>
-            <SfTextBox Placeholder="Apólice"
+            <SfTextBox Placeholder="@L["Apólice"]"
                        CssClass="form-control  e-corner"
                        FloatLabelType="@FloatLabelType.Always"
                        Width="170px"

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Localization;
+using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.UI.Services.ClientApi;
@@ -15,10 +16,13 @@ public class WrapperAppSettings : IAppSettingsService
     private readonly string? _initializeUrl;
     private readonly string? _updateLanguageUrl;
     private readonly HttpClientConfigurationService _httpClientConfigService;
+    private readonly IStringLocalizer<App> _localizer;
 
     public WrapperAppSettings(HttpClient httpClient, IConfiguration env,
-                                    ILogger<WrapperAppSettings> logger, HttpClientConfigurationService httpClientConfigService)
+                                    ILogger<WrapperAppSettings> logger, HttpClientConfigurationService httpClientConfigService,
+                                    IStringLocalizer<App> localizer)
     {
+        _localizer = localizer;
         _env = env;
         _url = $"{_env["BaseUrl"]}/appsettings/emailsettings";
         _otherSettingsUrl = $"{_env["BaseUrl"]}/appsettings/othersettings";
@@ -105,11 +109,11 @@ public class WrapperAppSettings : IAppSettingsService
 
             if (response.IsSuccessStatusCode)
             {
-                return ("Campo atualizado com sucesso!", true);
+                return (_localizer["Campo atualizado com sucesso!"].Value, true);
             }
             else
             {
-                return ("Falha ao atualizar o campo.", false);
+                return (_localizer["Falha ao atualizar o campo."].Value, false);
             }
 
         }

@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Shared.Enums;
+@using PropertyManagerFL.Application.Shared.Enums;
 @using Syncfusion.Blazor.Buttons
 @using Microsoft.Extensions.Localization
 
@@ -20,8 +20,8 @@
         <Content>
             @if (!string.IsNullOrEmpty(Message))
             {
-                <div class="m-2"> [ <span style="color:black; font-style:italic">@Message</span> ]</div>
-                <hr style="color:black;" />
+                <div class="m-2"> [ <span style="color:var(--app-text-primary); font-style:italic">@Message</span> ]</div>
+                <hr style="color:var(--app-text-primary);" />
             }
             <div class="row mx-2 mb-2">
                 <div class="col-9">
@@ -104,7 +104,7 @@
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 MessageSeverityType = MessageSeverity.Warning;
-                TitleColor = "#cc3300";
+                TitleColor = "var(--app-danger-text)";
                 OkButtonColor = "e-warning e-round-corner";
                 break;
             case AppDefinitions.AlertMessageType.Info:
@@ -141,7 +141,7 @@
         -moz-border-radius: 5px;
         background-clip: padding-box;
         margin-bottom: 0px;
-        background-color: #ffffff;
+        background-color: var(--app-surface);
         box-shadow: 0 0px 12px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
     }
 
@@ -150,7 +150,7 @@
     .notify-info, .notify-success, .notify-warning, .notify-error {
         padding: 5px;
         margin: 6px 4px 6px 4px;
-        box-shadow: 1px 1px 3px #888;
+        box-shadow: var(--app-shadow);
     }
 
         .notify-info:before, .notify-success:before, .notify-warning:before, .notify-error:before {
@@ -188,36 +188,36 @@
         }
 
     .notify-info {
-        color: #00529B;
-        background-color: #BDE5F8;
+        color: var(--app-info-text);
+        background-color: var(--app-info-bg);
     }
 
     .notify-success {
-        color: #4F8A10;
-        background-color: #DFF2BF;
+        color: var(--app-success-text);
+        background-color: var(--app-success-bg);
     }
 
     .notify-warning {
-        color: #9F6000;
-        background-color: #FEEFB3;
+        color: var(--app-warning-text);
+        background-color: var(--app-warning-bg);
     }
 
     .notify-error {
-        color: #D8000C;
-        background-color: #FFD2D2;
+        color: var(--app-danger-text);
+        background-color: var(--app-danger-bg);
     }
 
     /*Syncfusion*/
     .e-btn.e-flat.e-primary, .e-btn.e-flat.e-primary:focus {
-        background-color: #317ab9;
-        border-color: #265f91;
-        color: #fff;
+        background-color: var(--app-primary);
+        border-color: var(--app-primary-hover);
+        color: var(--app-on-primary);
     }
 
         .e-btn.e-flat.e-primary:hover, .e-btn.e-flat.e-primary:active {
-            background-color: #21527d;
-            border-color: #163854;
-            color: #fff;
+            background-color: var(--app-primary-hover);
+            border-color: var(--app-primary);
+            color: var(--app-on-primary);
         }
 
     .close-icon {
@@ -228,7 +228,7 @@
     }
 
     .error-msg {
-        color: #66afe9;
+        color: var(--app-info-text);
         display: inline-block;
         position: relative;
         top: -20px;
@@ -244,18 +244,18 @@
     .e-icons.close-icon.col-lg-2:before {
         content: '\e761';
         font-size: 32px;
-        color: #d9534f;
+        color: var(--app-danger-text);
         position: relative;
         left: 1px;
         bottom: 10px;
     }
 
     .e-dialog .e-footer-content {
-        background-color: #f8f8f8;
+        background-color: var(--app-dialog-footer-bg);
     }
 
     .e-dialog.e-control.e-popup, .e-dialog.e-control.e-popup .e-dlg-header-content {
-        background-color: #d9edf7;
+        background-color: var(--app-dialog-header-bg);
     }
 
     .e-dialog.e-control.e-popup {

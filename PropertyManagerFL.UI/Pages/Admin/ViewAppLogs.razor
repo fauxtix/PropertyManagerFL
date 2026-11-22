@@ -58,7 +58,7 @@
     {
         PrefixIcon = "fa fa-key",
         CssClass = "e-inherit",
-        Text = "Logins",
+        Text = L["Logins"],
         Id = "LoginLogs",
         ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
         ShowAlwaysInPopup = true,
@@ -202,7 +202,7 @@ else
 </SfDialog>
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error"
-                        DialogTitle="Apagar todos os registos do log!"
+                        DialogTitle="@L["Apagar todos os registos do log!"]"
                         Message="@DeleteLogEntryCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                         Visible="@DeleteLogsDialogVisibility"
                         DialogWidth="20%"
@@ -211,7 +211,7 @@ else
                         OnConfirmationNo="@(()=>DeleteLogsDialogVisibility = false)" />
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Error"
-                        DialogTitle="Apagar registo?"
+                        DialogTitle="@L["Apagar registo?"]"
                         Message="@DeleteLogEntryCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                         Visible="@DeleteLogDialogVisibility"
                         DialogWidth="20%"

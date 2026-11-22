@@ -2652,4 +2652,1141 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="LblThemeDark" xml:space="preserve">
     <value>Thème sombre</value>
   </data>
+  <data name="SidebarCollapse" xml:space="preserve">
+    <value>Réduire le menu</value>
+  </data>
+  <data name="SidebarNavLabel" xml:space="preserve">
+    <value>Menu principal</value>
+  </data>
+  <data name="SidebarManagement" xml:space="preserve">
+    <value>Gestion</value>
+  </data>
+  <data name="MenuAgenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="MenuLogs" xml:space="preserve">
+    <value>Journaux</value>
+  </data>
+  <data name="MenuFiles" xml:space="preserve">
+    <value>Fichiers</value>
+  </data>
+  <data name="AuthRegister" xml:space="preserve">
+    <value>S&apos;inscrire</value>
+  </data>
+  <data name="AuthLogin" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="carta de atualização de rendas?" xml:space="preserve">
+    <value>Lettre d’actualisation des loyers ?</value>
+  </data>
+  <data name="carta de atualização de rendas para o inquilino?" xml:space="preserve">
+    <value>Lettre de révision du loyer pour le locataire ?</value>
+  </data>
+  <data name="carta de aviso de renda(s) em atraso?" xml:space="preserve">
+    <value>Lettre de mise en demeure pour loyer(s) impayé(s) ?</value>
+  </data>
+  <data name="contrato de arrendamento?" xml:space="preserve">
+    <value>Contrat de location ?</value>
+  </data>
+  <data name="carta de oposição à renovação do contrato?" xml:space="preserve">
+    <value>Lettre d’opposition au renouvellement du contrat ?</value>
+  </data>
+  <data name="Oposição de renovação do contrato" xml:space="preserve">
+    <value>Opposition au renouvellement du contrat</value>
+  </data>
+  <data name="renda não paga" xml:space="preserve">
+    <value>loyer impayé</value>
+  </data>
+  <data name="rendas não pagas" xml:space="preserve">
+    <value>loyers impayés</value>
+  </data>
+  <data name="Há indicação de {0} {1}." xml:space="preserve">
+    <value>Il y a une indication de {0} {1}.</value>
+  </data>
+  <data name="Emite {0}" xml:space="preserve">
+    <value>Émet {0}</value>
+  </data>
+  <data name="Carrega imagem:" xml:space="preserve">
+    <value>Télécharger une image :</value>
+  </data>
+  <data name="Remover" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="Despesas" xml:space="preserve">
+    <value>Dépenses</value>
+  </data>
+  <data name="Agenda" xml:space="preserve">
+    <value>Agenda</value>
+  </data>
+  <data name="Manutenção" xml:space="preserve">
+    <value>Maintenance</value>
+  </data>
+  <data name="país" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Campo atualizado com sucesso!" xml:space="preserve">
+    <value>Champ mis à jour avec succès !</value>
+  </data>
+  <data name="Falha ao atualizar o campo." xml:space="preserve">
+    <value>Échec de la mise à jour du champ.</value>
+  </data>
+  <data name="Renda atualizada com sucesso" xml:space="preserve">
+    <value>Loyer mis à jour avec succès</value>
+  </data>
+  <data name="Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)" xml:space="preserve">
+    <value>Erreur lors de la recherche dans l’API (Locataires/MettreÀJourLoyerLocataire)</value>
+  </data>
+  <data name="Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino_Manual)" xml:space="preserve">
+    <value>Erreur lors de la recherche dans l’API (Locataires/MettreÀJourRevenuLocataire_Manuel)</value>
+  </data>
+  <data name="Código postal não devolveu dados... Inválido?" xml:space="preserve">
+    <value>Le code postal n’a renvoyé aucune donnée... Est-il invalide ?</value>
+  </data>
+  <data name="Ainda faltam {0} meses para terminar o contrato " xml:space="preserve">
+    <value>Il reste encore {0} mois avant la fin du contrat</value>
+  </data>
+  <data name=" Há indicação de rendas não pagas, mas ainda faltam {0} meses para terminar o contrato. " xml:space="preserve">
+    <value>Il y a une indication de loyers impayés, mais il reste encore {0} mois avant la fin du contrat.</value>
+  </data>
+  <data name="Não há indicação de rendas por pagar " xml:space="preserve">
+    <value>Aucune indication de loyers à payer</value>
+  </data>
+  <data name=" (lei permite 3). Verifique também, se cartas de atraso no pagamento, foram enviadas dentro do prazo" xml:space="preserve">
+    <value>(La loi autorise 3 relances.) Vérifiez également si les lettres de retard de paiement ont été envoyées dans les délais.</value>
+  </data>
+  <data name="Necessário envio de carta de atualização ao inquilino {0}" xml:space="preserve">
+    <value>Envoi d’une lettre de mise à jour au locataire {0} nécessaire</value>
+  </data>
+  <data name="Necessário atualizar renda do inquilino {0} ({1})" xml:space="preserve">
+    <value>Mise à jour du loyer du locataire {0} ({1}) nécessaire</value>
+  </data>
+  <data name=" - não foi enviada carta de atualização!" xml:space="preserve">
+    <value>- Aucune lettre de mise à jour n&apos;a été envoyée !</value>
+  </data>
+  <data name="Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano." xml:space="preserve">
+    <value>Aucune lettre de révision des loyers n’a été émise pour l’année en cours !! Le décret est publié en octobre ; les lettres doivent être envoyées avant la fin de l’année.</value>
+  </data>
+  <data name="Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação" xml:space="preserve">
+    <value>Le contrat du locataire {0} ({1}) est sur le point de se terminer. Renouveler la date de fin ou envoyer une lettre de résiliation</value>
+  </data>
+  <data name="Erro na atualização de Arrendamento" xml:space="preserve">
+    <value>Erreur lors de la mise à jour de la location</value>
+  </data>
+  <data name="Atualização de Arrendamento" xml:space="preserve">
+    <value>Mise à jour de la location</value>
+  </data>
+  <data name="Registo atualizado com sucesso" xml:space="preserve">
+    <value>Enregistrement mis à jour avec succès</value>
+  </data>
+  <data name="Já existe arrendamento ativo para essa fração" xml:space="preserve">
+    <value>Il existe déjà un bail actif pour ce lot</value>
+  </data>
+  <data name="Verifique, p.f." xml:space="preserve">
+    <value>Veuillez vérifier.</value>
+  </data>
+  <data name="Erro na criação de Arrendamento" xml:space="preserve">
+    <value>Erreur lors de la création de la location</value>
+  </data>
+  <data name="Criação de Arrendamento" xml:space="preserve">
+    <value>Création d’un bail</value>
+  </data>
+  <data name="Registo criado com sucesso" xml:space="preserve">
+    <value>Enregistrement créé avec succès</value>
+  </data>
+  <data name="Envio de carta ao inquilino" xml:space="preserve">
+    <value>Envoi d&apos;une lettre au locataire</value>
+  </data>
+  <data name="Inquilino não tem rendas em atraso! Verifique, p.f" xml:space="preserve">
+    <value>Le locataire n’a pas de loyers impayés ! Veuillez vérifier.</value>
+  </data>
+  <data name="Confirma operação?" xml:space="preserve">
+    <value>Confirmer l’opération ?</value>
+  </data>
+  <data name="Arrendamento tem pagamentos associados! Operação cancelada." xml:space="preserve">
+    <value>La location a des paiements associés ! Opération annulée.</value>
+  </data>
+  <data name="Erro ao remover Arrendamento" xml:space="preserve">
+    <value>Erreur lors de la suppression de la location</value>
+  </data>
+  <data name="Não foi possível concluir operação. {0}" xml:space="preserve">
+    <value>Impossible de terminer l’opération. {0}</value>
+  </data>
+  <data name="Atualização do termo do contrato" xml:space="preserve">
+    <value>Mise à jour de la date d’expiration du contrat</value>
+  </data>
+  <data name="Não aplicável. Ver &apos;Settings&apos;" xml:space="preserve">
+    <value>Non applicable. Voir « Paramètres »</value>
+  </data>
+  <data name="Erro ao atualizar data-fim do contrato (Arrendamentos)" xml:space="preserve">
+    <value>Erreur lors de la mise à jour de la date de fin du contrat (Baux)</value>
+  </data>
+  <data name="Contrato já foi emitido.&#xD;&#xA;&#xD;&#xA;Verifique, p.f" xml:space="preserve">
+    <value>Le contrat a déjà été émis.&#xD;&#xA;&#xD;&#xA;Veuillez vérifier.</value>
+  </data>
+  <data name="Fração não está livre para arrendamento..." xml:space="preserve">
+    <value>Le lot n’est pas disponible à la location...</value>
+  </data>
+  <data name="Geração de contrato e criação de documento na ficha do Inquilino" xml:space="preserve">
+    <value>Génération du contrat et création du document dans le dossier du locataire</value>
+  </data>
+  <data name="Erro na criação de documento na ficha do Inquilino" xml:space="preserve">
+    <value>Erreur lors de la création du document dans la fiche du locataire</value>
+  </data>
+  <data name="Listagem de arrendamentos" xml:space="preserve">
+    <value>Liste des locations</value>
+  </data>
+  <data name="Não há contratos ativos! Verifique, p.f." xml:space="preserve">
+    <value>Il n&apos;y a pas de contrats actifs ! Veuillez vérifier.</value>
+  </data>
+  <data name="Carta já foi enviada... Verifique, p.f." xml:space="preserve">
+    <value>La lettre a déjà été envoyée... Veuillez vérifier.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu no prazo definido... " xml:space="preserve">
+    <value>Processus d&apos;envoi annulé. Une lettre a déjà été envoyée, et le locataire a répondu dans le délai imparti...</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, e Inquilino respondeu fora do prazo definido (limite: {0})... Verifique Log , p.f." xml:space="preserve">
+    <value>Processus d’envoi annulé. Une lettre a déjà été envoyée, et le locataire a répondu hors du délai imparti (limite : {0})... Veuillez consulter le journal.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta, Aguarda resposta do Inquilino" xml:space="preserve">
+    <value>Processus d&apos;envoi annulé. Une lettre a déjà été envoyée. En attente de la réponse du locataire.</value>
+  </data>
+  <data name="Processo de envio cancelado. Já foi enviada carta. Inquilino não respondeu no prazo (limite: {0})... Verifique, p.f." xml:space="preserve">
+    <value>Processus d’envoi annulé. Une lettre a déjà été envoyée. Le locataire n’a pas répondu dans les délais (délai : {0})... Veuillez vérifier.</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao obter dados para a carta! Verifique log, p.f." xml:space="preserve">
+    <value>Processus d’envoi annulé. Erreur lors de l’obtention des données pour la lettre ! Veuillez consulter le journal.</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao gerar pdf... Verifique log, p.f." xml:space="preserve">
+    <value>Processus d’envoi annulé. Erreur lors de la génération du PDF... Veuillez vérifier le journal.</value>
+  </data>
+  <data name="Carta de oposição à renovação do contrato" xml:space="preserve">
+    <value>Lettre d’opposition au renouvellement du contrat</value>
+  </data>
+  <data name="Operação terminada com sucesso" xml:space="preserve">
+    <value>Opération terminée avec succès</value>
+  </data>
+  <data name="Processo de envio cancelado. Erro ao registar carta. Verifique log, p.f." xml:space="preserve">
+    <value>Processus d’envoi annulé. Erreur lors de l’enregistrement de la lettre. Veuillez consulter le journal.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição... Verifique, p.f." xml:space="preserve">
+    <value>Une lettre d’opposition a déjà été envoyée... Veuillez vérifier.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição e Inquilino já respondeu... Verifique, p.f." xml:space="preserve">
+    <value>Une lettre d’opposition a déjà été envoyée et le locataire a déjà répondu... Veuillez vérifier.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição ==&gt; prazo de resposta ultrapassado... Verifique, p.f." xml:space="preserve">
+    <value>Une lettre d’opposition a déjà été envoyée ==&gt; Délai de réponse dépassé... Veuillez vérifier.</value>
+  </data>
+  <data name="Já foi enviada uma carta de oposição e Inquilino ainda não respondeu (limite: {0})... Verifique, p.f." xml:space="preserve">
+    <value>Une lettre d’opposition a déjà été envoyée et le locataire n’a pas encore répondu (délai : {0})... Veuillez vérifier.</value>
+  </data>
+  <data name="Leitura de pdf" xml:space="preserve">
+    <value>Lecture de PDF</value>
+  </data>
+  <data name="Ficheiro {0} não existe no local indicado!" xml:space="preserve">
+    <value>Le fichier {0} n’existe pas à l’emplacement indiqué !</value>
+  </data>
+  <data name="Ficheiro não existe no local previsto" xml:space="preserve">
+    <value>Le fichier n’existe pas à l’emplacement prévu</value>
+  </data>
+  <data name="Erro ao abrir contrato para visualização" xml:space="preserve">
+    <value>Erreur lors de l’ouverture du contrat pour affichage</value>
+  </data>
+  <data name="Cartas de atualização de rendas" xml:space="preserve">
+    <value>Lettres d’actualisation des loyers</value>
+  </data>
+  <data name="Não foram configurados dados dos aumentos para o ano corrente" xml:space="preserve">
+    <value>Aucune donnée relative aux augmentations n’a été configurée pour l’année en cours</value>
+  </data>
+  <data name="Erro na emissão de carta. Verifique log, p.f." xml:space="preserve">
+    <value>Erreur lors de l’émission de la lettre. Veuillez vérifier le journal.</value>
+  </data>
+  <data name="Erro ao registar envio de carta na BD ({0}). Processo terminou com erro! Contacte Administrador, p.f." xml:space="preserve">
+    <value>Erreur lors de l’enregistrement de l’envoi de la lettre dans la BD ({0}). Le processus s’est terminé par une erreur ! Veuillez contacter l’administrateur.</value>
+  </data>
+  <data name="Erro ao obter dados para emissão de carta" xml:space="preserve">
+    <value>Erreur lors de l’obtention des données pour l’émission de la lettre</value>
+  </data>
+  <data name="Envio de carta de atraso no pagamento" xml:space="preserve">
+    <value>Envoi d’une lettre de retard de paiement</value>
+  </data>
+  <data name="Inquilino não tem contrato de arrendamento! Verifique, p.f" xml:space="preserve">
+    <value>Le locataire n&apos;a pas de contrat de location ! Veuillez vérifier.</value>
+  </data>
+  <data name="Envio de carta de revogação" xml:space="preserve">
+    <value>Envoi d’une lettre de révocation</value>
+  </data>
+  <data name="Envio de cartas ao inquilino" xml:space="preserve">
+    <value>Envoi de lettres au locataire</value>
+  </data>
+  <data name="Envio de carta de oposição à renovação" xml:space="preserve">
+    <value>Envoi d’une lettre d’opposition au renouvellement</value>
+  </data>
+  <data name="Envio de carta de atualização de renda" xml:space="preserve">
+    <value>Envoi d’une lettre de révision du loyer</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda para o Inquilino" xml:space="preserve">
+    <value>Aucune augmentation de loyer n’a été appliquée au Locataire</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda para o ano corrente" xml:space="preserve">
+    <value>Aucune augmentation de loyer n’a été effectuée pour l’année en cours</value>
+  </data>
+  <data name="Já foi enviada carta de aumento para o ano corrente.  Verifique histórico, p.f." xml:space="preserve">
+    <value>Une lettre d’augmentation a déjà été envoyée pour l’année en cours.  Veuillez consulter l’historique.</value>
+  </data>
+  <data name="Atualizar valor de renda" xml:space="preserve">
+    <value>Mettre à jour le montant du loyer</value>
+  </data>
+  <data name="Já foi efetuado o aumento de renda para este inquilino. Verifique histórico, p.f." xml:space="preserve">
+    <value>L’augmentation de loyer a déjà été effectuée pour ce locataire. Veuillez consulter l’historique.</value>
+  </data>
+  <data name="Contrato do inquilino não foi encontrado!" xml:space="preserve">
+    <value>Le contrat du locataire est introuvable !</value>
+  </data>
+  <data name="Contrato do inquilino só termina dentro de {0} meses!" xml:space="preserve">
+    <value>Le contrat du locataire ne se termine que dans {0} mois !</value>
+  </data>
+  <data name="Erro ao ler Api" xml:space="preserve">
+    <value>Erreur lors de la lecture de l’API</value>
+  </data>
+  <data name="Atualização de dados do inquilino" xml:space="preserve">
+    <value>Mise à jour des données du locataire</value>
+  </data>
+  <data name="Gravar dados do Fiador " xml:space="preserve">
+    <value>Enregistrer les données du garant</value>
+  </data>
+  <data name="Atualização de dados do Fiador" xml:space="preserve">
+    <value>Mise à jour des données du garant</value>
+  </data>
+  <data name="Criar Fiador" xml:space="preserve">
+    <value>Créer un garant</value>
+  </data>
+  <data name="Atualizar dados do documento" xml:space="preserve">
+    <value>Mettre à jour les données du document</value>
+  </data>
+  <data name="Gravar dados do Documento" xml:space="preserve">
+    <value>Enregistrer les données du document</value>
+  </data>
+  <data name="Criação de documento" xml:space="preserve">
+    <value>A: Création du document</value>
+  </data>
+  <data name="Erro desconhecido (!) ao processar atualização" xml:space="preserve">
+    <value>Erreur inconnue (!) lors du traitement de la mise à jour</value>
+  </data>
+  <data name="Inquilino tem contrato de arrendamento ativo! Verifique, p.f." xml:space="preserve">
+    <value>Le locataire a un contrat de location en cours ! Veuillez vérifier.</value>
+  </data>
+  <data name="Erro ao apagar Fiador. Confirme log, p.f." xml:space="preserve">
+    <value>Erreur lors de la suppression du garant. Veuillez confirmer le journal.</value>
+  </data>
+  <data name="Erro no processo (Id não existe)... Verifique, p.f." xml:space="preserve">
+    <value>Erreur dans le processus (l’identifiant n’existe pas)... Veuillez vérifier.</value>
+  </data>
+  <data name="Carta de aviso - rendas em atraso" xml:space="preserve">
+    <value>Lettre d’avertissement - Loyers impayés</value>
+  </data>
+  <data name="Inquilino não tem pagamentos em atraso!. Verifique, p.f." xml:space="preserve">
+    <value>Le locataire n’a pas de paiements en retard ! Veuillez vérifier.</value>
+  </data>
+  <data name="Carta de pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f." xml:space="preserve">
+    <value>La lettre de rappel de paiement en retard (mois {0}  de {1}) a déjà été envoyée ! Veuillez vérifier.</value>
+  </data>
+  <data name="Carta de alerta para pagamento em atraso (mês {0}  de {1}) já foi enviada!. Verifique, p.f." xml:space="preserve">
+    <value>La lettre de rappel pour paiement en retard (mois {0} de {1}) a déjà été envoyée ! Veuillez vérifier.</value>
+  </data>
+  <data name="Há cartas de aviso que não foram enviadas!. Verifique, p.f." xml:space="preserve">
+    <value>Il y a des lettres d’avertissement qui n’ont pas été envoyées ! Veuillez vérifier.</value>
+  </data>
+  <data name="Carta de atualização de rendas para o inquilino" xml:space="preserve">
+    <value>Lettre de révision du loyer destinée au locataire</value>
+  </data>
+  <data name="Não foi feito qualquer aumento de renda" xml:space="preserve">
+    <value>Aucune augmentation de loyer n&apos;a été effectuée</value>
+  </data>
+  <data name="Novo valor inválido. Verifique, p.f." xml:space="preserve">
+    <value>Nouvelle valeur non valide. Veuillez vérifier.</value>
+  </data>
+  <data name="Já foi efetuado um aumento de renda para este ano. Verifique, p.f." xml:space="preserve">
+    <value>Une augmentation du loyer a déjà été effectuée pour cette année. Veuillez vérifier.</value>
+  </data>
+  <data name="Operação terminou com sucesso." xml:space="preserve">
+    <value>L’opération s’est terminée avec succès.</value>
+  </data>
+  <data name="Operação terminou com erro ({0})" xml:space="preserve">
+    <value>L’opération s’est terminée par une erreur ({0})</value>
+  </data>
+  <data name="Estender prazo do contrato" xml:space="preserve">
+    <value>Prolonger la durée du contrat</value>
+  </data>
+  <data name="Não foi encontrado o contrato do Inquilino." xml:space="preserve">
+    <value>Le contrat du locataire n&apos;a pas été trouvé.</value>
+  </data>
+  <data name="Cartas já foram enviadas para os pagamentos em atraso. Verifique, p.f." xml:space="preserve">
+    <value>Des lettres ont déjà été envoyées concernant les paiements en retard. Veuillez vérifier.</value>
+  </data>
+  <data name="Criar registo de pagamento" xml:space="preserve">
+    <value>Créer un enregistrement de paiement</value>
+  </data>
+  <data name="Não há registo de Arrendamentos! Verifique, p.f." xml:space="preserve">
+    <value>Aucune location enregistrée ! Veuillez vérifier.</value>
+  </data>
+  <data name="Novo pagamento" xml:space="preserve">
+    <value>Nouveau paiement</value>
+  </data>
+  <data name="Não é possivel continuar. Não há registo de frações!" xml:space="preserve">
+    <value>Il n’est pas possible de continuer. Il n’y a aucun enregistrement de lots !</value>
+  </data>
+  <data name="Error while processings monthly rents! Check log, please." xml:space="preserve">
+    <value>Erreur lors du traitement des loyers mensuels ! Veuillez consulter le journal.</value>
+  </data>
+  <data name="Error while processings monthly rents! ({0}). Please check log." xml:space="preserve">
+    <value>Erreur lors du traitement des loyers mensuels ! ({0}). Veuillez consulter le journal.</value>
+  </data>
+  <data name="Cancelamento de Processamento de rendas" xml:space="preserve">
+    <value>Annulation du traitement des loyers</value>
+  </data>
+  <data name="Erro ao cancelar! Verifique log, p.f." xml:space="preserve">
+    <value>Erreur lors de l’annulation ! Veuillez consulter le journal.</value>
+  </data>
+  <data name="Data de pagamento ({0}) inválida. Já existe movimento com data posterior! ({1})" xml:space="preserve">
+    <value>Date de paiement ({0}) invalide. Il existe déjà un mouvement avec une date ultérieure ! ({1})</value>
+  </data>
+  <data name="Erro ao atualizar dados" xml:space="preserve">
+    <value>Erreur lors de la mise à jour des données</value>
+  </data>
+  <data name="Erro ao inserir pagamento na base de dados" xml:space="preserve">
+    <value>Erreur lors de la saisie du paiement dans la base de données</value>
+  </data>
+  <data name="Exportar pagamentos para Excel" xml:space="preserve">
+    <value>Exporter les paiements vers Excel</value>
+  </data>
+  <data name="Não há pagamentos para listar. Verifique, p.f." xml:space="preserve">
+    <value>Aucun paiement à répertorier. Veuillez vérifier.</value>
+  </data>
+  <data name="Imóvel" xml:space="preserve">
+    <value>Immeuble</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Previsto" xml:space="preserve">
+    <value>Prévu</value>
+  </data>
+  <data name="Recebido" xml:space="preserve">
+    <value>Reçu</value>
+  </data>
+  <data name="Em falta" xml:space="preserve">
+    <value>Manquant</value>
+  </data>
+  <data name="Estado" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="Editar dados de pagamento" xml:space="preserve">
+    <value>Modifier les données de paiement</value>
+  </data>
+  <data name="Valores das cauções não podem ser removidos" xml:space="preserve">
+    <value>Les montants des cautions ne peuvent pas être supprimés</value>
+  </data>
+  <data name="Esclareça com Administrador da aplicação, p.f." xml:space="preserve">
+    <value>Veuillez clarifier ce point avec l’administrateur de l’application.</value>
+  </data>
+  <data name="Transação: {0} / {1} " xml:space="preserve">
+    <value>Transaction : {0} / {1}</value>
+  </data>
+  <data name="Transação não terminou com sucesso. Verifique (erro: {0})" xml:space="preserve">
+    <value>La transaction n’a pas abouti. Veuillez vérifier (erreur : {0})</value>
+  </data>
+  <data name="Erro ao acertar pagamento. Verifique log, p.f." xml:space="preserve">
+    <value>Erreur lors du règlement du paiement. Veuillez consulter le journal.</value>
+  </data>
+  <data name="Selecione Imóvel, p.f." xml:space="preserve">
+    <value>Veuillez sélectionner un bien immobilier.</value>
+  </data>
+  <data name="Fração" xml:space="preserve">
+    <value>Lot</value>
+  </data>
+  <data name="Andar" xml:space="preserve">
+    <value>Etage</value>
+  </data>
+  <data name="Lado" xml:space="preserve">
+    <value>Côté</value>
+  </data>
+  <data name="Renda" xml:space="preserve">
+    <value>Loyer</value>
+  </data>
+  <data name="Tipo" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Escolha foto da propriedade, p.f." xml:space="preserve">
+    <value>Veuillez choisir une photo de la propriété.</value>
+  </data>
+  <data name="Não foi possível concluir operação. Imóvel com frações associadas!" xml:space="preserve">
+    <value>Impossible de terminer l’opération. Bien immobilier avec des lots associés !</value>
+  </data>
+  <data name="Apagar Fração" xml:space="preserve">
+    <value>Supprimer le lot</value>
+  </data>
+  <data name="Não foi possível concluir operação - Erro: {0}" xml:space="preserve">
+    <value>Impossible de terminer l’opération - Erreur : {0}</value>
+  </data>
+  <data name="Imóveis/Frações" xml:space="preserve">
+    <value>Biens immobiliers/Lots</value>
+  </data>
+  <data name="Erro no módulo de Imóveis/Frações: {0}" xml:space="preserve">
+    <value>Erreur dans le module Biens immobiliers/Lots : {0}</value>
+  </data>
+  <data name="Requisitos iniciais não foram preenchidos (Proprietário, Imóvel, Fração / Inquilino e Fiador)." xml:space="preserve">
+    <value>Les conditions initiales n’ont pas été remplies (propriétaire, bien immobilier, lot/locataire et garant).</value>
+  </data>
+  <data name="Pagamentos em dia" xml:space="preserve">
+    <value>Paiements à jour</value>
+  </data>
+  <data name="Saldo corrente do Inquilino" xml:space="preserve">
+    <value>Solde actuel du locataire</value>
+  </data>
+  <data name="Pagamentos estão dia." xml:space="preserve">
+    <value>Les paiements sont à jour.</value>
+  </data>
+  <data name=" ({0} meses * " xml:space="preserve">
+    <value> ({0} mois * </value>
+  </data>
+  <data name="Fração não está disponível para arrendamento" xml:space="preserve">
+    <value>Le lot n’est pas disponible à la location</value>
+  </data>
+  <data name="Fiador não foi encontrado. Verifique, p.f." xml:space="preserve">
+    <value>Garant non trouvé. Veuillez vérifier.</value>
+  </data>
+  <data name="Criar arrendamento" xml:space="preserve">
+    <value>Créer un bail</value>
+  </data>
+  <data name="Data inválida ({0}) posterior à data-corrente" xml:space="preserve">
+    <value>Date non valide ({0}) postérieure à la date actuelle</value>
+  </data>
+  <data name="Data inválida ({0}) deverá ser data mínima" xml:space="preserve">
+    <value>Date non valide ({0}) ; il doit s’agir de la date minimale</value>
+  </data>
+  <data name="Data-fim inválida (antes: {0}). Corrija, p.f.." xml:space="preserve">
+    <value>Date de fin non valide (avant : {0}). Veuillez la corriger.</value>
+  </data>
+  <data name="Data-início do contrato ou data do último pagamento inválida...." xml:space="preserve">
+    <value>Date de début du contrat ou date du dernier paiement non valide....</value>
+  </data>
+  <data name="Data-fim do contrato ou data do último pagamento inválida...." xml:space="preserve">
+    <value>Date de fin du contrat ou date du dernier paiement invalide....</value>
+  </data>
+  <data name="Data do último pagamento inválida (posterior à data corrente)...." xml:space="preserve">
+    <value>Date du dernier paiement non valide (ultérieure à la date actuelle)....</value>
+  </data>
+  <data name="Informe valor da renda, p.f." xml:space="preserve">
+    <value>Veuillez indiquer le montant du loyer.</value>
+  </data>
+  <data name="Último ano pago inválido" xml:space="preserve">
+    <value>Dernière année payée non valide</value>
+  </data>
+  <data name="Sem dados para mostrar" xml:space="preserve">
+    <value>Aucune donnée à afficher</value>
+  </data>
+  <data name="Editar dados do Fiador" xml:space="preserve">
+    <value>Modifier les données du garant</value>
+  </data>
+  <data name="Erro na na operação!" xml:space="preserve">
+    <value>Erreur lors de l’opération !</value>
+  </data>
+  <data name="Novo Fiador" xml:space="preserve">
+    <value>Nouveau garant</value>
+  </data>
+  <data name="Tentativa de apagar Fiador" xml:space="preserve">
+    <value>Tentative de suppression du garant</value>
+  </data>
+  <data name="Fiador tem contrato de arrendamento ativo! Verifique, p.f." xml:space="preserve">
+    <value>Le garant a un contrat de location en cours ! Veuillez vérifier.</value>
+  </data>
+  <data name="Erro ao apagar Fiador" xml:space="preserve">
+    <value>Erreur lors de la suppression du garant</value>
+  </data>
+  <data name="Ficheiro não existe no local indicado! Verifique, p.f." xml:space="preserve">
+    <value>Le fichier n’existe pas à l’emplacement indiqué ! Veuillez vérifier.</value>
+  </data>
+  <data name="Título" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="Descrição" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="Inquilino" xml:space="preserve">
+    <value>Locataire</value>
+  </data>
+  <data name="Criação de Contacto" xml:space="preserve">
+    <value>Création d’un contact</value>
+  </data>
+  <data name="Período inválido ({0}/{1}). Último processamento: {2} / {3}" xml:space="preserve">
+    <value>Période non valide ({0}/{1}). Dernier traitement : {2} / {3}</value>
+  </data>
+  <data name="Período inválido. Verifique, p.f." xml:space="preserve">
+    <value>Période non valide. Veuillez vérifier.</value>
+  </data>
+  <data name="Mês inválido. Último mês processado: {0}. Verifique, p.f." xml:space="preserve">
+    <value>Mois non valide. Dernier mois traité : {0}. Veuillez vérifier.</value>
+  </data>
+  <data name="Visualizar Log" xml:space="preserve">
+    <value>Voir le journal</value>
+  </data>
+  <data name="Ver dados da entrada no Log" xml:space="preserve">
+    <value>Voir les données de l’entrée dans le journal</value>
+  </data>
+  <data name="Log Viewer" xml:space="preserve">
+    <value>Visionneuse de journaux</value>
+  </data>
+  <data name="Marcou {0} registos para apagar. Não tem reversão! Backup recomendado antes de continuar" xml:space="preserve">
+    <value>Vous avez sélectionné {0} enregistrements à supprimer. Il n&apos;y a pas de retour en arrière ! Une sauvegarde est recommandée avant de continuer.</value>
+  </data>
+  <data name="Não há registos para apagar... Verifique, p.f." xml:space="preserve">
+    <value>Il n’y a aucun enregistrement à supprimer... Veuillez vérifier.</value>
+  </data>
+  <data name="Warnings" xml:space="preserve">
+    <value>Avertissements</value>
+  </data>
+  <data name="Errors" xml:space="preserve">
+    <value>Erreurs</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Logins" xml:space="preserve">
+    <value>Identifiants de connexion</value>
+  </data>
+  <data name="Atualização de renda" xml:space="preserve">
+    <value>Actualisation du loyer</value>
+  </data>
+  <data name="2ª tentativa" xml:space="preserve">
+    <value>2e tentative</value>
+  </data>
+  <data name="3ª tentativa" xml:space="preserve">
+    <value>3e tentative</value>
+  </data>
+  <data name="1ª tentativa" xml:space="preserve">
+    <value>1re tentative</value>
+  </data>
+  <data name="Contrato de arrendamento" xml:space="preserve">
+    <value>CONTRAT DE BAIL</value>
+  </data>
+  <data name="Janeiro" xml:space="preserve">
+    <value>Janvier</value>
+  </data>
+  <data name="Fevereiro" xml:space="preserve">
+    <value>Février</value>
+  </data>
+  <data name="Março" xml:space="preserve">
+    <value>Mars</value>
+  </data>
+  <data name="Abril" xml:space="preserve">
+    <value>Avril</value>
+  </data>
+  <data name="Maio" xml:space="preserve">
+    <value>Mai</value>
+  </data>
+  <data name="Junho" xml:space="preserve">
+    <value>Juin</value>
+  </data>
+  <data name="Julho" xml:space="preserve">
+    <value>Juillet</value>
+  </data>
+  <data name="Agosto" xml:space="preserve">
+    <value>Août</value>
+  </data>
+  <data name="Setembro" xml:space="preserve">
+    <value>Septembre</value>
+  </data>
+  <data name="Outubro" xml:space="preserve">
+    <value>Octobre</value>
+  </data>
+  <data name="Novembro" xml:space="preserve">
+    <value>Novembre</value>
+  </data>
+  <data name="Dezembro" xml:space="preserve">
+    <value>Décembre</value>
+  </data>
+  <data name="Recebida do inquilino" xml:space="preserve">
+    <value>Reçu du locataire</value>
+  </data>
+  <data name="Enviada ao inquilino" xml:space="preserve">
+    <value>Envoyée au locataire</value>
+  </data>
+  <data name="Outro Recebimento" xml:space="preserve">
+    <value>Autre encaissement</value>
+  </data>
+  <data name="Outro Envio" xml:space="preserve">
+    <value>Autre envoi</value>
+  </data>
+  <data name="Assunto" xml:space="preserve">
+    <value>Objet</value>
+  </data>
+  <data name="Mensagem" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="Referência" xml:space="preserve">
+    <value>Référence</value>
+  </data>
+  <data name="Guarda mensagem" xml:space="preserve">
+    <value>Enregistrer le message</value>
+  </data>
+  <data name="Guarda mensagem e envia email" xml:space="preserve">
+    <value>Enregistrer le message et envoyer un e-mail</value>
+  </data>
+  <data name="Cancelar" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Receção" xml:space="preserve">
+    <value>Réception</value>
+  </data>
+  <data name="Remetente" xml:space="preserve">
+    <value>Expéditeur</value>
+  </data>
+  <data name="Não escolheu opção" xml:space="preserve">
+    <value>Vous n’avez pas choisi d’option</value>
+  </data>
+  <data name="Escolha Inquilino" xml:space="preserve">
+    <value>Choisir un locataire</value>
+  </data>
+  <data name="Assunto em falta" xml:space="preserve">
+    <value>Objet manquant</value>
+  </data>
+  <data name="Mensagem em falta" xml:space="preserve">
+    <value>Message manquant</value>
+  </data>
+  <data name="Remetente em falta" xml:space="preserve">
+    <value>Expéditeur manquant</value>
+  </data>
+  <data name="Destinatário em falta" xml:space="preserve">
+    <value>Destinataire manquant</value>
+  </data>
+  <data name="e-mail não informado!" xml:space="preserve">
+    <value>Adresse e-mail non renseignée !</value>
+  </data>
+  <data name="Mensagem enviada com sucesso" xml:space="preserve">
+    <value>Message envoyé avec succès</value>
+  </data>
+  <data name="Erro ao criar mensagem. Verifique log, p.f.." xml:space="preserve">
+    <value>Erreur lors de la création du message. Veuillez consulter le journal.</value>
+  </data>
+  <data name="Erro no processo. Contacte Admin." xml:space="preserve">
+    <value>Erreur dans le processus. Veuillez contacter l’administrateur.</value>
+  </data>
+  <data name="E-mail não consta dos dados do inquilino..." xml:space="preserve">
+    <value>L’e-mail ne figure pas dans les données du locataire...</value>
+  </data>
+  <data name="e-Mail do Destinatário" xml:space="preserve">
+    <value>E-mail du destinataire</value>
+  </data>
+  <data name="e-Mail do Remetente" xml:space="preserve">
+    <value>E-mail de l’expéditeur</value>
+  </data>
+  <data name="Mensagem atualizada com sucesso" xml:space="preserve">
+    <value>Message mis à jour avec succès</value>
+  </data>
+  <data name="Erro na atualização da mensagem" xml:space="preserve">
+    <value>Erreur lors de la mise à jour du message</value>
+  </data>
+  <data name="Mensagem apagada com sucesso" xml:space="preserve">
+    <value>Message supprimé avec succès</value>
+  </data>
+  <data name="Erro ao apagar mensagem" xml:space="preserve">
+    <value>Erreur lors de la suppression du message</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="Acerto" xml:space="preserve">
+    <value>Règlement</value>
+  </data>
+  <data name="Não paga" xml:space="preserve">
+    <value>Impayée</value>
+  </data>
+  <data name="Editar pagamento de renda" xml:space="preserve">
+    <value>Modifier le paiement du loyer</value>
+  </data>
+  <data name="Outro recebimento" xml:space="preserve">
+    <value>Autre encaissement</value>
+  </data>
+  <data name="Fechar" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Valor pago é inferior ao previsto!" xml:space="preserve">
+    <value>Le montant payé est inférieur à celui prévu !</value>
+  </data>
+  <data name="Valor corrente {0}" xml:space="preserve">
+    <value>Valeur actuelle {0}</value>
+  </data>
+  <data name="Coeficiente {0} {1}%" xml:space="preserve">
+    <value>Coefficient {0} {1} %</value>
+  </data>
+  <data name="Valor esperado {0}" xml:space="preserve">
+    <value>Valeur attendue {0}</value>
+  </data>
+  <data name="Aumento {0}" xml:space="preserve">
+    <value>Augmentation {0}</value>
+  </data>
+  <data name="Aumento de renda" xml:space="preserve">
+    <value>Augmentation du loyer</value>
+  </data>
+  <data name="Coeficiente para o ano corrente não foi indicado. Verifique, por favor" xml:space="preserve">
+    <value>Le coefficient pour l’année en cours n’a pas été indiqué. Veuillez vérifier.</value>
+  </data>
+  <data name="Alteração do valor da renda" xml:space="preserve">
+    <value>Modification du montant du loyer</value>
+  </data>
+  <data name="Valor não foi alterado" xml:space="preserve">
+    <value>La valeur n’a pas été modifiée</value>
+  </data>
+  <data name="Valor não pode ser inferior ao corrente" xml:space="preserve">
+    <value>La valeur ne peut pas être inférieure à la valeur actuelle</value>
+  </data>
+  <data name="Valor não pode ser superior a 10% do valor corrente" xml:space="preserve">
+    <value>La valeur ne peut pas être supérieure à 10 % de la valeur actuelle</value>
+  </data>
+  <data name="Conta-corrente (10 ultºs movimentos)" xml:space="preserve">
+    <value>Compte courant (10 derniers mouvements)</value>
+  </data>
+  <data name="Valor Pago" xml:space="preserve">
+    <value>Montant payé</value>
+  </data>
+  <data name="Em dívida" xml:space="preserve">
+    <value>Impayé</value>
+  </data>
+  <data name="Notas" xml:space="preserve">
+    <value>Remarques</value>
+  </data>
+  <data name="Sem documentos para mostrar" xml:space="preserve">
+    <value>Aucun document à afficher</value>
+  </data>
+  <data name="Aumentos de renda" xml:space="preserve">
+    <value>Augmentations de loyer</value>
+  </data>
+  <data name="Saldo Corrente Inquilino" xml:space="preserve">
+    <value>Solde actuel du locataire</value>
+  </data>
+  <data name="Dt, Início" xml:space="preserve">
+    <value>Date de début</value>
+  </data>
+  <data name="Último mês pago" xml:space="preserve">
+    <value>Dernier mois payé</value>
+  </data>
+  <data name="Ano" xml:space="preserve">
+    <value>Année</value>
+  </data>
+  <data name="Meses/início" xml:space="preserve">
+    <value>Mois/début</value>
+  </data>
+  <data name="Gravar" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name=" anos" xml:space="preserve">
+    <value>ans</value>
+  </data>
+  <data name="(em anos)" xml:space="preserve">
+    <value>(en années)</value>
+  </data>
+  <data name="Lei vigente" xml:space="preserve">
+    <value>Loi en vigueur</value>
+  </data>
+  <data name="Carta de revogação enviada em {0}" xml:space="preserve">
+    <value>Lettre de révocation envoyée le {0}</value>
+  </data>
+  <data name="Data de resposta em {0}" xml:space="preserve">
+    <value>Date de réponse : {0}</value>
+  </data>
+  <data name="Novo" xml:space="preserve">
+    <value>Nouveau</value>
+  </data>
+  <data name="carta atualiz. enviada" xml:space="preserve">
+    <value>Lettre de mise à jour envoyée</value>
+  </data>
+  <data name="Editar" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="Tabela de Formas de Pagamento" xml:space="preserve">
+    <value>Tableau des modes de paiement</value>
+  </data>
+  <data name="Situação da Fração" xml:space="preserve">
+    <value>Situation du lot</value>
+  </data>
+  <data name="Tipo de Propriedade" xml:space="preserve">
+    <value>Type de propriété</value>
+  </data>
+  <data name="Tipo de Recebimento" xml:space="preserve">
+    <value>Type de réception</value>
+  </data>
+  <data name="Certificados Energéticos" xml:space="preserve">
+    <value>Certificats énergétiques</value>
+  </data>
+  <data name="Nova entrada - Erro na inserção! Verifique, p.f." xml:space="preserve">
+    <value>Nouvelle entrée - Erreur lors de la saisie ! Veuillez vérifier.</value>
+  </data>
+  <data name="Nova entrada ({0}) já existe na base de dados!" xml:space="preserve">
+    <value>La nouvelle entrée ({0}) existe déjà dans la base de données !</value>
+  </data>
+  <data name="Alteração - Entrada já existe na base de dados!" xml:space="preserve">
+    <value>Modification - L’entrée existe déjà dans la base de données !</value>
+  </data>
+  <data name="Apagar entrada - Erro ao apagar registo!" xml:space="preserve">
+    <value>Supprimer l’entrée - Erreur lors de la suppression de l’enregistrement !</value>
+  </data>
+  <data name="Rendas" xml:space="preserve">
+    <value>Loyers</value>
+  </data>
+  <data name="Inicializar tabelas" xml:space="preserve">
+    <value>Initialiser les tableaux</value>
+  </data>
+  <data name="Não esquecer de retirar em Produção!" xml:space="preserve">
+    <value>N’oubliez pas de le retirer de la production !</value>
+  </data>
+  <data name="Inicializar tabelas de pagamentos" xml:space="preserve">
+    <value>Initialiser les tableaux de paiements</value>
+  </data>
+  <data name="Processo terminou com sucesso" xml:space="preserve">
+    <value>Le processus s’est terminé avec succès</value>
+  </data>
+  <data name="Erro na inicialização. Verifique log, p.f." xml:space="preserve">
+    <value>Erreur lors de l’initialisation. Veuillez consulter le journal.</value>
+  </data>
+  <data name="Cria ficheiros Zip de documentos e imagens" xml:space="preserve">
+    <value>Crée des fichiers Zip de documents et d’images</value>
+  </data>
+  <data name="Apagar todos os registos do log!" xml:space="preserve">
+    <value>Supprimer tous les enregistrements du journal !</value>
+  </data>
+  <data name="Apagar registo?" xml:space="preserve">
+    <value>Supprimer l’enregistrement ?</value>
+  </data>
+  <data name="Opções" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Exceção encontrada." xml:space="preserve">
+    <value>Exception trouvée.</value>
+  </data>
+  <data name="Cartas de atualização de rendas não foram emitidas para o ano corrente" xml:space="preserve">
+    <value>Aucune lettre de révision des loyers n’a été émise pour l’année en cours</value>
+  </data>
+  <data name="Apagar Tipo de Despesa" xml:space="preserve">
+    <value>Supprimer le type de dépense</value>
+  </data>
+  <data name="Imputação de despesas" xml:space="preserve">
+    <value>Imputation des dépenses</value>
+  </data>
+  <data name="Existem despesas com esse Tipo. Confirme, p.f." xml:space="preserve">
+    <value>Il y a des dépenses de ce type. Veuillez confirmer.</value>
+  </data>
+  <data name="Valor patrimonial tributável" xml:space="preserve">
+    <value>Valeur patrimoniale imposable</value>
+  </data>
+  <data name="Distrito" xml:space="preserve">
+    <value>District</value>
+  </data>
+  <data name="Concelho" xml:space="preserve">
+    <value>Municipalité</value>
+  </data>
+  <data name="Tipo de Imóvel" xml:space="preserve">
+    <value>Type de bien immobilier</value>
+  </data>
+  <data name="Nº filhos" xml:space="preserve">
+    <value>Nombre d’enfants</value>
+  </data>
+  <data name="Calcular VPT" xml:space="preserve">
+    <value>Calculer la valeur patrimoniale imposable</value>
+  </data>
+  <data name="Preço Construção m2" xml:space="preserve">
+    <value>Prix de construction au m²</value>
+  </data>
+  <data name="Área bruta de construção" xml:space="preserve">
+    <value>Surface brute de construction</value>
+  </data>
+  <data name="Coeficiente Afetação" xml:space="preserve">
+    <value>Coefficient d’affectation</value>
+  </data>
+  <data name="Coeficientes IMI" xml:space="preserve">
+    <value>Coefficients IMI</value>
+  </data>
+  <data name="Outros" xml:space="preserve">
+    <value>Autres</value>
+  </data>
+  <data name="Licença de Habitação" xml:space="preserve">
+    <value>Permis d’habiter</value>
+  </data>
+  <data name="Imagem" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Dados do Seguro" xml:space="preserve">
+    <value>Détails de l&apos;assurance</value>
+  </data>
+  <data name="Prémio anual" xml:space="preserve">
+    <value>Prime annuelle</value>
+  </data>
+  <data name="Apólice" xml:space="preserve">
+    <value>Police</value>
+  </data>
+  <data name="renda" xml:space="preserve">
+    <value>loyer</value>
+  </data>
+  <data name="Área Privativa" xml:space="preserve">
+    <value>Surface privative</value>
+  </data>
+  <data name="Quartos" xml:space="preserve">
+    <value>Chambres</value>
+  </data>
+  <data name="Casas banho" xml:space="preserve">
+    <value>Salles de bain</value>
+  </data>
+  <data name="Garagem" xml:space="preserve">
+    <value>Garage</value>
+  </data>
+  <data name="Contactos" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="Cod. Pst." xml:space="preserve">
+    <value>Code postal</value>
+  </data>
+  <data name="Gás" xml:space="preserve">
+    <value>Gaz</value>
+  </data>
+  <data name="Imagem da propriedade" xml:space="preserve">
+    <value>Photo de la propriété</value>
+  </data>
+  <data name="Problema no acesso à API do Google Maps. Ìnternet indisponível?" xml:space="preserve">
+    <value>Problème d’accès à l’API Google Maps. Internet indisponible ?</value>
+  </data>
+  <data name="Expandir tudo" xml:space="preserve">
+    <value>Tout développer</value>
+  </data>
+  <data name="Recolher tudo" xml:space="preserve">
+    <value>Tout replier</value>
+  </data>
+  <data name="Foto" xml:space="preserve">
+    <value>Photo</value>
+  </data>
+  <data name="Dados foram alterados! Confirma cancelamento?" xml:space="preserve">
+    <value>Les données ont été modifiées ! Confirmez-vous l&apos;annulation ?</value>
+  </data>
+  <data name="Ao confirmar, todas as alterações serão perdidas." xml:space="preserve">
+    <value>En confirmant, toutes les modifications seront perdues.</value>
+  </data>
+  <data name="Os dados sobre o Senhorio são requeridos para a criação de um Arrendamento" xml:space="preserve">
+    <value>Les informations concernant le bailleur sont nécessaires pour créer un bail</value>
+  </data>
+  <data name="Categoria" xml:space="preserve">
+    <value>Catégorie</value>
+  </data>
+  <data name="Url do site" xml:space="preserve">
+    <value>URL du site</value>
+  </data>
+  <data name="Deve preencher Categoria e Tipo de documento" xml:space="preserve">
+    <value>Vous devez renseigner la catégorie et le type de document</value>
+  </data>
+  <data name="Ficheiros" xml:space="preserve">
+    <value>Fichiers</value>
+  </data>
+  <data name="Campo a inserir" xml:space="preserve">
+    <value>Champ à saisir</value>
+  </data>
+  <data name="Calcular IMI" xml:space="preserve">
+    <value>Calculer l’IMI</value>
+  </data>
+  <data name="Resultado da simulação" xml:space="preserve">
+    <value>Résultat de la simulation</value>
+  </data>
+  <data name="Montante de IMI a pagar" xml:space="preserve">
+    <value>Montant de la taxe foncière à payer</value>
+  </data>
+  <data name="Coeficiente" xml:space="preserve">
+    <value>Coefficient</value>
+  </data>
+  <data name="Plano de Pagamentos" xml:space="preserve">
+    <value>Échéancier de paiement</value>
+  </data>
+  <data name="Resultado para {0} ({1})" xml:space="preserve">
+    <value>Résultat pour {0} ({1})</value>
+  </data>
+  <data name="Valor Patrimonial" xml:space="preserve">
+    <value>Valeur patrimoniale</value>
+  </data>
+  <data name="Coeficiente Localização" xml:space="preserve">
+    <value>Coefficient de localisation</value>
+  </data>
+  <data name="Coeficiente Qualidade Conforto" xml:space="preserve">
+    <value>Coefficient Qualité Confort</value>
+  </data>
+  <data name="Coeficiente Vetustez" xml:space="preserve">
+    <value>Coefficient de vétusté</value>
+  </data>
+  <data name="Valor Calculado" xml:space="preserve">
+    <value>Valeur calculée</value>
+  </data>
+  <data name="Valor existente ({0})" xml:space="preserve">
+    <value>Valeur existante ({0})</value>
+  </data>
+  <data name="Imagem_{0}" xml:space="preserve">
+    <value>Image_{0}</value>
+  </data>
+  <data name="Voltar" xml:space="preserve">
+    <value>Retour</value>
+  </data>
+  <data name="Documentos" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="Nome" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="Antes" xml:space="preserve">
+    <value>Avant</value>
+  </data>
+  <data name="Depois" xml:space="preserve">
+    <value>Après</value>
+  </data>
+  <data name="Acertar" xml:space="preserve">
+    <value>Régler</value>
+  </data>
+  <data name="Carta de atraso de renda enviada em {0}" xml:space="preserve">
+    <value>Lettre de retard de loyer envoyée le {0}</value>
+  </data>
+  <data name="Limpar" xml:space="preserve">
+    <value>Effacer</value>
+  </data>
+  <data name="Inserir campo" xml:space="preserve">
+    <value>Insérer un champ</value>
+  </data>
+  <data name="Image 1" xml:space="preserve">
+    <value>Image 1</value>
+  </data>
+  <data name="Image 2" xml:space="preserve">
+    <value>Image 2</value>
+  </data>
+  <data name="Image 3" xml:space="preserve">
+    <value>Image 3</value>
+  </data>
+  <data name="Image 4" xml:space="preserve">
+    <value>Image 4</value>
+  </data>
+  <data name="Image 5" xml:space="preserve">
+    <value>Image 5</value>
+  </data>
+  <data name="Image 6" xml:space="preserve">
+    <value>Image 6</value>
+  </data>
+  <data name="Image 7" xml:space="preserve">
+    <value>Image 7</value>
+  </data>
+  <data name="Image 8" xml:space="preserve">
+    <value>Image 8</value>
+  </data>
+  <data name="Image 9" xml:space="preserve">
+    <value>Image 9</value>
+  </data>
+  <data name="Guardar" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
 </root>

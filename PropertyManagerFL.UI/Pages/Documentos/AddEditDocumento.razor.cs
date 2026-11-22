@@ -65,7 +65,7 @@ public partial class AddEditDocumento
         DocumentTypes = (await GetDocumentTypes());
         HideUploader = false;
 
-        PdfOrUrlCaption = Document.URL.ToLower().EndsWith("pdf") ? "Pdf" : "Url do site";
+        PdfOrUrlCaption = Document.URL.ToLower().EndsWith("pdf") ? "Pdf" : L["Url do site"];
         if (EditMode == OpcoesRegisto.Gravar)
         {
 
@@ -146,7 +146,7 @@ public partial class AddEditDocumento
         if (idxTipoCategoriaDocumento < 1 || idxTipoDocumento < 1)
         {
             ValidationsMessages = new List<string>
-        {  "Deve preencher Categoria e Tipo de documento"};
+        { L["Deve preencher Categoria e Tipo de documento"]};
             sfUploader?.ClearAllAsync();
             ErrorVisibility = true;
             return;

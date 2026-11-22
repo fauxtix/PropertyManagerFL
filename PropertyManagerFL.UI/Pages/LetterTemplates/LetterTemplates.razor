@@ -25,7 +25,7 @@ else
                 <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
                                 ShowClearButton="true" Width="250px" Index="@idxFileSelected"
                                 FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="Ficheiros" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
+                                Placeholder="@L["Ficheiros"]" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
                     <DropDownListTemplates TItem="TemplateFileName">
                     </DropDownListTemplates>
                     <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
@@ -46,12 +46,12 @@ else
             <DialogTemplates>
                 <Content>
                     <div>
-                        <SfTextBox ID="InVal" class="form-control" Placeholder="Campo a inserir" @bind-Value=@fieldName />
+                        <SfTextBox ID="InVal" class="form-control" Placeholder="@L["Campo a inserir"]" @bind-Value=@fieldName />
                     </div>
                 </Content>
                 <FooterTemplate>
                     <SfButton IconCss="fa fa-check" CssClass="e-btn e-success p-2 e-round-corner" Content="OK" OnClick="AddField" />
-                    <SfButton IconCss="fa fa-times" CssClass="e-btn e-ouline p-2 e-round-corner" Content="Cancelar" OnClick="CancelDialog" />
+                    <SfButton IconCss="fa fa-times" CssClass="e-btn e-ouline p-2 e-round-corner" Content="@L["Cancelar"]" OnClick="CancelDialog" />
                 </FooterTemplate>
 
             </DialogTemplates>

@@ -131,7 +131,7 @@ public partial class AppSettings
     private async void InitializeTables()
     {
         var processed = await AppSettingsService.InitializeRentProcessingTables();
-        InitializationMessage = processed ? "Processo terminou com sucesso" : "Erro na inicialização. Verifique log, p.f.";
+        InitializationMessage = processed ? L["Processo terminou com sucesso"] : L["Erro na inicializaÃ§Ã£o. Verifique log, p.f."];
         InitializationMessageVisibility = true;
         StateHasChanged();
     }

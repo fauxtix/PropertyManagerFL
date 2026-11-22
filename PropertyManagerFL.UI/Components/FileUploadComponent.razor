@@ -1,7 +1,10 @@
 ﻿@using PropertyManagerFL.UI.ApiWrappers;
+
+@inject IStringLocalizer<App> L
+
 <div class="form-row">
     <div class="form-group control-section">
-        <label class="col-form-label">Carrega imagem:</label>
+        <label class="col-form-label">@L["Carrega imagem:"]</label>
         <SfUploader ID="UploadFiles" AllowMultiple=false
                     AllowedExtensions=".png,.jpeg,.jpg">
             <UploaderEvents ValueChange="onChange" OnRemove="onRemove"></UploaderEvents>
@@ -21,7 +24,7 @@
                             </td>
                         </tr>
                     </table>
-                    <span class="e-icons e-file-remove-btn remove" id="removeIcon" title="Remover"></span>
+                    <span class="e-icons e-file-remove-btn remove" id="removeIcon" title="@L["Remover"]"></span>
                     <span class="e-upload-icon e-icons e-file-remove-btn" title="Upload" id="iconUpload"
                           @onclick="@uploadFile"></span>
                 </Template>

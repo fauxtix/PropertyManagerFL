@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
@@ -29,6 +30,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
         private readonly HttpClient _httpClient;
         private readonly IMapper _mapper;
         private readonly HttpClientConfigurationService _httpClientConfigService;
+        private readonly IStringLocalizer<App> _localizer;
 
 
         readonly IProprietarioService _svcProprietarios;
@@ -58,8 +60,10 @@ namespace PropertyManagerFL.UI.ApiWrappers
                                  IImovelService svcImoveis,
                                  IFracaoService svcFracoes,
                                  IMailMergeService mailMergeSvc,
-                                 HttpClientConfigurationService httpClientConfigService)
+                                 HttpClientConfigurationService httpClientConfigService,
+                                 IStringLocalizer<App> localizer)
         {
+            _localizer = localizer;
             _httpClient = httpClient;
             _env = env;
             _logger = logger;
@@ -588,7 +592,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
                     var jsonData = await response.Content.ReadAsStringAsync();
 
                     if (response.IsSuccessStatusCode)
-                        return "Renda atualizada com sucesso";
+                        return _localizer["Renda atualizada com sucesso"].Value;
                     else
                         return jsonData.Trim('"');
                 }
@@ -596,7 +600,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             catch (Exception exc)
             {
                 _logger.LogError(exc, "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)");
-                return "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)"; ;
+                return _localizer["Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino)"].Value; ;
             }
         }
 
@@ -621,7 +625,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             catch (Exception exc)
             {
                 _logger.LogError(exc, $"Erro ao pesquisar API AtualizaRendaInquilino_Manual ({exc.ToString()})");
-                return "Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino_Manual)"; ;
+                return _localizer["Erro ao pesquisar API (Inquilinos/AtualizaRendaInquilino_Manual)"].Value; ;
             }
         }
 

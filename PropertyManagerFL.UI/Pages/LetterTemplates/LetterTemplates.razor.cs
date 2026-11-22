@@ -48,8 +48,8 @@ public partial class LetterTemplates
     private string? selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
 
 
-    protected List<Object> Items = new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text="Save", PrefixIcon="saveIcon"},  "Undo",
-        new CustomToolbarItemModel(){ Id="insertfield", Text="Insert Field", PrefixIcon="fa fa-user fa-lg"},
+    protected List<Object> Items => new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text=L?["Guardar"] ?? "Save", PrefixIcon="saveIcon"},  "Undo",
+        new CustomToolbarItemModel(){ Id="insertfield", Text=L?["Inserir campo"] ?? "Insert Field", PrefixIcon="fa fa-user fa-lg"},
         "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "Header",
         "Footer", "PageSetup", "PageNumber", "Find", "LocalClipboard", "RestrictEditing"
     };
@@ -219,7 +219,7 @@ public partial class LetterTemplates
         if (!string.IsNullOrEmpty(fieldName))
         {
             string fieldCode = $"MERGEFIELD  {fieldName}  \\* MERGEFORMAT ";
-            string fieldResult = $"'«{fieldName}»";
+            string fieldResult = $"'ï¿½{fieldName}ï¿½";
             await container.DocumentEditor.Editor.InsertFieldAsync(fieldCode, fieldResult);
         }
 

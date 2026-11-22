@@ -1,0 +1,145 @@
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Localization
+@implements IDisposable
+@inject NavigationManager NavigationManager
+@inject IConfiguration Config
+@inject IStringLocalizer<App> L
+
+<aside id="sidebar" class="sidebar break-point-md @(_isCollapsed ? "collapsed" : "") @(_isToggled ? "toggled" : "")">
+    <button type="button" id="btn-collapse" class="sidebar-collapser"
+            @onclick="BtnCollapseClicked"
+            title="@L["SidebarCollapse"]" aria-label="@L["SidebarCollapse"]">
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+    </button>
+
+    <div class="sidebar-layout">
+        <div class="sidebar-header">
+            <div class="pro-sidebar-logo">
+                <div>PM</div>
+                <h5>Property Manager</h5>
+            </div>
+        </div>
+
+        <div class="sidebar-content">
+            <nav class="menu open-current-submenu" aria-label="@L["SidebarNavLabel"]">
+                <ul>
+                    @if (generalMenuItems.Count > 0)
+                    {
+                        <li class="menu-header"><span>@L["SidebarManagement"]</span></li>
+                        @foreach (var menuItem in generalMenuItems)
+                        {
+                            <MenuItemComponent MenuItem="@menuItem" MenuItemClickCallback="MenuItemClick" />
+                        }
+                    }
+
+                    @if (standardMenuItems.Count > 0)
+                    {
+                        <li class="menu-header"><span>@L["menu-admin-management"]</span></li>
+                        @foreach (var menuItem in standardMenuItems)
+                        {
+                            <MenuItemComponent MenuItem="@menuItem" MenuItemClickCallback="MenuItemClick" />
+                        }
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+</aside>
+
+@code {
+    private bool _isCollapsed;
+    private bool _isToggled;
+
+    private List<MenuItem> generalMenuItems = new();
+    private List<MenuItem> standardMenuItems = new();
+
+    protected override void OnInitialized()
+    {
+        var sidebarData = new SidebarData(L, Config);
+        generalMenuItems = sidebarData.GetGeneralMenuItems();
+        standardMenuItems = sidebarData.GetStandardMenuItems();
+
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        if (_isToggled)
+        {
+            _isToggled = false;
+        }
+
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void BtnToggleClicked()
+    {
+        _isToggled = !_isToggled;
+        if (_isToggled)
+        {
+            _isCollapsed = false;
+        }
+
+        StateHasChanged();
+    }
+
+    public void BtnCollapseClicked()
+    {
+        _isCollapsed = !_isCollapsed;
+        CloseAllMenus();
+        StateHasChanged();
+    }
+
+    public void MouseClickedInOverlay()
+    {
+        if (_isToggled)
+        {
+            _isToggled = false;
+            StateHasChanged();
+        }
+    }
+
+    public void MouseClickedInContent()
+    {
+        CloseAllMenus();
+        StateHasChanged();
+    }
+
+    private void MenuItemClick(MenuItem menuItem)
+    {
+        if (menuItem.HasChildMenuItems)
+        {
+            var wasOpen = menuItem.IsOpened;
+            CloseAllMenus();
+            menuItem.IsOpened = !wasOpen;
+        }
+        else
+        {
+            CloseAllMenus();
+            if (_isToggled)
+            {
+                _isToggled = false;
+            }
+        }
+
+        StateHasChanged();
+    }
+
+    private void CloseAllMenus()
+    {
+        foreach (var item in generalMenuItems)
+        {
+            item.IsOpened = false;
+        }
+
+        foreach (var item in standardMenuItems)
+        {
+            item.IsOpened = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

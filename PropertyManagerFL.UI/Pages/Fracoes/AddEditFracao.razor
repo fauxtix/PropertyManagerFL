@@ -220,12 +220,12 @@ else
                     </ContentTemplate>
                 </TabItem>
                 <TabItem>
-                    <HeaderTemplate>Outros</HeaderTemplate>
+                    <HeaderTemplate>@L["Outros"]</HeaderTemplate>
                     <ContentTemplate>
                         <div class="container mt-1">
                             <SfMessage Severity="MessageSeverity.Info"
                                        Variant="MessageVariant.Text" ShowCloseIcon="false"
-                                       ShowIcon="true">Licença de Habitação</SfMessage>
+                                       ShowIcon="true">@L["Licença de Habitação"]</SfMessage>
 
                             <div class="group-box">
                                 <SfTextBox Enabled="true" @ref="txtLicHabitacao"
@@ -450,7 +450,7 @@ else
                         {
                             Foto = uploadedFile,
                             Id_Fracao = PropertyUnit!.Id,
-                            Descricao = "Imagem"
+                            Descricao = L["Imagem"]
                         });
             }
             else
@@ -465,7 +465,7 @@ else
                         {
                             Foto = uploadedFile,
                             Id_Fracao = PropertyUnit!.Id,
-                            Descricao = "Imagem"
+                            Descricao = L["Imagem"]
                         });
             }
         }
@@ -484,7 +484,7 @@ else
                     {
                         Foto = Path.GetFileName(file.Name),
                         Id_Fracao = PropertyUnit!.Id, // FK to identify the unit the image belongs to
-                        Descricao = $"Imagem_{file.Name}" // redundant for now, later may useful to identify 'room', 'kitchen', ...
+                        Descricao = L["Imagem_{0}", file.Name] // redundant for now, later may useful to identify 'room', 'kitchen', ...
                     });
         }
 

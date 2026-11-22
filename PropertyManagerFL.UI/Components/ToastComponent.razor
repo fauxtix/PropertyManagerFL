@@ -1,4 +1,4 @@
-﻿@using Syncfusion.Blazor.Notifications
+@using Syncfusion.Blazor.Notifications
 @implements IDisposable
 
 <SfToast ID="toast_custom" @ref="ToastComponentObj"
@@ -69,7 +69,7 @@
     #toast_custom .e-toast .e-toast-message,
     #toast_custom .e-toast .e-toast-message .e-toast-content,
     #toast_custom .e-toast .e-toast-close-icon {
-        color: #fff;
+        color: var(--app-on-primary);
     }
 
     #toast_custom .e-toast-container .e-toast .e-toast-message .e-toast-content {
@@ -99,7 +99,7 @@
         font-size: 18px;
         font-weight: bold;
         font-weight: 500;
-        color: #fff;
+        color: var(--app-on-primary);
     }
 
     #template_toast .horizontal-align .toast-content .toast-message {

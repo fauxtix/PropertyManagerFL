@@ -1,4 +1,4 @@
-﻿@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 @using PropertyManagerFL.Application.Interfaces.Services.Common;
 @using PropertyManagerFL.Core.Entities;
 @using PropertyManagerFL.Application.ViewModels.Despesas;
@@ -10,7 +10,7 @@
 
 <div>
     <HeaderDialogComponent HeaderCaption="@L["TituloPagamentos"]" ImageName="payment" />
-    <hr style="color:black">
+    <hr style="color:var(--app-text-primary)">
 </div>
 <div class="container-fluid">
     <EditForm Model="@SelectedRecord">

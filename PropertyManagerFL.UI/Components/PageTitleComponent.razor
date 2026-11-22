@@ -1,5 +1,5 @@
-﻿<div class="mt-0">
-    <header>
+<div class="mt-0">
+    <div>
         <div class="module-title">
             <div class="title">
                 @PageTitle
@@ -14,7 +14,7 @@
                 }
             </div>
         </div>
-    </header>
+    </div>
 </div>
 <hr />
 
@@ -27,16 +27,15 @@
     private string CssBadgeSubTitle { get; set; } = "pb-4 e-badge e-badge-success e-badge-pill size_2";
 }
 
-<style type="text/css" scoped>
-
+<style>
     .card-box-title {
         -webkit-border-radius: 5px;
         border-radius: 10px;
         -moz-border-radius: 5px;
         background-clip: padding-box;
         margin-bottom: 5px;
-        background-color: #ffffff;
-        box-shadow: 0 0px 24px 0 rgba(0, 0, 0, 0.06), 0 1px 0px 0 rgba(0, 0, 0, 0.02);
+        background-color: var(--app-surface);
+        box-shadow: var(--app-shadow);
     }
 
         .card-box-title span {
@@ -45,10 +44,9 @@
             font-size: 16px;
         }
 
-
     .e-badge.blue {
-        background: #5f65b8;
-        color: #fff;
+        background: var(--app-primary);
+        color: var(--app-on-primary);
     }
 
     .e-badge.size_1 {
@@ -68,9 +66,37 @@
     }
 
     .module-title {
-        /*font-size: 12px;*/
         padding: 2px;
         margin: 0px 2px 5px 3px;
     }
-</style>
 
+    /* Estilos base que antes vinham de AppStyles.css através de header;
+       o componente de referência usa div, por isso são replicados aqui. */
+    .module-title .title {
+        font-weight: bold;
+        font-size: 18px;
+        color: var(--app-text-primary);
+        letter-spacing: 0.54px;
+        padding-bottom: 10px;
+    }
+
+    .module-title .underline {
+        background: var(--app-primary);
+        border-radius: 10px;
+        width: 100px;
+        height: 6px;
+    }
+
+    [data-theme="dark"] .title,
+    [data-theme="dark"] .module-title .title {
+        color: var(--app-text-primary);
+    }
+
+    [data-theme="dark"] .card-box-title {
+        background-color: var(--app-surface-alt);
+    }
+
+    [data-theme="dark"] hr {
+        border-color: var(--app-border);
+    }
+</style>

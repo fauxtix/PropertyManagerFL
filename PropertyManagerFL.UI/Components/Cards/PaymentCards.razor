@@ -1,4 +1,4 @@
-﻿<div id="root">
+<div id="root">
     <div class="container pt-5">
         <div class="row align-items-stretch">
             <div class="c-dashboardInfo col-lg-4 col-md-6">
@@ -56,7 +56,7 @@
     }
 
         .c-dashboardInfo .wrap {
-            background: #ffffff;
+            background: var(--app-surface);
             box-shadow: 2px 10px 20px rgba(0, 0, 0, 0.1);
             border-radius: 7px;
             text-align: center;
@@ -68,7 +68,7 @@
 
     .c-dashboardInfo__title,
     .c-dashboardInfo__subInfo {
-        color: #6c6c6c;
+        color: var(--app-text-secondary);
         font-size: 1.18em;
     }
 
@@ -80,7 +80,7 @@
         font-weight: 600;
         font-size: 2.5em;
         line-height: 64px;
-        color: #323c43;
+        color: var(--app-text-primary);
     }
 
     .c-dashboardInfo .wrap:after {
@@ -94,20 +94,20 @@
     }
 
     .c-dashboardInfo:nth-child(1) .wrap:after {
-        background: linear-gradient(82.59deg, #00c48c 0%, #00a173 100%);
+        background: linear-gradient(82.59deg, var(--app-accent-green) 0%, var(--app-accent-green-strong) 100%);
     }
 
     .c-dashboardInfo:nth-child(2) .wrap:after {
-        background: linear-gradient(81.67deg, #0084f4 0%, #1a4da2 100%);
+        background: linear-gradient(81.67deg, var(--app-primary) 0%, var(--app-primary-hover) 100%);
     }
 
     .c-dashboardInfo:nth-child(3) .wrap:after {
-        background: linear-gradient(69.83deg, #0084f4 0%, #00c48c 100%);
+        background: linear-gradient(69.83deg, var(--app-primary) 0%, var(--app-accent-green) 100%);
     }
 
 
     .c-dashboardInfo__title svg {
-        color: #d7d7d7;
+        color: var(--app-text-secondary);
         margin-left: 5px;
     }
 

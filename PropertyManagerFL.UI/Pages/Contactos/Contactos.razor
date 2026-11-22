@@ -1,4 +1,4 @@
-﻿@page "/contactos"
+@page "/contactos"
 @using PropertyManagerFL.Application.Shared.Enums
 @using PropertyManagerFL.Application.ViewModels.Contactos
 @using PropertyManagerFL.UI.Pages.ComponentsBase
@@ -31,7 +31,7 @@
     }
 </style>
 *@
-<PageTitle>Contactos</PageTitle>
+<PageTitle>@L["Contactos"]</PageTitle>
 <PageTitleComponent PageTitle="@L["Site_Menu_Contactos"]"></PageTitleComponent>
 
 @if (Contacts is null)
@@ -62,7 +62,7 @@ else
                                                 @{
                                                     var contact = (context as ContactoVM);
                                                     <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="@(e => EditContact(contact))">
-                                                        <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:#BCBCBC" />
+                                                        <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:var(--app-surface-alt)" />
                                                         <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
                                                         <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
                                                         <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
@@ -97,7 +97,7 @@ else
                                             @{
                                                 var contact = (context as ContactoVM);
                                                 <div class="e-list-wrapper e-list-multi-line e-list-avatar">
-                                                    <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:#BCBCBC" />
+                                                    <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:var(--app-surface-alt)" />
                                                     <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
                                                     <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
                                                     <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Morada</span>
@@ -155,10 +155,10 @@ else
 
     @*User exited insert/edit action with data changed.*@
     <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
-                       DialogTitle="Dados foram alterados! Confirma cancelamento?"
+                       DialogTitle="@L["Dados foram alterados! Confirma cancelamento?"]"
                        Message="@SelectedContact?.Nome"
                        Visible="@IsDirty"
-                       AlertMessage="Ao confirmar, todas as alterações serão perdidas."
+                       AlertMessage="@L["Ao confirmar, todas as alterações serão perdidas."]"
                        OnConfirmationYes="IgnoreChangesAlert"
                        OnConfirmationNo="ContinueEdit" />
 

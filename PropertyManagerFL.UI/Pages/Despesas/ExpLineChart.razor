@@ -6,10 +6,12 @@
 @inject IStringLocalizer<App> localizerApp
 @inject IStatsService statsService
 @inject IStringLocalizer<App> L
+@inject PropertyManagerFL.UI.Services.ThemeStateService ThemeState
+@implements IDisposable
 
 @attribute [Authorize]
 
-<SfChart Title="@chartTitle">
+<SfChart Title="@chartTitle" Theme="@ChartTheme" Background="transparent">
     <ChartPrimaryXAxis IntervalType="IntervalType.Auto" LabelFormat="{value}ºC" ValueType="Syncfusion.Blazor.Charts.ValueType.Category">
     </ChartPrimaryXAxis>
     <ChartPrimaryYAxis Title="@L["TituloDespesas"]" LabelPlacement="LabelPlacement.OnTicks"></ChartPrimaryYAxis>
@@ -24,7 +26,7 @@
                     <ChartDataLabel Visible="true"></ChartDataLabel>
                 </ChartMarker>
                 <ChartCornerRadius TopLeft="8" TopRight="8"></ChartCornerRadius>
-                <ChartSeriesBorder Width="1" Color="#ffffff"></ChartSeriesBorder>               
+                <ChartSeriesBorder Width="1" Color="transparent"></ChartSeriesBorder>
             </ChartSeries>
         }
     </ChartSeriesCollection>
@@ -37,6 +39,26 @@
 
     [Parameter] public string? Year { get; set; } = default;
     [Parameter] public IEnumerable<ExpensesSummaryDataByType>? Expenses { get; set; } = default;
+
+    private Syncfusion.Blazor.Theme ChartTheme => ThemeState.IsDark
+        ? Syncfusion.Blazor.Theme.Bootstrap5Dark
+        : Syncfusion.Blazor.Theme.Bootstrap5;
+
+    protected override void OnInitialized()
+    {
+        ThemeState.Changed += OnThemeChanged;
+    }
+
+    private void OnThemeChanged()
+    {
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        ThemeState.Changed -= OnThemeChanged;
+    }
+
     protected string? chartTitle = "";
     protected List<IGrouping<string, ExpensesSummaryDataByType>>? GroupedExpensesData;
 

@@ -79,7 +79,7 @@
             else
             {
                 AlertVisibility = true;
-                alertMessage = "Nova entrada - Erro na inserção! Verifique, p.f.";
+                alertMessage = L["Nova entrada - Erro na inserção! Verifique, p.f."];
                 messageType = AppDefinitions.AlertMessageType.Error;
                 StateHasChanged();
             }
@@ -87,7 +87,7 @@
         else
         {
             AlertVisibility = true;
-            alertMessage = $"Nova entrada ({Descricao}) já existe na base de dados!";
+            alertMessage = L["Nova entrada ({0}) já existe na base de dados!", Descricao];
             messageType = AppDefinitions.AlertMessageType.Warning;
             StateHasChanged();
         }
@@ -106,7 +106,7 @@
         else
         {
             AlertVisibility = true;
-            alertMessage = "Alteração - Entrada já existe na base de dados!";
+            alertMessage = L["Alteração - Entrada já existe na base de dados!"];
             messageType = AppDefinitions.AlertMessageType.Warning;
             StateHasChanged();
         }
@@ -125,7 +125,7 @@
         {
 
             AlertVisibility = true;
-            alertMessage = "Apagar entrada - Erro ao apagar registo!";
+            alertMessage = L["Apagar entrada - Erro ao apagar registo!"];
             messageType = AppDefinitions.AlertMessageType.Error;
             StateHasChanged();
         }

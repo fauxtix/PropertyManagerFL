@@ -149,7 +149,7 @@ public partial class ExpensesDashboard
                 new ExpenseResults { Description = titSeguros, Value = totInsurance, TaxPercent = totInsurancePercent },
                 new ExpenseResults { Description = titOutrasDespesas, Value = ExpensesThisYear , TaxPercent = totOthersPercent},
                 new ExpenseResults { 
-                    Description = "Total", 
+                    Description = L["Total"],
                     Value = (totIRS + totIMI + totInsurance + ExpensesThisYear), 
                     TaxPercent = (totIRSPercent + totIMIPercent + totInsurancePercent + totOthersPercent)}
                 };

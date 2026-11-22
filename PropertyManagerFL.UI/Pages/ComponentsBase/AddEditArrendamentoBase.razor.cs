@@ -125,6 +125,22 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected override void OnInitialized()
         {
+            Meses.AddRange(new[]
+            {
+                new Mes { Id = 1, Descricao = L["Janeiro"] },
+                new Mes { Id = 2, Descricao = L["Fevereiro"] },
+                new Mes { Id = 3, Descricao = L["Março"] },
+                new Mes { Id = 4, Descricao = L["Abril"] },
+                new Mes { Id = 5, Descricao = L["Maio"] },
+                new Mes { Id = 6, Descricao = L["Junho"] },
+                new Mes { Id = 7, Descricao = L["Julho"] },
+                new Mes { Id = 8, Descricao = L["Agosto"] },
+                new Mes { Id = 9, Descricao = L["Setembro"] },
+                new Mes { Id = 10, Descricao = L["Outubro"] },
+                new Mes { Id = 11, Descricao = L["Novembro"] },
+                new Mes { Id = 12, Descricao = L["Dezembro"] }
+            });
+
             for (int i = 1; i <= 20; i++)
             {
                 LeaseYearsList.Add(new LeaseYear
@@ -148,7 +164,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (requirementsMet == false)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Requisitos iniciais não foram preenchidos (Proprietário, Imóvel, Fração / Inquilino e Fiador)." };
+                ValidationMessages = new List<string> { L["Requisitos iniciais não foram preenchidos (Proprietário, Imóvel, Fração / Inquilino e Fiador)."] };
                 return;
             }
 
@@ -291,17 +307,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             if (decTotRendasSemAtrasos == decTotRendasUltPag)
             {
-                DiferencaSaldos = "Pagamentos em dia";
+                DiferencaSaldos = L["Pagamentos em dia"];
                 //SaldoCorrente = "0";
-                UserDialogTitle = "Saldo corrente do Inquilino";
+                UserDialogTitle = L["Saldo corrente do Inquilino"];
                 UserDialogVisibility = true;
-                UserMessage = "Pagamentos estão dia.";
+                UserMessage = L["Pagamentos estão dia."];
                 blnPagamentosEmDia = true;
             }
             else
             {
                 DiferencaSaldos = decTotRendasAPagar.ToString("C", new CultureInfo("pt-PT"));
-                DiferencaSaldos += $" ({MesesCorrente - MesesUltPag} meses * ";
+                DiferencaSaldos += L[" ({0} meses * ", MesesCorrente - MesesUltPag];
                 DiferencaSaldos += Valor_Renda.ToString("C", new CultureInfo("pt-PT")) + ")";
 
                 //SaldoCorrente = ((decTotRendasSemAtrasos - decTotRendasUltPag)).ToString("C", new CultureInfo("pt-PT"));
@@ -359,7 +375,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 if (!leaseOkForTransaction)
                 {
                     ErrorVisibility = true;
-                    ValidationMessages = new List<string> { "Fração não está disponível para arrendamento" };
+                    ValidationMessages = new List<string> { L["Fração não está disponível para arrendamento"] };
                     return;
                 }
             }
@@ -412,7 +428,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
             else
             {
-                nomeFiador = "Fiador não foi encontrado. Verifique, p.f.";
+                nomeFiador = L["Fiador não foi encontrado. Verifique, p.f."];
                 idxFiador = 0;
             }
 
@@ -444,8 +460,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             if (args.Value.Date > DateTime.Now.Date)
             {
-                UserDialogTitle = "Criar arrendamento";
-                UserMessage = $"Data inválida ({args.Value.Date.ToShortDateString()} posterior à data-corrente)";
+                UserDialogTitle = L["Criar arrendamento"];
+                UserMessage = L["Data inválida ({0}) posterior à data-corrente", args.Value.Date.ToShortDateString()];
                 UserDialogVisibility = true;
                 args.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
                 return;
@@ -454,8 +470,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             var minimumDateAllowed = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-2);
             if (args.Value.Date < minimumDateAllowed)
             {
-                UserDialogTitle = "Criar arrendamento";
-                UserMessage = $"Data inválida ({minimumDateAllowed.ToShortDateString()} deverá ser data mínima)";
+                UserDialogTitle = L["Criar arrendamento"];
+                UserMessage = L["Data inválida ({0}) deverá ser data mínima", minimumDateAllowed.ToShortDateString()];
                 UserDialogVisibility = true;
                 args.Value = minimumDateAllowed;
                 return;
@@ -494,7 +510,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 if (EditMode == OpcoesRegisto.Gravar)
                 {
-                    ValidationMessages = new List<string> { $"Data-fim inválida (antes: {LeaseEnd.Date.ToShortDateString()}). Corrija, p.f.." };
+                    ValidationMessages = new List<string> { L["Data-fim inválida (antes: {0}). Corrija, p.f..", LeaseEnd.Date.ToShortDateString()] };
                     ErrorVisibility = true;
                 }
             }
@@ -522,32 +538,32 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             if (SelectedLease!.Data_Inicio.Date > dInicioContrato.Date)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Data-início do contrato ou data do último pagamento inválida...." };
+                ValidationMessages = new List<string> { L["Data-início do contrato ou data do último pagamento inválida...."] };
                 return;
             }
             if (SelectedLease!.Data_Fim.Date < dInicioContrato.Date)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Data-fim do contrato ou data do último pagamento inválida...." };
+                ValidationMessages = new List<string> { L["Data-fim do contrato ou data do último pagamento inválida...."] };
                 return;
             }
             if (dInicioContrato.Date > DateTime.Now.Date)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Data do último pagamento inválida (posterior à data corrente)...." };
+                ValidationMessages = new List<string> { L["Data do último pagamento inválida (posterior à data corrente)...."] };
                 return;
             }
 
             if (SelectedLease!.Valor_Renda == 0)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Informe valor da renda, p.f." };
+                ValidationMessages = new List<string> { L["Informe valor da renda, p.f."] };
                 return;
             }
             if (UltimoAnoPago > DateTime.Today.Year)
             {
                 ErrorVisibility = true;
-                ValidationMessages = new List<string> { "Último ano pago inválido" };
+                ValidationMessages = new List<string> { L["Último ano pago inválido"] };
                 return;
             }
 
@@ -617,19 +633,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
 
 
-        protected List<Mes> Meses = new() {
-        new Mes{ Id = 1, Descricao= "Janeiro"},
-        new Mes{ Id = 2, Descricao= "Fevereiro"},
-        new Mes{ Id = 3, Descricao= "Março"},
-        new Mes{ Id = 4, Descricao= "Abril"},
-        new Mes{ Id = 5, Descricao= "Maio"},
-        new Mes{ Id = 6, Descricao= "Junho"},
-        new Mes{ Id = 7, Descricao= "Julho"},
-        new Mes{ Id = 8, Descricao= "Agosto"},
-        new Mes{ Id = 9, Descricao= "Setembro"},
-        new Mes{ Id = 10, Descricao= "Outubro"},
-        new Mes{ Id = 11, Descricao= "Novembro"},
-        new Mes{ Id = 12, Descricao= "Dezembro"}
-        };
+        protected List<Mes> Meses = new();
     }
 }
