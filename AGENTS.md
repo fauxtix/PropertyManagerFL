@@ -2,6 +2,7 @@
 
 ## Repo shape
 - `PropertyManagerFL.sln` is the build boundary: 6 projects (Core, Application, Infrastructure, Api, UI, EmailService). Five other `.csproj` files sit outside it (`Client.Infrastrucure` [sic], `Shared`, `Sql`, `Logging`, `Application/Shared/CommonLayer`); `Logging` is empty but still referenced by Api.
+- User-facing setup docs: `README.md` / `README-EN.md` plus `docs/DATABASE.md`, `docs/LOCAL-SETUP.md`, `docs/SYNCFUSION-LICENSES.md` (key version/editions) and `docs/PRODUCTION.md`. Keep them in sync when ports, scripts, secrets or Syncfusion versions change.
 - Two web apps must run together: `PropertyManagerFL.slnLaunch.user` starts API, then UI. UI is Blazor Server; it calls the API via `ApiWrappers/*` HttpClient wrappers **and** references Infrastructure directly (repositories registered in `UI/Configuration/DependencyInjectionConfig.cs`).
 - API/UI DI, AutoMapper and FluentValidation setup lives in parallel `Configuration/*.cs` files and is near-duplicated; changes often need both. Entry points are `Api/Program.cs` and `UI/Program.cs`.
 

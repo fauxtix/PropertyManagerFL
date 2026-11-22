@@ -1,10 +1,33 @@
 # PropertyManagerFL
 
-[Português](https://github.com/fauxtix/PropertyManagerFL/blob/master/README.md) 
+[Português](https://github.com/fauxtix/PropertyManagerFL/blob/master/README.md)
 
 Application designed to assist landlords in managing their properties and rentals. With a user-friendly interface and a range of helpful features, PropertyManagerFL (PMFL) serves as a centralized platform for landlords, to streamline their property management tasks.
 
-# Key Features
+## Summary (start here)
+
+- **What it is:** a localhost, single-user application with an **ASP.NET Core API** and a **Blazor Server UI** that must run **at the same time**. It manages properties, tenants, leases, rents, expenses, letters, messages and a **notification centre** (bell + inbox, SignalR with a 60-second polling fallback).
+- **Stack:** C#, .NET 10 LTS, Blazor, **Syncfusion 35.2.12**, Dapper, AutoMapper, FluentValidation, Serilog, SQL Server.
+- **Prerequisites:** .NET 10 SDK (`global.json`), **SQL Server Developer or Community** (both free) with the database created, SSMS/`sqlcmd`, a development HTTPS certificate, SMTP credentials and **your own Syncfusion licences**.
+- **Database:** manual setup — EF migrations are disabled. The scripts (`PropertyManagerFL.Infrastructure/Database/*.sql` or `SqlData_Script/PropertyManagerDB.sql`) are **not idempotent** and must run **on an empty database**, in the order described in [DATABASE.md](docs/DATABASE.md).
+- **Keys:** the UI and the API each register their own Syncfusion licence. In Development use `dotnet user-secrets set --project ...`; in Production use GitHub Secrets. **Choose a key for version 35.2.x with all editions** — see [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md).
+- **Run locally:** API at `http://localhost:4300`, UI at `https://localhost:4310`. Full commands in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
+- **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone needs their own database, credentials and licences. Never reuse the maintainer's keys or commit any key.
+- **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — see [PRODUCTION.md](docs/PRODUCTION.md).
+- **Tests:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
+
+### Guides
+
+| Guide | What it covers |
+|---|---|
+| [DATABASE.md](docs/DATABASE.md) | Install SQL Server, create `PropertyManagerDB`, script order, verification |
+| [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) | Ports, per-project user-secrets, running the apps, themes/languages, troubleshooting |
+| [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md) | **Which key to choose (version/edition)**, where to set it, how to fix licence warnings |
+| [PRODUCTION.md](docs/PRODUCTION.md) | GitHub Secrets, IIS runner, app pools, deploy, key rotation |
+
+> The detailed guides are written in Portuguese; each one starts with a short English TL;DR.
+
+## Key Features
 
 - **Centralized Property and Tenant Information**: PMFL allows landlords to store all property and tenant details in one convenient location. From property specifications to tenant records and contact information, everything is easily accessible whenever you need it.
 
@@ -13,30 +36,32 @@ Application designed to assist landlords in managing their properties and rental
 - **Rent Payment Tracking**: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
 
 - **Notification centre**: a bell and an inbox with operational alerts (rents, leases, documents). Updates arrive via SignalR, with a 60-second polling fallback.
+
 - **Keeping track of rental property expenses**: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
- Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
+  Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
 
 - **Tenant letters management**:
-  
+
   >Invitation to Renew - This gives the tenant some time to decide whether to renew their lease or move out.
-    
+
   >Termination Letter - This signals the end of the rental agreement. It might be due to the tenant’s plan to move out or the landlord's refusal to renew the lease
-    
+
   >Increase in Rent - an invitation to renew so the tenant can decide whether to stay
-    
+
   >Change in Payment Information - To avoid confusion and continue to receive rent payments on time, landlords should let tenants know of payment changes
-    
+
   >Overdue Rent Notice - to put rent reminders in writing. A landlord might need proof that a tenant was chronically late in paying as a basis for terminating their lease
-    
+
   >Pay or Quit Letter - warning about unpaid rent. It demands payment of current and back rent by a certain date or eviction proceedings will begin
-    
+
   >Rent increases - process is automatic for the following year, from the start date of the contract, or through a manual procedure for each tenant.
     Each of these situations presupposes a letter alerting them to the change
-    
+
   >Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
-# Localization / globalization
-The application supports Portuguese, English, French and Spanish languages (nearing completion).
+## Localization, themes and documents
+
+The application supports Portuguese, English, French and Spanish (`en-US` is the default culture; `AppSettings:Language` is `pt-PT`). There is a light/dark theme toggle: **dark** is the default and the choice is persisted in the browser.
 
 Some of the tables used in the application (mainly **lookup** ones) will require user intervention, since Portuguese has been used as the native language for filling in/configuring them.
 
@@ -47,69 +72,21 @@ It's a simple process to carry out:
 3. Copy the translated text and replace the text in the letter (safeguarding the placeholders of variable fields);
 4. Finish the process by saving the updated documents (overwriting the existing ones).
 
-# Database
-For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database). The notification centre uses the `dbo.Notifications` table and the `usp_Notifications_*` procedures, already included in `WorkingTables.sql` and `StoredProcedures.sql` (and in the full `SqlData_Script/PropertyManagerDB.sql`). EF migrations are disabled — database creation is manual.
-#
+More details in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
 
-**Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.NET 10 LTS).
+## Database
 
-# Local setup (.NET 10)
+The structure (tables, stored procedures, functions, views) is in the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) and in the full script `SqlData_Script/PropertyManagerDB.sql`. The notification centre and its procedures are part of those scripts — there is no separate script. EF migrations are disabled: database creation is manual and the scripts must only be run on an empty database. The execution order is in [DATABASE.md](docs/DATABASE.md).
 
-The SDK is pinned in `global.json` (10.0.404, `rollForward: latestPatch`). This is a single-user, localhost-only application and the **API and the UI must run at the same time**.
+## Tests and deployment
 
-1. **Database**: create `PropertyManagerDB` from the scripts in `PropertyManagerFL.Infrastructure/Database` (or restore `SqlData_Script/PropertyManagerDB.sql`) on a local SQL Server and override the connection string locally.
-2. **Ports**: API `http://localhost:4300`; UI `https://localhost:4310`. The UI `BaseUrl` is `http://localhost:4300/api` and is already present in `appsettings.Development.json` / `appsettings.Production.json`; the API wrappers, SignalR and uploads all derive from it.
-3. **Local secrets** — never commit them. Each project has its own `UserSecretsId`, so values must be set **per project** with `dotnet user-secrets set --project <project> "<key>" "<value>"`:
-
-   | Project | Required keys in Development |
-   |---|---|
-   | `PropertyManagerFL.Api` | `Serilog:ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey` (API key), `JWT:Secret` (min. 32 characters), `JWT:Issuer`, `JWT:Audience`, `JWT:ExpiraEmMinutos` |
-   | `PropertyManagerFL.UI` | `ApiKey` (**same value as the API**), `SyncfusionLicenseKey` (**UI key, different from the API**), `EmailConfiguration:Username`, `EmailConfiguration:SmtpServer`, `EmailConfiguration:Port`, `EmailConfiguration:Password`, `EmailConfiguration:From` |
-
-   The UI requires the `EmailConfiguration` section at startup; the API validates `JWT:Secret` at startup (it cannot start with `<`).
-4. In each terminal set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` before starting the apps. User-secrets are **not** loaded in `Production`.
-5. Start in two terminals:
-   ```
-   dotnet run --project PropertyManagerFL.Api
-   dotnet run --project PropertyManagerFL.UI
-   ```
-   API: `http://localhost:4300`; UI: `https://localhost:4310`.
-6. Quick check: `GET http://localhost:4300/api/Imoveis/TableHasData` with the `ApiKey` header returns `200` / `true`; the UI redirects to the login page and the notification bell appears after signing in.
-
-# Keys, secrets and deployment
-
-- **If you cloned this repository**: the GitHub Secrets of this repository are **not visible and are not copied by a clone**. Every developer needs their own local user-secrets, database, SMTP credentials and **their own Syncfusion licences**. Do not reuse the maintainer's keys.
-- **Syncfusion**: the API and the UI use **different licences**. If you see `Claim your FREE account and get a key in less than a minute`, that project's key is missing or invalid — get your own key at <https://www.syncfusion.com/account/licenses> and set `SyncfusionLicenseKey` in the corresponding project (`--project PropertyManagerFL.Api` or `--project PropertyManagerFL.UI`).
-- **Production**: deployment is performed by `.github/workflows/cd.yml` (only `workflow_dispatch` from `master`) on a self-hosted runner registered **in this repository** with the label `iis-propertymanager`. The workflow reads the GitHub Secrets and `deploy-iis.ps1` writes them into the published `web.config` as environment variables, because Production does not load user-secrets.
-
-  | GitHub Secret | Used by |
-  |---|---|
-  | `PM_API_KEY` | API and UI (same value) |
-  | `PM_SYNCFUSION_LICENSE` | **UI** Syncfusion licence |
-  | `PM_SYNCFUSION_LICENSE_API` | **API** Syncfusion licence |
-  | `PM_PMCONNECTION` | SQL connection string |
-  | `PM_JWT_SECRET`, `PM_JWT_ISSUER`, `PM_JWT_AUDIENCE`, `PM_JWT_EXPIRA_EM_MINUTOS` | API (startup validates the secret) |
-  | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI (startup requires the email section) |
-  | `PM_UI_CERT_THUMBPRINT` | Optional: existing certificate for the HTTPS 4310 binding (otherwise a self-signed one is created) |
-
-- **Rotating a production key** (requires write access to the repository secrets):
-  ```
-  gh secret set PM_SYNCFUSION_LICENSE --repo fauxtix/PropertyManagerFL --body "<new key>"
-  gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master
-  ```
-  Use `PM_SYNCFUSION_LICENSE_API` for the API. If a secret is missing, the deploy fails with `Missing deployment value for <key>`.
-- **IIS**: the app pools need SQL Server access (the connection string uses Integrated Security). On this server the existing pools `PropertyManagerApi` and `PropertyManagerFL` are reused because they already have a SQL login and `db_owner` on the database. If you create new pools, grant them database access.
-- Never publish secret values in issues, logs, `backup.md` or versioned files; the values in `appsettings` are placeholders only.
-
-# Tests
-
-- `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`
-- Database integration tests are read-only and are no-ops until `PMFL_TEST_CONNECTION` points to a **copy** of the database. Never point it at production or commit the value.
-- `.github/workflows/ci.yml` restores, builds and tests on .NET 10 without a database.
+- Tests: `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
+- CI: `.github/workflows/ci.yml` (restore/build/test on .NET 10, no database).
+- CD: `.github/workflows/cd.yml`, manual (`workflow_dispatch`) from `master`, on a self-hosted runner with the `iis-propertymanager` label. See [PRODUCTION.md](docs/PRODUCTION.md).
 
 ## 🌟 Contributing
 
-Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/PropertyManagerFL/Issues 
+Contributions to this project are welcome! If you encounter any issues or have suggestions for improvement, please open an issue on the GitHub repository: https://github.com/fauxtix/PropertyManagerFL/Issues
 
 Fork the project (https://github.com/fauxtix/PropertyManagerFL/fork)
 
@@ -123,7 +100,7 @@ Create a new Pull Request
 
 More info: https://www.digitalocean.com/community/tutorials/how-to-create-a-pull-request-on-github
 
-When contributing code, please follow the existing code style and submit a pull request with your changes.
+When contributing code, please follow the existing code style and submit a pull request with your changes. Before running the app, follow the [setup guides](#guides) and never commit keys, connection strings or tenant data.
 
 ## ⚖ License
 
@@ -149,7 +126,7 @@ Thank you for using PropertyManagerFL!
 ![Main](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/61fe28f7-9703-4a8b-922a-9b948084db15)
 
 - **Properties**
- #
+  #
 ![Properties](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d1cf7d8f-900d-49c3-9065-82a86a92803a)
 ![Properties_edit_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/13edd0bd-3925-4a16-8011-fb515ffdd239)
 ![Properties_edit_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/8dbe7cfa-bea7-4260-96e6-75390c6fcfdc)
@@ -166,12 +143,12 @@ Thank you for using PropertyManagerFL!
 ![Tenants_guarantor](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/d8742713-ecd6-48eb-b800-8eaed7c1cf3f)
 
 - **Units**
- #
+  #
 ![Unit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/54a0caae-2265-49e6-8b87-e500d43ab15d)
 ![Unit_Images](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/77df0a32-2d8a-4699-ba78-2b66a8d00279)
 
 - **Monthly payments**
- #
+  #
 ![MonthlyRentPayment_1](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/67874f25-5fb6-4e66-8cfd-1783c5eb1c29)
 ![MonthlyRentPayment_2](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6169ae59-9c2d-4db2-b407-f8e2d7bc6e58)
 
@@ -186,12 +163,12 @@ Thank you for using PropertyManagerFL!
 ![Payments_new_3](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/aaf6cf89-7dca-46e2-a54f-1cf9984b56b4)
 
 - **Leases**
- #
+  #
 ![Leases](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b573364b-939b-4f70-be09-acc9634093f5)
 ![Leases_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/85d07a7a-8c79-4fba-a252-359cf0a1e593)
 
 - **Expenses**
- #
+  #
 ![Expenses_maintenance](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/b164b028-23b8-4b6c-b057-e70d2f7ba095)
 ![Expenses_maintenance_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/6dda062b-02e5-410c-a5ae-bc1bf961677c)
 ![Expenses_maintenance_subCategories_edit](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c47278d5-e37e-44d0-9132-1f1cf8ec1d39)
@@ -214,10 +191,9 @@ Thank you for using PropertyManagerFL!
 ![Contacts](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c32585b3-b6b7-4042-bda8-296e79ff76c9)
 
 - **App Management**
- #
+  #
 
 ![Management_CoefAtual_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/63717d27-9a58-40d6-83e0-ae304084eb24)
 ![Management_Tables_1_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/1bb2471c-7dbb-4f9e-bdbe-fcea69b55ec8)
 ![Management_Tables_2_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/fde12d70-4a74-4593-bfa5-fb007aa08851)
 ![Management_LogViewer_EN](https://github.com/fauxtix/PropertyManagerFL/assets/49880538/c0ec8d33-a195-43b9-a80d-0cdf2b4f5d71)
-
