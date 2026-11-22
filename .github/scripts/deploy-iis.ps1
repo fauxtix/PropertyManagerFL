@@ -255,16 +255,18 @@ try {
     $commonEnv = @{
         ASPNETCORE_ENVIRONMENT          = 'Production'
         ApiKey                          = $env:PM_API_KEY
-        SyncfusionLicenseKey            = $env:PM_SYNCFUSION_LICENSE
         ConnectionStrings__PMConnection = $env:PM_PMCONNECTION
     }
+    # The UI and the API have different Syncfusion keys in Development; keep them separate.
     $apiEnv = $commonEnv + @{
+        'SyncfusionLicenseKey' = $env:PM_SYNCFUSION_LICENSE_API
         'JWT:Secret'          = $env:PM_JWT_SECRET
         'JWT:Issuer'          = $env:PM_JWT_ISSUER
         'JWT:Audience'        = $env:PM_JWT_AUDIENCE
         'JWT:ExpiraEmMinutos' = $env:PM_JWT_EXPIRA_EM_MINUTOS
     }
     $uiEnv = $commonEnv + @{
+        'SyncfusionLicenseKey'          = $env:PM_SYNCFUSION_LICENSE
         'EmailConfiguration:Username'   = $env:PM_EMAIL_USERNAME
         'EmailConfiguration:SmtpServer' = $env:PM_EMAIL_SMTPSERVER
         'EmailConfiguration:Port'       = $env:PM_EMAIL_PORT

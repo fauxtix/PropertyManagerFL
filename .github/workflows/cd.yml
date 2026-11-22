@@ -20,6 +20,7 @@ jobs:
     env:
       PM_API_KEY: ${{ secrets.PM_API_KEY }}
       PM_SYNCFUSION_LICENSE: ${{ secrets.PM_SYNCFUSION_LICENSE }}
+      PM_SYNCFUSION_LICENSE_API: ${{ secrets.PM_SYNCFUSION_LICENSE_API }}
       PM_PMCONNECTION: ${{ secrets.PM_PMCONNECTION }}
       PM_UI_CERT_THUMBPRINT: ${{ secrets.PM_UI_CERT_THUMBPRINT }}
       PM_JWT_SECRET: ${{ secrets.PM_JWT_SECRET }}
