@@ -140,6 +140,13 @@ Ensure-Site $uiSite $uiPool $uiPath $uiPort
 Ensure-HttpBinding $apiSite $apiPort
 Ensure-HttpsBinding $uiSite $uiPort $env:PM_UI_CERT_THUMBPRINT
 
+# Removing/recreating bindings can leave a site stopped even when its pool is running.
+foreach ($site in @($apiSite, $uiSite)) {
+    if ((Get-Website -Name $site).State -ne 'Started') {
+        Start-Website -Name $site
+    }
+}
+
 $stoppedPools = @()
 try {
     foreach ($pool in @($apiPool, $uiPool)) {
