@@ -67,15 +67,15 @@ function Ensure-HttpsBinding([string] $Site, [int] $Port, [string] $Thumbprint) 
         }
     }
 
-    # Remove the default HTTP binding created by New-Website before adding the SNI one.
-    Get-WebBinding -Name $Site -Protocol http |
-        Where-Object { $_.bindingInformation -eq "*:$($Port):" -or $_.bindingInformation -eq "*:$($Port)" } |
+    # Recreate the port binding without SNI: 4310 is dedicated to this site, and a
+    # non-SNI binding is the default SSL site, so IIS does not warn about SNI-only SSL.
+    Get-WebBinding -Name $Site |
+        Where-Object { $_.bindingInformation -like "*:$($Port):*" -or $_.bindingInformation -like "*:$($Port)" } |
         Remove-WebBinding
 
     $bindings = @(Get-WebBinding -Name $Site -Protocol https -Port $Port)
     if ($bindings.Count -eq 0) {
-        # SNI (SslFlags=1) requires a host header in bindingInformation.
-        New-WebBinding -Name $Site -Protocol https -Port $Port -HostHeader localhost -SslFlags 1 | Out-Null
+        New-WebBinding -Name $Site -Protocol https -Port $Port -SslFlags 0 | Out-Null
         $bindings = @(Get-WebBinding -Name $Site -Protocol https -Port $Port)
     }
     foreach ($binding in $bindings) {
