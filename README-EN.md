@@ -11,6 +11,8 @@ Application designed to assist landlords in managing their properties and rental
 - **Rent Lease Creation**: PMFL simplifies the process of creating rent leases; new and existing ones.
 
 - **Rent Payment Tracking**: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
+
+- **Notification centre**: a bell and an inbox with operational alerts (rents, leases, documents). Updates arrive via SignalR, with a 60-second polling fallback.
 - **Keeping track of rental property expenses**: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
  Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
 
@@ -46,22 +48,58 @@ It's a simple process to carry out:
 4. Finish the process by saving the updated documents (overwriting the existing ones).
 
 # Database
-For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) 
+For the database structure (SQl Server), you can access the scripts (tables, stored procedures, functions, ...) at the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database). The notification centre uses the `dbo.Notifications` table and the `usp_Notifications_*` procedures, already included in `WorkingTables.sql` and `StoredProcedures.sql` (and in the full `SqlData_Script/PropertyManagerDB.sql`). EF migrations are disabled — database creation is manual.
 #
 
 **Technologies used**: C#, Blazor with Syncfusion components, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.NET 10 LTS).
 
 # Local setup (.NET 10)
 
-The SDK is pinned in `global.json` (10.0.404, `rollForward: latestPatch`). This is a single-user, localhost-only application.
+The SDK is pinned in `global.json` (10.0.404, `rollForward: latestPatch`). This is a single-user, localhost-only application and the **API and the UI must run at the same time**.
 
-1. **Database**: create `PropertyManagerDB` from the scripts in `PropertyManagerFL.Infrastructure/Database` (or restore a backup to a local SQL Server) and override `ConnectionStrings:PMConnection` locally.
-2. **Secrets** (never commit them), set with `dotnet user-secrets set`:
-   - API (`PropertyManagerFL.Api`): `ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey`, `JWT:Secret` (at least 32 characters), `JWT:Issuer` and `JWT:Audience` (`https://localhost:5001/` in Development), `JWT:ExpiraEmMinutos`.
-   - UI (`PropertyManagerFL.UI`): `ApiKey` (same value as the API), `SyncfusionLicenseKey`, `BaseUrl` = `https://localhost:5001/api`.
-3. In each terminal set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` before starting the apps. User-secrets are not loaded in `Production`.
-4. Start in two terminals: `dotnet run --project PropertyManagerFL.Api` and `dotnet run --project PropertyManagerFL.UI`. URLs: `https://localhost:5001` and `https://localhost:7181`.
-5. Quick check: `GET https://localhost:5001/api/Imoveis/TableHasData` with the `ApiKey` header returns `200` / `true`; the UI redirects to the login page.
+1. **Database**: create `PropertyManagerDB` from the scripts in `PropertyManagerFL.Infrastructure/Database` (or restore `SqlData_Script/PropertyManagerDB.sql`) on a local SQL Server and override the connection string locally.
+2. **Ports**: API `http://localhost:4300`; UI `https://localhost:4310`. The UI `BaseUrl` is `http://localhost:4300/api` and is already present in `appsettings.Development.json` / `appsettings.Production.json`; the API wrappers, SignalR and uploads all derive from it.
+3. **Local secrets** — never commit them. Each project has its own `UserSecretsId`, so values must be set **per project** with `dotnet user-secrets set --project <project> "<key>" "<value>"`:
+
+   | Project | Required keys in Development |
+   |---|---|
+   | `PropertyManagerFL.Api` | `Serilog:ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey` (API key), `JWT:Secret` (min. 32 characters), `JWT:Issuer`, `JWT:Audience`, `JWT:ExpiraEmMinutos` |
+   | `PropertyManagerFL.UI` | `ApiKey` (**same value as the API**), `SyncfusionLicenseKey` (**UI key, different from the API**), `EmailConfiguration:Username`, `EmailConfiguration:SmtpServer`, `EmailConfiguration:Port`, `EmailConfiguration:Password`, `EmailConfiguration:From` |
+
+   The UI requires the `EmailConfiguration` section at startup; the API validates `JWT:Secret` at startup (it cannot start with `<`).
+4. In each terminal set `$env:ASPNETCORE_ENVIRONMENT = 'Development'` before starting the apps. User-secrets are **not** loaded in `Production`.
+5. Start in two terminals:
+   ```
+   dotnet run --project PropertyManagerFL.Api
+   dotnet run --project PropertyManagerFL.UI
+   ```
+   API: `http://localhost:4300`; UI: `https://localhost:4310`.
+6. Quick check: `GET http://localhost:4300/api/Imoveis/TableHasData` with the `ApiKey` header returns `200` / `true`; the UI redirects to the login page and the notification bell appears after signing in.
+
+# Keys, secrets and deployment
+
+- **If you cloned this repository**: the GitHub Secrets of this repository are **not visible and are not copied by a clone**. Every developer needs their own local user-secrets, database, SMTP credentials and **their own Syncfusion licences**. Do not reuse the maintainer's keys.
+- **Syncfusion**: the API and the UI use **different licences**. If you see `Claim your FREE account and get a key in less than a minute`, that project's key is missing or invalid — get your own key at <https://www.syncfusion.com/account/licenses> and set `SyncfusionLicenseKey` in the corresponding project (`--project PropertyManagerFL.Api` or `--project PropertyManagerFL.UI`).
+- **Production**: deployment is performed by `.github/workflows/cd.yml` (only `workflow_dispatch` from `master`) on a self-hosted runner registered **in this repository** with the label `iis-propertymanager`. The workflow reads the GitHub Secrets and `deploy-iis.ps1` writes them into the published `web.config` as environment variables, because Production does not load user-secrets.
+
+  | GitHub Secret | Used by |
+  |---|---|
+  | `PM_API_KEY` | API and UI (same value) |
+  | `PM_SYNCFUSION_LICENSE` | **UI** Syncfusion licence |
+  | `PM_SYNCFUSION_LICENSE_API` | **API** Syncfusion licence |
+  | `PM_PMCONNECTION` | SQL connection string |
+  | `PM_JWT_SECRET`, `PM_JWT_ISSUER`, `PM_JWT_AUDIENCE`, `PM_JWT_EXPIRA_EM_MINUTOS` | API (startup validates the secret) |
+  | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI (startup requires the email section) |
+  | `PM_UI_CERT_THUMBPRINT` | Optional: existing certificate for the HTTPS 4310 binding (otherwise a self-signed one is created) |
+
+- **Rotating a production key** (requires write access to the repository secrets):
+  ```
+  gh secret set PM_SYNCFUSION_LICENSE --repo fauxtix/PropertyManagerFL --body "<new key>"
+  gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master
+  ```
+  Use `PM_SYNCFUSION_LICENSE_API` for the API. If a secret is missing, the deploy fails with `Missing deployment value for <key>`.
+- **IIS**: the app pools need SQL Server access (the connection string uses Integrated Security). On this server the existing pools `PropertyManagerApi` and `PropertyManagerFL` are reused because they already have a SQL login and `db_owner` on the database. If you create new pools, grant them database access.
+- Never publish secret values in issues, logs, `backup.md` or versioned files; the values in `appsettings` are placeholders only.
 
 # Tests
 

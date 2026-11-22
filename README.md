@@ -12,6 +12,8 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 
 - **Controlo de pagamentos de rendas**: O PMFL fornece um sistema abrangente de acompanhamento de pagamentos de rendas, ajudando os senhorios a manterem-se actualizados sobre as transacções e a tratarem prontamente de quaisquer pagamentos em atraso.
 
+- **Centro de notificações**: sino e caixa de entrada com alertas operacionais (rendas, contratos, documentos). As atualizações chegam por SignalR, com polling de 60 segundos como alternativa.
+
 - **Acompanhamento das despesas do imóvel alugado**: como proprietário, ficará perdido (mesmo com um contabilista) se não acompanhar corretamente as despesas do imóvel alugado.
  Manter registos detalhados das despesas não só o ajudará a sentir-se mais organizado, como também facilitará o preenchimento dos seus impostos, permitindo-lhe ver mais oportunidades de deduções e compreender o retorno de cada um dos seus investimentos em arrendamento.
 
@@ -47,27 +49,58 @@ O mesmo se aplica à redação das várias cartas enviadas aos inquilinos, uma v
 4. Termine o processo guardando os documentos actualizados (substituindo os existentes).
 
 # Base de dados
-Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) na [pasta de scripts da base de dados](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database).
+Relativamente à estrutura da base de dados (SQl Server), pode aceder aos scripts (tabelas, stored procedures, funções, ...) na [pasta de scripts da base de dados](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database). O centro de notificações usa a tabela `dbo.Notifications` e as procedures `usp_Notifications_*`, já incluídas em `WorkingTables.sql` e `StoredProcedures.sql` (e no script completo `SqlData_Script/PropertyManagerDB.sql`). As migrações EF estão desativadas — a criação da base de dados é manual.
 #
 
 **Tecnologias utilizadas**: C#, Blazor com componentes Syncfusion, Dapper (Orm), AutoMapper, FluentValidation, Serilog, ... (.NET 10 LTS).
 
 # Configuração local (.NET 10)
 
-O SDK está fixado em `global.json` (10.0.404, `rollForward: latestPatch`). A aplicação destina-se a uma única utilização em `localhost`.
+O SDK está fixado em `global.json` (10.0.404, `rollForward: latestPatch`). A aplicação destina-se a uma única utilização em `localhost` e a **API e a UI têm de estar a correr ao mesmo tempo**.
 
-1. **Base de dados**: criar `PropertyManagerDB` com os scripts em `PropertyManagerFL.Infrastructure/Database` (ou restaurar um backup num SQL Server local) e sobrepor `ConnectionStrings:PMConnection` com a ligação local.
-2. **Segredos** (nunca os incluir no repositório), definidos com `dotnet user-secrets set`:
-   - API (`PropertyManagerFL.Api`): `ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey`, `JWT:Secret` (mínimo 32 caracteres), `JWT:Issuer` e `JWT:Audience` (`https://localhost:5001/` em Development), `JWT:ExpiraEmMinutos`.
-   - UI (`PropertyManagerFL.UI`): `ApiKey` (mesmo valor da API), `SyncfusionLicenseKey`, `BaseUrl` = `https://localhost:5001/api`.
-3. Em cada terminal, definir `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes de arrancar as aplicações. Em `Production` os user-secrets não são carregados.
-4. Arrancar em dois terminais:
+1. **Base de dados**: criar `PropertyManagerDB` com os scripts em `PropertyManagerFL.Infrastructure/Database` (ou restaurar `SqlData_Script/PropertyManagerDB.sql`) num SQL Server local e sobrepor a connection string com a ligação local.
+2. **Portas**: API `http://localhost:4300`; UI `https://localhost:4310`. O `BaseUrl` da UI é `http://localhost:4300/api` e já vem nos `appsettings.Development.json` / `appsettings.Production.json`; os wrappers, o SignalR e o upload derivam todos dele.
+3. **Segredos locais** — nunca os incluir no repositório. Cada projeto tem o seu próprio `UserSecretsId`, pelo que os valores têm de ser definidos **por projeto** com `dotnet user-secrets set --project <proj> "<chave>" "<valor>"`:
+
+   | Projeto | Chaves obrigatórias em Development |
+   |---|---|
+   | `PropertyManagerFL.Api` | `Serilog:ConnectionStrings:PMConnection`, `ApiKey`, `SyncfusionLicenseKey` (chave da API), `JWT:Secret` (mín. 32 caracteres), `JWT:Issuer`, `JWT:Audience`, `JWT:ExpiraEmMinutos` |
+   | `PropertyManagerFL.UI` | `ApiKey` (**mesmo valor** da API), `SyncfusionLicenseKey` (**chave da UI, diferente da API**), `EmailConfiguration:Username`, `EmailConfiguration:SmtpServer`, `EmailConfiguration:Port`, `EmailConfiguration:Password`, `EmailConfiguration:From` |
+
+   A UI exige a secção `EmailConfiguration` no arranque; a API valida `JWT:Secret` no arranque (não pode começar por `<`).
+4. Em cada terminal, definir `$env:ASPNETCORE_ENVIRONMENT = 'Development'` antes de arrancar as aplicações. Em `Production` os user-secrets **não** são carregados.
+5. Arrancar em dois terminais:
    ```
    dotnet run --project PropertyManagerFL.Api
    dotnet run --project PropertyManagerFL.UI
    ```
-   API em `https://localhost:5001`; UI em `https://localhost:7181`.
-5. Verificação rápida: `GET https://localhost:5001/api/Imoveis/TableHasData` com o cabeçalho `ApiKey` deve devolver `200` / `true`; a UI deve redirecionar para a página de login.
+   API em `http://localhost:4300`; UI em `https://localhost:4310`.
+6. Verificação rápida: `GET http://localhost:4300/api/Imoveis/TableHasData` com o cabeçalho `ApiKey` deve devolver `200` / `true`; a UI deve redirecionar para a página de login e o sino de notificações deve aparecer após autenticação.
+
+# Chaves, segredos e deploy
+
+- **Quem faz clone**: os GitHub Secrets deste repositório **não são visíveis nem copiados pelo clone**. Cada pessoa precisa dos seus próprios user-secrets locais, da sua base de dados, das suas credenciais SMTP e das **suas próprias licenças Syncfusion**. Não reutilize chaves do mantenedor.
+- **Syncfusion**: a API e a UI usam licenças **diferentes**. Se aparecer a mensagem `Claim your FREE account and get a key in less than a minute`, a licença daquele projeto está ausente ou inválida — obtenha a sua chave em <https://www.syncfusion.com/account/licenses> e defina `SyncfusionLicenseKey` no respetivo projeto (`--project PropertyManagerFL.Api` ou `--project PropertyManagerFL.UI`).
+- **Produção**: o deploy é feito por `.github/workflows/cd.yml` (apenas `workflow_dispatch` a partir de `master`) num runner self-hosted registado **neste repositório** com o label `iis-propertymanager`. O workflow lê os GitHub Secrets e o `deploy-iis.ps1` escreve-os no `web.config` publicado como variáveis de ambiente, porque em Production os user-secrets não são carregados.
+
+  | GitHub Secret | Destino |
+  |---|---|
+  | `PM_API_KEY` | API e UI (mesmo valor) |
+  | `PM_SYNCFUSION_LICENSE` | Licença Syncfusion da **UI** |
+  | `PM_SYNCFUSION_LICENSE_API` | Licença Syncfusion da **API** |
+  | `PM_PMCONNECTION` | Connection string SQL |
+  | `PM_JWT_SECRET`, `PM_JWT_ISSUER`, `PM_JWT_AUDIENCE`, `PM_JWT_EXPIRA_EM_MINUTOS` | API (arranque valida o segredo) |
+  | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI (arranque exige a secção de email) |
+  | `PM_UI_CERT_THUMBPRINT` | Opcional: certificado existente para a binding HTTPS 4310 (senão é criado um self-signed) |
+
+- **Atualizar uma chave em produção** (é necessário acesso de escrita aos segredos do repositório):
+  ```
+  gh secret set PM_SYNCFUSION_LICENSE --repo fauxtix/PropertyManagerFL --body "<nova chave>"
+  gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master
+  ```
+  Substituir `PM_SYNCFUSION_LICENSE` por `PM_SYNCFUSION_LICENSE_API` para a API. Se faltar algum segredo, o deploy falha com `Missing deployment value for <chave>`.
+- ** IIS**: os app pools precisam de acesso ao SQL Server (a connection string usa Integrated Security). Neste servidor reutilizam-se os pools `PropertyManagerApi` e `PropertyManagerFL`, que já têm login e `db_owner` na base de dados. Se criar pools novos, tem de lhes dar acesso à BD.
+- Nunca publicar valores de segredos em issues, logs, `backup.md` ou ficheiros versionados; os valores em `appsettings` são apenas placeholders.
 
 # Testes
 
