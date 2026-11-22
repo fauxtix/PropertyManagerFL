@@ -67,6 +67,11 @@ function Ensure-HttpsBinding([string] $Site, [int] $Port, [string] $Thumbprint) 
         }
     }
 
+    # Remove the default HTTP binding created by New-Website before adding the SNI one.
+    Get-WebBinding -Name $Site -Protocol http |
+        Where-Object { $_.bindingInformation -eq "*:$($Port):" -or $_.bindingInformation -eq "*:$($Port)" } |
+        Remove-WebBinding
+
     $bindings = @(Get-WebBinding -Name $Site -Protocol https -Port $Port)
     if ($bindings.Count -eq 0) {
         # SNI (SslFlags=1) requires a host header in bindingInformation.
@@ -76,12 +81,9 @@ function Ensure-HttpsBinding([string] $Site, [int] $Port, [string] $Thumbprint) 
     foreach ($binding in $bindings) {
         $binding.AddSslCertificate($cert.Thumbprint, 'my')
     }
-
-    # The site may have been bootstrapped with an HTTP binding on the same port.
-    Get-WebBinding -Name $Site -Protocol http -Port $Port | Remove-WebBinding
 }
 
-function Set-WebConfigEnvironment([string] $SitePath) {
+function Set-WebConfigEnvironment([string] $SitePath, [hashtable] $Values) {
     $webConfig = Join-Path $SitePath 'web.config'
     if (-not (Test-Path $webConfig)) {
         throw "web.config was not published to $SitePath"
@@ -100,15 +102,8 @@ function Set-WebConfigEnvironment([string] $SitePath) {
         [void] $aspNetCore.AppendChild($variables)
     }
 
-    $values = [ordered] @{
-        ASPNETCORE_ENVIRONMENT          = 'Production'
-        ApiKey                          = $env:PM_API_KEY
-        SyncfusionLicenseKey            = $env:PM_SYNCFUSION_LICENSE
-        ConnectionStrings__PMConnection = $env:PM_PMCONNECTION
-    }
-
-    foreach ($key in $values.Keys) {
-        $value = [string] $values[$key]
+    foreach ($key in $Values.Keys) {
+        $value = [string] $Values[$key]
         if ([string]::IsNullOrWhiteSpace($value)) {
             throw "Missing deployment value for $key"
         }
@@ -155,8 +150,29 @@ try {
 
     Copy-PublishedFiles $ApiPublishDir $apiPath
     Copy-PublishedFiles $UiPublishDir $uiPath
-    Set-WebConfigEnvironment $apiPath
-    Set-WebConfigEnvironment $uiPath
+
+    # Production does not load user-secrets: inject every value the apps read at startup.
+    $commonEnv = @{
+        ASPNETCORE_ENVIRONMENT          = 'Production'
+        ApiKey                          = $env:PM_API_KEY
+        SyncfusionLicenseKey            = $env:PM_SYNCFUSION_LICENSE
+        ConnectionStrings__PMConnection = $env:PM_PMCONNECTION
+    }
+    $apiEnv = $commonEnv + @{
+        'JWT:Secret'          = $env:PM_JWT_SECRET
+        'JWT:Issuer'          = $env:PM_JWT_ISSUER
+        'JWT:Audience'        = $env:PM_JWT_AUDIENCE
+        'JWT:ExpiraEmMinutos' = $env:PM_JWT_EXPIRA_EM_MINUTOS
+    }
+    $uiEnv = $commonEnv + @{
+        'EmailConfiguration:Username'   = $env:PM_EMAIL_USERNAME
+        'EmailConfiguration:SmtpServer' = $env:PM_EMAIL_SMTPSERVER
+        'EmailConfiguration:Port'       = $env:PM_EMAIL_PORT
+        'EmailConfiguration:Password'   = $env:PM_EMAIL_PASSWORD
+        'EmailConfiguration:From'       = $env:PM_EMAIL_FROM
+    }
+    Set-WebConfigEnvironment $apiPath $apiEnv
+    Set-WebConfigEnvironment $uiPath $uiEnv
 
     Write-Host "Deployed API -> $apiPath (http://localhost:$apiPort)"
     Write-Host "Deployed UI  -> $uiPath (https://localhost:$uiPort)"

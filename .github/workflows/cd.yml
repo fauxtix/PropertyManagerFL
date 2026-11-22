@@ -22,6 +22,15 @@ jobs:
       PM_SYNCFUSION_LICENSE: ${{ secrets.PM_SYNCFUSION_LICENSE }}
       PM_PMCONNECTION: ${{ secrets.PM_PMCONNECTION }}
       PM_UI_CERT_THUMBPRINT: ${{ secrets.PM_UI_CERT_THUMBPRINT }}
+      PM_JWT_SECRET: ${{ secrets.PM_JWT_SECRET }}
+      PM_JWT_ISSUER: ${{ secrets.PM_JWT_ISSUER }}
+      PM_JWT_AUDIENCE: ${{ secrets.PM_JWT_AUDIENCE }}
+      PM_JWT_EXPIRA_EM_MINUTOS: ${{ secrets.PM_JWT_EXPIRA_EM_MINUTOS }}
+      PM_EMAIL_USERNAME: ${{ secrets.PM_EMAIL_USERNAME }}
+      PM_EMAIL_SMTPSERVER: ${{ secrets.PM_EMAIL_SMTPSERVER }}
+      PM_EMAIL_PORT: ${{ secrets.PM_EMAIL_PORT }}
+      PM_EMAIL_PASSWORD: ${{ secrets.PM_EMAIL_PASSWORD }}
+      PM_EMAIL_FROM: ${{ secrets.PM_EMAIL_FROM }}
 
     steps:
       - name: Checkout
