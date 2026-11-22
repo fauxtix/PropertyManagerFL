@@ -133,6 +133,9 @@ function Copy-PublishedFiles([string] $Source, [string] $Destination) {
 }
 
 Ensure-Directory $root
+# New-Website requires the physical path to exist before it is called.
+Ensure-Directory $apiPath
+Ensure-Directory $uiPath
 Ensure-AppPool $apiPool
 Ensure-AppPool $uiPool
 Ensure-Site $apiSite $apiPool $apiPath $apiPort
