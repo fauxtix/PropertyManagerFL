@@ -29,6 +29,41 @@ function Ensure-Directory([string] $Path) {
     }
 }
 
+function Wait-AppPoolState([string] $Name, [string] $Desired) {
+    for ($i = 0; $i -lt 40; $i++) {
+        if ((Get-WebAppPoolState -Name $Name -ErrorAction Stop).Value -eq $Desired) {
+            return
+        }
+        Start-Sleep -Milliseconds 250
+    }
+    throw "App pool $Name did not reach state $Desired"
+}
+
+function Stop-AppPool-WithRetry([string] $Name) {
+    for ($attempt = 0; $attempt -lt 10; $attempt++) {
+        if ((Get-WebAppPoolState -Name $Name -ErrorAction Stop).Value -eq 'Stopped') {
+            return
+        }
+        try {
+            Stop-WebAppPool -Name $Name -ErrorAction Stop
+        }
+        catch {
+            if ($attempt -eq 9) { throw }
+            # IIS can briefly reject control messages right after a pool stop.
+            Start-Sleep -Milliseconds 500
+            continue
+        }
+        try {
+            Wait-AppPoolState $Name 'Stopped'
+            return
+        }
+        catch {
+            if ($attempt -eq 9) { throw }
+            Start-Sleep -Milliseconds 500
+        }
+    }
+}
+
 function Start-AppPool-WithRetry([string] $Name) {
     for ($attempt = 0; $attempt -lt 10; $attempt++) {
         if ((Get-WebAppPoolState -Name $Name -ErrorAction Stop).Value -eq 'Started') {
@@ -36,11 +71,11 @@ function Start-AppPool-WithRetry([string] $Name) {
         }
         try {
             Start-WebAppPool -Name $Name -ErrorAction Stop
+            Wait-AppPoolState $Name 'Started'
             return
         }
         catch {
             if ($attempt -eq 9) { throw }
-            # IIS can briefly reject control messages right after a pool stop.
             Start-Sleep -Milliseconds 500
         }
     }
@@ -180,9 +215,7 @@ foreach ($site in @($apiSite, $uiSite)) {
 
 try {
     foreach ($pool in @($apiPool, $uiPool)) {
-        if ((Get-WebAppPoolState -Name $pool).Value -ne 'Stopped') {
-            Stop-WebAppPool -Name $pool
-        }
+        Stop-AppPool-WithRetry $pool
     }
 
     Copy-PublishedFiles $ApiPublishDir $apiPath
