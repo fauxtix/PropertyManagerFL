@@ -8,7 +8,8 @@ permissions:
 
 defaults:
   run:
-    shell: pwsh
+    # The self-hosted runner has Windows PowerShell but not PowerShell Core.
+    shell: powershell
 
 jobs:
   deploy-iis:
@@ -37,16 +38,16 @@ jobs:
           dotnet build PropertyManagerFL.sln --no-restore -c Release --nologo
           dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj --no-build -c Release --nologo
 
-      - name: Publish API and UI
+      - name: Publish and deploy to IIS (API 4300 HTTP / UI 4310 HTTPS)
         run: |
           $apiOut = Join-Path $env:RUNNER_TEMP 'PropertyManagerFL-Api'
           $uiOut = Join-Path $env:RUNNER_TEMP 'PropertyManagerFL-UI'
           # Do not use --no-build here: PropertyManagerFL.Logging has no source files,
           # so a solution build produces no DLL for it and publish --no-build fails MSB3030.
           dotnet publish PropertyManagerFL.Api/PropertyManagerFL.Api.csproj -c Release -o $apiOut --nologo
+          if ($LASTEXITCODE -ne 0) { throw "API publish failed" }
           dotnet publish PropertyManagerFL.UI/PropertyManagerFL.UI.csproj -c Release -o $uiOut --nologo
-          "API_PUBLISH_DIR=$apiOut" >> $env:GITHUB_ENV
-          "UI_PUBLISH_DIR=$uiOut" >> $env:GITHUB_ENV
-
-      - name: Deploy to IIS (API 4300 HTTP / UI 4310 HTTPS)
-        run: ./.github/scripts/deploy-iis.ps1 -ApiPublishDir $env:API_PUBLISH_DIR -UiPublishDir $env:UI_PUBLISH_DIR
+          if ($LASTEXITCODE -ne 0) { throw "UI publish failed" }
+          # Keep publish and deploy in one step: Windows PowerShell's >> writes UTF-16,
+          # which is unsafe for GITHUB_ENV.
+          & ./.github/scripts/deploy-iis.ps1 -ApiPublishDir $apiOut -UiPublishDir $uiOut
