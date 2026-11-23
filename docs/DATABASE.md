@@ -23,10 +23,10 @@ O projeto foi desenvolvido com uma instância `SQLEXPRESS`, mas serve qualquer i
 
 | Ficheiro | Conteúdo |
 |---|---|
-| `WorkingTables.sql` | Tabelas, incluindo `dbo.Notifications` e os seus índices, e as tabelas do schema `[Identity]` usadas pelo ASP.NET Identity |
+| `WorkingTables.sql` | Tabelas, incluindo os seus índices, e as tabelas do schema `[Identity]` usadas pelo ASP.NET Identity |
 | `LookupTablesWithData.sql` | Tabelas de *lookup* e dados iniciais (redigidos em português — ver a secção 6) |
 | `UserDefinedFunctions.sql` | Funções SQL |
-| `StoredProcedures.sql` | *Stored procedures*, incluindo as 8 `usp_Notifications_*` do centro de notificações |
+| `StoredProcedures.sql` | *Stored procedures* |
 | `Views.sql` | Vistas |
 | `UsersAndSchemas.sql` | Schema `[Identity]`, users `IIS APPPOOL\*`, permissão `db_owner` |
 | `Login_App.sql` | Login `IIS APPPOOL\PropertyManagerFL` (executado em `master`) |
@@ -96,7 +96,6 @@ No SSMS: botão direito em **Databases → Restore Database… → Device → Ad
 - Usar **sempre numa base de dados nova/vazia**.
 - Para repetir a instalação, largar e recriar a base de dados.
 - Não executar em conjunto os scripts individuais e o script completo.
-- O centro de notificações não precisa de nenhum script à parte: `dbo.Notifications`, os índices e as procedures `usp_Notifications_*` já estão incluídos nos ficheiros acima.
 
 ## 5. Verificação
 
