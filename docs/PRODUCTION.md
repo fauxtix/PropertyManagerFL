@@ -45,7 +45,7 @@ Os segredos não são visíveis após serem criados e **não são copiados por u
 | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI — a secção `EmailConfiguration` é obrigatória no arranque |
 | `PM_UI_CERT_THUMBPRINT` | Opcional: thumbprint de certificado existente em `LocalMachine\My` para a binding HTTPS 4310 |
 
-Se os dois segredos Syncfusion puderem ser o mesmo valor (chave Enterprise/Community que cobre todas as edições), ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md). Neste servidor estão separados porque a UI e a API usam chaves diferentes.
+Se os dois segredos Syncfusion puderem ser o mesmo valor (chave Enterprise/Community que cobre todas as edições), ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md). Neste servidor os dois segredos passaram a conter a mesma chave 35.2.x em 2026-11-24; mantêm-se dois segredos separados apenas para permitir chaves diferentes no futuro.
 
 ### Como os valores chegam à aplicação
 
