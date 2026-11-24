@@ -222,6 +222,16 @@ main .top-row,
     white-space: nowrap;
 }
 
+.top-row a.topbar-user {
+    text-decoration: none;
+}
+
+    .top-row a.topbar-user:hover,
+    .top-row a.topbar-user:focus {
+        color: var(--app-info-text) !important;
+        text-decoration: underline;
+    }
+
 .top-row .topbar-action {
     display: inline-flex;
     align-items: center;
@@ -237,6 +247,7 @@ main .top-row,
     line-height: 25px;
     text-align: center;
     text-decoration: none;
+    white-space: nowrap;
     transition: background-color 0.2s;
 }
 
@@ -461,4 +472,54 @@ main .top-row,
 .e-chart .e-axis-title,
 .e-accumulationchart .e-axis-label {
     color: var(--app-text-secondary);
+}
+
+/* ==================== Semantic helpers (grid values/notes) ============== */
+/* Definidas aqui (CSS global carregado por último) para não ficarem sujeitas
+   à cascata/escopo dos <style> injetados dentro das grelhas Blazor. */
+
+.tenant-amount {
+    color: var(--app-text-primary);
+}
+
+    .tenant-amount--due {
+        color: var(--app-danger-text);
+    }
+
+.tenant-note {
+    color: var(--app-text-primary);
+    background-color: var(--app-surface-alt);
+}
+
+    .tenant-note--warning {
+        color: var(--app-warning-text);
+        background-color: var(--app-warning-bg);
+    }
+
+    .tenant-note--danger {
+        color: var(--app-danger-text);
+        background-color: var(--app-danger-bg);
+    }
+
+.e-grid .e-rowcell.e-selectionbackground .tenant-amount,
+.e-grid .e-rowcell.e-selectionbackground .tenant-note,
+.e-grid .e-rowcell.e-active .tenant-amount,
+.e-grid .e-rowcell.e-active .tenant-note {
+    color: var(--app-on-primary) !important;
+    background-color: transparent;
+}
+
+.e-attr .e-categoria {
+    font-weight: bolder;
+    color: var(--app-success-text);
+}
+
+.e-attr .e-valor {
+    font-weight: bolder;
+    color: var(--app-danger-text);
+}
+
+.e-grid td.e-active {
+    background-color: var(--app-primary);
+    color: var(--app-on-primary);
 }

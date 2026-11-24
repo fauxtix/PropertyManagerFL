@@ -6,18 +6,19 @@
 @inject IStringLocalizer<App> L
 
 <aside id="sidebar" class="sidebar break-point-md @(_isCollapsed ? "collapsed" : "") @(_isToggled ? "toggled" : "")">
-    <button type="button" id="btn-collapse" class="sidebar-collapser"
-            @onclick="BtnCollapseClicked"
-            title="@L["SidebarCollapse"]" aria-label="@L["SidebarCollapse"]">
-        <i class="fa fa-arrow-left" aria-hidden="true"></i>
-    </button>
-
     <div class="sidebar-layout">
         <div class="sidebar-header">
             <div class="pro-sidebar-logo">
                 <div>PM</div>
                 <h5>Property Manager</h5>
             </div>
+            <button type="button" id="btn-collapse" class="sidebar-collapser"
+                    @onclick="BtnCollapseClicked"
+                    title="@(_isCollapsed ? L["TituloExpandir"] : L["TituloRecolher"])"
+                    aria-label="@(_isCollapsed ? L["TituloExpandir"] : L["TituloRecolher"])"
+                    aria-expanded="@(_isCollapsed ? "false" : "true")">
+                <span class="sidebar-collapser-chevron" aria-hidden="true"></span>
+            </button>
         </div>
 
         <div class="sidebar-content">

@@ -78,7 +78,7 @@
     [Parameter] public string? PositionX { get; set; } = "center";
     [Parameter] public string? PositionY { get; set; } = "center";
 
-    private string TitleColor { get; set; } = "cornflowerblue";
+    private string TitleColor { get; set; } = "var(--app-info-text)";
     private string OkButtonColor { get; set; } = "e-danger e-round-corner";
 
     private DialogEffect Effects = DialogEffect.FadeZoom;
@@ -91,7 +91,7 @@
     protected override void OnInitialized()
     {
         MessageSeverityType = MessageSeverity.Info;
-        TitleColor = "cornflowerblue";
+        TitleColor = "var(--app-info-text)";
     }
 
     protected override void OnParametersSet()
@@ -100,7 +100,7 @@
         {
             case AppDefinitions.AlertMessageType.Error:
                 MessageSeverityType = MessageSeverity.Error;
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 MessageSeverityType = MessageSeverity.Warning;
@@ -109,12 +109,12 @@
                 break;
             case AppDefinitions.AlertMessageType.Info:
                 MessageSeverityType = MessageSeverity.Info;
-                TitleColor = "cornflowerblue";
+                TitleColor = "var(--app-info-text)";
                 OkButtonColor = "e-info e-round-corner";
                 break;
             default:
                 MessageSeverityType = MessageSeverity.Info;
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
         }
 

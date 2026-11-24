@@ -50,9 +50,10 @@
         .layout.has-sidebar .sidebar .sidebar-header {
             display: flex;
             align-items: center;
+            gap: 10px;
             height: 64px;
             min-height: 64px;
-            padding: 0 16px;
+            padding: 0 12px 0 16px;
             border-bottom: 1px solid var(--sidebar-border);
         }
 
@@ -63,6 +64,7 @@
 
 .pro-sidebar-logo {
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
     gap: 10px;
     min-width: 0;
@@ -227,27 +229,70 @@
     transform: translateY(-8px);
 }
 
+/* O botão faz parte do cabeçalho (flow, não absolute): nunca fica cortado
+   pelo overflow-x:hidden do sidebar nem escondido atrás do logótipo. */
 .layout.has-sidebar .sidebar .sidebar-collapser {
-    position: absolute;
-    top: 18px;
-    right: -11px;
+    position: relative;
     z-index: 111;
-    display: flex;
+    display: inline-flex;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    width: 22px;
-    height: 22px;
-    border: 0;
-    border-radius: 50%;
-    background-color: var(--sidebar-accent);
-    color: #fff;
-    font-size: 0.8rem;
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid var(--sidebar-border);
+    border-radius: 9px;
+    background-color: var(--sidebar-bg-alt);
+    color: var(--sidebar-text-primary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    line-height: 1;
     cursor: pointer;
-    box-shadow: var(--app-shadow);
+    transition: background-color 0.15s, border-color 0.15s;
 }
 
-    .layout.has-sidebar .sidebar.collapsed .sidebar-collapser i {
-        transform: rotate(180deg);
+    .layout.has-sidebar .sidebar .sidebar-collapser:hover,
+    .layout.has-sidebar .sidebar .sidebar-collapser:focus {
+        border-color: var(--sidebar-accent);
+        background-color: var(--sidebar-accent);
+        color: #fff;
+    }
+
+/* Seta desenhada em CSS: não depende de fontes nem do JS do Font Awesome
+   (que substitui <i> por <svg> e impede o Blazor de trocar o ícone). */
+.layout.has-sidebar .sidebar .sidebar-collapser .sidebar-collapser-chevron {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border: solid currentColor;
+    border-width: 0 2px 2px 0;
+    padding: 0;
+    /* Base com border-right + border-bottom: 135deg = seta para a esquerda. */
+    transform: rotate(135deg);
+    transition: transform 0.2s ease;
+}
+
+    /* Recolhido: -45deg = seta para a direita (expandir). */
+    .layout.has-sidebar .sidebar.collapsed .sidebar-collapser .sidebar-collapser-chevron {
+        transform: rotate(-45deg);
+    }
+
+/* Em modo recolhido fica apenas o botão, centrado nos 80px do sidebar. */
+.layout.has-sidebar .sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    padding: 0;
+}
+
+    .layout.has-sidebar .sidebar.collapsed .pro-sidebar-logo {
+        display: none;
+    }
+
+    .layout.has-sidebar .sidebar.collapsed .sidebar-collapser {
+        width: 34px;
+        min-width: 34px;
+        padding: 0;
     }
 
 /* ------------------------- Top bar / hamburger -------------------------- */

@@ -1,0 +1,215 @@
+@page "/messages-modern"
+
+@using EmailService
+@using Microsoft.AspNetCore.Identity
+@using PropertyManagerFL.Application.Interfaces.Services.AppManager
+@using PropertyManagerFL.Application.ViewModels.Email
+@using PropertyManagerFL.Application.ViewModels.LookupTables
+@using PropertyManagerFL.Application.ViewModels.Messages
+@using Syncfusion.Blazor.Navigations
+
+<PageTitle>@L["TituloMenuMensagens"]</PageTitle>
+<PageTitleComponent PageTitle="@L["TituloMenuMensagens"]"></PageTitleComponent>
+
+@if (_messages is null && InquilinosLookup is null)
+{
+    <LoadingData />
+}
+else
+{
+    <div class="msg-shell">
+        <header class="msg-hero">
+            <div class="msg-hero-icon"><i class="fas fa-envelope-open-text" aria-hidden="true"></i></div>
+            <div class="msg-hero-copy">
+                <h1>@L["TituloMenuMensagens"]</h1>
+                <p>@L["TituloMensagem"]</p>
+            </div>
+            <div class="msg-hero-stats">
+                <span><b>@(_receivedMessages?.Count ?? 0)</b> @L["TituloMensagensRecebidas"]</span>
+                <span><b>@(_sentMessages?.Count ?? 0)</b> @L["TituloMensagensEnviadas"]</span>
+            </div>
+        </header>
+
+        <div class="msg-tabs" role="tablist" aria-label="@L["TituloMenuMensagens"]">
+            <button type="button" role="tab" class="msg-tab @(activeTab == 0 ? "active" : "")"
+                    aria-selected="@(activeTab == 0 ? "true" : "false")" @onclick="() => activeTab = 0">
+                <i class="fas fa-pen" aria-hidden="true"></i><span>@L["TituloMensagem"]</span>
+            </button>
+            <button type="button" role="tab" class="msg-tab @(activeTab == 1 ? "active" : "")"
+                    aria-selected="@(activeTab == 1 ? "true" : "false")" @onclick="() => activeTab = 1">
+                <i class="fas fa-inbox" aria-hidden="true"></i><span>@L["TituloMensagensRecebidas"]</span>
+                <span class="msg-tab-count">@(_receivedMessages?.Count ?? 0)</span>
+            </button>
+            <button type="button" role="tab" class="msg-tab @(activeTab == 2 ? "active" : "")"
+                    aria-selected="@(activeTab == 2 ? "true" : "false")" @onclick="() => activeTab = 2">
+                <i class="fas fa-paper-plane" aria-hidden="true"></i><span>@L["TituloMensagensEnviadas"]</span>
+                <span class="msg-tab-count">@(_sentMessages?.Count ?? 0)</span>
+            </button>
+        </div>
+
+        @if (activeTab == 0)
+        {
+            <section class="msg-card" role="tabpanel">
+                <EditForm Model=@_message>
+                    <div class="msg-section">
+                        <h2 class="msg-section-title"><i class="fas fa-list-check" aria-hidden="true"></i>@L["TituloMenuMensagens"]</h2>
+                        <fieldset class="msg-type-group">
+                            <div class="msg-type-options">
+                                <SfRadioButton Name="options" Label="@L["TituloRecebidaInquilino"]" Value="1" CssClass="msg-radio" TChecked="string" @bind-Checked=@SentReceivedBy
+                                               ValueChange="HandleMessageType"
+                                               LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
+                                <SfRadioButton Name="options" Label="@L["TituloEnviadaInquilino"]" Value="2" CssClass="msg-radio" TChecked="string" @bind-Checked=@SentReceivedBy
+                                               ValueChange="HandleMessageType"
+                                               LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
+                                <SfRadioButton Name="options" Label="@L["TituloOutroRecebimentoMensagem"]" Value="3" CssClass="msg-radio" TChecked="string" @bind-Checked=@SentReceivedBy
+                                               ValueChange="HandleMessageType"
+                                               LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
+                                <SfRadioButton Name="options" Label="@L["TituloOutroEnvioMensagem"]" Value="4" CssClass="msg-radio" TChecked="string" @bind-Checked=@SentReceivedBy
+                                               ValueChange="HandleMessageType"
+                                               LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="msg-section">
+                        <h2 class="msg-section-title"><i class="fas fa-user-clock" aria-hidden="true"></i>@L["TituloDestinatarioMensagem"]</h2>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-7" hidden="@(ShowTenantsCombo == false)">
+                                <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true"
+                                                ShowClearButton="true" Enabled="@ShowTenantsCombo" @bind-Value=@TenantId
+                                                FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                                Placeholder="@comboPlaceHolder" FloatLabelType="FloatLabelType.Always"
+                                                DataSource="@InquilinosLookup">
+                                    <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTenant"></DropDownListEvents>
+                                    <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
+                                </SfDropDownList>
+                            </div>
+                            <div class="col-12 col-md-7" hidden="@(ShowSenderReceiver == false)">
+                                <label class="form-label">@senderReceiverLabel</label>
+                                <SfTextBox Type="InputType.Email"
+                                           @bind-Value="@_message!.DestinationEmail"
+                                           ID="recipientEmail" CssClass="form-control" Placeholder="email@provider.com" />
+                            </div>
+                            <div class="col-12 col-md-5" hidden="@(ShowSenderReceiver == false)">
+                                <label class="form-label">@L["TituloData"]</label>
+                                <SfDatePicker Width="100%"
+                                              FloatLabelType="FloatLabelType.Always"
+                                              CssClass="form-control"
+                                              Placeholder="@L["TituloData"]"
+                                              Min="@DateTime.Now.Date.AddDays(-30)"
+                                              Max="@DateTime.Now.Date"
+                                              @bind-Value="@MessageDate">
+                                    <DatePickerEvents ValueChange="MessageDateChanged" TValue="DateTime"></DatePickerEvents>
+                                </SfDatePicker>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg-section">
+                        <h2 class="msg-section-title"><i class="fas fa-align-left" aria-hidden="true"></i>@L["TituloMensagem"]</h2>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">@L["msgUploadSubject"]</label>
+                                <SfTextBox Type="InputType.Text"
+                                           @bind-Value="@_message!.SubjectTitle"
+                                           CssClass="form-control" Placeholder="@L["msgUploadSubject"]" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">@L["TituloMensagem"]</label>
+                                <SfTextBox Multiline="true" Type="InputType.Text" ID="message"
+                                           @bind-Value="@_message!.MessageContent"
+                                           CssClass="form-control" Placeholder="@L["TituloMensagem"]" />
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">@L["TituloReferencia"]</label>
+                                <SfAutoComplete TValue="string" TItem="ComposeMessageVM" Placeholder="Ref#..." DataSource="@_messages" Autofill=true @bind-Value="@_message.ReferenceId">
+                                    <AutoCompleteFieldSettings Value="ReferenceId" />
+                                </SfAutoComplete>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="msg-actions">
+                        <SfButton CssClass="e-btn e-outline e-success" IconCss="fas fa-save"
+                                  Content="@L["TituloGuardaMensagem"]" OnClick="(()=>SendMessage(1))" />
+                        <SfButton CssClass="e-btn e-primary" IconCss="fas fa-paper-plane"
+                                  Content="@L["TituloGuardaMensagemEnviaEmail"]" OnClick="(()=>SendMessage(2))" />
+                        <SfButton CssClass="e-btn e-outline e-secondary" IconCss="fas fa-times"
+                                  Content="@L["btnCancelar"]" OnClick="GotoIndex" />
+                    </div>
+                </EditForm>
+
+                @if (ShowResultMessage)
+                {
+                    <div class="mt-3">
+                        <SfMessage Visible="@ShowResultMessage" Variant="MessageVariant.Filled" Severity="@messageSeverity">@ResultMessage</SfMessage>
+                    </div>
+                }
+            </section>
+        }
+        else if (activeTab == 1)
+        {
+            <section class="msg-card" role="tabpanel">
+                <h2 class="msg-section-title"><i class="fas fa-inbox" aria-hidden="true"></i>@L["TituloMensagensRecebidas"]</h2>
+                <div class="table-responsive">
+                    <SfGrid DataSource="@_receivedMessages" TValue="ComposeMessageVM"
+                            EnableStickyHeader="true" EnableAltRow="true" EnableHover="true"
+                            AllowFiltering="false" AllowSelection="true" AllowGrouping="false"
+                            AllowPaging="true" AllowSorting="true" AllowPdfExport="true"
+                            RowHeight="32" AllowTextWrap="true"
+                            Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })">
+                        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal" ShowDeleteConfirmDialog="true"></GridEditSettings>
+                        <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
+                        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                        <GridColumns>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageReceivedOn) EditType="EditType.DatePickerEdit" HeaderText="@L["TituloRececaoMensagens"]" Format="d" Width="90"></GridColumn>
+                            <GridColumn AllowEditing="false" HeaderText="@L["TituloInquilino"]" Width="80" TextAlign="TextAlign.Center">
+                                <Template Context="msgCtx">
+                                    @{
+                                        var msg = (msgCtx as ComposeMessageVM);
+                                        <span>@(msg?.TenantId > 0 ? "X" : "")</span>
+                                    }
+                                </Template>
+                            </GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="@L["TituloRemetente"]" Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloReferencia"]" Width="80"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </section>
+        }
+        else
+        {
+            <section class="msg-card" role="tabpanel">
+                <h2 class="msg-section-title"><i class="fas fa-paper-plane" aria-hidden="true"></i>@L["TituloMensagensEnviadas"]</h2>
+                <div class="table-responsive">
+                    <SfGrid DataSource="@_sentMessages" TValue="ComposeMessageVM"
+                            EnableStickyHeader="true" EnableAltRow="true" EnableHover="true"
+                            AllowFiltering="false" AllowSelection="true" AllowGrouping="false"
+                            AllowPaging="true" AllowSorting="true" AllowPdfExport="true"
+                            RowHeight="32" AllowTextWrap="true"
+                            Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })">
+                        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal" ShowDeleteConfirmDialog="true"></GridEditSettings>
+                        <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
+                        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
+                        <GridColumns>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageSentOn) EditType="EditType.DatePickerEdit" HeaderText="@L["TituloEnvioMensagem"]" Width="90" Format="d"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.DestinationEmail) AllowEditing="false" HeaderText="@L["TituloDestinatarioMensagem"]" Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
+                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloReferencia"]" Width="80"></GridColumn>
+                        </GridColumns>
+                    </SfGrid>
+                </div>
+            </section>
+        }
+    </div>
+}
+
+@code {
+    private int activeTab;
+}

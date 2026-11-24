@@ -26,3 +26,17 @@ jobs:
 
       - name: Test
         run: dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj --no-build --configuration Release --nologo
+
+      - name: Verify letter templates are published with the API
+        run: |
+          dotnet publish PropertyManagerFL.Api/PropertyManagerFL.Api.csproj -c Release -o "${RUNNER_TEMP}/pmfl-api-publish" --nologo
+          expected=$(find PropertyManagerFL.Api/Reports/Docs -maxdepth 1 -type f -name '*.dotx' | wc -l)
+          actual=0
+          if [ -d "${RUNNER_TEMP}/pmfl-api-publish/Reports/Docs" ]; then
+            actual=$(find "${RUNNER_TEMP}/pmfl-api-publish/Reports/Docs" -maxdepth 1 -type f -name '*.dotx' | wc -l)
+          fi
+          if [ "$expected" -eq 0 ] || [ "$actual" -ne "$expected" ]; then
+            echo "::error::Letter templates missing from API publish output (expected $expected, found $actual). Check the CopyToOutputDirectory rule in PropertyManagerFL.Api.csproj."
+            exit 1
+          fi
+          echo "Verified $actual letter templates in API publish output"

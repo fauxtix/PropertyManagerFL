@@ -1,4 +1,5 @@
-﻿using PropertyManagerFL.Core.Entities;
+﻿using PropertyManagerFL.Application.ViewModels.MailMerge;
+using PropertyManagerFL.Core.Entities;
 using System.Collections.Generic;
 
 namespace PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -9,5 +10,6 @@ public interface ILetterTemplatesService
     Task<Template> GetTemplateByIdAsync(int id);
     Task<string> GetTemplateFromServer(string templateName);
     Task<IList<string>> GetTemplatesFilenamesFromServer(string culture);
+    Task<byte[]?> PreviewDocumentAsync(MailMergePreviewModel model);
     Task<bool> UpdateTemplateAsync(Template template);
 }

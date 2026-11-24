@@ -8,9 +8,18 @@
 @using System.Text.Json
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
-@if (!FileNamesOnlyList!.Any())
+@if (!TemplatesLoaded)
 {
     <LoadingData />
+}
+else if (!FileNamesOnlyList!.Any())
+{
+    <div class="letter-templates @(IsFullScreen ? "lt-full" : "lt-embedded") alert alert-warning" role="alert">
+        <div>@L["lt-no-templates"]</div>
+        <button type="button" class="btn btn-sm btn-outline-primary mt-2" @onclick="ReloadTemplates">
+            <i class="fa fa-refresh" aria-hidden="true"></i> @L["lt-retry"]
+        </button>
+    </div>
 }
 else
 {
@@ -31,6 +40,27 @@ else
                     <i class="fa fa-expand" aria-hidden="true"></i> @L["mf-fullscreen"]
                 </button>
             }
+
+            <div class="lt-topbar-tools">
+                <div class="lt-topbar-template">
+                    <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
+                                    ShowClearButton="true" Width="250px" Index="@idxFileSelected"
+                                    FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
+                                    Placeholder="@L["Ficheiros"]" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
+                        <DropDownListTemplates TItem="TemplateFileName">
+                        </DropDownListTemplates>
+                        <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
+                        <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
+                    </SfDropDownList>
+                </div>
+                <div class="lt-topbar-upload">
+                    <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
+                        <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
+                        <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save"
+                                               RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove" />
+                    </SfUploader>
+                </div>
+            </div>
         </div>
 
         <div class="lt-body">
@@ -49,33 +79,49 @@ else
                 </div>
             }
         </div>
-        <div class="row control-section mt-2">
-            <div class="col-md-5">
-                <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                ShowClearButton="true" Width="250px" Index="@idxFileSelected"
-                                FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                Placeholder="@L["Ficheiros"]" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
-                    <DropDownListTemplates TItem="TemplateFileName">
-                    </DropDownListTemplates>
-                    <DropDownListEvents TValue="int" TItem="TemplateFileName" ValueChange="OnSelectTemplate"></DropDownListEvents>
-                    <DropDownListFieldSettings Value="Id" Text="TemplateFile"></DropDownListFieldSettings>
-                </SfDropDownList>
-            </div>
-            <div class="control-section col-md-7 mb-2">
-                <SfUploader @ref="uploader" AutoUpload="true" AllowedExtensions=".doc,.docx,.dotx">
-                    <UploaderEvents OnActionComplete="@OnActionCompleteHandler" OnFailure="OnFailure" OnUploadStart="OnSuccess" />
-                    <UploaderAsyncSettings SaveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Save"
-                                           RemoveUrl="https://aspnetmvc.syncfusion.com/services/api/uploadbox/Remove" />
-                </SfUploader>
-            </div>
-        </div>
-
         <AlertUserComponent AlertMessageType="@AlertMessageType"
                             Title="@AlertTitle"
                             OperationType="@OpcoesRegisto"
                             Visibility="@AlertVisibility"
                             Message="@WarningMessage"
                             OnCloseDialog="(()=>AlertVisibility=false)"></AlertUserComponent>
+
+        @if (PreviewVisible)
+        {
+            <SfDialog Width="60%" style="min-width:600px; max-width:96vw"
+                      Height="85%" MinHeight="600px"
+                      IsModal="true" CloseOnEscape="true" ShowCloseIcon="false"
+                      @bind-Visible="PreviewVisible">
+                <DialogTemplates>
+                    <Header>
+                        <span class="lt-preview-caption">@L["lt-preview-title"] — @currentTemplateName</span>
+                    </Header>
+                    <Content>
+                        @if (PreviewBusy || PreviewPdfBytes is null)
+                        {
+                            <LoadingData />
+                        }
+                        else
+                        {
+                            <SfPdfViewer2 @ref="previewViewer" Width="100%" Height="100%"
+                                          EnablePrint="true" EnableDownload="true"
+                                          EnableThumbnailPanel="false" ZoomValue="100">
+                                <PdfViewerEvents Created="OnPreviewViewerCreated" />
+                            </SfPdfViewer2>
+                        }
+                    </Content>
+                    <FooterTemplate>
+                        <div class="d-flex justify-content-end">
+                            <SfButton CssClass="e-outline e-round-corner"
+                                      IconCss="fas fa-times" @onclick="ClosePreview">
+                                @L["lt-preview-close"]
+                            </SfButton>
+                        </div>
+                    </FooterTemplate>
+                </DialogTemplates>
+                <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration="300"></DialogAnimationSettings>
+            </SfDialog>
+        }
     </div>
 }
 

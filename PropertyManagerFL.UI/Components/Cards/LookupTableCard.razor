@@ -21,7 +21,7 @@
         <div class="card__icon"><i class="@CardSymbol"></i></div>
         <h2 class="card__title" style="font-size:x-large">@cardTitle</h2>
         <p class="card__apply" style="text-align:center;">
-            <SfButton CssClass="btn e-outline e-round-corner card__link p-2" style="color:white"
+            <SfButton CssClass="btn e-outline e-round-corner card__link p-2" style="color:var(--app-on-primary)"
                       IconCss="e-icons e-settings"
                       @onclick="@(e => NavigateToUrlAsync(tableParam!))" Content="@L["lblManutencao"]">
             </SfButton>

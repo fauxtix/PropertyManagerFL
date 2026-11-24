@@ -79,7 +79,7 @@
 
     protected EventCallbackArgs args { get; set; }
 
-    private string TitleColor { get; set; } = "cornflowerblue";
+    private string TitleColor { get; set; } = "var(--app-info-text)";
     private string OkButtonColor { get; set; } = "e-danger e-round-corner";
     private string? AlertMessage = "";
     private bool HideMessage = false;
@@ -110,7 +110,7 @@
     protected override void OnInitialized()
     {
         cssClass = "notify-info";
-        TitleColor = "cornflowerblue";
+        TitleColor = "var(--app-info-text)";
         MonthList = GetMonths();
         YearsList = GetYears();
     }
@@ -121,7 +121,7 @@
         {
             case AppDefinitions.AlertMessageType.Error:
                 cssClass = "notify-error";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 cssClass = "notify-warning";
@@ -130,12 +130,12 @@
                 break;
             case AppDefinitions.AlertMessageType.Info:
                 cssClass = "notify-info";
-                TitleColor = "cornflowerblue";
+                TitleColor = "var(--app-info-text)";
                 OkButtonColor = "e-info e-round-corner";
                 break;
             default:
                 cssClass = "notify-warning";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
         }
 

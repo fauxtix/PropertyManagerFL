@@ -58,7 +58,7 @@
     [Parameter] public string DialogHeight { get; set; } = "35%";
     [Parameter] public bool Visible { get; set; } = false;
 
-    private string TitleColor { get; set; } = "cornflowerblue";
+    private string TitleColor { get; set; } = "var(--app-info-text)";
 
     private string? cssClass;
     private string? moduleDescription;
@@ -73,7 +73,7 @@
     protected override void OnInitialized()
     {
         cssClass = "notify-info";
-        TitleColor = "cornflowerblue";
+        TitleColor = "var(--app-info-text)";
 
     }
 
@@ -85,7 +85,7 @@
         {
             case AppDefinitions.AlertMessageType.Error:
                 cssClass = "notify-error";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 cssClass = "notify-warning";
@@ -93,11 +93,11 @@
                 break;
             case AppDefinitions.AlertMessageType.Info:
                 cssClass = "notify-info";
-                TitleColor = "cornflowerblue";
+                TitleColor = "var(--app-info-text)";
                 break;
             default:
                 cssClass = "notify-warning";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
         }
     }

@@ -275,7 +275,7 @@ else
 
         .e-attr .e-categoria {
             font-weight: bolder;
-            color: green;
+            color: var(--app-success-text);
         }
 
         .e-attr .e-valor {
@@ -283,7 +283,10 @@ else
             color: var(--app-danger-text);
         }
 
+    /* A grelha usa --app-primary para a linha selecionada; o texto tem de
+       acompanhar --app-on-primary para continuar legível em ambos os temas. */
     .e-grid td.e-active {
-        background-color: yellow;
+        background-color: var(--app-primary);
+        color: var(--app-on-primary);
     }
 </style>

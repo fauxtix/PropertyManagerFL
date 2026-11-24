@@ -11,7 +11,7 @@ Application designed to assist landlords in managing their properties and rental
 - **Prerequisites:** .NET 10 SDK (`global.json`), **SQL Server Developer or Community** (both free) with the database created, SSMS/`sqlcmd`, a development HTTPS certificate, SMTP credentials and **your own Syncfusion licences**.
 - **Database:** manual setup — EF migrations are disabled. The scripts (`PropertyManagerFL.Infrastructure/Database/*.sql` or `SqlData_Script/PropertyManagerDB.sql`) are **not idempotent** and must run **on an empty database**, in the order described in [DATABASE.md](docs/DATABASE.md).
 - **Keys:** the UI and the API each register their own Syncfusion licence. In Development use `dotnet user-secrets set --project ...`; in Production use GitHub Secrets. **Choose a key for version 35.2.x with all editions** — see [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md).
-- **Run locally:** API at `http://localhost:4300`, UI at `https://localhost:4310`. Full commands in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
+- **Run locally (Development, Kestrel):** API at `https://localhost:5001`, UI at `https://localhost:7181` — the original project ports, different from IIS (Production: 4300/4310), so both can run at the same time. Full commands in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
 - **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone needs their own database, credentials and licences. Never reuse the maintainer's keys or commit any key.
 - **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — see [PRODUCTION.md](docs/PRODUCTION.md).
 - **Tests:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.

@@ -11,7 +11,7 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 - **Pré-requisitos:** SDK .NET 10 (`global.json`), **SQL Server Developer ou Community** (gratuitos) com a base de dados criada, SSMS/`sqlcmd`, certificado HTTPS de desenvolvimento, credenciais SMTP e **as suas próprias licenças Syncfusion**.
 - **Base de dados:** criação manual — não há EF migrations ativas. Os scripts (`PropertyManagerFL.Infrastructure/Database/*.sql` ou `SqlData_Script/PropertyManagerDB.sql`) não são idempotentes e devem correr **numa BD vazia**, pela ordem descrita em [DATABASE.md](docs/DATABASE.md).
 - **Chaves:** a UI e a API registam cada uma a sua licença Syncfusion. Em Development usam `dotnet user-secrets set --project ...`; em Production usam GitHub Secrets. **Escolher uma chave para a versão 35.2.x e com todas as edições** — detalhes em [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md).
-- **Arranque local:** API em `http://localhost:4300`, UI em `https://localhost:4310`. Ver [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) para os comandos completos.
+- **Arranque local (Development, Kestrel):** API em `https://localhost:5001`, UI em `https://localhost:7181` — portas originais do projeto, distintas do IIS (Produção: 4300/4310), para poderem correr ao mesmo tempo. Ver [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) para os comandos completos.
 - **Quem faz clone:** os GitHub Secrets **não vêm com o clone**. Cada pessoa precisa da sua BD, das suas credenciais e das suas licenças. Nunca reutilizar chaves do mantenedor nem as committed.
 - **Produção:** deploy manual via GitHub Actions para IIS, com segredos injetados no `web.config` — ver [PRODUCTION.md](docs/PRODUCTION.md).
 - **Testes:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.

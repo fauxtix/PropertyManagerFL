@@ -111,6 +111,39 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+        [HttpPost("PreviewDocument")]
+        public IActionResult PreviewDocument([FromBody] MailMergePreviewModel model)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (model is null || string.IsNullOrWhiteSpace(model.TemplateBase64))
+                    return BadRequest("Modelo de carta não fornecido.");
+
+                string[] fields = model.MergeFields ?? Array.Empty<string>();
+                string[] values = model.ValuesFields ?? Array.Empty<string>();
+                if (fields.Length != values.Length)
+                    return BadRequest("A quantidade de campos e valores não coincide.");
+
+                byte[] templateBytes = Convert.FromBase64String(model.TemplateBase64);
+                using MemoryStream templateStream = new(templateBytes);
+                using WordDocument document = new(templateStream, FormatType.Dotx);
+                document.MailMerge.Execute(fields, values);
+
+                using DocIORenderer renderer = new();
+                using PdfDocument pdfDocument = renderer.ConvertToPDF(document);
+                using MemoryStream pdfStream = new();
+                pdfDocument.Save(pdfStream);
+
+                return File(pdfStream.ToArray(), "application/pdf", "pre-visualizacao.pdf");
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Location}: falha na pré-visualização do modelo", location);
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
         private bool GeneratePDF_FromDocx(string docWord, string docWordPDF)
         {
             try

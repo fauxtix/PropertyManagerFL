@@ -8,12 +8,10 @@
 @using PropertyManagerFL.UI.Components.Cards
 @using System.Globalization;
 
-<header>
-    <div class="module-title">
-        <div class="title">@L["TituloPainelPagamentos"]</div>
-        <div class="underline"></div>
-    </div>
-</header>
+@if (ShowTitle)
+{
+    <PageTitleComponent PageTitle="@L["TituloPainelPagamentos"]" />
+}
 
 @if (rentsAdjustments is null)
 {
@@ -34,7 +32,7 @@ else
                                                                             TituloEmFalta="@TituloEmFalta"
                                                                             ResultadoEmFalta="@totalDuePaymentsThisYear.ToString("C2")" />
 
-                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
+                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@Year</SfMessage>
                     </div>
                     <div class="row card-box">
                         <PropertyManagerFL.UI.Components.Cards.PaymentCards TituloRecebido="@TituloRecebido"
@@ -43,7 +41,7 @@ else
                                                                             ResultadoPrevisto="@totalExpectedPaymentsPreviousYear.ToString("C2")"
                                                                             TituloEmFalta="@TituloEmFalta"
                                                                             ResultadoEmFalta="@totalDuePaymentsPreviousYear.ToString("C2")" />
-                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
+                        <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@PreviousYear</SfMessage>
                     </div>
                     <div class="row card-box mt-3">
                         <div class="col-md-7">
@@ -235,6 +233,9 @@ else
 }
 @code {
 
+    [Parameter] public bool ShowTitle { get; set; } = true;
+    [Parameter] public int Year { get; set; } = DateTime.Today.Year;
+
     [Inject] public IRecebimentoService? paymentsService { get; set; }
     [Inject] public IInquilinoService? tenantsService { get; set; }
     [Inject] public IStatsService? statsService { get; set; }
@@ -263,24 +264,28 @@ else
 
     protected string currentCulture = CultureInfo.CurrentCulture.Name;
 
-    protected override async Task OnInitializedAsync()
+    private int _lastLoadedYear;
+    private int PreviousYear => Year - 1;
+
+    protected override async Task OnParametersSetAsync()
     {
+        if (_lastLoadedYear == Year && paymentsList is not null)
+            return;
 
-        paymentsList = (await paymentsService.GetAll())
-        .ToList();
+        _lastLoadedYear = Year;
+        await LoadDashboardAsync();
+    }
 
-        paymentsThisYear = paymentsList
-                .Where(e => e.DataMovimento.Year == DateTime.Now.Year);
+    private async Task LoadDashboardAsync()
+    {
+        paymentsList = (await paymentsService!.GetAll()).ToList();
 
+        paymentsThisYear = paymentsList.Where(e => e.DataMovimento.Year == Year).ToList();
         totalPaymentsThisYear = paymentsThisYear.Sum(e => e.ValorRecebido);
         totalExpectedPaymentsThisYear = paymentsThisYear.Sum(e => e.ValorPrevisto);
         totalDuePaymentsThisYear = paymentsThisYear.Sum(e => e.ValorEmFalta);
 
-        paymentsPreviousYear = (await paymentsService
-            .GetAll())
-            .ToList()
-            .Where(e => e.DataMovimento.Year == DateTime.Now.AddYears(-1).Year);
-
+        paymentsPreviousYear = paymentsList.Where(e => e.DataMovimento.Year == PreviousYear).ToList();
         totalPaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorRecebido);
         totalExpectedPaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorPrevisto);
         totalDuePaymentsPreviousYear = paymentsPreviousYear.Sum(e => e.ValorEmFalta);
@@ -289,11 +294,18 @@ else
         TituloPrevisto = L["TituloValorPrevisto"];
         TituloEmFalta = L["TituloValorAPagar"];
 
-        partiallyPaidPayments = paymentsList.Where(p => p.ValorEmFalta > 0 && p.ValorRecebido > 0);
-        duePayments = paymentsList.Where(p => p.ValorRecebido == 0);
+        partiallyPaidPayments = paymentsThisYear!.Where(p => p.ValorEmFalta > 0 && p.ValorRecebido > 0);
+        duePayments = paymentsThisYear!.Where(p => p.ValorRecebido == 0);
 
-        rentsIncreased = (await tenantsService.GetAllRentUpdates()).ToList();
-        rentsAdjustments = (await tenantsService.GetRentAdjustments()).ToList().OrderBy(o => o.TransactionId).ThenBy(o => o.Id);
-        latePaymentLetters = (await tenantsService.GetLatePaymentLetters()).ToList();
+        rentsIncreased = (await tenantsService!.GetAllRentUpdates())
+            .Where(r => r.DateProcessed.Year == Year)
+            .ToList();
+        rentsAdjustments = (await tenantsService.GetRentAdjustments())
+            .Where(r => r.DataMovimento.Year == Year)
+            .OrderBy(o => o.TransactionId).ThenBy(o => o.Id)
+            .ToList();
+        latePaymentLetters = (await tenantsService.GetLatePaymentLetters())
+            .Where(l => l.CreationDate.Year == Year)
+            .ToList();
     }
 }

@@ -82,7 +82,7 @@
     [Parameter] public AppDefinitions.AlertMessageType AlertType { get; set; } = AppDefinitions.AlertMessageType.Error;
     [Parameter] public bool Visible { get; set; } = false;
 
-    private string TitleColor { get; set; } = "cornflowerblue";
+    private string TitleColor { get; set; } = "var(--app-info-text)";
 
     private string cssClass { get; set; }
     private string cssModalAlertClass { get; set; }
@@ -97,7 +97,7 @@
     {
         cssClass = "notify-info";
         cssModalAlertClass = "info";
-        TitleColor = "cornflowerblue";
+        TitleColor = "var(--app-info-text)";
         DialogWidth = "25%";
         DialogHeight = "25%";
     }
@@ -109,17 +109,17 @@
             case AppDefinitions.AlertMessageType.Error:
                 cssClass = "notify-error";
                 cssModalAlertClass = "error";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 cssClass = "notify-warning";
                 cssModalAlertClass = "warning";
-                TitleColor = "Orange";
+                TitleColor = "var(--app-warning-text)";
                 break;
             case AppDefinitions.AlertMessageType.Info:
                 cssClass = "notify-info";
                 cssModalAlertClass = "info";
-                TitleColor = "cornflowerblue";
+                TitleColor = "var(--app-info-text)";
                 break;
         }
 

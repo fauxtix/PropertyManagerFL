@@ -251,6 +251,15 @@ try {
     Copy-PublishedFiles $ApiPublishDir $apiPath
     Copy-PublishedFiles $UiPublishDir $uiPath
 
+    # Letter templates are essential to the letter editor and mail merge. Assert they
+    # reached the IIS content root; a silent miss would leave Dev/Prod with no templates.
+    $expectedTemplates = @(Get-ChildItem -Path (Join-Path $ApiPublishDir 'Reports\Docs') -Filter '*.dotx' -File -ErrorAction SilentlyContinue)
+    $deployedTemplates = @(Get-ChildItem -Path (Join-Path $apiPath 'Reports\Docs') -Filter '*.dotx' -File -ErrorAction SilentlyContinue)
+    if ($expectedTemplates.Count -eq 0 -or $deployedTemplates.Count -ne $expectedTemplates.Count) {
+        throw "Letter templates missing from IIS API folder: expected $($expectedTemplates.Count), found $($deployedTemplates.Count) in $apiPath\Reports\Docs"
+    }
+    Write-Host "Verified $($deployedTemplates.Count) letter templates in $apiPath\Reports\Docs"
+
     # Production does not load user-secrets: inject every value the apps read at startup.
     $commonEnv = @{
         ASPNETCORE_ENVIRONMENT          = 'Production'

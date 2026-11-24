@@ -10,12 +10,10 @@
 @using Microsoft.AspNetCore
 @using PropertyManagerFL.UI.Components.Expenses.Dashboard
 
-<header>
-    <div class="module-title">
-        <div class="title">@L["TituloPainelDespesas"]</div>
-        <div class="underline"></div>
-    </div>
-</header>
+@if (ShowTitle)
+{
+    <PageTitleComponent PageTitle="@L["TituloPainelDespesas"]" />
+}
 @if (expensesList is null || last5Transactions is null ||
   CategoriesWithMoreSpending is null ||
   CategoriesWithMoreSpendings_ByYear_Current is null ||
@@ -32,11 +30,11 @@ else
                     <div class="row card-box">
                         <DashboardStatCard ResultadoAnual="@ExpensesThisYear.ToString("C2")"
                                            TituloAnual="@L["TituloDespesasEsteAno"]"
-                                           ResultadoMensal="@ExpensesThisMonth.ToString("C2")"
+                                           ResultadoMensal="@MonthlyResult"
                                            TituloMensal="@L["TituloDespesasEsteMes"]"
-                                           ResultadoSemanal="@ExpensesThisWeek.ToString("C2")"
+                                           ResultadoSemanal="@WeeklyResult"
                                            TituloSemanal="@L["TituloDespesasEstaSemana"]"
-                                           ResultadoDiario="@ExpensesToday.ToString("C2")"
+                                           ResultadoDiario="@DailyResult"
                                            TituloDiario="@L["TituloDespesasHoje"]">
                         </DashboardStatCard>
                     </div>
@@ -47,20 +45,20 @@ else
                 <div class="row">
                     <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
-                            <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@DateTime.Now.Year.ToString()</SfMessage>
+                            <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Info">@Year</SfMessage>
                             <ExpPieChart @ref="PieChartRef"
                                          FilterType="C"
                                          Title="@L["TituloDespesasPorCategoria"]"
-                                         Year="@(DateTime.Today.Year)" />
+                                         Year="@Year" />
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
-                            <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@DateTime.Now.AddYears(-1).Year.ToString()</SfMessage>
+                            <SfMessage ContentAlignment="HorizontalAlign.Center" Severity="MessageSeverity.Success">@PreviousYear</SfMessage>
                             <ExpPieChart @ref="PieChartRef"
                                          FilterType="C"
                                          Title="@L["TituloDespesasPorCategoria"]"
-                                         Year="@(DateTime.Today.Year - 1)" />
+                                         Year="@PreviousYear" />
                         </div>
                     </div>
                 </div>
@@ -77,18 +75,22 @@ else
                 <div class="row">
                     <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
-                            <ExpLineChart Year="@DateTime.Now.Year.ToString()" Expenses="@CategoriesSummaryCurrentYear" />
+                            <ExpLineChart Year="@Year.ToString()" Expenses="@CategoriesSummaryCurrentYear" />
                         </div>
                     </div>
                     <div class="col-lg-6 col-md-12 control-section sb-property-border">
                         <div class="control-section">
-                            <ExpLineChart Year="@DateTime.Now.AddYears(-1).Year.ToString()" Expenses="@CategoriesSummaryPreviousYear" />
+                            <ExpLineChart Year="@PreviousYear.ToString()" Expenses="@CategoriesSummaryPreviousYear" />
                         </div>
                     </div>
                 </div>
             </div>
         }
 
+        @if (!IsCurrentYear)
+        {
+            <SfMessage Severity="MessageSeverity.Info">@L["home-historical-estimate"]</SfMessage>
+        }
         <div class="row card-box">
             <div class="col-lg-4 col-md-12">
                 <div class="table table-striped table-responsive-sm">

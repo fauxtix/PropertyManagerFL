@@ -134,7 +134,7 @@ input[type="checkbox"] {
 
 .center {
     text-align: center;
-    border: 3px solid green;
+    border: 3px solid var(--app-border);
 }
 
 /*  .e-dropdownbase, .e-dropdownbase .e-list-item {
@@ -160,7 +160,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
 
     .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-text,
     .e-tab .e-tab-header .e-toolbar-item.e-active .e-tab-icon {
-        color: green !important;
+        color: var(--app-success-text) !important;
     }
 
 .e-radio:checked + .e-success::after { /* csslint allow: adjoining-classes */
@@ -496,7 +496,7 @@ e-tab .e-tab-header .e-hor-nav .e-popup-up-icon:hover,
         }
 
     .modal-confirm .icon-box {
-        color: black;
+        color: var(--app-text-primary);
         width: 75px;
         height: 75px;
         display: inline-block;

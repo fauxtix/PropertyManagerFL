@@ -13,6 +13,12 @@
     <Compile Remove="Filter\AuthorizationFilterAttribute.cs" />
   </ItemGroup>
 
+  <!-- Letter templates are read from ContentRootPath/reports/docs at runtime,
+       so they must travel with the published API (not just the source tree). -->
+  <ItemGroup>
+    <None Update="Reports\Docs\*.dotx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="15.1.4" />
     <PackageReference Include="Dapper" Version="2.0.123" />

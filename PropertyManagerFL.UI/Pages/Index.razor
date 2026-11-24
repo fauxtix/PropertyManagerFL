@@ -1,51 +1,56 @@
 ﻿@page "/"
 
-@using GoogleMapsComponents
-@using GoogleMapsComponents.Maps
+@inject IStringLocalizer<App> L
 
-@inject IJSRuntime JSRuntime
+<PageTitle>@L["Site_Menu_Inicio"]</PageTitle>
+<PageTitleComponent PageTitle="@L["Site_Menu_Inicio"]"
+                    WithBadge="true"
+                    PageSubTitle="@L["menu-admin-dashoard"]" />
 
-<PageTitle>Properties Manager FL</PageTitle>
-<div>
-    <img class="house-image" src="images/main-image.jpg" />
-</div>
-@code {
+<div class="home-dashboard">
+    <div class="home-year-bar">
+        <label class="home-year-label" for="home-year-select">@L["Ano"]</label>
+        <select id="home-year-select" class="home-year-select" @bind="_selectedYear">
+            @foreach (var year in _availableYears)
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+        <span class="home-year-compare">@string.Format(L["home-compare-label"], _selectedYear, _selectedYear - 1)</span>
+    </div>
 
-    private MapOptions? mapOptions;
+    <div class="home-tabs" role="tablist" aria-label="@L["menu-admin-dashoard"]">
+        <button type="button" role="tab" class="home-tab @(_activeTab == 0 ? "active" : "")"
+                aria-selected="@(_activeTab == 0 ? "true" : "false")"
+                @onclick="() => _activeTab = 0">
+            <i class="fas fa-money-bill" aria-hidden="true"></i>
+            <span>@L["TituloPainelPagamentos"]</span>
+        </button>
+        <button type="button" role="tab" class="home-tab @(_activeTab == 1 ? "active" : "")"
+                aria-selected="@(_activeTab == 1 ? "true" : "false")"
+                @onclick="() => _activeTab = 1">
+            <i class="fas fa-chart-pie" aria-hidden="true"></i>
+            <span>@L["TituloPainelDespesas"]</span>
+        </button>
+    </div>
 
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (firstRender)
+    <section class="home-tab-panel" role="tabpanel">
+        @if (_activeTab == 0)
         {
-            mapOptions = new MapOptions()
-                {
-                    Zoom = 13,
-                    Center = new LatLngLiteral()
-                    {
-                        Lat = 13.505892,
-                        Lng = 100.8162
-                    },
-                    MapTypeId = MapTypeId.Roadmap
-                };
-
+            <PropertyManagerFL.UI.Pages.Recebimentos.PaymentsDasboard ShowTitle="false" Year="@_selectedYear" />
         }
-    }
+        else
+        {
+            <PropertyManagerFL.UI.Pages.Despesas.ExpensesDashboard ShowTitle="false" Year="@_selectedYear" />
+        }
+    </section>
+</div>
+
+@code {
+    private int _activeTab;
+    private int _selectedYear = DateTime.Today.Year;
+    private readonly IReadOnlyList<int> _availableYears = Enumerable
+        .Range(DateTime.Today.Year - 10, 11)
+        .Reverse()
+        .ToList();
 }
-
-<style type="text/css" scoped>
-    .house-image {
-        position: fixed;
-        width:100%;
-        height: auto;
-        bottom: 0;
-    }
-
-    .responsive {
-        background-position: center;
-        background-repeat: no-repeat;
-        background-size: cover;
-        width: 100%;
-        height: auto;
-        overflow-y: hidden;
-    }
-</style>

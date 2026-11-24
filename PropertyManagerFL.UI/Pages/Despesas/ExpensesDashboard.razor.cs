@@ -11,6 +11,9 @@ using PropertyManagerFL.Core.Entities;
 namespace PropertyManagerFL.UI.Pages.Despesas;
 public partial class ExpensesDashboard
 {
+    [Parameter] public bool ShowTitle { get; set; } = true;
+    [Parameter] public int Year { get; set; } = DateTime.Today.Year;
+
     [Inject] public IDistritosConcelhosService? DistritosConcelhosService { get; set; }
     [Inject] public IAppSettingsService? AppSettingsService { get; set; }
     [Inject] public IFracaoService? fracoesService { get; set; }
@@ -53,16 +56,31 @@ public partial class ExpensesDashboard
     protected decimal totRents;
     protected decimal totExpensesPercent;
 
-
     protected List<ExpenseResults> totExpensesList = new();
 
-    protected override async Task OnInitializedAsync()
-    {
-        TituloCategoriaComMaisGastos = $"{L["TituloDespesasCategoriaComMaisGastos"]} {DateTime.Today.Year}";
-        TituloSegundaCategoriaComMaisGastos = $"{L["TituloDespesasSegundaCategoriaComMaisGastos"]} {DateTime.Today.Year}";
+    private int _lastLoadedYear;
+    private int PreviousYear => Year - 1;
+    private bool IsCurrentYear => Year == DateTime.Today.Year;
+    private string MonthlyResult => IsCurrentYear ? ExpensesThisMonth.ToString("C2") : "—";
+    private string WeeklyResult => IsCurrentYear ? ExpensesThisWeek.ToString("C2") : "—";
+    private string DailyResult => IsCurrentYear ? ExpensesToday.ToString("C2") : "—";
 
-        TituloCategoriaEsteAno = $"{L["TituloDespesasPorCategoria_Ano"]} {DateTime.Now.Year}";
-        TituloCategoriaAnoAnterior = $"{L["TituloDespesasPorCategoria_Ano"]} {DateTime.Now.AddYears(-1).Year}";
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_lastLoadedYear == Year && expensesList is not null)
+            return;
+
+        _lastLoadedYear = Year;
+        await LoadDashboardAsync();
+    }
+
+    private async Task LoadDashboardAsync()
+    {
+        TituloCategoriaComMaisGastos = $"{L["TituloDespesasCategoriaComMaisGastos"]} {Year}";
+        TituloSegundaCategoriaComMaisGastos = $"{L["TituloDespesasSegundaCategoriaComMaisGastos"]} {Year}";
+
+        TituloCategoriaEsteAno = $"{L["TituloDespesasPorCategoria_Ano"]} {Year}";
+        TituloCategoriaAnoAnterior = $"{L["TituloDespesasPorCategoria_Ano"]} {PreviousYear}";
         DateTime startOfWeek = DateTime.Today;
         int delta = DayOfWeek.Monday - startOfWeek.DayOfWeek;
         startOfWeek = startOfWeek.AddDays(delta);
@@ -104,17 +122,25 @@ public partial class ExpensesDashboard
             totRents = IRSValues!.Sum(i => i.ValorRenda);
 
             expensesList = await expensesService!.GetAll();
-            last5Transactions = expensesList.OrderByDescending(l => l.DataMovimento).ToList().Take(5);
-            ExpensesTotal = expensesList.Sum(e => e.Valor_Pago);
-            ExpensesThisYear = expensesList.Where(e => e.DataMovimento.Year == DateTime.Today.Year).Sum(f => f.Valor_Pago);
-            ExpensesThisMonth = expensesList.Where(e => e.DataMovimento.Year == DateTime.Today.Year && e.DataMovimento.Month == DateTime.Today.Month).Sum(f => f.Valor_Pago);
-            ExpensesToday = expensesList.Where(e => e.DataMovimento.Date == DateTime.Today.Date).Sum(f => f.Valor_Pago);
+            var selectedYearExpenses = expensesList
+                .Where(e => e.DataMovimento.Year == Year)
+                .ToList();
 
-            ExpensesThisWeek = expensesList.Where(x => (
-            (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek) ||
-            (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek) ||
-            (x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek)
-            )).Sum(t => t.Valor_Pago);
+            last5Transactions = selectedYearExpenses
+                .OrderByDescending(l => l.DataMovimento)
+                .Take(5);
+            ExpensesTotal = selectedYearExpenses.Sum(e => e.Valor_Pago);
+            ExpensesThisYear = selectedYearExpenses.Sum(f => f.Valor_Pago);
+            ExpensesThisMonth = selectedYearExpenses
+                .Where(f => f.DataMovimento.Month == DateTime.Today.Month)
+                .Sum(f => f.Valor_Pago);
+            ExpensesToday = selectedYearExpenses
+                .Where(f => f.DataMovimento.Date == DateTime.Today.Date)
+                .Sum(f => f.Valor_Pago);
+
+            ExpensesThisWeek = selectedYearExpenses
+                .Where(x => x.DataMovimento >= startOfWeek && x.DataMovimento < endOfWeek)
+                .Sum(t => t.Valor_Pago);
 
             CategoriesWithMoreSpending = await statsService.GetExpensesCategoriesWithMoreSpending();
             // Current year's expenses (result may be 0)
@@ -125,14 +151,15 @@ public partial class ExpensesDashboard
                     SecondCategoryWithMoreSpendings = $"{CategoriesWithMoreSpending.ElementAt(1).Descricao} - ({CategoriesWithMoreSpending.ElementAt(1).TotalDespesas.ToString("#,###.00")})";
             }
 
-            CategoriesWithMoreSpendings_ByYear_Current = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(DateTime.Today.Year);
-            CategoriesWithMoreSpendings_ByYear_Prior = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(DateTime.Today.Year - 1);
+            CategoriesWithMoreSpendings_ByYear_Current = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(Year);
+            CategoriesWithMoreSpendings_ByYear_Prior = await statsService.GetExpensesCategoriesWithMoreSpendings_ByYear(PreviousYear);
 
-            Expenses_ByType = (await statsService.GetTotalExpenses_ByType()).ToList();
-            CategoriesSummaryCurrentYear = Expenses_ByType
-                .Where(p => p.YearOfExpenses == DateTime.Now.Year);
-            CategoriesSummaryPreviousYear = Expenses_ByType
-                .Where(p => p.YearOfExpenses == DateTime.Now.Year - 1);
+            var currentYearByType = (await statsService.GetTotalExpenses_ByTypeAndYear(Year)).ToList();
+            var previousYearByType = (await statsService.GetTotalExpenses_ByTypeAndYear(PreviousYear)).ToList();
+
+            Expenses_ByType = currentYearByType;
+            CategoriesSummaryCurrentYear = currentYearByType.Where(p => p.YearOfExpenses == Year);
+            CategoriesSummaryPreviousYear = previousYearByType.Where(p => p.YearOfExpenses == PreviousYear);
 
             var sumOfExpenses = (totIMI + totIRS + totInsurance + ExpensesThisYear) / totRents;
             var totIRSPercent = Math.Round((totIRS / totRents) * 100, 2);
@@ -148,9 +175,9 @@ public partial class ExpensesDashboard
                 new ExpenseResults { Description = "IMI", Value = totIMI, TaxPercent = totIMIPercent },
                 new ExpenseResults { Description = titSeguros, Value = totInsurance, TaxPercent = totInsurancePercent },
                 new ExpenseResults { Description = titOutrasDespesas, Value = ExpensesThisYear , TaxPercent = totOthersPercent},
-                new ExpenseResults { 
+                new ExpenseResults {
                     Description = L["Total"],
-                    Value = (totIRS + totIMI + totInsurance + ExpensesThisYear), 
+                    Value = (totIRS + totIMI + totInsurance + ExpensesThisYear),
                     TaxPercent = (totIRSPercent + totIMIPercent + totInsurancePercent + totOthersPercent)}
                 };
         }

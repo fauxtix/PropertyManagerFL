@@ -1,4 +1,5 @@
 ﻿using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.UI.Services.ClientApi;
 
@@ -9,6 +10,7 @@ public class WrapperLetterTemplates : ILetterTemplatesService
     private readonly IConfiguration _env;
     private readonly ILogger<WrapperLetterTemplates> _logger;
     private readonly string? _templatesUri;
+    private readonly string? _mailMergeUri;
     private readonly HttpClient _httpClient;
     private readonly HttpClientConfigurationService _httpClientConfigService;
 
@@ -19,6 +21,7 @@ public class WrapperLetterTemplates : ILetterTemplatesService
         _env = env;
         _logger = logger;
         _templatesUri = $"{_env["BaseUrl"]}/Templates";
+        _mailMergeUri = $"{_env["BaseUrl"]}/MailMerge";
         _httpClientConfigService = httpClientConfigService;
         _httpClientConfigService.ConfigureHttpClient(_httpClient);
     }
@@ -90,6 +93,21 @@ public class WrapperLetterTemplates : ILetterTemplatesService
         return await response.Content.ReadFromJsonAsync<int>();
     }
 
+    public async Task<byte[]?> PreviewDocumentAsync(MailMergePreviewModel model)
+    {
+        try
+        {
+            var response = await _httpClient.PostAsJsonAsync($"{_mailMergeUri}/PreviewDocument", model);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsByteArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Could not generate letter template preview from the API.");
+            return null;
+        }
+    }
+
     public async Task<bool> UpdateTemplateAsync(Template template)
     {
         var response = await _httpClient.PutAsJsonAsync($"{_templatesUri}/{template.Id}", template);
@@ -103,15 +121,16 @@ public class WrapperLetterTemplates : ILetterTemplatesService
         try
         {
             var response = await _httpClient.GetFromJsonAsync<IList<string>>($"{_templatesUri}/GetTemplatesFilenamesFromServer/{culture}");
-            if (!response!.Any())
+            if (response is null || response.Count == 0)
             {
                 return new List<string>();
             }
 
-            return response ?? new List<string>();
+            return response;
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Could not load letter template filenames from the API for culture {Culture}.", culture);
             return new List<string>();
         }
 

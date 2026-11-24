@@ -3464,6 +3464,12 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="Ano" xml:space="preserve">
     <value>Año</value>
   </data>
+  <data name="home-compare-label" xml:space="preserve">
+    <value>Comparación: {0} / {1}</value>
+  </data>
+  <data name="home-historical-estimate" xml:space="preserve">
+    <value>Los valores de IMI, IRS y Seguros a continuación son una estimación basada en datos actuales.</value>
+  </data>
   <data name="Meses/início" xml:space="preserve">
     <value>Meses/inicio</value>
   </data>
@@ -3842,6 +3848,48 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="mf-back-menu" xml:space="preserve">
     <value>Volver al menú</value>
   </data>
+  <data name="lt-no-templates" xml:space="preserve">
+    <value>No hay modelos de cartas disponibles. Compruebe la conexión con la API y los archivos .dotx en la carpeta Reports/Docs de la API.</value>
+  </data>
+  <data name="lt-retry" xml:space="preserve">
+    <value>Reintentar</value>
+  </data>
+  <data name="lt-preview" xml:space="preserve">
+    <value>Vista previa</value>
+  </data>
+  <data name="lt-preview-title" xml:space="preserve">
+    <value>Vista previa de la carta</value>
+  </data>
+  <data name="lt-preview-close" xml:space="preserve">
+    <value>Cerrar vista previa</value>
+  </data>
+  <data name="lt-preview-error" xml:space="preserve">
+    <value>No se pudo generar la vista previa.</value>
+  </data>
+  <data name="lt-save-title" xml:space="preserve">
+    <value>Guardar plantilla</value>
+  </data>
+  <data name="lt-save-success" xml:space="preserve">
+    <value>Plantilla guardada correctamente.</value>
+  </data>
+  <data name="lt-save-error" xml:space="preserve">
+    <value>Error al guardar la plantilla</value>
+  </data>
+  <data name="lt-upload-error-title" xml:space="preserve">
+    <value>Error al cargar el archivo</value>
+  </data>
+  <data name="lt-file-not-loaded-title" xml:space="preserve">
+    <value>Plantillas de cartas</value>
+  </data>
+  <data name="lt-file-not-loaded" xml:space="preserve">
+    <value>El archivo no se cargó desde la ubicación esperada.</value>
+  </data>
+  <data name="lt-file-not-found" xml:space="preserve">
+    <value>Archivo ({0}) no encontrado. Verifique.</value>
+  </data>
+  <data name="lt-file-load-error" xml:space="preserve">
+    <value>Error al cargar el archivo ({0}).</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>General</value>
   </data>
@@ -4084,5 +4132,11 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
     <value>Notificaciones marcadas como leÃ­das</value>
+  </data>
+  <data name="TopBarLogout" xml:space="preserve">
+    <value>Cerrar sesión</value>
+  </data>
+  <data name="TopBarManageAccount" xml:space="preserve">
+    <value>Gestionar cuenta</value>
   </data>
 </root>

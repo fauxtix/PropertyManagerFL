@@ -3,11 +3,12 @@ using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
+using PropertyManagerFL.Application.ViewModels.MailMerge;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFL.Core.Helpers;
 using Syncfusion.Blazor.DocumentEditor;
 using Syncfusion.Blazor.Inputs;
-using System.Globalization;
+using Syncfusion.Blazor.SfPdfViewer;
 using System.Text.Json;
 using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions;
 
@@ -18,6 +19,7 @@ public partial class LetterTemplates
     [Inject] public IAppSettingsService? appSettingsService { get; set; }
 
     [Inject] public IStringLocalizer<App>? L { get; set; }
+    [Inject] public ILogger<LetterTemplates>? Logger { get; set; }
 
     protected List<Template> Templates { get; set; } = new();
 
@@ -44,23 +46,54 @@ public partial class LetterTemplates
 
     private string? selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
     private string? currentTemplateName;
+    private bool PreviewVisible { get; set; }
+    private bool PreviewBusy { get; set; }
+    private byte[]? PreviewPdfBytes { get; set; }
+    private SfPdfViewer2? previewViewer;
+    private bool previewLoaded;
 
     [Inject] public NavigationManager? NavManager { get; set; }
 
     protected bool IsFullScreen { get; private set; }
     protected bool FieldPanelVisible { get; set; }
+    protected bool TemplatesLoaded { get; private set; }
     protected IReadOnlyList<MergeField> AvailableFields =>
         MergeFieldCatalog.GetFieldsForTemplate(currentTemplateName);
 
 
-    protected List<Object> Items => new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text=L?["Guardar"] ?? "Save", PrefixIcon="saveIcon"},  "Undo",
+    protected List<Object> Items => new List<Object> { "New", new CustomToolbarItemModel(){ Id="save", Text=L?["Guardar"] ?? "Save", PrefixIcon="saveIcon"},
+        new CustomToolbarItemModel(){ Id="preview", Text=L?["lt-preview"] ?? "Pré-visualizar", PrefixIcon="fa fa-eye"}, "Undo",
         "Redo", "Comments", "Image", "Table", "Hyperlink", "Bookmark", "Header",
         "Footer", "PageSetup", "PageNumber", "Find", "LocalClipboard", "RestrictEditing"
     };
 
 #pragma warning disable BL0005, CA2000  // Component parameter should not be set outside of its component, Dispose objects before losing scope
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnInitializedAsync() => await LoadTemplatesAsync();
+
+    private async Task OnPreviewViewerCreated()
+    {
+        if (!PreviewVisible || previewLoaded || previewViewer is null || PreviewPdfBytes is null)
+            return;
+
+        previewLoaded = true;
+        try
+        {
+            await previewViewer.LoadAsync(PreviewPdfBytes, null);
+        }
+        catch (Exception ex)
+        {
+            Logger?.LogError(ex, "Could not load the letter template preview in the PDF viewer.");
+            PreviewVisible = false;
+            PreviewPdfBytes = null;
+            DisplayResult(L?["lt-preview-title"] ?? "Preview",
+                L?["lt-preview-error"] ?? "Could not generate the preview.", AlertMessageType.Error);
+        }
+    }
+
+    protected async Task ReloadTemplates() => await LoadTemplatesAsync();
+
+    private async Task LoadTemplatesAsync()
     {
         string relativeUrl = NavManager?.ToBaseRelativePath(NavManager.Uri) ?? string.Empty;
         IsFullScreen = relativeUrl.StartsWith("LetterTemplates", StringComparison.OrdinalIgnoreCase);
@@ -70,22 +103,38 @@ public partial class LetterTemplates
         AlertVisibility = false;
         AlertTitle = "";
         WarningMessage = "";
+        TemplatesLoaded = false;
         int counter = 0;
 
         appSettings = await GetSettings();
-        selectedCulture = appSettings.DefaultLanguage;
-        var culture = new CultureInfo(selectedCulture!);
+        selectedCulture = appSettings?.DefaultLanguage;
+        if (string.IsNullOrWhiteSpace(selectedCulture))
+            selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
 
         FileList = (await documentsSevice!.GetTemplatesFilenamesFromServer(selectedCulture!)).ToList();
+        FileNamesOnlyList = new();
         foreach (var item in FileList)
         {
             var filename = Path.GetFileNameWithoutExtension(item);
-            FileNamesOnlyList?.Add(new TemplateFileName { Id = counter++, TemplateFile = filename });
+            FileNamesOnlyList.Add(new TemplateFileName { Id = counter++, TemplateFile = filename });
         }
 
         idxFileSelected = 0;
-        filePath = FileList[0];
-        currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
+        filePath = string.Empty;
+        currentTemplateName = string.Empty;
+        TemplatesLoaded = true;
+
+        if (FileList.Count > 0)
+        {
+            filePath = FileList[0];
+            currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
+        }
+        else
+        {
+            Logger?.LogWarning(
+                "No letter templates found for culture '{Culture}'. Check the API connection and the .dotx files in the API's Reports/Docs folder.",
+                selectedCulture);
+        }
 
         StateHasChanged();
     }
@@ -121,7 +170,7 @@ public partial class LetterTemplates
     {
         if (string.IsNullOrEmpty(filePath))
         {
-            DisplayResult("Letter templates", "File was not loaded from the expected location.", AlertMessageType.Warning);
+            DisplayResult(Localized("lt-file-not-loaded-title"), Localized("lt-file-not-loaded"), AlertMessageType.Warning);
         }
         else
         {
@@ -134,7 +183,7 @@ public partial class LetterTemplates
 
     private void OnFailure(FailureEventArgs args)
     {
-        DisplayResult("Error uploading file", args.Response.StatusText, AlertMessageType.Error);
+        DisplayResult(Localized("lt-upload-error-title"), args.Response.StatusText, AlertMessageType.Error);
     }
 
     private async void OnCreated()
@@ -147,7 +196,8 @@ public partial class LetterTemplates
             {
                 if (!File.Exists(filePath))
                 {
-                    DisplayResult("Templates", $"File ({filePath}) not found. Please verify.", AlertMessageType.Error);
+                    DisplayResult(Localized("lt-file-not-loaded-title"),
+                        string.Format(Localized("lt-file-not-found"), filePath), AlertMessageType.Error);
                     return;
                 }
 
@@ -161,12 +211,12 @@ public partial class LetterTemplates
             }
             catch (Exception ex)
             {
-                DisplayResult($"Error loading file ({filePath}).", $"{ex.Message}");
+                DisplayResult(string.Format(Localized("lt-file-load-error"), filePath), $"{ex.Message}");
             }
         }
     }
 
-    public async void onItemClick(ClickEventArgs args)
+    public async Task onItemClick(ClickEventArgs args)
     {
         switch (args.Item.Id)
         {
@@ -179,9 +229,12 @@ public partial class LetterTemplates
                     }
                     catch (Exception ex)
                     {
-                        DisplayResult("Save document", ex.Message);
+                        DisplayResult(Localized("lt-save-error"), ex.Message);
                     }
                 }
+                break;
+            case "preview":
+                await PreviewDocument();
                 break;
         }
     }
@@ -203,10 +256,68 @@ public partial class LetterTemplates
 
         stream.Close();
         stream = null;
-        DisplayResult("Save file", "File successfully saved", AlertMessageType.Info);
+        DisplayResult(Localized("lt-save-title"), Localized("lt-save-success"), AlertMessageType.Info);
     }
 
 
+
+    async Task PreviewDocument()
+    {
+        if (container?.DocumentEditor is null)
+            return;
+
+        PreviewVisible = true;
+        PreviewBusy = true;
+        PreviewPdfBytes = null;
+        previewLoaded = false;
+        StateHasChanged();
+
+        try
+        {
+            string dotxBase64 = await container.DocumentEditor.SaveAsBlobAsync(FormatType.Dotx);
+            byte[] templateBytes = Convert.FromBase64String(dotxBase64);
+
+            IReadOnlyList<MergeField> fields = AvailableFields;
+            string[] fieldCodes = fields.Select(field => field.Code).ToArray();
+            string[] sampleValues = fieldCodes.Select(MergeFieldSampleValues.For).ToArray();
+
+            byte[]? pdf = await documentsSevice!.PreviewDocumentAsync(new MailMergePreviewModel
+            {
+                TemplateBase64 = Convert.ToBase64String(templateBytes),
+                MergeFields = fieldCodes,
+                ValuesFields = sampleValues
+            });
+
+            if (pdf is null || pdf.Length == 0)
+            {
+                PreviewVisible = false;
+                DisplayResult(L?["lt-preview-title"] ?? "Preview",
+                    L?["lt-preview-error"] ?? "Could not generate the preview.", AlertMessageType.Error);
+                return;
+            }
+
+            PreviewPdfBytes = pdf;
+        }
+        catch (Exception ex)
+        {
+            PreviewVisible = false;
+            Logger?.LogError(ex, "Letter template preview failed for {Template}.", currentTemplateName);
+            DisplayResult(L?["lt-preview-title"] ?? "Preview", ex.Message, AlertMessageType.Error);
+        }
+        finally
+        {
+            PreviewBusy = false;
+        }
+    }
+
+    void ClosePreview()
+    {
+        PreviewVisible = false;
+        PreviewBusy = false;
+        PreviewPdfBytes = null;
+        previewLoaded = false;
+        previewViewer = null;
+    }
 
     async Task InsertMergeField(string fieldName)
     {
@@ -229,13 +340,22 @@ public partial class LetterTemplates
 
     protected void OnSelectTemplate(Syncfusion.Blazor.DropDowns.ChangeEventArgs<int, TemplateFileName> args)
     {
+        if (args.ItemData is null)
+            return;
+
         idxFileSelected = args.ItemData.Id;
-        filePath = FileList![idxFileSelected];
+        if (idxFileSelected < 0 || idxFileSelected >= FileList.Count)
+            return;
+
+        ClosePreview();
+        filePath = FileList[idxFileSelected];
         currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
         OnCreated();
 
         StateHasChanged();
     }
+    private string Localized(string key) => L?[key].Value ?? key;
+
     protected void DisplayResult(string titleCaption, string errorMessage, AlertMessageType alertMessageType = AlertMessageType.Error)
     {
         WarningMessage = errorMessage;

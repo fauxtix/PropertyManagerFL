@@ -3472,6 +3472,12 @@
   <data name="Ano" xml:space="preserve">
     <value>Year</value>
   </data>
+  <data name="home-compare-label" xml:space="preserve">
+    <value>Comparison: {0} / {1}</value>
+  </data>
+  <data name="home-historical-estimate" xml:space="preserve">
+    <value>The IMI, IRS and Insurance values below are an estimate based on current data.</value>
+  </data>
   <data name="Meses/início" xml:space="preserve">
     <value>Months/start</value>
   </data>
@@ -3850,6 +3856,48 @@
   <data name="mf-back-menu" xml:space="preserve">
     <value>Back to menu</value>
   </data>
+  <data name="lt-no-templates" xml:space="preserve">
+    <value>No letter templates are available. Check the API connection and the .dotx files in the API's Reports/Docs folder.</value>
+  </data>
+  <data name="lt-retry" xml:space="preserve">
+    <value>Try again</value>
+  </data>
+  <data name="lt-preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="lt-preview-title" xml:space="preserve">
+    <value>Letter preview</value>
+  </data>
+  <data name="lt-preview-close" xml:space="preserve">
+    <value>Close preview</value>
+  </data>
+  <data name="lt-preview-error" xml:space="preserve">
+    <value>Could not generate the preview.</value>
+  </data>
+  <data name="lt-save-title" xml:space="preserve">
+    <value>Save template</value>
+  </data>
+  <data name="lt-save-success" xml:space="preserve">
+    <value>Template saved successfully.</value>
+  </data>
+  <data name="lt-save-error" xml:space="preserve">
+    <value>Error saving template</value>
+  </data>
+  <data name="lt-upload-error-title" xml:space="preserve">
+    <value>Error uploading file</value>
+  </data>
+  <data name="lt-file-not-loaded-title" xml:space="preserve">
+    <value>Letter templates</value>
+  </data>
+  <data name="lt-file-not-loaded" xml:space="preserve">
+    <value>The file was not loaded from the expected location.</value>
+  </data>
+  <data name="lt-file-not-found" xml:space="preserve">
+    <value>File ({0}) not found. Please verify.</value>
+  </data>
+  <data name="lt-file-load-error" xml:space="preserve">
+    <value>Error loading file ({0}).</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>General</value>
   </data>
@@ -4092,5 +4140,11 @@
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
     <value>Notifications marked as read</value>
+  </data>
+  <data name="TopBarLogout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="TopBarManageAccount" xml:space="preserve">
+    <value>Manage account</value>
   </data>
 </root>

@@ -16,14 +16,14 @@ A UI e a API registam a licença separadamente no arranque:
 - `PropertyManagerFL.UI/Program.cs` → `SyncfusionLicenseProvider.RegisterLicense(...)` com `Configuration["SyncfusionLicenseKey"]`;
 - `PropertyManagerFL.Api/Program.cs` → o mesmo registo.
 
-Cada projeto tem o seu próprio `UserSecretsId`, pelo que os valores são independentes. Neste repositório, historicamente, a UI e a API ficaram com **chaves diferentes**. Por isso o CD usa dois segredos:
+Cada projeto tem o seu próprio `UserSecretsId`, pelo que os valores são independentes. Neste repositório, historicamente, a UI e a API ficaram com **chaves diferentes**; em 2026-11-24 a chave da API estava desatualizada (24.x) e foi alinhada com a chave válida da UI (35.2.x). O CD continua a usar dois segredos, mas **ambos devem conter o mesmo valor**:
 
 | Ambiente | UI | API |
 |---|---|---|
 | Development | user-secrets do projeto `PropertyManagerFL.UI` | user-secrets do projeto `PropertyManagerFL.Api` |
 | Production | GitHub Secret `PM_SYNCFUSION_LICENSE` | GitHub Secret `PM_SYNCFUSION_LICENSE_API` |
 
-**Não é obrigatório ter duas chaves diferentes.** Se você gerar uma única chave válida que cubra todas as edições usadas pelo projeto, pode usar o mesmo valor na UI e na API (e nos dois segredos de produção). O que não pode acontecer é a UI receber a chave da API se essa chave não cobrir os componentes que a UI usa — foi exatamente isso que provocou a mensagem `Claim your FREE account and get a key in less than a minute` em produção.
+**Não é obrigatório ter duas chaves diferentes — e neste repositório as duas devem ser iguais.** Se você gerar uma única chave válida que cubra todas as edições usadas pelo projeto, use o mesmo valor na UI e na API (e nos dois segredos de produção). O que não pode acontecer é a API receber uma chave antiga/errada: uma chave 24.x não serve para assemblies 35.2.12 e provoca a marca de água `Created with a trial version of Syncfusion PDF library...` ao gerar PDFs. O inverso (UI receber a chave da API) provocou a mensagem `Claim your FREE account and get a key in less than a minute` em produção.
 
 Regra prática: se o aviso aparece **só na UI**, corrigir a chave da UI; se aparece **só na API/geração de PDFs**, corrigir a chave da API.
 

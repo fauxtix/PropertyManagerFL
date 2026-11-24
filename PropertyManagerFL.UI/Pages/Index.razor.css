@@ -1,0 +1,86 @@
+/* Home — dashboard único. Usa apenas tokens de tema (theme-tokens.css). */
+.home-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.home-year-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: var(--app-surface-alt);
+}
+
+.home-year-label {
+    color: var(--app-text-secondary);
+    font-weight: 600;
+}
+
+.home-year-select {
+    min-width: 7rem;
+    padding: 0.4rem 0.6rem;
+    border: 1px solid var(--app-border);
+    border-radius: 8px;
+    background: var(--app-surface);
+    color: var(--app-text-primary);
+}
+
+.home-year-compare {
+    color: var(--app-text-secondary);
+    font-size: 0.9rem;
+}
+
+.home-tabs {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.35rem;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: var(--app-surface-alt);
+    overflow-x: auto;
+}
+
+.home-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.1rem;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--app-text-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+    .home-tab:hover {
+        background: var(--app-surface-hover);
+        color: var(--app-text-primary);
+    }
+
+    .home-tab.active {
+        border-color: var(--app-border);
+        background: var(--app-surface);
+        color: var(--app-primary);
+        box-shadow: var(--app-shadow);
+    }
+
+.home-tab-panel {
+    padding-top: 0.25rem;
+}
+
+@media only screen and (max-width: 575.98px) {
+    .home-tab {
+        flex: 1 1 auto;
+        padding: 0.65rem 0.6rem;
+    }
+}

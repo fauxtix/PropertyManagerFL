@@ -58,6 +58,14 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "API publish failed" }
           dotnet publish PropertyManagerFL.UI/PropertyManagerFL.UI.csproj -c Release -o $uiOut --nologo
           if ($LASTEXITCODE -ne 0) { throw "UI publish failed" }
+          # The API reads letter templates from ContentRootPath/reports/docs at runtime.
+          # Fail the deploy if publish dropped them (csproj CopyToOutputDirectory rule).
+          $expectedTemplates = @(Get-ChildItem -Path 'PropertyManagerFL.Api\Reports\Docs' -Filter '*.dotx' -File)
+          $publishedTemplates = @(Get-ChildItem -Path (Join-Path $apiOut 'Reports\Docs') -Filter '*.dotx' -File -ErrorAction SilentlyContinue)
+          if ($expectedTemplates.Count -eq 0 -or $publishedTemplates.Count -ne $expectedTemplates.Count) {
+            throw "Letter templates missing from API publish output: expected $($expectedTemplates.Count), found $($publishedTemplates.Count). Check PropertyManagerFL.Api.csproj."
+          }
+          Write-Host "Verified $($publishedTemplates.Count) letter templates in API publish output"
           # Keep publish and deploy in one step: Windows PowerShell's >> writes UTF-16,
           # which is unsafe for GITHUB_ENV.
           & ./.github/scripts/deploy-iis.ps1 -ApiPublishDir $apiOut -UiPublishDir $uiOut

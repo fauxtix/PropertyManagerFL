@@ -5,8 +5,40 @@
 .lt-topbar {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 8px;
+}
+
+/* Combo e importação partilham a linha dos botões "Campos"/"Ecrã inteiro", alinhados à direita. */
+.lt-topbar-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+    flex: 0 1 auto;
+    min-width: 0;
+}
+
+.lt-topbar-template {
+    width: 250px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.lt-topbar-upload {
+    width: 220px;
+    max-width: 100%;
+    min-width: 0;
+}
+
+@media (max-width: 767.98px) {
+    .lt-topbar-tools {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-start;
+    }
 }
 
 .lt-body {
@@ -26,6 +58,13 @@
     flex: 0 0 290px;
     width: 290px;
     min-height: 0;
+}
+
+.lt-preview-caption {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* Vista incorporada nas definições: o painel abre como gaveta sobre o editor. */

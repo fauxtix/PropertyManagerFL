@@ -39,7 +39,7 @@ Os segredos não são visíveis após serem criados e **não são copiados por u
 |---|---|
 | `PM_API_KEY` | API e UI — mesmo valor; é o cabeçalho `ApiKey` verificado pelo middleware |
 | `PM_SYNCFUSION_LICENSE` | Licença Syncfusion da **UI** |
-| `PM_SYNCFUSION_LICENSE_API` | Licença Syncfusion da **API** |
+| `PM_SYNCFUSION_LICENSE_API` | Licença Syncfusion da **API** — **usar o mesmo valor** de `PM_SYNCFUSION_LICENSE` (chave válida 35.2.x que cubra UI + Document SDK) |
 | `PM_PMCONNECTION` | Connection string SQL (`ConnectionStrings__PMConnection`) |
 | `PM_JWT_SECRET`, `PM_JWT_ISSUER`, `PM_JWT_AUDIENCE`, `PM_JWT_EXPIRA_EM_MINUTOS` | API — o `JWT:Secret` é validado no arranque (32+ caracteres) |
 | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI — a secção `EmailConfiguration` é obrigatória no arranque |
@@ -80,6 +80,8 @@ O mesmo padrão serve para qualquer outro segredo. **Nunca** imprimir os valores
 | Bindings | HTTP `*:4300` (API), HTTPS `*:4310` (UI, **non-SNI**) |
 | Certificado | `PM_UI_CERT_THUMBPRINT` se definido; senão self-signed `CN=localhost` |
 
+> Estas portas são **exclusivas do IIS/Produção**. Em Development (Kestrel) a API usa `https://localhost:5001` e a UI `https://localhost:7181` — ver [LOCAL-SETUP.md](LOCAL-SETUP.md). Assim os dois ambientes podem correr ao mesmo tempo sem conflito de bind.
+
 Notas importantes:
 
 - **Reutilizar os pools existentes.** As identidades `IIS APPPOOL\PropertyManagerApi` (também referida como `PropertyManagerAPI` nos scripts SQL) e `IIS APPPOOL\PropertyManagerFL` já têm login SQL e `db_owner` em `PropertyManagerDB`. Pools novos não conseguem abrir a base de dados com `Integrated Security` e o login falha com 500.
@@ -87,6 +89,7 @@ Notas importantes:
 - A binding 4310 é criada sem SNI por ser uma porta dedicada; assim o IIS não mostra o aviso *"Não foi criado um site SSL predefinido"*.
 - O script para os pools antes de copiar os ficheiros (incluindo os antigos `PropertyManagerFL.Api` / `PropertyManagerFL.UI`, que podem reter DLLs em `w3wp.exe`) e volta a arrancá-los no `finally`, mesmo se o deploy falhar.
 - A cópia é por sobrescrita: **nunca apaga** a pasta de destino, para preservar ficheiros carregados pelos utilizadores.
+- Os 8 modelos `.dotx` são publicados com a API (`CopyToOutputDirectory` no `PropertyManagerFL.Api.csproj`). O CI verifica a sua presença no output de publish e o CD verifica tanto o output como a pasta `Reports\Docs` do IIS, falhando o deploy se faltarem. **Não copiar ficheiros manualmente para o IIS**: corrigir a regra de publicação e voltar a deployar.
 
 ## 4. Verificação após o deploy
 
@@ -96,6 +99,9 @@ curl.exe -k -s -o NUL -w '%{http_code}' http://localhost:4300/api/Notifications/
 curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' http://localhost:4300/api/Notifications/alerts
 curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' http://localhost:4300/api/Notifications/unread-count
 
+# Modelos de carta: tem de devolver nomes de ficheiros .dotx (nunca uma lista vazia)
+curl.exe -k -s -H 'ApiKey: <valor>' http://localhost:4300/api/Templates/GetTemplatesFilenamesFromServer/pt-PT
+
 # UI: 302 para /Identity/Account/Login
 curl.exe -k -s -o NUL -w '%{http_code}' https://localhost:4310/
 
@@ -103,7 +109,7 @@ curl.exe -k -s -o NUL -w '%{http_code}' https://localhost:4310/
 netsh http show servicestate
 ```
 
-Esperado: `401`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`.
+Esperado: `401`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`. O endpoint de modelos deve listar os `.dotx` (5 para `pt-PT`); lista vazia significa que a publicação não levou a pasta `Reports\Docs`.
 
 Para confirmar que a chave Syncfusion da UI foi injetada **sem revelar valores** (substituir `<valor-local>` pela chave já existente no seu ambiente):
 

@@ -23,18 +23,16 @@ public sealed class SidebarData
         var items = new List<MenuItem>
         {
             new(href: "", title: T("Site_Menu_Inicio"), icon: "fa fa-home"),
-            new(href: "imoveis", title: T("TituloMenuImoveis"), icon: "fa fa-house"),
+            new(href: "imoveis", title: T("TituloMenuImoveis"), icon: "fa fa-building"),
             new(href: "inquilinos", title: T("TituloMenuInquilinos"), icon: "fa fa-users"),
             GetRentalsItem(),
             new(title: T("TituloDespesas"), icon: "fas fa-euro", childMenuItems: new List<MenuItem>
             {
-                new(href: "/expenses/dashboard", title: T("menu-admin-dashoard"), icon: "fas fa-table-cells-large"),
                 new(href: "/despesas/manutencao", title: T("lblManutencao"), icon: "fas fa-table-cells-large"),
                 new(href: "/despesas/tipodespesas", title: T("TituloSubCategorias"), icon: "fas fa-cogs")
             }),
             new(title: T("TituloPagamentos"), icon: "fa fa-money-bill", childMenuItems: new List<MenuItem>
             {
-                new(href: "/payments/dashboard", title: T("menu-admin-dashoard"), icon: "fa fa-money-bill"),
                 new(href: "/recebimentos/manutencao", title: T("lblManutencao"), icon: "fa fa-money-bill"),
                 new(href: "/monthlyrentprocessing", title: T("TituloMenuProcessaRendas"), icon: "fa fa-money-bill")
             }),
@@ -45,7 +43,7 @@ public sealed class SidebarData
             }),
             new(href: "Contactos", title: T("Site_Menu_Contactos"), icon: "fa fa-users"),
             new(href: "documentos", title: T("TituloDocumentacao"), icon: "fas fa-file-pdf"),
-            new(href: "messages", title: T("TituloMenuMensagens"), icon: "fas fa-paper-plane"),
+            new(href: "messages-modern", title: T("TituloMenuMensagens"), icon: "fas fa-paper-plane"),
             new(href: "scheduler", title: T("MenuAgenda"), icon: "fas fa-calendar")
         };
 

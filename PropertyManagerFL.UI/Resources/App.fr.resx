@@ -3480,6 +3480,12 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="Ano" xml:space="preserve">
     <value>Année</value>
   </data>
+  <data name="home-compare-label" xml:space="preserve">
+    <value>Comparaison : {0} / {1}</value>
+  </data>
+  <data name="home-historical-estimate" xml:space="preserve">
+    <value>Les valeurs IMI, IRS et Assurance ci-dessous sont une estimation basée sur les données actuelles.</value>
+  </data>
   <data name="Meses/início" xml:space="preserve">
     <value>Mois/début</value>
   </data>
@@ -3858,6 +3864,48 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="mf-back-menu" xml:space="preserve">
     <value>Retour au menu</value>
   </data>
+  <data name="lt-no-templates" xml:space="preserve">
+    <value>Aucun modèle de lettre disponible. Vérifiez la connexion à l'API et les fichiers .dotx dans le dossier Reports/Docs de l'API.</value>
+  </data>
+  <data name="lt-retry" xml:space="preserve">
+    <value>Réessayer</value>
+  </data>
+  <data name="lt-preview" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="lt-preview-title" xml:space="preserve">
+    <value>Aperçu de la lettre</value>
+  </data>
+  <data name="lt-preview-close" xml:space="preserve">
+    <value>Fermer l'aperçu</value>
+  </data>
+  <data name="lt-preview-error" xml:space="preserve">
+    <value>Impossible de générer l'aperçu.</value>
+  </data>
+  <data name="lt-save-title" xml:space="preserve">
+    <value>Enregistrer le modèle</value>
+  </data>
+  <data name="lt-save-success" xml:space="preserve">
+    <value>Modèle enregistré avec succès.</value>
+  </data>
+  <data name="lt-save-error" xml:space="preserve">
+    <value>Erreur lors de l'enregistrement du modèle</value>
+  </data>
+  <data name="lt-upload-error-title" xml:space="preserve">
+    <value>Erreur lors de l'envoi du fichier</value>
+  </data>
+  <data name="lt-file-not-loaded-title" xml:space="preserve">
+    <value>Modèles de lettres</value>
+  </data>
+  <data name="lt-file-not-loaded" xml:space="preserve">
+    <value>Le fichier n'a pas été chargé depuis l'emplacement attendu.</value>
+  </data>
+  <data name="lt-file-not-found" xml:space="preserve">
+    <value>Fichier ({0}) introuvable. Vérifiez.</value>
+  </data>
+  <data name="lt-file-load-error" xml:space="preserve">
+    <value>Erreur lors du chargement du fichier ({0}).</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>Général</value>
   </data>
@@ -4100,5 +4148,11 @@ Vérifiez les erreurs, s'il vous plaît</value>
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
     <value>Notifications marquÃ©es comme lues</value>
+  </data>
+  <data name="TopBarLogout" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="TopBarManageAccount" xml:space="preserve">
+    <value>Gérer le compte</value>
   </data>
 </root>

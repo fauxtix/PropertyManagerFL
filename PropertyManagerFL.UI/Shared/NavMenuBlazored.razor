@@ -28,7 +28,7 @@
             </BlazoredMenuItem>
             <BlazoredMenuItem Css="nav-item px-3">
                 <NavLink href="imoveis">
-                    <i class="fa fa-house" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuImoveis"]
+                    <i class="fa fa-building" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuImoveis"]
                 </NavLink>
             </BlazoredMenuItem>
             <BlazoredMenuItem>
@@ -93,9 +93,6 @@
                 </HeaderTemplate>
                 <MenuTemplate>
                     <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="/expenses/dashboard">
-                            <i class="fas fa-table-cells-large" aria-hidden="true" />&nbsp;&nbsp;Dashboard
-                        </NavLink>
                         <NavLink href="/despesas/manutencao">
                             <i class="fas fa-table-cells-large" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
                         </NavLink>
@@ -115,13 +112,6 @@
                     <i class="fas fa-euro position-sticky" aria-hidden="true" />&nbsp;&nbsp;@L["TituloPagamentos"]
                 </HeaderTemplate>
                 <MenuTemplate>
-
-                    <BlazoredMenuItem Css="nav-item px-3">
-                        <NavLink href="/payments/dashboard">
-                            <i class="fa fa-money-bill" aria-hidden="true" />&nbsp;&nbsp;Dashboard
-                        </NavLink>
-                    </BlazoredMenuItem>
-
                     <BlazoredMenuItem Css="nav-item px-3">
                         <NavLink href="/recebimentos/manutencao">
                             <i class="fa fa-money-bill" aria-hidden="true" />&nbsp;&nbsp;@L["lblManutencao"]
@@ -183,7 +173,7 @@
                 </div>
             </BlazoredMenuItem>
             <BlazoredMenuItem Css="nav-item px-3">
-                <NavLink href="messages">
+                <NavLink href="messages-modern">
                     <i class="fas fa-paper-plane" aria-hidden="true" />&nbsp;&nbsp;@L["TituloMenuMensagens"]
                 </NavLink>
             </BlazoredMenuItem>
@@ -378,8 +368,8 @@
     }
 
     .nav-active {
-        background-color: orange;
-        color: black;
+        background-color: var(--app-warning-bg);
+        color: var(--app-warning-text);
         font-style: normal;
     }
 

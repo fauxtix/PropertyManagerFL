@@ -10,8 +10,9 @@
 @using Syncfusion.Blazor.Navigations
 
 <PageTitle>@L["TituloMenuMensagens"]</PageTitle>
-    <PageTitleComponent PageTitle="@L["TituloMenuMensagens"]"></PageTitleComponent>
-    @if (_messages is null && InquilinosLookup is null)
+<PageTitleComponent PageTitle="@L["TituloMenuMensagens"]"></PageTitleComponent>
+
+@if (_messages is null && InquilinosLookup is null)
 {
     <LoadingData />
 }
@@ -23,11 +24,11 @@ else
                 <TabItem>
                     <HeaderTemplate>@L["TituloMensagem"]</HeaderTemplate>
                     <ContentTemplate>
-                        <div class="row">
-                            <div class="col-md-6 offset-2">
+                        <div class="row g-3">
+                            <div class="col-12 col-lg-8">
                                 <EditForm Model=@_message>
-                                    @*<input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" />*@
-                                    <div class="group-box g-5">
+                                    <fieldset class="msg-type-group">
+                                        <legend class="example-label">@L["TituloMenuMensagens"]</legend>
                                         <div class="mb-1">
                                             <SfRadioButton Name="options" Label="@L["TituloRecebidaInquilino"]" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
                                                            ValueChange="HandleMessageType"
@@ -42,9 +43,9 @@ else
                                                            ValueChange="HandleMessageType"
                                                            LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
                                         </div>
-                                    </div>
+                                    </fieldset>
                                     <div>
-                                        <div class="w-50 mb-1" hidden="@(ShowTenantsCombo == false)">
+                                        <div class="col-12 col-md-8 mb-3" hidden="@(ShowTenantsCombo == false)">
                                             <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true"
                                                             ShowClearButton="true" Enabled="@ShowTenantsCombo" @bind-Value=@TenantId
                                                             FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
@@ -90,7 +91,7 @@ else
                                     </div>
 
                                     <div class="form-group">
-                                        <label class="example-label">@L["TituloReferencia"]"</label>
+                                        <label class="example-label">@L["TituloReferencia"]</label>
                                         <SfAutoComplete TValue="string" TItem="ComposeMessageVM" Placeholder="e.g. Ref#..." DataSource="@_messages" Autofill=true @bind-Value="@_message.ReferenceId">
                                             <AutoCompleteFieldSettings Value="ReferenceId" />
                                         </SfAutoComplete>
@@ -107,19 +108,17 @@ else
                                     </div>
                                 </EditForm>
                             </div>
-                            <div class="my-2 w-50">
+                            <div class="col-12 mt-3">
                                 <SfMessage Visible="@ShowResultMessage" Variant="MessageVariant.Filled" Severity="@messageSeverity">@ResultMessage</SfMessage>
-                                </div>
+                            </div>
                             </div>
                         </ContentTemplate>
                     </TabItem>
                     <TabItem>
                         <HeaderTemplate>@L["TituloMensagensRecebidas"]</HeaderTemplate>
                     <ContentTemplate>
-                        <div class="container">
-                            <h2 class="display-4 fw-normal"></h2>
-                            <hr />
-                            <div class="d-flex table table-striped">
+                        <div class="container-fluid">
+                            <div class="table-responsive">
                                 <SfGrid DataSource="@_receivedMessages"
                                         TValue="ComposeMessageVM"
                                         EnableStickyHeader="true"
@@ -164,12 +163,9 @@ else
                 <TabItem>
                     <HeaderTemplate>@L["TituloMensagensEnviadas"]</HeaderTemplate>
                     <ContentTemplate>
-                        <div class="container">
-                            <h2 class="display-4 fw-normal"></h2>
-                            <hr />
-                            <div class="container-fluid">
-                                <div class="d-flex">
-                                    <SfGrid DataSource="@_sentMessages"
+                        <div class="container-fluid">
+                            <div class="table-responsive">
+                                <SfGrid DataSource="@_sentMessages"
                                             TValue="ComposeMessageVM"
                                             EnableStickyHeader="true"
                                             EnableAltRow="true"
@@ -197,8 +193,7 @@ else
                                             <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
                                             <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloReferencia"]" Width="80"></GridColumn>
                                         </GridColumns>
-                                    </SfGrid>
-                                </div>
+                                </SfGrid>
                             </div>
                         </div>
                     </ContentTemplate>
@@ -206,217 +201,9 @@ else
             </TabItems>
         </SfTab>
     </div>
-
-    <div hidden="hidden" class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                    Message...
-                </button>
-            </h2>
-            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
-                <div class="accordion-body">
-                    <div class="row">
-                        <div class="col-md-6 offset-2">
-                            <EditForm Model=@_message>
-                                @*<input type="hidden" id="AppUserId" name="AppUserId" asp-for="AppUserId" />*@
-                                <div class="group-box g-5">
-                                    <div class="mb-1">
-                                        <SfRadioButton Name="options" Label="@L["Recebida do inquilino"]" Value="1" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
-                                                       ValueChange="HandleMessageType"
-                                                       LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="@L["Enviada ao inquilino"]" Value="2" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
-                                                       ValueChange="HandleMessageType"
-                                                       LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="@L["Outro Recebimento"]" Value="3" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
-                                                       ValueChange="HandleMessageType"
-                                                       LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                        <SfRadioButton Name="options" Label="@L["Outro Envio"]" Value="4" CssClass="p-2" TChecked="string" @bind-Checked=@SentReceivedBy
-                                                       ValueChange="HandleMessageType"
-                                                       LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.After"></SfRadioButton>
-                                    </div>
-                                </div>
-                                <div>
-                                    <div class="w-50 mb-1" hidden="@(ShowTenantsCombo == false)">
-                                        <SfDropDownList TValue="int" TItem="LookupTableVM" AllowFiltering="true"
-                                                        ShowClearButton="true" Enabled="@ShowTenantsCombo" @bind-Value=@TenantId
-                                                        FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
-                                                        Placeholder="@comboPlaceHolder" FloatLabelType="FloatLabelType.Always"
-                                                        DataSource="@InquilinosLookup">
-                                            <DropDownListTemplates TItem="LookupTableVM">
-                                            </DropDownListTemplates>
-                                            <DropDownListEvents TValue="int" TItem="LookupTableVM" ValueChange="onChangeTenant"></DropDownListEvents>
-                                            <DropDownListFieldSettings Value="Id" Text="Descricao"></DropDownListFieldSettings>
-                                        </SfDropDownList>
-                                    </div>
-                                </div>
-                                <div hidden="@(ShowSenderReceiver == false)">
-                                    <label asp-for="DestinationEmail" class="form-label">@senderReceiverLabel</label>
-                                    <div class="group-box my-1">
-                                        <SfTextBox Type="InputType.Email"
-                                                   @bind-Value="@_message!.DestinationEmail"
-                                                   ID="recipientEmail" CssClass="form-control" Placeholder="email@provider.com" />
-
-                                        <SfDatePicker Width="150px"
-                                                      FloatLabelType="FloatLabelType.Always"
-                                                      Min="@DateTime.Now.Date.AddDays(-30)"
-                                                      Max="@DateTime.Now.Date"
-                                                      @bind-Value="@MessageDate">
-                                            <DatePickerEvents ValueChange="MessageDateChanged" TValue="DateTime"></DatePickerEvents>
-                                        </SfDatePicker>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="SubjectTitle">@L["Assunto"]</label>
-                                    <SfTextBox Type="InputType.Text"
-                                               @bind-Value="@_message!.SubjectTitle"
-                                               CssClass="form-control" Placeholder="@L["Assunto"]" />
-                                </div>
-                                <div class="my-3">
-                                    <label asp-for="MessageContent">@L["Mensagem"]</label>
-                                    <SfTextBox Multiline="true" Type="InputType.Text" ID="message"
-                                               @bind-Value="@_message!.MessageContent"
-                                               CssClass="form-control" Placeholder="@L["Mensagem"]" />
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="example-label">@L["Referência"]</label>
-                                    <SfAutoComplete TValue="string" TItem="ComposeMessageVM" Placeholder="e.g. Ref#..." DataSource="@_messages" Autofill=true @bind-Value="@_message.ReferenceId">
-                                        <AutoCompleteFieldSettings Value="ReferenceId" />
-                                    </SfAutoComplete>
-                                </div>
-                                <div class="group-box">
-                                    <div class="form-group mt-2">
-                                        <SfButton CssClass="e-btn e-outline e-success" IconCss="fas fa-save"
-                                                  Content="@L["Guarda mensagem"]" OnClick="(()=>SendMessage(1))" />
-                                        <SfButton CssClass="e-btn e-outline e-warning" IconCss="fas fa-paper-plane"
-                                                  Content="@L["Guarda mensagem e envia email"]" OnClick="(()=>SendMessage(2))" />
-                                        <SfButton CssClass="e-btn e-outline e-secondary" IconCss="fas fa-times"
-                                                  Content="@L["Cancelar"]" OnClick="GotoIndex" />
-                                    </div>
-                                </div>
-                            </EditForm>
-                        </div>
-                        <div class="my-2 w-50">
-                            <SfMessage Visible="@ShowResultMessage" Variant="MessageVariant.Filled" Severity="@messageSeverity">@ResultMessage</SfMessage>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                        Messages received...
-                    </button>
-                </h2>
-                <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
-                    <div class="accordion-body">
-                        <div class="album py-5 bg-light">
-                            <div class="container">
-                                <h2 class="display-4 fw-normal"></h2>
-                                <hr />
-                                <div class="d-flex table table-striped">
-                                    <SfGrid DataSource="@_receivedMessages"
-                                            TValue="ComposeMessageVM"
-                                            EnableStickyHeader="true"
-                                            EnableAltRow="true"
-                                            EnableHover="true"
-                                            AllowFiltering="false"
-                                            AllowSelection="true"
-                                            AllowGrouping="false"
-                                            AllowPaging="true"
-                                            AllowSorting="true"
-                                            AllowPdfExport="true"
-                                            RowHeight="32"
-                                            Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })"
-                                            AllowTextWrap="true">
-                                        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal"
-                                                          ShowDeleteConfirmDialog="true"></GridEditSettings>
-                                        <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
-                                        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
-
-                                        <GridColumns>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageReceivedOn) EditType="EditType.DatePickerEdit"
-                                                        HeaderText="@L["Receção"]" Format="d" Width="90"></GridColumn>
-                                            <GridColumn AllowEditing="false" HeaderText="@L["Inquilino"]" Width="80" TextAlign="TextAlign.Center">
-                                                <Template Context="msgCtx">
-                                                    @{
-                                                    var msg = (msgCtx as ComposeMessageVM);
-                                                    <span>@(msg?.TenantId > 0 ? "X" : "")</span>
-                                                }
-                                            </Template>
-                                        </GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SenderEmail) AllowEditing="false" HeaderText="@L["Remetente"]" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["Assunto"]" Width="200"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["Mensagem"]" Width="300"></GridColumn>
-                                        <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["Referência"]" Width="80"></GridColumn>
-                                    </GridColumns>
-                                </SfGrid>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="panelsStayOpen-headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
-                    Messages sent...
-                </button>
-            </h2>
-            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingThree">
-                <div class="accordion-body">
-                    <div class="album py-5 bg-light">
-                        <div class="container">
-                            <h2 class="display-4 fw-normal"></h2>
-                            <hr />
-                            <div class="container-fluid">
-                                <div class="d-flex">
-                                    <SfGrid DataSource="@_sentMessages"
-                                            TValue="ComposeMessageVM"
-                                            EnableStickyHeader="true"
-                                            EnableAltRow="true"
-                                            EnableHover="true"
-                                            AllowFiltering="false"
-                                            AllowSelection="true"
-                                            AllowGrouping="false"
-                                            AllowPaging="true"
-                                            AllowSorting="true"
-                                            AllowPdfExport="true"
-                                            Toolbar="@(new List<string>() { "Edit", "Delete", "Update", "Cancel" })"
-                                            RowHeight="32"
-                                            AllowTextWrap="true">
-                                        <GridEditSettings AllowAdding="false" AllowEditing="true" AllowDeleting="true" Mode="EditMode.Normal"
-                                                          ShowDeleteConfirmDialog="true"></GridEditSettings>
-                                        <GridSelectionSettings Mode="Syncfusion.Blazor.Grids.SelectionMode.Row" Type="Syncfusion.Blazor.Grids.SelectionType.Single"></GridSelectionSettings>
-                                        <GridEvents OnActionComplete="CRUD_Handler" TValue="ComposeMessageVM"></GridEvents>
-                                        <GridColumns>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageId) Visible=false IsPrimaryKey="true"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageSentOn) EditType="EditType.DatePickerEdit"
-                                                        HeaderText="@L["TituloEnvioMensagem"]" Width="90" Format="d"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.DestinationEmail) AllowEditing="false"
-                                                        HeaderText="@L["TituloDestinatario"]" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.SubjectTitle) HeaderText="@L["msgUploadSubject"]" Width="200"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.MessageContent) HeaderText="@L["TituloMensagem"]" Width="300"></GridColumn>
-                                            <GridColumn Field=@nameof(ComposeMessageVM.ReferenceId) HeaderText="@L["TituloMensagem"]" Width="80"></GridColumn>
-                                        </GridColumns>
-                                    </SfGrid>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-
 }
-@code {
 
+@code {
     [Inject] IMessagesService? MessagesService { get; set; }
     [Inject] IEmailSender? EmailService { get; set; }
     [Inject] UserManager<IdentityUser>? UserManager { get; set; }
@@ -473,7 +260,6 @@ else
         CurrentUser = (await authenticationStateTask!).User;
         user = await UserManager.FindByNameAsync(CurrentUser?.Identity?.Name);
         email = user.Email;
-        email = "fauxtix.luix@gmail.com"; // para teste
         await GetMessages();
     }
 
@@ -752,4 +538,14 @@ else
         font-size: 14px;
         margin-bottom: 6px;
     }
+
+    .msg-type-group {
+        border: 0;
+        padding: 0;
+        margin: 0 0 12px;
+    }
+
+        .msg-type-group legend {
+            color: var(--app-text-secondary, inherit);
+        }
 </style>

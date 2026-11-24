@@ -1,6 +1,6 @@
 # Configuração local (.NET 10)
 
-> **TL;DR (EN):** Prerequisites: .NET 10 SDK (`global.json`), SQL Server Developer/Community with `PropertyManagerDB` created ([DATABASE.md](DATABASE.md)), SSMS/`sqlcmd`, your own Syncfusion keys ([SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md)) and SMTP settings. Set secrets **per project** with `dotnet user-secrets set --project ...`, set `ASPNETCORE_ENVIRONMENT=Development`, then run the API (`http://localhost:4300`) and the UI (`https://localhost:4310`) in two terminals. GitHub Secrets are **not** copied by a clone.
+> **TL;DR (EN):** Prerequisites: .NET 10 SDK (`global.json`), SQL Server Developer/Community with `PropertyManagerDB` created ([DATABASE.md](DATABASE.md)), SSMS/`sqlcmd`, your own Syncfusion keys ([SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md)) and SMTP settings. Set secrets **per project** with `dotnet user-secrets set --project ...`, set `ASPNETCORE_ENVIRONMENT=Development`, then run the API (`https://localhost:5001`) and the UI (`https://localhost:7181`) in two terminals. These are the original **Kestrel** ports and are **different from the IIS/Production ports (4300/4310)**, so both can run on the same machine. GitHub Secrets are **not** copied by a clone.
 
 ## 1. Pré-requisitos
 
@@ -18,11 +18,18 @@
 
 | Serviço | URL | Configuração |
 |---|---|---|
-| API | `http://localhost:4300` | perfil `PM.WebApi` em `Properties/launchSettings.json` |
-| UI | `https://localhost:4310` | perfil da UI em `Properties/launchSettings.json` |
-| API chamada pela UI | `http://localhost:4300/api` | `BaseUrl` em `appsettings.Development.json` e `appsettings.Production.json` |
+| API (Development, Kestrel) | `https://localhost:5001;http://localhost:5000` | perfil `PM.WebApi` em `Properties/launchSettings.json` |
+| UI (Development, Kestrel) | `https://localhost:7181;http://localhost:5152` | perfil da UI em `Properties/launchSettings.json` |
+| API chamada pela UI (Development) | `https://localhost:5001/api` | `BaseUrl` em `appsettings.Development.json` |
+| API (Production/IIS) | `http://localhost:4300` | binding HTTP do site `PropertyManagerFL.Api` |
+| UI (Production/IIS) | `https://localhost:4310` | binding HTTPS do site `PropertyManagerFL.UI` |
+| API chamada pela UI (Production) | `http://localhost:4300/api` | `BaseUrl` em `appsettings.Production.json` |
+
+Os perfis **IIS Express** (`5010`/`44301` na API, `31859`/`44350` na UI) ficam em `iisSettings` e só são usados se selecionar "IIS Express" no Visual Studio. `dotnet run` e o arranque da solução usam os perfis Kestrel acima.
 
 O `BaseUrl` já vem nos ficheiros de configuração e é usado pelos `ApiWrappers/*`, pelo cliente SignalR (`WrapperNotifications.HubUrl`) e pelo upload de ficheiros (`FileUploadComponent.razor`). Não precisa de o alterar, a menos que mude as portas.
+
+> **Não use 4300/4310 em Development.** Essas portas pertencem ao IIS em Produção. Se o arranque falhar com `Failed to bind to address http://localhost:4300`, o perfil de launch ou o `BaseUrl` ficou desatualizado — verifique os ficheiros acima. A mensagem vem do Kestrel; o `4300` aparece porque a config de Dev estava com a porta do IIS, não porque o ambiente seja Production.
 
 **A API e a UI têm de estar a correr ao mesmo tempo.**
 
@@ -43,11 +50,11 @@ dotnet user-secrets set --project PropertyManagerFL.UI  "<chave>" "<valor>"
 | `ApiKey` | valor local à sua escolha; tem de ser **igual** ao da UI |
 | `SyncfusionLicenseKey` | a sua chave Syncfusion da API — ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md) |
 | `JWT:Secret` | mínimo 32 caracteres, não pode começar por `<`; a API valida no arranque |
-| `JWT:Issuer` | por exemplo `http://localhost:4300/` |
-| `JWT:Audience` | por exemplo `http://localhost:4300/` |
+| `JWT:Issuer` | por exemplo `https://localhost:5001/` |
+| `JWT:Audience` | por exemplo `https://localhost:5001/` |
 | `JWT:ExpiraEmMinutos` | por exemplo `120` |
 
-> `appsettings.Development.json` ainda contém `https://localhost:5001/` no `JWT:Issuer`/`JWT:Audience` e um nome de máquina antigo na connection string. São valores de exemplo: os user-secrets sobrepõem-nos. Defina-os sempre.
+> `appsettings.Development.json` contém valores de exemplo no `JWT:Issuer`/`JWT:Audience` e um nome de máquina antigo na connection string. Os user-secrets sobrepõem-nos. Defina-os sempre.
 
 Exemplo (substituir os valores entre `<...>`):
 
@@ -56,8 +63,8 @@ dotnet user-secrets set --project PropertyManagerFL.Api "ConnectionStrings:PMCon
 dotnet user-secrets set --project PropertyManagerFL.Api "ApiKey" "<api-key-local>"
 dotnet user-secrets set --project PropertyManagerFL.Api "SyncfusionLicenseKey" "<chave-syncfusion-da-api>"
 dotnet user-secrets set --project PropertyManagerFL.Api "JWT:Secret" "<segredo-com-32-caracteres-ou-mais>"
-dotnet user-secrets set --project PropertyManagerFL.Api "JWT:Issuer" "http://localhost:4300/"
-dotnet user-secrets set --project PropertyManagerFL.Api "JWT:Audience" "http://localhost:4300/"
+dotnet user-secrets set --project PropertyManagerFL.Api "JWT:Issuer" "https://localhost:5001/"
+dotnet user-secrets set --project PropertyManagerFL.Api "JWT:Audience" "https://localhost:5001/"
 dotnet user-secrets set --project PropertyManagerFL.Api "JWT:ExpiraEmMinutos" "120"
 ```
 
@@ -106,21 +113,24 @@ Em `Production` os user-secrets **não** são carregados — ver [PRODUCTION.md]
 
 ```powershell
 # API protegida pelo cabeçalho ApiKey (não é X-ApiKey)
-curl.exe -k -H "ApiKey: <api-key-local>" http://localhost:4300/api/Imoveis/TableHasData
-curl.exe -k -H "ApiKey: <api-key-local>" http://localhost:4300/api/Notifications/alerts
+curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Imoveis/TableHasData
+curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Notifications/alerts
+
+# Modelos de carta (devem devolver ficheiros .dotx, não uma lista vazia)
+curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Templates/GetTemplatesFilenamesFromServer/pt-PT
 
 # UI deve redirecionar para a página de login
-curl.exe -k -I https://localhost:4310/
+curl.exe -k -I https://localhost:7181/
 ```
 
-Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/Account/Login`. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`.
+Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/Account/Login`. O endpoint de modelos deve devolver nomes de ficheiros `.dotx`; uma lista vazia significa que a API não encontrou `Reports\Docs` no content root. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`.
 
 ## 5. Idiomas, temas e documentos
 
 - **Idiomas:** a UI suporta `en-US` (culture por omissão), `pt-PT`, `es` e `fr` (`Program.cs`, `UseRequestLocalization`). `AppSettings:Language` em `appsettings.Development.json` é `pt-PT`. As traduções da interface estão em `PropertyManagerFL.UI/Resources/App.*.resx` e as dos componentes Syncfusion em `SfResources.*.resx`.
 - **Dados de lookup:** as tabelas criadas por `LookupTablesWithData.sql` estão em português. Para outro idioma, adaptar os dados na BD.
 - **Temas:** existe um interruptor claro/escuro (`Components/ThemeToggle.razor`, `Services/ThemeStateService.cs`, `wwwroot/js/themeToggle.js`). O **dark** é o tema por omissão; a escolha fica em `localStorage`. Os estilos usam `wwwroot/css/theme-tokens.css` e os temas Syncfusion `bootstrap5.css` / `bootstrap5-dark.css` em `Pages/_Layout.cshtml`.
-- **Cartas/contratos:** os modelos `.dotx` estão em `PropertyManagerFL.Api/Reports/Docs`. Ao traduzir, preservar os *placeholders* dos campos variáveis (por exemplo `«NomeInquilino»`).
+- **Cartas/contratos:** os modelos `.dotx` estão em `PropertyManagerFL.Api/Reports/Docs` e são essenciais em **Development e Production**. A API lê-os de `ContentRootPath/reports/docs`: em Dev são os ficheiros do projeto; em Prod são copiados para a publicação pela regra `CopyToOutputDirectory` no `PropertyManagerFL.Api.csproj` e verificados pelo CI/CD. Ao traduzir, preservar os *placeholders* dos campos variáveis (por exemplo `«NomeInquilino»`).
 
 ## 6. Resolução de problemas
 
@@ -132,7 +142,9 @@ Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/
 | Mensagem da Syncfusion | Chave ausente/inválida/errada para a versão | Ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md) |
 | Erro `Login failed for user ...` | A conta Windows/app pool não tem acesso ao SQL | Ver a secção de IIS em [DATABASE.md](DATABASE.md) e [PRODUCTION.md](PRODUCTION.md) |
 | `dotnet dev-certs` / aviso de certificado | Certificado de desenvolvimento não confiável | `dotnet dev-certs https --clean` e depois `--trust` |
-| Porta ocupada | Outra aplicação está a usar 4300/4310 | Verificar com `netstat -ano | findstr :4300` |
+| `Failed to bind to address http://localhost:4300` em Dev | O `applicationUrl` do perfil Kestrel ficou com a porta do IIS | Confirmar `5001`/`5000` na API e `7181`/`5152` na UI, além do `BaseUrl` de Development |
+| Porta ocupada | Outra aplicação está a usar 5001/5000/7181/5152 | Verificar com `netstat -ano | findstr :5001` |
+| Editor de cartas mostra "sem modelos" | A API não encontrou `Reports\Docs` no content root | Confirmar os `.dotx` na pasta da API e o endpoint `GetTemplatesFilenamesFromServer` |
 
 ## 7. Testes e deploy
 

@@ -1,0 +1,194 @@
+/* Mensagens — página nova. Usa apenas tokens de tema (theme-tokens.css). */
+.msg-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+}
+
+.msg-hero {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    background: linear-gradient(120deg, var(--app-surface), var(--app-surface-alt));
+    box-shadow: var(--app-shadow);
+}
+
+.msg-hero-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 48px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--app-primary);
+    color: var(--app-on-primary);
+    font-size: 1.3rem;
+}
+
+.msg-hero-copy {
+    min-width: 0;
+}
+
+    .msg-hero-copy h1 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--app-text-primary);
+    }
+
+    .msg-hero-copy p {
+        margin: 0.15rem 0 0;
+        font-size: 0.9rem;
+        color: var(--app-text-secondary);
+    }
+
+.msg-hero-stats {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+    .msg-hero-stats span {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.35rem;
+        padding: 0.35rem 0.7rem;
+        border: 1px solid var(--app-border);
+        border-radius: 999px;
+        background: var(--app-surface);
+        font-size: 0.8rem;
+        color: var(--app-text-secondary);
+        white-space: nowrap;
+    }
+
+    .msg-hero-stats b {
+        font-size: 1rem;
+        color: var(--app-primary);
+    }
+
+.msg-tabs {
+    display: flex;
+    gap: 0.35rem;
+    padding: 0.35rem;
+    border: 1px solid var(--app-border);
+    border-radius: 12px;
+    background: var(--app-surface-alt);
+    overflow-x: auto;
+}
+
+.msg-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    background: transparent;
+    color: var(--app-text-secondary);
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+}
+
+    .msg-tab:hover {
+        background: var(--app-surface-hover);
+        color: var(--app-text-primary);
+    }
+
+    .msg-tab.active {
+        border-color: var(--app-border);
+        background: var(--app-surface);
+        color: var(--app-primary);
+        box-shadow: var(--app-shadow);
+    }
+
+.msg-tab-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 0.35rem;
+    border-radius: 999px;
+    background: var(--app-surface-alt);
+    color: var(--app-text-secondary);
+    font-size: 0.75rem;
+}
+
+.msg-tab.active .msg-tab-count {
+    background: var(--app-primary);
+    color: var(--app-on-primary);
+}
+
+.msg-card {
+    padding: 1.25rem 1.5rem;
+    border: 1px solid var(--app-border);
+    border-radius: 14px;
+    background: var(--app-surface);
+    box-shadow: var(--app-shadow);
+}
+
+.msg-section + .msg-section {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--app-border);
+}
+
+.msg-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--app-text-primary);
+}
+
+    .msg-section-title i {
+        color: var(--app-primary);
+    }
+
+.msg-type-group {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.msg-type-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+}
+
+.msg-radio {
+    margin: 0;
+}
+
+.msg-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--app-border);
+}
+
+@media (max-width: 767px) {
+    .msg-hero {
+        flex-wrap: wrap;
+    }
+
+    .msg-hero-stats {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .msg-card {
+        padding: 1rem;
+    }
+}

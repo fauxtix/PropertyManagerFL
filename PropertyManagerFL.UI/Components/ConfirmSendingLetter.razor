@@ -83,7 +83,7 @@
     protected string SubTitle { get; set; } = string.Empty;
     protected string WarningMessage { get; set; } = string.Empty;
 
-    private string? TitleColor { get; set; } = "cornflowerblue";
+    private string? TitleColor { get; set; } = "var(--app-info-text)";
     private string? OkButtonColor { get; set; } = "e-danger e-round-corner";
 
     private string? cssClass;
@@ -97,7 +97,7 @@
     protected override void OnInitialized()
     {
         cssClass = "notify-info";
-        TitleColor = "cornflowerblue";
+        TitleColor = "var(--app-info-text)";
     }
 
     protected override async Task OnParametersSetAsync()
@@ -109,7 +109,7 @@
         {
             case AppDefinitions.AlertMessageType.Error:
                 cssClass = "notify-error";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
             case AppDefinitions.AlertMessageType.Warning:
                 cssClass = "notify-warning";
@@ -118,12 +118,12 @@
                 break;
             case AppDefinitions.AlertMessageType.Info:
                 cssClass = "notify-info";
-                TitleColor = "cornflowerblue";
+                TitleColor = "var(--app-info-text)";
                 OkButtonColor = "e-info e-round-corner";
                 break;
             default:
                 cssClass = "notify-warning";
-                TitleColor = "Red";
+                TitleColor = "var(--app-danger-text)";
                 break;
         }
 

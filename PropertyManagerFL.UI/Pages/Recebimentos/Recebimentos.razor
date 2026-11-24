@@ -154,11 +154,11 @@ else
                                         }
                                         else if (currentTransaction.ValorPrevisto > 0 && currentTransaction.ValorRecebido > currentTransaction.ValorPrevisto)
                                         {
-                                            <span style="color:orange">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                            <span class="payments-amount payments-amount--partial">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
                                         }
                                         else
                                         {
-                                            <span style="color:red">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                            <span class="payments-amount payments-amount--due">@currentTransaction!.ValorRecebido.ToString("C2", CultureInfo.CreateSpecificCulture(currentCulture))</span>
                                         }
                                     }
                                 }
@@ -171,15 +171,14 @@ else
                                 @{
                                     var currentTransaction = (Registo as RecebimentoVM);
                                     int paidStatus = currentTransaction.Estado;
-                                    var color = paidStatus == 1 ? "black" : paidStatus == 2 ? "orange" : "red";
-                                    var ChipCss = paidStatus == 2 ? "e-primary" : paidStatus == 3 ? "e-danger" : "e-outline";
-                                    //<SfChip>
-                                    //    <ChipItems>
-                                    //        <ChipItem  Text="@currentTransaction!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))" CssClass="@ChipCss"></ChipItem>
-                                    //    </ChipItems>
-                                    //</SfChip>
+                                    var amountClass = paidStatus switch
+                                    {
+                                        1 => "payments-amount payments-amount--ok",
+                                        2 => "payments-amount payments-amount--partial",
+                                        _ => "payments-amount payments-amount--due"
+                                    };
 
-                                    <span style="color:@color">@currentTransaction!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))</span>
+                                    <span class="@amountClass">@currentTransaction!.ValorEmFalta.ToString("C", CultureInfo.CreateSpecificCulture(currentCulture))</span>
                                 }
                             </Template>
                         </GridColumn>
@@ -515,7 +514,7 @@ else
 
         .e-attr .e-categoria {
             font-weight: bolder;
-            color: green;
+            color: var(--app-success-text);
         }
 
         .e-attr .e-valor {
@@ -523,8 +522,29 @@ else
             color: var(--app-danger-text);
         }
 
+    /* Cores semânticas dos valores pagos/em falta — válidas em Light e Dark. */
+    .payments-amount--ok {
+        color: var(--app-success-text);
+    }
+
+    .payments-amount--partial {
+        color: var(--app-warning-text);
+    }
+
+    .payments-amount--due {
+        color: var(--app-danger-text);
+    }
+
+    /* A linha selecionada usa --app-primary como fundo: o texto do valor
+       tem de seguir --app-on-primary para não ficar ilegível. */
+    .e-grid .e-rowcell.e-selectionbackground .payments-amount,
+    .e-grid .e-rowcell.e-active .payments-amount {
+        color: var(--app-on-primary) !important;
+    }
+
     .e-grid td.e-active {
-        background-color: azure;
+        background-color: var(--app-primary);
+        color: var(--app-on-primary);
     }
 
     /*to remove the 'custom button alone*/

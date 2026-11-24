@@ -2465,6 +2465,12 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="Ano" xml:space="preserve">
     <value>Ano</value>
   </data>
+  <data name="home-compare-label" xml:space="preserve">
+    <value>Comparação: {0} / {1}</value>
+  </data>
+  <data name="home-historical-estimate" xml:space="preserve">
+    <value>Os valores de IMI, IRS e Seguros abaixo são uma estimativa com base nos dados atuais.</value>
+  </data>
   <data name="Meses/início" xml:space="preserve">
     <value>Meses/início</value>
   </data>
@@ -2843,6 +2849,48 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="mf-back-menu" xml:space="preserve">
     <value>Voltar ao menu</value>
   </data>
+  <data name="lt-no-templates" xml:space="preserve">
+    <value>Não existem modelos de carta disponíveis. Verifique a ligação à API e os ficheiros .dotx na pasta Reports/Docs da API.</value>
+  </data>
+  <data name="lt-retry" xml:space="preserve">
+    <value>Tentar novamente</value>
+  </data>
+  <data name="lt-preview" xml:space="preserve">
+    <value>Pré-visualizar</value>
+  </data>
+  <data name="lt-preview-title" xml:space="preserve">
+    <value>Pré-visualização da carta</value>
+  </data>
+  <data name="lt-preview-close" xml:space="preserve">
+    <value>Fechar pré-visualização</value>
+  </data>
+  <data name="lt-preview-error" xml:space="preserve">
+    <value>Não foi possível gerar a pré-visualização.</value>
+  </data>
+  <data name="lt-save-title" xml:space="preserve">
+    <value>Guardar modelo</value>
+  </data>
+  <data name="lt-save-success" xml:space="preserve">
+    <value>Modelo guardado com sucesso.</value>
+  </data>
+  <data name="lt-save-error" xml:space="preserve">
+    <value>Erro ao guardar o modelo</value>
+  </data>
+  <data name="lt-upload-error-title" xml:space="preserve">
+    <value>Erro ao carregar o ficheiro</value>
+  </data>
+  <data name="lt-file-not-loaded-title" xml:space="preserve">
+    <value>Modelos de carta</value>
+  </data>
+  <data name="lt-file-not-loaded" xml:space="preserve">
+    <value>O ficheiro não foi carregado da localização esperada.</value>
+  </data>
+  <data name="lt-file-not-found" xml:space="preserve">
+    <value>Ficheiro ({0}) não encontrado. Verifique.</value>
+  </data>
+  <data name="lt-file-load-error" xml:space="preserve">
+    <value>Erro ao carregar o ficheiro ({0}).</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>Geral</value>
   </data>
@@ -3085,5 +3133,11 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
     <value>NotificaÃ§Ãµes marcadas como lidas</value>
+  </data>
+  <data name="TopBarLogout" xml:space="preserve">
+    <value>Terminar sessão</value>
+  </data>
+  <data name="TopBarManageAccount" xml:space="preserve">
+    <value>Gerir conta</value>
   </data>
 </root>
