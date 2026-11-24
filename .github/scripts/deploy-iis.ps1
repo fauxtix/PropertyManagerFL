@@ -225,6 +225,18 @@ function Copy-PublishedFiles([string] $Source, [string] $Destination) {
     throw "Failed to copy publish files to $Destination : $lastError"
 }
 
+function Grant-TemplatesWrite([string] $Path, [string] $AppPool) {
+    Ensure-Directory $Path
+    # The Blazor Server UI writes templates directly to the API's Reports\Docs folder
+    # (the API returns its absolute server path), and the API writes generated letters
+    # there. Neither app pool can write with the default IIS_IUSRS read-only ACL.
+    $rule = "IIS APPPOOL\${AppPool}:(OI)(CI)M"
+    & icacls $Path /grant $rule /T | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to grant template write permission to $AppPool on $Path"
+    }
+}
+
 Ensure-Directory $root
 # New-Website requires the physical path to exist before it is called.
 Ensure-Directory $apiPath
@@ -250,6 +262,12 @@ try {
     Wait-NoW3wpForPools $poolsToStop
     Copy-PublishedFiles $ApiPublishDir $apiPath
     Copy-PublishedFiles $UiPublishDir $uiPath
+
+    # Reapply after every publish: copied files can carry read-only source ACLs.
+    $templatesPath = Join-Path $apiPath 'Reports\Docs'
+    Grant-TemplatesWrite $templatesPath $uiPool
+    Grant-TemplatesWrite $templatesPath $apiPool
+    Write-Host "Granted template write permission to $uiPool and $apiPool on $templatesPath"
 
     # Letter templates are essential to the letter editor and mail merge. Assert they
     # reached the IIS content root; a silent miss would leave Dev/Prod with no templates.

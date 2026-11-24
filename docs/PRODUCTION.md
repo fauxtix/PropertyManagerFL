@@ -90,6 +90,7 @@ Notas importantes:
 - O script para os pools antes de copiar os ficheiros (incluindo os antigos `PropertyManagerFL.Api` / `PropertyManagerFL.UI`, que podem reter DLLs em `w3wp.exe`) e volta a arrancá-los no `finally`, mesmo se o deploy falhar.
 - A cópia é por sobrescrita: **nunca apaga** a pasta de destino, para preservar ficheiros carregados pelos utilizadores.
 - Os 8 modelos `.dotx` são publicados com a API (`CopyToOutputDirectory` no `PropertyManagerFL.Api.csproj`). O CI verifica a sua presença no output de publish e o CD verifica tanto o output como a pasta `Reports\Docs` do IIS, falhando o deploy se faltarem. **Não copiar ficheiros manualmente para o IIS**: corrigir a regra de publicação e voltar a deployar.
+- O CD concede `Modify` em `Reports\Docs` aos pools `PropertyManagerFL` (UI) e `PropertyManagerApi` (API), de forma idempotente. A UI é Blazor Server e grava diretamente no caminho absoluto devolvido pela API (`GetTemplateName`); sem essa permissão, guardar um modelo falha com `Access to the path ... is denied`. O aviso não significa que o caminho seja do PC do utilizador.
 
 ## 4. Verificação após o deploy
 
@@ -134,5 +135,6 @@ Repetir para a API com `C:\inetpub\wwwroot\PropertyManagerFL\Api\web.config` e a
 | Cópia falha com DLL bloqueada | `w3wp.exe` ainda a correr | O script já espera pelo fim do processo e repete a cópia |
 | Aviso de certificado no browser | Certificado self-signed | Instalar um certificado de confiança e definir `PM_UI_CERT_THUMBPRINT` |
 | Mensagem da Syncfusion em produção | Segredo errado/expirado ou injetado no site errado | Ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md) |
+| `Access to the path ... Reports\Docs\...dotx is denied` ao gravar modelo | Pool da UI sem escrita na pasta de modelos da API | O CD já concede `Modify` aos dois pools; repetir o CD. Conferir com `icacls C:\inetpub\wwwroot\PropertyManagerFL\Api\Reports\Docs` |
 
 > Não alterar diretamente os `web.config` publicados para corrigir configuração: o próximo deploy sobrescreve-os. Alterar sempre o GitHub Secret correspondente e repetir o CD.
