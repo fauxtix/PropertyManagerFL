@@ -30,6 +30,8 @@
     <PackageReference Include="BlazorGoogleMaps" Version="2.4.4" />
     <PackageReference Include="Blazorized.AdminLte" Version="0.1.8" />
     <PackageReference Include="Blazorized.AdminLte.Content" Version="3.0.7" />
+    <PackageReference Include="HtmlSanitizer" Version="11.0.16" />
+    <PackageReference Include="Markdig" Version="1.1.1" />
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="10.0.15" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="10.0.15" />
@@ -205,6 +207,12 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+  </ItemGroup>
+
+  <!-- User manual (docs/Help*.md): read from disk at runtime by HelpDialog. -->
+  <ItemGroup>
+    <None Remove="docs\**\*.md" />
+    <Content Include="docs\**\*.md" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

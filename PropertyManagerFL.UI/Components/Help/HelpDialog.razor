@@ -1,0 +1,294 @@
+<SfDialog CssClass="help-dialog"
+          Width="@Width"
+          IsModal="true"
+          AllowDragging="true"
+          ShowCloseIcon="true"
+          CloseOnEscape="true"
+          ZIndex="@ZIndex"
+          Visible="@Visible"
+          VisibleChanged="@OnDialogVisibleChanged">
+    <DialogTemplates>
+        <Header>
+            <div class="help-dialog-title">
+                <i class="fa fa-question-circle" aria-hidden="true"></i>
+                <span>@EffectiveTitle</span>
+            </div>
+        </Header>
+        <Content>
+            <div class="help-body">
+                <div class="help-content">
+                    @if (_isLoading)
+                    {
+                        <div class="help-loading">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <span>@L["MSG_PreparandoDados"]</span>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(_error))
+                    {
+                        <div class="help-error">
+                            <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                            <span>@_error</span>
+                        </div>
+                    }
+                    else if (!string.IsNullOrEmpty(_html))
+                    {
+                        @((MarkupString)_html)
+                    }
+                </div>
+                @if (!_isLoading && string.IsNullOrEmpty(_error) && !string.IsNullOrEmpty(_html))
+                {
+                    @* Irmão do contentor de scroll: dentro de .help-content ele desapareceria
+                       com o texto. Alternado por wwwroot/js/help-dialog.js. *@
+                    <button type="button"
+                            class="help-scroll-top"
+                            title="@L["HelpScrollToTop"]"
+                            aria-label="@L["HelpScrollToTop"]">
+                        <i class="fa fa-arrow-up" aria-hidden="true"></i>
+                    </button>
+                }
+            </div>
+        </Content>
+        <FooterTemplate>
+            <div class="help-footer">
+                <SfButton CssClass="e-outline e-round-corner"
+                          IconCss="fa fa-times"
+                          OnClick="CloseAsync"
+                          Content="@L["btnFechar"]" />
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+    <DialogAnimationSettings Effect="DialogEffect.FadeZoom" Duration="400"></DialogAnimationSettings>
+</SfDialog>
+
+<style>
+    .help-dialog-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--app-info-text);
+        font-weight: 600;
+    }
+
+    /* O conteúdo faz scroll; o SfDialog mantém altura automática para o manual
+       nunca ultrapassar a viewport. */
+    .help-content {
+        max-height: 78vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 4px 18px 14px 18px;
+        background-color: var(--app-surface);
+        color: var(--app-text-primary);
+        box-sizing: border-box;
+    }
+
+    /* Wrapper que define o contexto de posicionamento do botão "voltar ao topo".
+       O botão é irmão do contentor de scroll, nunca filho. */
+    .help-body {
+        position: relative;
+    }
+
+    .help-scroll-top {
+        position: absolute;
+        right: 18px;
+        bottom: 16px;
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border: 1px solid var(--app-border);
+        border-radius: 50%;
+        background-color: var(--app-primary);
+        color: var(--app-on-primary);
+        box-shadow: var(--app-shadow);
+        cursor: pointer;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px);
+        transition: opacity .2s ease, transform .2s ease, visibility .2s;
+        z-index: 2;
+    }
+
+        .help-scroll-top.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .help-scroll-top:hover {
+            background-color: var(--app-primary-hover);
+        }
+
+        .help-scroll-top:focus-visible {
+            outline: 2px solid var(--app-primary);
+            outline-offset: 2px;
+        }
+
+    .help-loading,
+    .help-error {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 32px 8px;
+        font-weight: 600;
+    }
+
+    .help-error {
+        color: var(--app-danger-text);
+    }
+
+    .help-footer {
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    /* ===== Markdown (HTML puro do Markdig, injectado via MarkupString) ===== */
+    .help-content .markdown-body {
+        max-width: none;
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.65;
+        color: var(--app-text-primary);
+        overflow-wrap: break-word;
+    }
+
+    .help-content h1,
+    .help-content h2 {
+        border-bottom: 1px solid var(--app-border);
+        padding-bottom: 0.3em;
+    }
+
+    .help-content h1 {
+        font-size: 1.8em;
+        margin-top: 1.1em;
+    }
+
+    .help-content h2 {
+        font-size: 1.45em;
+        margin-top: 1.1em;
+    }
+
+    .help-content h3 {
+        font-size: 1.2em;
+        margin-top: 1em;
+    }
+
+    .help-content h4 {
+        font-size: 1em;
+    }
+
+    .help-content h5 {
+        font-size: 0.9em;
+    }
+
+    .help-content h6 {
+        font-size: 0.85em;
+        color: var(--app-text-secondary);
+    }
+
+    .help-content h1,
+    .help-content h2,
+    .help-content h3,
+    .help-content h4,
+    .help-content h5,
+    .help-content h6 {
+        margin-bottom: 0.5em;
+        font-weight: 600;
+        color: var(--app-text-primary);
+    }
+
+    .help-content p {
+        margin: 0.8em 0;
+    }
+
+    .help-content strong {
+        font-weight: 600;
+    }
+
+    .help-content ul,
+    .help-content ol {
+        padding-left: 2em;
+        margin: 0.8em 0;
+    }
+
+    .help-content li {
+        margin: 0.25em 0;
+    }
+
+    .help-content a {
+        color: var(--app-primary);
+        text-decoration: none;
+    }
+
+        .help-content a:hover {
+            text-decoration: underline;
+        }
+
+    .help-content code {
+        background-color: var(--app-surface-alt);
+        color: var(--app-text-primary);
+        padding: 0.2em 0.4em;
+        border-radius: 6px;
+        font-size: 85%;
+        font-family: Consolas, Monaco, "Courier New", monospace;
+    }
+
+    .help-content pre {
+        background-color: var(--app-surface-alt);
+        color: var(--app-text-primary);
+        border: 1px solid var(--app-border);
+        padding: 1em;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 1em 0;
+    }
+
+        .help-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+    .help-content table {
+        border-collapse: collapse;
+        display: block;
+        max-width: 100%;
+        overflow-x: auto;
+        margin: 1em 0;
+    }
+
+    .help-content th,
+    .help-content td {
+        border: 1px solid var(--app-border);
+        padding: 6px 10px;
+        vertical-align: top;
+    }
+
+    .help-content th {
+        background-color: var(--app-surface-alt);
+        font-weight: 600;
+        color: var(--app-text-primary);
+    }
+
+    .help-content blockquote {
+        border-left: 4px solid var(--app-border);
+        padding: 0 1em;
+        margin: 1em 0;
+        color: var(--app-text-secondary);
+    }
+
+    .help-content hr {
+        border: none;
+        border-top: 1px solid var(--app-border);
+        margin: 1.6em 0;
+    }
+
+    .help-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 6px;
+    }
+</style>

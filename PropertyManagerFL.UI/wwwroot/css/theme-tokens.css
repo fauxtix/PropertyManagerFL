@@ -257,6 +257,16 @@ main .top-row,
         color: var(--app-on-primary);
     }
 
+/* Botão de ajuda — só o ícone '?' (o rótulo fica no title/aria-label) */
+.top-row .topbar-action.help-topbar-button {
+    min-width: 34px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 1.05rem;
+}
+
 /* O menu lateral usa as variáveis --sidebar-* definidas acima.
    Os estilos estruturais vivem em css/sidebarpro/*.css. */
 

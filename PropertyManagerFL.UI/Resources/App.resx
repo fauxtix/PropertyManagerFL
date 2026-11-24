@@ -132,6 +132,15 @@
   <data name="btnHelp" xml:space="preserve">
     <value>Ajuda</value>
   </data>
+  <data name="HelpFileNotFound" xml:space="preserve">
+    <value>Não foi possível encontrar o manual do utilizador.</value>
+  </data>
+  <data name="HelpFileLoadError" xml:space="preserve">
+    <value>Não foi possível carregar o manual: {0}</value>
+  </data>
+  <data name="HelpScrollToTop" xml:space="preserve">
+    <value>Voltar ao topo</value>
+  </data>
   <data name="btnListar" xml:space="preserve">
     <value>Listagem</value>
   </data>

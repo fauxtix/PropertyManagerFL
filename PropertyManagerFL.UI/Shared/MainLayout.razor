@@ -31,6 +31,12 @@
             </div>
 
             <div class="top-navbar-end">
+                <button type="button" class="topbar-action help-topbar-button"
+                        @onclick="OpenHelp"
+                        aria-label="@L["btnHelp"]" title="@L["btnHelp"]">
+                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                </button>
+
                 <AuthorizeView>
                     <Authorized>
                         <NotificationBell />
@@ -51,10 +57,15 @@
             </article>
         </main>
     </div>
+
+    <HelpDialog @bind-Visible="helpVisible" />
 </div>
 
 @code {
     private SidebarComponent? sideBarComponent;
+    private bool helpVisible;
+
+    private void OpenHelp() => helpVisible = true;
 
     private void ToggleSidebar() => sideBarComponent?.BtnToggleClicked();
 

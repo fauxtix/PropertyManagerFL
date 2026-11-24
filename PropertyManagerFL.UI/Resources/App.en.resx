@@ -132,6 +132,15 @@
   <data name="btnHelp" xml:space="preserve">
     <value>Help</value>
   </data>
+  <data name="HelpFileNotFound" xml:space="preserve">
+    <value>The user manual could not be found.</value>
+  </data>
+  <data name="HelpFileLoadError" xml:space="preserve">
+    <value>Could not load the manual: {0}</value>
+  </data>
+  <data name="HelpScrollToTop" xml:space="preserve">
+    <value>Back to top</value>
+  </data>
   <data name="BtnIngresar" xml:space="preserve">
     <value>Login</value>
   </data>
