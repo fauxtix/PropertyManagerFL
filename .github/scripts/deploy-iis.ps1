@@ -225,15 +225,75 @@ function Copy-PublishedFiles([string] $Source, [string] $Destination) {
     throw "Failed to copy publish files to $Destination : $lastError"
 }
 
-function Grant-TemplatesWrite([string] $Path, [string] $AppPool) {
+function Grant-DirectoryWrite([string] $Path, [string] $Account, [string] $Purpose) {
     Ensure-Directory $Path
-    # The Blazor Server UI writes templates directly to the API's Reports\Docs folder
-    # (the API returns its absolute server path), and the API writes generated letters
-    # there. Neither app pool can write with the default IIS_IUSRS read-only ACL.
-    $rule = "IIS APPPOOL\${AppPool}:(OI)(CI)M"
+    # IIS_IUSRS is read-only by default. Every runtime write folder needs an explicit ACE.
+    $rule = "${Account}:(OI)(CI)M"
     & icacls $Path /grant $rule /T | Out-Null
     if ($LASTEXITCODE -ne 0) {
-        throw "Failed to grant template write permission to $AppPool on $Path"
+        throw "Failed to grant $Purpose write permission to $Account on $Path"
+    }
+}
+
+function Grant-AppPoolWrite([string] $Path, [string[]] $Pools, [string] $Purpose) {
+    foreach ($pool in $Pools) {
+        Grant-DirectoryWrite -Path $Path -Account "IIS APPPOOL\$pool" -Purpose $Purpose
+    }
+}
+
+function Resolve-ConfiguredPath([string] $Configured, [string] $BasePath) {
+    if ([string]::IsNullOrWhiteSpace($Configured)) { return $null }
+    if ([System.IO.Path]::IsPathRooted($Configured)) {
+        return [System.IO.Path]::GetFullPath($Configured)
+    }
+    return [System.IO.Path]::GetFullPath((Join-Path $BasePath $Configured))
+}
+
+function Get-SqlServiceAccount([string] $DataSource) {
+    $instance = $DataSource
+    $slash = $instance.LastIndexOf('\')
+    if ($slash -ge 0) { $instance = $instance.Substring($slash + 1) }
+    if ([string]::IsNullOrWhiteSpace($instance) -or $instance -eq '.') { $instance = 'MSSQLSERVER' }
+    $serviceName = if ($instance -eq 'MSSQLSERVER') { 'MSSQLSERVER' } else { "MSSQL`$$instance" }
+    $svc = Get-CimInstance Win32_Service -Filter "Name='$serviceName'" -ErrorAction SilentlyContinue
+    if ($null -eq $svc -or [string]::IsNullOrWhiteSpace($svc.StartName)) { return $null }
+    $start = $svc.StartName
+    # Virtual accounts are reported as "NT Service\..." but must be granted as "NT SERVICE\<service>".
+    if ($start.StartsWith('NT SERVICE\', [System.StringComparison]::OrdinalIgnoreCase) -or
+        $start -eq 'LocalSystem' -or $start -eq 'NT Authority\SYSTEM') {
+        return "NT SERVICE\$serviceName"
+    }
+    return $start
+}
+
+function Get-BackupPathsFromDatabase {
+    $connectionString = $env:PM_PMCONNECTION
+    if ([string]::IsNullOrWhiteSpace($connectionString)) {
+        throw 'PM_PMCONNECTION is not set; cannot read backup paths from ApplicationSettings'
+    }
+    $builder = New-Object System.Data.SqlClient.SqlConnectionStringBuilder($connectionString)
+    $sqlArgs = @('-S', $builder.DataSource, '-d', $builder.InitialCatalog, '-h', '-1', '-W', '-s', '|', '-l', '10')
+    if ($builder.IntegratedSecurity) {
+        $sqlArgs += '-E'
+    }
+    else {
+        $sqlArgs += @('-U', $builder.UserID, '-P', $builder.Password)
+    }
+    $query = 'SET NOCOUNT ON; SELECT ISNULL(BackupBaseDados, ''''), ISNULL(BackupOutrosFicheiros, '''') FROM ApplicationSettings;'
+    $raw = & sqlcmd @sqlArgs -Q $query 2>&1
+    if ($LASTEXITCODE -ne 0) {
+        throw "Could not read backup paths from ApplicationSettings: $(($raw | ForEach-Object { [string]$_ }) -join ' ')"
+    }
+    $line = @($raw | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ -and $_ -notmatch '^\(' }) | Select-Object -First 1
+    $sqlService = Get-SqlServiceAccount ($builder.DataSource)
+    if (-not $line) {
+        return @{ Database = $null; Uploads = $null; SqlService = $sqlService }
+    }
+    $parts = $line -split '\|', 2
+    return @{
+        Database   = (Resolve-ConfiguredPath $parts[0] $root)
+        Uploads    = (Resolve-ConfiguredPath $parts[1] $root)
+        SqlService = $sqlService
     }
 }
 
@@ -264,10 +324,37 @@ try {
     Copy-PublishedFiles $UiPublishDir $uiPath
 
     # Reapply after every publish: copied files can carry read-only source ACLs.
-    $templatesPath = Join-Path $apiPath 'Reports\Docs'
-    Grant-TemplatesWrite $templatesPath $uiPool
-    Grant-TemplatesWrite $templatesPath $apiPool
-    Write-Host "Granted template write permission to $uiPool and $apiPool on $templatesPath"
+    # IIS_IUSRS is read-only on fresh IIS folders; every runtime write folder needs an ACE.
+    $managedBackups = Join-Path $root 'Backups'
+    $writableTargets = @(
+        @{ Path = (Join-Path $apiPath 'Reports\Docs'); Pools = @($uiPool, $apiPool); Purpose = 'letter templates and generated letters' },
+        @{ Path = (Join-Path $uiPath 'wwwroot\uploads'); Pools = @($uiPool); Purpose = 'property/tenant/unit uploads' },
+        @{ Path = (Join-Path $uiPath 'Data\Files'); Pools = @($uiPool); Purpose = 'Syncfusion FileManager' },
+        @{ Path = (Join-Path $apiPath 'uploads'); Pools = @($apiPool); Purpose = 'API image uploads (ContentRootPath)' },
+        @{ Path = (Join-Path $apiPath 'wwwroot\uploads'); Pools = @($apiPool); Purpose = 'API image uploads (WebRootPath)' },
+        @{ Path = $managedBackups; Pools = @($uiPool, $apiPool); Purpose = 'managed backup root' }
+    )
+    foreach ($target in $writableTargets) {
+        Grant-AppPoolWrite -Path $target.Path -Pools $target.Pools -Purpose $target.Purpose
+    }
+    Write-Host "Granted app pools write access to $($writableTargets.Count) runtime folders"
+
+    # Backup paths live in ApplicationSettings, not in appsettings.json. Read them at
+    # deploy time and grant the exact folders so changing a setting cannot break backups.
+    $backupSettings = Get-BackupPathsFromDatabase
+    if ($backupSettings.Database) {
+        Grant-DirectoryWrite -Path $backupSettings.Database -Account "IIS APPPOOL\$apiPool" -Purpose 'database backup (API)'
+    }
+    if ($backupSettings.Uploads) {
+        Grant-DirectoryWrite -Path $backupSettings.Uploads -Account "IIS APPPOOL\$uiPool" -Purpose 'upload backup (UI)'
+    }
+    if ($backupSettings.SqlService) {
+        # SQL Server, not the app pool, performs BACKUP DATABASE TO DISK.
+        Grant-DirectoryWrite -Path (Join-Path $managedBackups 'Database') -Account $backupSettings.SqlService -Purpose 'managed database backup (SQL engine)'
+        if ($backupSettings.Database) {
+            Grant-DirectoryWrite -Path $backupSettings.Database -Account $backupSettings.SqlService -Purpose 'database backup (SQL engine)'
+        }
+    }
 
     # Letter templates are essential to the letter editor and mail merge. Assert they
     # reached the IIS content root; a silent miss would leave Dev/Prod with no templates.

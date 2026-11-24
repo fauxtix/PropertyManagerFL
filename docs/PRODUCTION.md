@@ -90,7 +90,14 @@ Notas importantes:
 - O script para os pools antes de copiar os ficheiros (incluindo os antigos `PropertyManagerFL.Api` / `PropertyManagerFL.UI`, que podem reter DLLs em `w3wp.exe`) e volta a arrancá-los no `finally`, mesmo se o deploy falhar.
 - A cópia é por sobrescrita: **nunca apaga** a pasta de destino, para preservar ficheiros carregados pelos utilizadores.
 - Os 8 modelos `.dotx` são publicados com a API (`CopyToOutputDirectory` no `PropertyManagerFL.Api.csproj`). O CI verifica a sua presença no output de publish e o CD verifica tanto o output como a pasta `Reports\Docs` do IIS, falhando o deploy se faltarem. **Não copiar ficheiros manualmente para o IIS**: corrigir a regra de publicação e voltar a deployar.
-- O CD concede `Modify` em `Reports\Docs` aos pools `PropertyManagerFL` (UI) e `PropertyManagerApi` (API), de forma idempotente. A UI é Blazor Server e grava diretamente no caminho absoluto devolvido pela API (`GetTemplateName`); sem essa permissão, guardar um modelo falha com `Access to the path ... is denied`. O aviso não significa que o caminho seja do PC do utilizador.
+- O CD concede `Modify`, de forma idempotente, a **todas as pastas onde a app escreve em runtime**:
+  - `Api\Reports\Docs` → pools `PropertyManagerFL` e `PropertyManagerApi` (modelos `.dotx`, subpastas e cartas geradas);
+  - `UI\wwwroot\uploads` → pool `PropertyManagerFL` (fotos de imóveis, documentos de inquilinos, imagens de frações);
+  - `UI\Data\Files` → pool `PropertyManagerFL` (FileManager da Syncfusion);
+  - `Api\uploads` e `Api\wwwroot\uploads` → pool `PropertyManagerApi` (`ImagesController`);
+  - `C:\inetpub\wwwroot\PropertyManagerFL\Backups` → ambos os pools;
+  - os caminhos `BackupBaseDados` e `BackupOutrosFicheiros` lidos de `ApplicationSettings` no deploy → respetivamente API e UI; a conta do serviço SQL também recebe `Modify` no caminho de backup da base de dados.
+- A UI é Blazor Server: o código corre no servidor e grava caminhos absolutos devolvidos pela API. Um `Access to the path ... is denied` significa que a ACL não foi aplicada (ou que o CD não foi repetido), **não** que o caminho seja do PC do utilizador.
 
 ## 4. Verificação após o deploy
 
@@ -111,6 +118,30 @@ netsh http show servicestate
 ```
 
 Esperado: `401`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`. O endpoint de modelos deve listar os `.dotx` (5 para `pt-PT`); lista vazia significa que a publicação não levou a pasta `Reports\Docs`.
+
+Para confirmar que o CD concedeu escrita em todas as pastas de runtime:
+
+```powershell
+$root = 'C:\inetpub\wwwroot\PropertyManagerFL'
+$targets = @(
+  "$root\Api\Reports\Docs",
+  "$root\UI\wwwroot\uploads",
+  "$root\UI\Data\Files",
+  "$root\Api\uploads",
+  "$root\Api\wwwroot\uploads",
+  "$root\Backups"
+)
+foreach ($path in $targets) {
+  if (Test-Path $path) {
+    $aces = @(icacls $path | Select-String -Pattern 'IIS APPPOOL\\(PropertyManagerFL|PropertyManagerApi)')
+    "{0} -> {1}" -f $path, $(if ($aces.Count) { 'OK' } else { 'SEM GRANT' })
+  } else {
+    "$path -> AINDA NÃO EXISTE"
+  }
+}
+```
+
+Se alguma pasta mostrar `SEM GRANT`, repetir o CD (não corrigir com `icacls` manual: o próximo deploy sobrescreve o estado).
 
 Para confirmar que a chave Syncfusion da UI foi injetada **sem revelar valores** (substituir `<valor-local>` pela chave já existente no seu ambiente):
 
@@ -136,5 +167,7 @@ Repetir para a API com `C:\inetpub\wwwroot\PropertyManagerFL\Api\web.config` e a
 | Aviso de certificado no browser | Certificado self-signed | Instalar um certificado de confiança e definir `PM_UI_CERT_THUMBPRINT` |
 | Mensagem da Syncfusion em produção | Segredo errado/expirado ou injetado no site errado | Ver [SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md) |
 | `Access to the path ... Reports\Docs\...dotx is denied` ao gravar modelo | Pool da UI sem escrita na pasta de modelos da API | O CD já concede `Modify` aos dois pools; repetir o CD. Conferir com `icacls C:\inetpub\wwwroot\PropertyManagerFL\Api\Reports\Docs` |
+| `Access to the path ... wwwroot\uploads\...` ao enviar/remover ficheiro | Pool da UI sem escrita em `UI\wwwroot\uploads` | Repetir o CD; verificar com `icacls C:\inetpub\wwwroot\PropertyManagerFL\UI\wwwroot\uploads` |
+| `Access to the path ...` em `BackupDatabase` ou `BackupStaticFiles` | Caminho alterado em `ApplicationSettings` ou conta do SQL sem escrita | O CD lê `BackupBaseDados`/`BackupOutrosFicheiros` da BD e concede aos pools e ao serviço SQL; repetir o CD após alterar a configuração |
 
 > Não alterar diretamente os `web.config` publicados para corrigir configuração: o próximo deploy sobrescreve-os. Alterar sempre o GitHub Secret correspondente e repetir o CD.
