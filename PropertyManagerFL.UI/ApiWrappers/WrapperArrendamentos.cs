@@ -990,12 +990,7 @@ namespace PropertyManagerFL.UI.ApiWrappers
             try
             {
                 var endpoint = $"{_uri}/RequirementsMet";
-                using (HttpResponseMessage result = await _httpClient.GetAsync(endpoint))
-                {
-                    var success = result.IsSuccessStatusCode;
-                    return success;
-                }
-
+                return await _httpClient.GetFromJsonAsync<bool>(endpoint);
             }
             catch (Exception ex)
             {
