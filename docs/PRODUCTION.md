@@ -1,6 +1,8 @@
 # Produção — deploy IIS, segredos e verificação
 
-> **TL;DR (EN):** Production uses GitHub Secrets (never committed). Deploy with `gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master`; it needs a self-hosted runner registered in **this repo** with label `iis-propertymanager`. The script injects secrets into the published `web.config` as environment variables (Production does not load user-secrets). Two Syncfusion secrets are required: `PM_SYNCFUSION_LICENSE` (UI) and `PM_SYNCFUSION_LICENSE_API` (API). Pools `PropertyManagerApi` and `PropertyManagerFL` already have SQL logins/`db_owner`.
+> **TL;DR (EN):** Production uses GitHub Secrets (never committed). Deploy with `gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master`; it needs a self-hosted runner registered in **this repo** with label `iis-propertymanager`. The script injects secrets into the published `web.config` as environment variables (Production does not load user-secrets), except the connection string, which comes from `appsettings.Production.json`. Two Syncfusion secrets are required: `PM_SYNCFUSION_LICENSE` (UI) and `PM_SYNCFUSION_LICENSE_API` (API). Pools `PropertyManagerApi` and `PropertyManagerFL` already have SQL logins/`db_owner`. Never use the repo SQL scripts on the Production database.
+
+> **Aviso:** a base de dados de Produção **nunca** é criada nem atualizada com os scripts deste repositório. Ela é gerida pelo responsável da infraestrutura (backups, manutenção e alterações controladas). Os scripts servem apenas para instalações novas em Development/teste.
 
 ## 1. Como disparar o deploy
 
@@ -58,7 +60,7 @@ Em Production os user-secrets não são carregados. O `deploy-iis.ps1` escreve c
 - O elemento correto é `environmentVariable` (não `<add>`); usar `<add>` provoca o erro ANCM *"Unable to get required configuration section 'system.webServer/aspNetCore'"*.
 - Se faltar algum valor, o deploy falha com `Missing deployment value for <chave>` — não fica uma aplicação meio configurada.
 - A injeção é idempotente: repetir o deploy não cria entradas duplicadas.
-- `ConnectionStrings__PMConnection` **não** é injetado; as duas aplicações leem `appsettings.Production.json`, que aponta para `PropertyManagerDB_Production`. O segredo `PM_PMCONNECTION` serve apenas para o script de deploy descobrir as pastas de backup e aplicar as ACLs.
+- `ConnectionStrings__PMConnection` **não** é injetado; as duas aplicações leem `appsettings.Production.json`, que aponta para `PropertyManagerDB_Production`. O segredo `PM_PMCONNECTION` serve apenas para o script de deploy descobrir as pastas de backup e aplicar as ACLs. Se o nome da base mudar, alterar esse ficheiro na API e na UI e voltar a deployar — não criar um segredo novo.
 - Os restantes valores em `appsettings*.json` são apenas placeholders.
 
 ### Rodar uma chave

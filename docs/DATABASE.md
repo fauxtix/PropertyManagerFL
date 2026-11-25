@@ -1,6 +1,6 @@
 # Base de dados — instalação (SQL Server)
 
-> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. Create an empty `PropertyManagerDB`, create the `[Identity]` schema, then run the scripts in the order below. The scripts are **not idempotent**: run them once, on an empty database. The full script `SqlData_Script/PropertyManagerDB.sql` is an alternative to the individual scripts, not an extra step: it is generated from the cleaned reference database, creates the `[Identity]` schema itself and contains **no operational/sample data**. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
+> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. Create an empty `PropertyManagerDB`, create the `[Identity]` schema, then run the scripts in the order below. The scripts are **not idempotent**: run them once, on an empty database. The full script `SqlData_Script/PropertyManagerDB.sql` is an alternative to the individual scripts, not an extra step: it is generated from the cleaned reference database, creates the `[Identity]` schema itself and contains **no operational/sample data**. These scripts are for **fresh Dev/test installs only** — never use them to create or update the Production database. Existing Dev/test databases need only the small `SuggestedAction` upgrade below. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
 
 ## 1. Pré-requisitos
 
@@ -41,7 +41,9 @@ Script completo **gerado** da base de dados de referência já limpa (`PropertyM
 
 Valores sanitizados no `INSERT` de `ApplicationSettings`: `ApiKey` e os dois caminhos de backup são *placeholders* (`REPLACE_WITH_...`) e os campos de identidade SMTP ficam `NULL`. Substituir pelos valores reais antes de usar a aplicação. A conta `admin` é genérica: alterar a palavra-passe após a instalação.
 
-**Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. Não editar este ficheiro à mão — regenerá-lo a partir de uma BD limpa com SMO.
+**Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. A pasta `SqlData_Script` contém apenas este ficheiro — os antigos `Sps_Arrendamentos.sql` e `RentsDB.db.sql` foram removidos. Não editar este ficheiro à mão — regenerá-lo a partir de uma BD limpa com SMO.
+
+> **Não usar em Produção.** A base de dados de Produção (`PropertyManagerDB_Production`) é gerida pelo responsável da infraestrutura (backups e manutenção). Estes scripts servem apenas para instalações novas em Development/teste.
 
 ## 3. Instalação passo a passo (scripts individuais)
 
@@ -123,9 +125,21 @@ Resultado esperado para as procedures de notificações:
 
 `usp_Notifications_Insert`, `usp_Notifications_GetForUser`, `usp_Notifications_GetUnreadCount`, `usp_Notifications_MarkRead`, `usp_Notifications_MarkAllRead`, `usp_Notifications_MarkSeen`, `usp_Notifications_PurgeOld`, `usp_Notifications_ExistsRecent`.
 
+### O que muda para quem usa a aplicação
+
+O sino e a página `/notifications` mostram, além do texto do aviso, uma **sugestão de ação** (`SuggestedAction`): por exemplo, abrir a ficha do inquilino, registar um pagamento ou gerar a carta correspondente. Os alertas operacionais agora incluem:
+
+- **rendas em atraso** com valor em falta;
+- **falta de carta de aviso** para rendas em atraso;
+- **renda a vencer** nos próximos dias;
+- **carta de revogação sem resposta** após o prazo configurado;
+- **contrato marcado como emitido sem documento gerado**.
+
+Estas regras são calculadas no servidor; não é preciso configurar nada para as ver.
+
 ### Atualização de uma BD já criada (coluna `SuggestedAction`)
 
-As notificações passam a guardar também uma **sugestão de ação** para o utilizador. Em bases criadas antes desta alteração, executar apenas:
+As notificações passam a guardar também uma **sugestão de ação** para o utilizador. Bases criadas com o script completo já a têm; em bases criadas antes desta alteração, executar apenas:
 
 ```sql
 IF COL_LENGTH(N'dbo.Notifications', N'SuggestedAction') IS NULL

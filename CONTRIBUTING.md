@@ -20,7 +20,7 @@ When contributing code, please follow the existing code style and submit a pull 
 
 Before running the solution, read the **Summary** and the **Guides** table in [README.md](README.md) (or [README-EN.md](README-EN.md)):
 
-1. [DATABASE.md](docs/DATABASE.md) — install SQL Server Developer/Community and create `PropertyManagerDB` with the scripts in the documented order.
+1. [DATABASE.md](docs/DATABASE.md) — install SQL Server Developer/Community and create a fresh local `PropertyManagerDB` with the scripts in the documented order. These scripts are for Development/test only: never use them on the Production database. If you already have an older local database, apply only the `SuggestedAction` upgrade described there.
 2. [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) — Development Kestrel ports (API 5001 / UI 7181, distinct from IIS Production 4300/4310), per-project user-secrets, startup and troubleshooting.
 3. [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md) — which Syncfusion key/version/edition to choose. The repo currently uses **35.2.12**; a key must match the version of the NuGet packages.
 4. [PRODUCTION.md](docs/PRODUCTION.md) — GitHub Secrets and IIS deployment (maintainers only).

@@ -336,6 +336,8 @@ Página: **Documentos** (`/documentos`). Permite registrar y cargar documentos g
 La **campana** de la barra superior abre el centro de notificaciones. También puede abrir la página completa en `/notifications`.
 
 - Las notificaciones incluyen avisos operativos (citas, rentas, cartas, contratos).
+- Cada aviso puede incluir una **acción sugerida** — por ejemplo, abrir la ficha del inquilino, registrar un pago o generar la carta correspondiente.
+- Los avisos incluyen: rentas atrasadas, falta de carta de aviso, rentas próximas a vencer, carta de revocación sin respuesta y contrato marcado como emitido sin documento generado.
 - Los mensajes sin leer aparecen destacados.
 - Al abrir una notificación, se marca como leída.
 

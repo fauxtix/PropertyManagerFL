@@ -123,7 +123,9 @@ curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Templates/Ge
 curl.exe -k -I https://localhost:7181/
 ```
 
-Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/Account/Login`. O endpoint de modelos deve devolver nomes de ficheiros `.dotx`; uma lista vazia significa que a API não encontrou `Reports\Docs` no content root. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`.
+Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/Account/Login`. O endpoint de modelos deve devolver nomes de ficheiros `.dotx`; uma lista vazia significa que a API não encontrou `Reports\Docs` no content root. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`: cada aviso pode incluir uma sugestão de ação e os alertas cobrem rendas em atraso, cartas em falta, rendas a vencer, cartas sem resposta e contratos sem documento.
+
+Se a base de dados foi criada antes desta alteração, aplicar primeiro o pequeno `ALTER` da coluna `SuggestedAction` indicado em [DATABASE.md](DATABASE.md).
 
 ## 5. Idiomas, temas e documentos
 

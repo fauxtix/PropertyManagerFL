@@ -336,6 +336,8 @@ Page: **Documents** (`/documentos`). Lets you register and upload general applic
 The **bell** in the top bar opens the notification centre. You can also open the full page at `/notifications`.
 
 - Notifications include operational alerts (appointments, rents, letters, contracts).
+- Each alert can include a **suggested action** — for example, open the tenant record, record a payment or generate the corresponding letter.
+- Alerts include: overdue rent, a missing overdue-rent letter, rent due soon, a revocation letter with no reply, and a lease marked as issued without a generated document.
 - Unread messages are highlighted.
 - Opening a notification marks it as read.
 

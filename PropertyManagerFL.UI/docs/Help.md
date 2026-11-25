@@ -336,6 +336,8 @@ Página: **Documentos** (`/documentos`). Permite registar e carregar documentos 
 O **sino** na barra superior abre o centro de notificações. Também pode abrir a página completa em `/notifications`.
 
 - As notificações incluem avisos operacionais (consultas, rendas, cartas, contratos).
+- Cada aviso pode trazer uma **sugestão de ação** — por exemplo, abrir a ficha do inquilino, registar um pagamento ou gerar a carta correspondente.
+- Os alertas incluem: rendas em atraso, falta de carta de aviso, rendas a vencer em breve, carta de revogação sem resposta e contrato emitido sem documento gerado.
 - As mensagens por ler aparecem assinaladas.
 - Ao abrir uma notificação, esta é marcada como lida.
 

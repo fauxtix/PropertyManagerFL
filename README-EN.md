@@ -6,14 +6,14 @@ Application designed to assist landlords in managing their properties and rental
 
 ## Summary (start here)
 
-- **What it is:** a localhost, single-user application with an **ASP.NET Core API** and a **Blazor Server UI** that must run **at the same time**. It manages properties, tenants, leases, rents, expenses, letters, messages and a **notification centre** (bell + inbox, SignalR with a 60-second polling fallback).
+- **What it is:** a localhost, single-user application with an **ASP.NET Core API** and a **Blazor Server UI** that must run **at the same time**. It manages properties, tenants, leases, rents, expenses, letters, messages and a **notification centre** (bell + inbox, SignalR with a 60-second polling fallback). Each alert can include a **suggested action** (open the tenant record, record a payment, generate a letter, etc.).
 - **Stack:** C#, .NET 10 LTS, Blazor, **Syncfusion 35.2.12**, Dapper, AutoMapper, FluentValidation, Serilog, SQL Server.
 - **Prerequisites:** .NET 10 SDK (`global.json`), **SQL Server Developer or Community** (both free) with the database created, SSMS/`sqlcmd`, a development HTTPS certificate, SMTP credentials and **your own Syncfusion licences**.
 - **Database:** manual setup — EF migrations are disabled. The scripts (`PropertyManagerFL.Infrastructure/Database/*.sql` or `SqlData_Script/PropertyManagerDB.sql`) are **not idempotent** and must run **on an empty database**, in the order described in [DATABASE.md](docs/DATABASE.md). The full script is generated from the cleaned reference database and contains only configuration/reference data; **test data is the user's responsibility**.
 - **Keys:** the UI and the API each register their own Syncfusion licence. In Development use `dotnet user-secrets set --project ...`; in Production use GitHub Secrets. **Choose a key for version 35.2.x with all editions** — see [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md).
 - **Run locally (Development, Kestrel):** API at `https://localhost:5001`, UI at `https://localhost:7181` — the original project ports, different from IIS (Production: 4300/4310), so both can run at the same time. Full commands in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
 - **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone needs their own database, credentials and licences. Never reuse the maintainer's keys or commit any key.
-- **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — see [PRODUCTION.md](docs/PRODUCTION.md).
+- **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — **except the connection string**, which comes from `appsettings.Production.json` and points to `PropertyManagerDB_Production` — see [PRODUCTION.md](docs/PRODUCTION.md).
 - **Tests:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
 
 ### Guides
@@ -35,7 +35,7 @@ Application designed to assist landlords in managing their properties and rental
 
 - **Rent Payment Tracking**: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
 
-- **Notification centre**: a bell and an inbox with operational alerts (rents, leases, documents). Updates arrive via SignalR, with a 60-second polling fallback.
+- **Notification centre**: a bell and an inbox with operational alerts and a **suggested action** on each alert. Alerts include overdue rent, a missing overdue-rent letter, rent due soon, a revocation letter with no reply, and a lease marked as issued without a generated document. Updates arrive via SignalR, with a 60-second polling fallback.
 
 - **Keeping track of rental property expenses**: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
   Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
@@ -76,7 +76,7 @@ More details in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
 
 ## Database
 
-The structure (tables, stored procedures, functions, views) is in the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) and in the full script `SqlData_Script/PropertyManagerDB.sql`, generated from the already cleaned reference database. The notification centre and its procedures are part of those scripts — there is no separate script. The full script contains only reference/configuration data (`ApiKey` and backup paths are placeholders); it has **no properties, tenants or other sample data** — each user creates their own with fictional names. EF migrations are disabled: database creation is manual and the scripts must only be run on an empty database. The execution order is in [DATABASE.md](docs/DATABASE.md).
+The structure (tables, stored procedures, functions, views) is in the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) and in the full script `SqlData_Script/PropertyManagerDB.sql`, generated from the already cleaned reference database. The notification centre and its procedures are part of those scripts — there is no separate script; the suggested-action column is already included. The full script contains only reference/configuration data (`ApiKey` and backup paths are placeholders); it has **no properties, tenants or other sample data** — each user creates their own with fictional names. EF migrations are disabled: database creation is manual and the scripts must only be run on an empty database. **Never use these scripts to create or update the Production database** — it is managed by the infrastructure owner. The execution order and the upgrade path for older databases are in [DATABASE.md](docs/DATABASE.md).
 
 ## Tests and deployment
 

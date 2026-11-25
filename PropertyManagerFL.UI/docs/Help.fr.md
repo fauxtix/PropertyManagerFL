@@ -336,6 +336,8 @@ Page : **Documents** (`/documentos`). Permet d’enregistrer et de téléverser 
 La **cloche** dans la barre supérieure ouvre le centre de notifications. Vous pouvez aussi ouvrir la page complète sur `/notifications`.
 
 - Les notifications comprennent les alertes opérationnelles (rendez-vous, loyers, lettres, contrats).
+- Chaque alerte peut inclure une **action suggérée** — par exemple ouvrir la fiche du locataire, enregistrer un paiement ou générer la lettre correspondante.
+- Les alertes comprennent : loyers en retard, lettre de rappel manquante, loyer à échoir prochainement, lettre de révocation sans réponse et bail marqué comme émis sans document généré.
 - Les messages non lus sont mis en évidence.
 - L’ouverture d’une notification la marque comme lue.
 
