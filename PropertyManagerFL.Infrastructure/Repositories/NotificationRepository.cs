@@ -32,6 +32,7 @@ public class NotificationRepository : INotificationRepository
             parameters.Add("@Body", notification.Body);
             parameters.Add("@Link", notification.Link);
             parameters.Add("@Severity", notification.Severity);
+            parameters.Add("@SuggestedAction", notification.SuggestedAction);
             parameters.Add("@ResourceType", notification.ResourceType);
             parameters.Add("@ResourceId", notification.ResourceId);
             parameters.Add("@CreatedAt", notification.CreatedAt);

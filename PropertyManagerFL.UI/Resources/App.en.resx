@@ -4129,6 +4129,12 @@
   <data name="NotificationsTitle" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="NotificationsSuggestedAction" xml:space="preserve">
+    <value>Suggested action:</value>
+  </data>
+  <data name="LeaseEndingAutoRenewal" xml:space="preserve">
+    <value>Tenant {0}'s lease ({1}) is approaching its end - renewal expected</value>
+  </data>
   <data name="NotificationsMarkAllRead" xml:space="preserve">
     <value>Mark all as read</value>
   </data>

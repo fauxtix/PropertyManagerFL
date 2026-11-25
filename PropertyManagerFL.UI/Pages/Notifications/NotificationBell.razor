@@ -65,6 +65,13 @@
                                                 {
                                                     <span class="notification-item-text">@item.Body</span>
                                                 }
+                                                @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
+                                                {
+                                                    <span class="notification-item-suggestion">
+                                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                        @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                    </span>
+                                                }
                                                 <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
                                             </div>
                                             @if (!item.IsRead)
@@ -99,6 +106,13 @@
                                                 @if (!string.IsNullOrWhiteSpace(item.Body))
                                                 {
                                                     <span class="notification-item-text">@item.Body</span>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
+                                                {
+                                                    <span class="notification-item-suggestion">
+                                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                        @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                    </span>
                                                 }
                                                 <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
                                             </div>

@@ -77,6 +77,18 @@
 
 .notification-row-body small { opacity: .65; }
 
+.notification-row-suggestion {
+    font-size: .82rem;
+    color: var(--app-info-text, #1976d2);
+    background: rgba(25, 118, 210, .08);
+    border-radius: 4px;
+    padding: .15rem .4rem;
+}
+
+.notification-row-suggestion i {
+    margin-right: .3rem;
+}
+
 .notification-unread-dot {
     flex: 0 0 .5rem;
     inline-size: .5rem;

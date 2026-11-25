@@ -366,10 +366,12 @@ try {
     Write-Host "Verified $($deployedTemplates.Count) letter templates in $apiPath\Reports\Docs"
 
     # Production does not load user-secrets: inject every value the apps read at startup.
+    # PMConnection is intentionally NOT injected: the checked-in Production appsettings
+    # already point to PropertyManagerDB_Production. The PM_PMCONNECTION secret is used
+    # above only by the deploy script itself to locate backup folders for ACL grants.
     $commonEnv = @{
-        ASPNETCORE_ENVIRONMENT          = 'Production'
-        ApiKey                          = $env:PM_API_KEY
-        ConnectionStrings__PMConnection = $env:PM_PMCONNECTION
+        ASPNETCORE_ENVIRONMENT = 'Production'
+        ApiKey                 = $env:PM_API_KEY
     }
     # The UI and the API have different Syncfusion keys in Development; keep them separate.
     $apiEnv = $commonEnv + @{

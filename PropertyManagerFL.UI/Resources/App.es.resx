@@ -4121,6 +4121,12 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="NotificationsTitle" xml:space="preserve">
     <value>Notificaciones</value>
   </data>
+  <data name="NotificationsSuggestedAction" xml:space="preserve">
+    <value>Acción sugerida:</value>
+  </data>
+  <data name="LeaseEndingAutoRenewal" xml:space="preserve">
+    <value>El contrato del inquilino {0} ({1}) está a punto de terminar - renovación prevista</value>
+  </data>
   <data name="NotificationsMarkAllRead" xml:space="preserve">
     <value>Marcar todas como leÃ­das</value>
   </data>

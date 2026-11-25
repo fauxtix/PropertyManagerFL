@@ -2,7 +2,9 @@ using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
+using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.Notifications;
+using PropertyManagerFL.Application.ViewModels.Recebimentos;
 using PropertyManagerFL.Core.Entities;
 
 namespace PropertyManagerFL.Infrastructure.Services;
@@ -57,6 +59,7 @@ public class NotificationService : INotificationService
             Body = notification.Body ?? string.Empty,
             Link = notification.Link,
             Severity = string.IsNullOrWhiteSpace(notification.Severity) ? "Info" : notification.Severity,
+            SuggestedAction = notification.SuggestedAction,
             ResourceType = notification.ResourceType,
             ResourceId = notification.ResourceId,
             CreatedAt = DateTime.UtcNow
@@ -74,6 +77,7 @@ public class NotificationService : INotificationService
             Body = n.Body,
             Link = n.Link,
             Severity = n.Severity,
+            SuggestedAction = n.SuggestedAction,
             ResourceType = n.ResourceType,
             ResourceId = n.ResourceId,
             CreatedAt = n.CreatedAt,
@@ -105,6 +109,14 @@ public class NotificationService : INotificationService
             var settings = await _appSettings.GetSettingsAsync();
             var leases = (await _leases.GetAll() ?? Enumerable.Empty<ArrendamentoVM>()).ToList();
 
+            // Shared snapshots. Each source is optional: a failure must not suppress unrelated rules.
+            var payments = new List<RecebimentoVM>();
+            var tenantDocuments = new List<DocumentoInquilinoVM>();
+            try { payments = (await _payments.GetAll() ?? Enumerable.Empty<RecebimentoVM>()).ToList(); }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'payments snapshot' failed"); }
+            try { tenantDocuments = (await _tenants.GetDocumentos() ?? Enumerable.Empty<DocumentoInquilinoVM>()).ToList(); }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'tenant documents snapshot' failed"); }
+
             // Appointments today
             try
             {
@@ -134,7 +146,7 @@ public class NotificationService : INotificationService
                 // Rent update letters - manual mode
                 try
                 {
-                    var docs = await _tenants.GetDocumentos();
+                    var docs = tenantDocuments;
                     if (docs is not null)
                     {
                         // BUG FIX: only documents of type 16 (rent-update letter) from previous years
@@ -184,8 +196,7 @@ public class NotificationService : INotificationService
                 {
                     try
                     {
-                        var payments = await _payments.GetAll();
-                        if (leases.Any() && payments is not null && payments.Any() &&
+                        if (leases.Any() && payments.Any() &&
                             !await _leases.CartaAtualizacaoRendasEmitida(DateTime.Today.Year))
                         {
                             alerts.Add(new NotificationAlertVM
@@ -203,27 +214,171 @@ public class NotificationService : INotificationService
                 }
             }
 
-            // Leases ending within 4 months (only when renewals are manual).
-            // Uses the same month-difference calculation as the original Arrendamentos page
-            // so both surfaces produce exactly the same set of warnings.
-            if (settings is not null && !settings.RenovacaoAutomatica)
+            // Leases ending within 4 months. Automatic renewal must NOT silence the alert:
+            // the term still has to be reviewed/updated (1, 3 or more years).
+            // Uses the same month-difference calculation as the Arrendamentos page.
+            try
             {
                 foreach (var lease in leases.Where(l => MonthsUntil(l.Data_Fim) <= 4))
                 {
+                    var autoRenew = settings?.RenovacaoAutomatica == true && lease.RenovacaoAutomatica;
+                    var subject = $"{lease.NomeInquilino} ({lease.Fracao})";
                     alerts.Add(new NotificationAlertVM
                     {
                         Kind = "LeaseEnding",
                         Severity = "Warning",
-                        Title = $"Contrato do inquilino {lease.NomeInquilino} ({lease.Fracao}) está prestes a terminar",
-                        Body = "Renovar data-fim, ou enviar carta de revogação",
+                        Title = autoRenew
+                            ? $"Contrato do inquilino {subject} vai chegar ao fim — renovação prevista"
+                            : $"Contrato do inquilino {subject} está prestes a terminar",
+                        Body = autoRenew
+                            ? "Renovação automática ativa; confirme o termo do contrato."
+                            : "Renovar data-fim, ou enviar carta de revogação",
+                        SuggestedAction = autoRenew
+                            ? "Atualize a data-termo do contrato (1, 3 ou mais anos) ou confirme a renovação."
+                            : "Renovar data-fim, ou enviar carta de revogação.",
                         Link = "/arrendamentos",
                         ResourceType = "Lease",
+                        ResourceId = lease.Id,
+                        PrimaryText = lease.NomeInquilino,
+                        SecondaryText = lease.Fracao,
+                        AutoRenewal = autoRenew
+                    });
+                }
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'lease ending' failed"); }
+
+            // Rents due in the next 10 days. Mirrors CheckNewRents but only looks forward,
+            // otherwise every historical lease would produce a permanent alert.
+            try
+            {
+                var dueUntil = DateTime.Today.AddDays(10);
+                foreach (var lease in leases.Where(l => l.Data_Pagamento.Date >= DateTime.Today &&
+                                                        l.Data_Pagamento.Date <= dueUntil))
+                {
+                    alerts.Add(new NotificationAlertVM
+                    {
+                        Kind = "RentDueSoon",
+                        Severity = "Warning",
+                        Title = $"Renda a vencer — {lease.NomeInquilino} ({lease.Fracao})",
+                        Body = $"Data de pagamento: {lease.Data_Pagamento:dd/MM/yyyy}.",
+                        SuggestedAction = "Confirmar a data de pagamento e preparar o movimento de renda.",
+                        Link = "/recebimentos/manutencao",
+                        ResourceType = "LeasePaymentDue",
                         ResourceId = lease.Id,
                         PrimaryText = lease.NomeInquilino,
                         SecondaryText = lease.Fracao
                     });
                 }
             }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'rent due soon' failed"); }
+
+            // Overdue rents, grouped by tenant, matching the dashboard/tenant checks
+            // (Estado == 3 or ValorEmFalta > 0).
+            try
+            {
+                foreach (var group in payments.Where(p => p.Renda && (p.Estado == 3 || p.ValorEmFalta > 0))
+                                              .GroupBy(p => p.ID_Inquilino))
+                {
+                    var name = group.Select(p => p.Inquilino)
+                                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n)) ?? $"#{group.Key}";
+                    var total = group.Sum(p => p.ValorEmFalta);
+                    alerts.Add(new NotificationAlertVM
+                    {
+                        Kind = "PaymentOverdue",
+                        Severity = "Error",
+                        Title = $"Rendas em atraso — {name}",
+                        Body = $"{group.Count()} pagamento(s) em falta, num total de {total:C}.",
+                        SuggestedAction = "Verificar os movimentos em atraso e enviar carta de aviso ao inquilino.",
+                        Link = "/recebimentos/manutencao",
+                        ResourceType = "TenantArrears",
+                        ResourceId = group.Key,
+                        PrimaryText = name
+                    });
+                }
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'payment overdue' failed"); }
+
+            // Missing late-rent warning letters: same rule used by IssueLateRentLetter
+            // (more than 2 due months and fewer than dueMonths - 1 letters of type 18).
+            try
+            {
+                foreach (var group in payments.Where(p => p.Renda && p.ValorEmFalta > 0)
+                                              .GroupBy(p => p.ID_Inquilino))
+                {
+                    var dueMonths = group.Count();
+                    if (dueMonths <= 2) continue;
+
+                    var letters = tenantDocuments.Count(d => d.TenantId == group.Key && d.DocumentType == 18);
+                    if (letters >= dueMonths - 1) continue;
+
+                    var name = group.Select(p => p.Inquilino)
+                                    .FirstOrDefault(n => !string.IsNullOrWhiteSpace(n)) ?? $"#{group.Key}";
+                    alerts.Add(new NotificationAlertVM
+                    {
+                        Kind = "LateLetterMissing",
+                        Severity = "Error",
+                        Title = $"Faltam cartas de aviso de rendas em atraso — {name}",
+                        Body = $"{dueMonths} meses em dívida e apenas {letters} carta(s) registada(s).",
+                        SuggestedAction = "Emitir as cartas de aviso em falta antes de avançar com a revogação do contrato.",
+                        Link = "/tenants",
+                        ResourceType = "TenantLateLetters",
+                        ResourceId = group.Key,
+                        PrimaryText = name
+                    });
+                }
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'late letter missing' failed"); }
+
+            // Revocation letters without an answer inside the configured deadline
+            // (the UI currently hardcodes 10 days when the setting is not usable).
+            try
+            {
+                var responseDays = settings?.PrazoRespostaCartaRevogacao > 0
+                    ? settings.PrazoRespostaCartaRevogacao
+                    : (byte)10;
+                foreach (var lease in leases.Where(l => l.EnvioCartaRevogacao &&
+                                                        !l.RespostaCartaRevogacao &&
+                                                        l.DataEnvioCartaRevogacao != default &&
+                                                        l.DataEnvioCartaRevogacao.AddDays(responseDays).Date < DateTime.Today))
+                {
+                    alerts.Add(new NotificationAlertVM
+                    {
+                        Kind = "LetterResponseOverdue",
+                        Severity = "Error",
+                        Title = $"Carta de revogação sem resposta — {lease.NomeInquilino} ({lease.Fracao})",
+                        Body = $"Enviada em {lease.DataEnvioCartaRevogacao:dd/MM/yyyy}; prazo de {responseDays} dias ultrapassado.",
+                        SuggestedAction = "Contactar o inquilino, registar a resposta ou avançar com a oposição à renovação.",
+                        Link = "/arrendamentos",
+                        ResourceType = "LeaseRevocationLetter",
+                        ResourceId = lease.Id,
+                        PrimaryText = lease.NomeInquilino,
+                        SecondaryText = lease.Fracao
+                    });
+                }
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'letter response overdue' failed"); }
+
+            // Contract flagged as issued but without a generated document reference.
+            try
+            {
+                foreach (var lease in leases.Where(l => l.ContratoEmitido && string.IsNullOrWhiteSpace(l.DocumentoGerado)))
+                {
+                    alerts.Add(new NotificationAlertVM
+                    {
+                        Kind = "ContractDocumentMissing",
+                        Severity = "Warning",
+                        Title = $"Contrato emitido sem documento — {lease.NomeInquilino} ({lease.Fracao})",
+                        Body = "O contrato está assinalado como emitido mas não tem ficheiro gerado registado.",
+                        SuggestedAction = "Gerar novamente o contrato ou corrigir a indicação de emissão.",
+                        Link = "/arrendamentos",
+                        ResourceType = "LeaseContract",
+                        ResourceId = lease.Id,
+                        PrimaryText = lease.NomeInquilino,
+                        SecondaryText = lease.Fracao
+                    });
+                }
+            }
+            catch (Exception ex) { _logger.LogWarning(ex, "Alert rule 'contract document missing' failed"); }
         }
         catch (Exception ex)
         {
@@ -272,6 +427,7 @@ public class NotificationService : INotificationService
                         Body = alert.Body,
                         Link = alert.Link,
                         Severity = alert.Severity,
+                        SuggestedAction = alert.SuggestedAction,
                         ResourceType = alert.ResourceType,
                         ResourceId = alert.ResourceId
                     });

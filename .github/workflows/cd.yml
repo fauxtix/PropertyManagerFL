@@ -21,6 +21,8 @@ jobs:
       PM_API_KEY: ${{ secrets.PM_API_KEY }}
       PM_SYNCFUSION_LICENSE: ${{ secrets.PM_SYNCFUSION_LICENSE }}
       PM_SYNCFUSION_LICENSE_API: ${{ secrets.PM_SYNCFUSION_LICENSE_API }}
+      # Used by deploy-iis.ps1 only to grant ACLs on configured backup folders;
+      # it is not written into web.config as ConnectionStrings__PMConnection.
       PM_PMCONNECTION: ${{ secrets.PM_PMCONNECTION }}
       PM_UI_CERT_THUMBPRINT: ${{ secrets.PM_UI_CERT_THUMBPRINT }}
       PM_JWT_SECRET: ${{ secrets.PM_JWT_SECRET }}

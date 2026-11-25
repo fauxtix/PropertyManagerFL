@@ -4137,6 +4137,12 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="NotificationsTitle" xml:space="preserve">
     <value>Notifications</value>
   </data>
+  <data name="NotificationsSuggestedAction" xml:space="preserve">
+    <value>Action suggérée :</value>
+  </data>
+  <data name="LeaseEndingAutoRenewal" xml:space="preserve">
+    <value>Le contrat du locataire {0} ({1}) arrive à échéance - renouvellement prévu</value>
+  </data>
   <data name="NotificationsMarkAllRead" xml:space="preserve">
     <value>Tout marquer comme lu</value>
   </data>

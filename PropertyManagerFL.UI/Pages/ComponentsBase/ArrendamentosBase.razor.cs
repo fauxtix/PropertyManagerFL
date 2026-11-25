@@ -166,11 +166,20 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             "RentLetters" => (
                 L["Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano."], 3),
             "LeaseEnding" => (
-                L["Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação",
-                    alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty], 2),
-            _ => (alert.Title, 1)
+                L[alert.AutoRenewal
+                        ? "LeaseEndingAutoRenewal"
+                        : "Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação",
+                    alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty]
+                + SuggestionSuffix(alert), 2),
+            _ => (alert.Title + SuggestionSuffix(alert), 1)
         };
     }
+
+    /// <summary>Appends the recommended next step produced by the shared rules engine.</summary>
+    private string SuggestionSuffix(NotificationAlertVM alert)
+        => string.IsNullOrWhiteSpace(alert.SuggestedAction)
+            ? string.Empty
+            : " " + L["NotificationsSuggestedAction"] + " " + alert.SuggestedAction;
 
     /// <summary>
     /// Get all leases

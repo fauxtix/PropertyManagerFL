@@ -15,6 +15,8 @@ public class Notification
     public string Body { get; set; } = string.Empty;
     public string? Link { get; set; }
     public string Severity { get; set; } = "Info";
+    /// <summary>Recommended next step shown in the bell/inbox (free text produced by the rules engine).</summary>
+    public string? SuggestedAction { get; set; }
     public string? ResourceType { get; set; }
     public int? ResourceId { get; set; }
     public DateTime CreatedAt { get; set; }

@@ -43,6 +43,13 @@
                                         <div class="notification-row-body">
                                             <strong>@item.Title</strong>
                                             <span>@item.Body</span>
+                                            @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
+                                            {
+                                                <span class="notification-row-suggestion">
+                                                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                    @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                </span>
+                                            }
                                             <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
                                         </div>
                                         @if (!item.IsRead)
@@ -78,6 +85,13 @@
                                         <div class="notification-row-body">
                                             <strong>@item.Title</strong>
                                             <span>@item.Body</span>
+                                            @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
+                                            {
+                                                <span class="notification-row-suggestion">
+                                                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
+                                                    @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                </span>
+                                            }
                                             <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
                                         </div>
                                         <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>

@@ -40,7 +40,7 @@ Os segredos não são visíveis após serem criados e **não são copiados por u
 | `PM_API_KEY` | API e UI — mesmo valor; é o cabeçalho `ApiKey` verificado pelo middleware |
 | `PM_SYNCFUSION_LICENSE` | Licença Syncfusion da **UI** |
 | `PM_SYNCFUSION_LICENSE_API` | Licença Syncfusion da **API** — **usar o mesmo valor** de `PM_SYNCFUSION_LICENSE` (chave válida 35.2.x que cubra UI + Document SDK) |
-| `PM_PMCONNECTION` | Connection string SQL (`ConnectionStrings__PMConnection`) |
+| `PM_PMCONNECTION` | Usado **apenas pelo script de deploy** para ler os caminhos de backup em `ApplicationSettings` e conceder ACLs. **Não** é injetado nas aplicações: `appsettings.Production.json` já aponta para `PropertyManagerDB_Production`. |
 | `PM_JWT_SECRET`, `PM_JWT_ISSUER`, `PM_JWT_AUDIENCE`, `PM_JWT_EXPIRA_EM_MINUTOS` | API — o `JWT:Secret` é validado no arranque (32+ caracteres) |
 | `PM_EMAIL_USERNAME`, `PM_EMAIL_SMTPSERVER`, `PM_EMAIL_PORT`, `PM_EMAIL_PASSWORD`, `PM_EMAIL_FROM` | UI — a secção `EmailConfiguration` é obrigatória no arranque |
 | `PM_UI_CERT_THUMBPRINT` | Opcional: thumbprint de certificado existente em `LocalMachine\My` para a binding HTTPS 4310 |
@@ -58,7 +58,8 @@ Em Production os user-secrets não são carregados. O `deploy-iis.ps1` escreve c
 - O elemento correto é `environmentVariable` (não `<add>`); usar `<add>` provoca o erro ANCM *"Unable to get required configuration section 'system.webServer/aspNetCore'"*.
 - Se faltar algum valor, o deploy falha com `Missing deployment value for <chave>` — não fica uma aplicação meio configurada.
 - A injeção é idempotente: repetir o deploy não cria entradas duplicadas.
-- Os valores em `appsettings*.json` são apenas placeholders.
+- `ConnectionStrings__PMConnection` **não** é injetado; as duas aplicações leem `appsettings.Production.json`, que aponta para `PropertyManagerDB_Production`. O segredo `PM_PMCONNECTION` serve apenas para o script de deploy descobrir as pastas de backup e aplicar as ACLs.
+- Os restantes valores em `appsettings*.json` são apenas placeholders.
 
 ### Rodar uma chave
 

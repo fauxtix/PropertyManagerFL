@@ -3122,6 +3122,12 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="NotificationsTitle" xml:space="preserve">
     <value>NotificaÃ§Ãµes</value>
   </data>
+  <data name="NotificationsSuggestedAction" xml:space="preserve">
+    <value>Sugestão:</value>
+  </data>
+  <data name="LeaseEndingAutoRenewal" xml:space="preserve">
+    <value>Contrato do inquilino {0} ({1}) vai chegar ao fim — renovação prevista</value>
+  </data>
   <data name="NotificationsMarkAllRead" xml:space="preserve">
     <value>Marcar todas como lidas</value>
   </data>

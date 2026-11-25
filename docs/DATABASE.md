@@ -1,6 +1,6 @@
 # Base de dados — instalação (SQL Server)
 
-> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. Create an empty `PropertyManagerDB`, create the `[Identity]` schema, then run the scripts in the order below. The scripts are **not idempotent**: run them once, on an empty database. The full script `SqlData_Script/PropertyManagerDB.sql` is an alternative to the individual scripts, not an extra step. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
+> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. Create an empty `PropertyManagerDB`, create the `[Identity]` schema, then run the scripts in the order below. The scripts are **not idempotent**: run them once, on an empty database. The full script `SqlData_Script/PropertyManagerDB.sql` is an alternative to the individual scripts, not an extra step: it is generated from the cleaned reference database, creates the `[Identity]` schema itself and contains **no operational/sample data**. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
 
 ## 1. Pré-requisitos
 
@@ -35,7 +35,13 @@ O projeto foi desenvolvido com uma instância `SQLEXPRESS`, mas serve qualquer i
 
 ### `SqlData_Script/PropertyManagerDB.sql`
 
-Script completo (tabelas + dados + funções + procedures + vistas) para criar a base de dados de uma só vez. **Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos.
+Script completo **gerado** da base de dados de referência já limpa (`PropertyManagerDB_Production`, 2026-11-25). Cria o schema `[Identity]`, as 78 tabelas, 2 funções, 6 vistas e 294 procedures, e carrega **apenas** os dados de referência/configuração: distritos, concelhos, população, tabelas de *lookup*, roles, a conta `admin@propertymanager.pt` e a linha de `ApplicationSettings`.
+
+**Não contém dados operacionais nem dados de exemplo** — imóveis, fracções, inquilinos, arrendamentos, recibos, documentos, mensagens, notificações e logs ficam vazios. Criar dados de teste é da responsabilidade de quem faz o clone, com nomes fictícios; nunca reutilizar dados reais de inquilinos.
+
+Valores sanitizados no `INSERT` de `ApplicationSettings`: `ApiKey` e os dois caminhos de backup são *placeholders* (`REPLACE_WITH_...`) e os campos de identidade SMTP ficam `NULL`. Substituir pelos valores reais antes de usar a aplicação. A conta `admin` é genérica: alterar a palavra-passe após a instalação.
+
+**Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. Não editar este ficheiro à mão — regenerá-lo a partir de uma BD limpa com SMO.
 
 ## 3. Instalação passo a passo (scripts individuais)
 
@@ -83,7 +89,7 @@ Script completo (tabelas + dados + funções + procedures + vistas) para criar a
 sqlcmd -S .\SQLEXPRESS -E -i SqlData_Script\PropertyManagerDB.sql -b
 ```
 
-O script começa com `USE [PropertyManagerDB]`, pelo que a base de dados já tem de existir. Crie também o schema `[Identity]` (secção 3, passo 2), porque o script completo usa tabelas `[Identity].*` mas não cria o schema.
+O script começa com `USE [PropertyManagerDB]`, pelo que a base de dados já tem de existir. O schema `[Identity]` é criado pelo próprio script — não executar o passo 2 da secção 3 neste caminho.
 
 ### Alternativa B — restaurar o backup
 
@@ -117,6 +123,18 @@ Resultado esperado para as procedures de notificações:
 
 `usp_Notifications_Insert`, `usp_Notifications_GetForUser`, `usp_Notifications_GetUnreadCount`, `usp_Notifications_MarkRead`, `usp_Notifications_MarkAllRead`, `usp_Notifications_MarkSeen`, `usp_Notifications_PurgeOld`, `usp_Notifications_ExistsRecent`.
 
+### Atualização de uma BD já criada (coluna `SuggestedAction`)
+
+As notificações passam a guardar também uma **sugestão de ação** para o utilizador. Em bases criadas antes desta alteração, executar apenas:
+
+```sql
+IF COL_LENGTH(N'dbo.Notifications', N'SuggestedAction') IS NULL
+    ALTER TABLE [dbo].[Notifications] ADD [SuggestedAction] nvarchar(1024) NULL;
+GO
+```
+
+Depois voltar a executar **apenas** `usp_Notifications_Insert` e `usp_Notifications_GetForUser` (estão em `StoredProcedures.sql` e no script completo). Não é necessário recriar a base de dados.
+
 Se usar IIS, confirmar também:
 
 ```sql
@@ -127,6 +145,7 @@ SELECT name FROM sys.database_principals WHERE name LIKE 'IIS APPPOOL\%';
 ## 6. Dados iniciais, idiomas e modelos de cartas
 
 - As tabelas de *lookup* vêm preenchidas em português. Para usar outra língua, adaptar os dados (`LookupTablesWithData.sql` ou diretamente na BD) — ver a secção de localização no README.
+- O script completo não inclui dados operacionais nem de demonstração. Cada utilizador deve criar os seus próprios dados de teste (imóveis, inquilinos, rendas, etc.) com nomes fictícios. Nunca copiar dados reais de inquilinos para um ambiente partilhado.
 - Os modelos de cartas (`.dotx`) estão em `PropertyManagerFL.Api/Reports/Docs`. Cada país pode ter regras/modelos diferentes; traduzir o texto com Winword, preservando os *placeholders* dos campos variáveis.
 - Não alterar ficheiros gerados (`*.Designer.cs`, `TableAdapters.Designer.cs`, `ScheduleData.cs`).
 
