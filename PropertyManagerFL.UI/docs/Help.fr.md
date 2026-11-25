@@ -247,6 +247,8 @@ Un bail relie un **locataire** à une **unité**, avec une date de début, une d
 3. Saisissez la **date de début**, la **durée** et le **montant du loyer**.
 4. Enregistrez.
 
+> ⚠️ Pour créer ou enregistrer un bail, un propriétaire, un bien, une unité, un locataire et un garant doivent être enregistrés. Tant qu’ils manquent, les boutons **Nouveau**, **Contrat existant** et **Enregistrer** sont désactivés et un avertissement est affiché.
+
 ### 7.3 Actions dans la grille
 
 La barre d’outils et le menu contextuel permettent de :
@@ -286,9 +288,13 @@ La grille permet de rechercher, trier et exporter au format Excel.
 
 > ⚠️ Le traitement par lot crée plusieurs enregistrements à la fois. Vérifiez toujours la liste avant de confirmer.
 
+> ℹ️ Si aucun bail ni aucune unité n’est enregistré, le bouton **Nouveau** est désactivé et le motif est affiché. La page ne reste plus bloquée sur « Préparation des données ».
+
 ### 8.3 Tableau de bord des paiements
 
 Le tableau de bord (`/payments/dashboard`) résume les paiements par période et permet de suivre ce qui a été payé et ce qui reste dû.
+
+Si aucun paiement n’est enregistré, le tableau de bord affiche **Aucune donnée à afficher** au lieu de cartes à zéro et de grilles vides.
 
 ---
 
@@ -384,6 +390,8 @@ Le menu **Calculateurs** comprend :
 - **IMI** (`/CalculadoraIMI`) — calcul de l’impôt municipal sur les immeubles.
 - **VPT** (`/CalculadoraVPT`) — calcul de la valeur patrimoniale fiscale.
 - **Gestion des coefficients IMI** (`/ManutencaoCoeficientesIMI`).
+
+> ℹ️ Les calculateurs IMI et VPT nécessitent des biens et des unités enregistrés. Sans données, les listes déroulantes sont désactivées, un avertissement est affiché et le bouton **Calculer** est désactivé. Sélectionnez un bien et une unité, puis confirmez la valeur patrimoniale et les coefficients pour activer le calcul.
 
 ### 13.2 Cartes
 

@@ -62,6 +62,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     protected bool ShowToolbarViewContract { get; set; }
 
     protected bool IsDirty = false;
+    protected bool CanAddLease { get; set; } = false;
     protected List<string> ValidationMessages = new();
 
     protected string? alertTitle = "";
@@ -118,6 +119,8 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         DeleteLeaseVisibility = false;
         LeaseId = 0;
         IsDirty = false;
+
+        CanAddLease = await arrendamentosService!.RequirementsMet();
 
         // Arrendamentos
         leases = await GetAllLeases();
@@ -231,17 +234,23 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     /// <param name="args"></param>
     protected void onAddLease(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
+        if (!CanAddLease) return;
+
         PrepareAndCreateNewLease();
     }
 
     protected void onAddExistentLease(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
     {
+        if (!CanAddLease) return;
+
         PrepareAndCreateExistingLease();
     }
 
     // Grava dados do arrendamento
     protected async Task SaveLeaseData()
     {
+        if (!CanAddLease) return;
+
         IsDirty = false;
         ErrorVisibility = false;
 

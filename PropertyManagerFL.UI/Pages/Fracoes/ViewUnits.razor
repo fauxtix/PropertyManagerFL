@@ -14,6 +14,12 @@ else
 {
     <section class="property-grid grid">
         <div class="container">
+            @if (!Units.Any())
+            {
+                <div class="mb-2">
+                    <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+                </div>
+            }
             <div class="row">
                 @foreach (var Unit in Units)
                 {
@@ -90,7 +96,7 @@ else
     {
 
         HideUnitDiv = true;
-        Units = await UnitsService!.GetAll();
+        Units = await UnitsService!.GetAll() ?? Enumerable.Empty<FracaoVM>();
     }
 
     private async Task ShowUnit(int Id)

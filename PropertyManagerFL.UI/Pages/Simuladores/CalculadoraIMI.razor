@@ -25,7 +25,7 @@ else
                         <div class="col-md-6 mt-2">
                             <SfDropDownList TValue="int"
                                             TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            Value="@idxProperty" ShowClearButton="true" Enabled="true"
+                                            Value="@idxProperty" ShowClearButton="true" Enabled="@HasProperties"
                                             FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                             Placeholder="@L["TituloImovel"]" DataSource="@PropertiesLookup" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
@@ -37,7 +37,7 @@ else
                         <div class="col-md-6 mt-2">
                             <SfDropDownList TValue="int" @ref="ddlUnits"
                                             TItem="LookupTableVM" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                            ShowClearButton="true" Enabled="@ShowUnitsCombo"
+                                            ShowClearButton="true" Enabled="@(ShowUnitsCombo && UnitsLookup!.Any())"
                                             FilterBarPlaceholder="@L["msgSelect"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                             Placeholder="@L["TituloFracao"]" DataSource="@UnitsLookup" FloatLabelType="FloatLabelType.Always">
                                 <DropDownListTemplates TItem="LookupTableVM">
@@ -47,6 +47,14 @@ else
                             </SfDropDownList>
                         </div>
                     </div>
+                    @if (!string.IsNullOrEmpty(CalculateRequirementMessage))
+                    {
+                        <div class="row mx-1 mt-2">
+                            <div class="col-12">
+                                <SfMessage Severity="MessageSeverity.Warning">@CalculateRequirementMessage</SfMessage>
+                            </div>
+                        </div>
+                    }
                     <hr />
                     <div class="row mx-1">
                         <div class="col-lg-6 col-sm-12 mt-2">

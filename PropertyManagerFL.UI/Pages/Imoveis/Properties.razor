@@ -17,6 +17,12 @@
 }
 else
 {
+    @if (!properties.Any())
+    {
+        <div class="mb-2">
+            <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+        </div>
+    }
     <div class="row mt-3">
         @foreach (var item in properties)
         {

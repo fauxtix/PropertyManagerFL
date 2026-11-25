@@ -67,11 +67,23 @@ else
 {
     <div id="expensescontainer" class="mt-0 container-fluid w-100">
         <div class="group-box">
+            @if (!CanAddLease)
+            {
+                <div class="mb-2">
+                    <SfMessage Severity="MessageSeverity.Warning">@L["ArrendamentoPrerequisitosEmFalta"]</SfMessage>
+                </div>
+            }
+            else if (!leases.Any())
+            {
+                <div class="mb-2">
+                    <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+                </div>
+            }
             <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
-                      @onclick="@onAddLease" IsPrimary="true">
+                      Disabled="@(!CanAddLease)" @onclick="@onAddLease" IsPrimary="true">
             </SfButton>
             <SfButton CssClass="e-primary mx-3 e-round-corner" IconCss="fa fa-check" Content="@L["TituloContratoExistente"]"
-                      @onclick="@onAddExistentLease" IsPrimary="false">
+                      Disabled="@(!CanAddLease)" @onclick="@onAddExistentLease" IsPrimary="false">
             </SfButton>
         </div>
 
@@ -299,7 +311,7 @@ else
         <FooterTemplate>
             <div>
                 <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                          @onclick="SaveLeaseData" Content="@L["btnSalvar"]">
+                          Disabled="@(!CanAddLease)" @onclick="SaveLeaseData" Content="@L["btnSalvar"]">
                 </SfButton>
                 <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
                           @onclick="(()=>AddEditLeaseVisibility = false)" Content="@L["BtnSalir"]">

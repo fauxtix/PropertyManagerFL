@@ -4162,4 +4162,19 @@
   <data name="TopBarManageAccount" xml:space="preserve">
     <value>Manage account</value>
   </data>
+  <data name="CalculadoraSemImoveis" xml:space="preserve">
+    <value>No properties registered. Register a property to use this calculator.</value>
+  </data>
+  <data name="CalculadoraSemFracoes" xml:space="preserve">
+    <value>The selected property has no registered units. Register a unit to continue.</value>
+  </data>
+  <data name="CalculadoraSelecioneImovelEFracao" xml:space="preserve">
+    <value>Select a property and a unit before calculating.</value>
+  </data>
+  <data name="CalculadoraDadosInsuficientes" xml:space="preserve">
+    <value>Enter the taxable value and confirm the coefficient before calculating.</value>
+  </data>
+  <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
+    <value>You cannot create a lease until a landlord, property, unit, tenant and guarantor have been registered.</value>
+  </data>
 </root>

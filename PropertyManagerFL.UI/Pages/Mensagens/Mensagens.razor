@@ -19,6 +19,12 @@
 else
 {
     <div class="container-fluid w-100">
+        @if (_messages?.Any() != true || InquilinosLookup?.Any() != true)
+        {
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+            </div>
+        }
         <SfTab OverflowMode="OverflowMode.Scrollable">
             <TabItems>
                 <TabItem>
@@ -456,7 +462,7 @@ else
 
     protected async Task GetMessages()
     {
-        _messages = await MessagesService.GetAllMessages();
+        _messages = await MessagesService.GetAllMessages() ?? Enumerable.Empty<ComposeMessageVM>();
         _receivedMessages = _messages.Where(p => p.MessageType == 1 || p.MessageType == 3).ToList();
         _sentMessages = _messages.Where(p => p.MessageType == 2 || p.MessageType == 4).ToList();
 
@@ -478,7 +484,7 @@ else
 
     protected async Task GetTenants()
     {
-        InquilinosLookup = (await inquilinosService!.GetInquilinosAsLookup()).ToList();
+        InquilinosLookup = (await inquilinosService!.GetInquilinosAsLookup())?.ToList() ?? Enumerable.Empty<LookupTableVM>();
     }
 
     public async Task CRUD_Handler(Syncfusion.Blazor.Grids.ActionEventArgs<ComposeMessageVM> args)

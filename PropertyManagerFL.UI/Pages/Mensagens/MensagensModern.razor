@@ -18,6 +18,12 @@
 else
 {
     <div class="msg-shell">
+        @if (_messages?.Any() != true || InquilinosLookup?.Any() != true)
+        {
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+            </div>
+        }
         <header class="msg-hero">
             <div class="msg-hero-icon"><i class="fas fa-envelope-open-text" aria-hidden="true"></i></div>
             <div class="msg-hero-copy">

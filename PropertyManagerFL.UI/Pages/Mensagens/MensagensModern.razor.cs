@@ -273,7 +273,7 @@ public partial class MensagensModern
 
     protected async Task GetMessages()
     {
-        _messages = await MessagesService.GetAllMessages();
+        _messages = await MessagesService.GetAllMessages() ?? Enumerable.Empty<ComposeMessageVM>();
         _receivedMessages = _messages.Where(p => p.MessageType == 1 || p.MessageType == 3).ToList();
         _sentMessages = _messages.Where(p => p.MessageType == 2 || p.MessageType == 4).ToList();
 
@@ -295,7 +295,7 @@ public partial class MensagensModern
 
     protected async Task GetTenants()
     {
-        InquilinosLookup = (await inquilinosService!.GetInquilinosAsLookup()).ToList();
+        InquilinosLookup = (await inquilinosService!.GetInquilinosAsLookup())?.ToList() ?? Enumerable.Empty<LookupTableVM>();
     }
 
     public async Task CRUD_Handler(Syncfusion.Blazor.Grids.ActionEventArgs<ComposeMessageVM> args)

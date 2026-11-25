@@ -247,6 +247,8 @@ A lease links a **tenant** to a **unit**, with a start date, term and rent amoun
 3. Enter the **start date**, **term** and **rent amount**.
 4. Save.
 
+> ⚠️ To create or save a lease, a landlord, property, unit, tenant and guarantor must be registered. Until then, the **New**, **Existing contract** and **Save** buttons are disabled and a warning is shown.
+
 ### 7.3 Grid actions
 
 The toolbar and context menu allow you to:
@@ -286,9 +288,13 @@ The grid allows searching, sorting and exporting to Excel.
 
 > ⚠️ Batch processing creates several records at once. Always review the list before confirming.
 
+> ℹ️ If no leases or units are registered, the **New** button is disabled and the reason is shown. The page no longer stays on "Preparing data".
+
 ### 8.3 Payments dashboard
 
 The dashboard (`/payments/dashboard`) summarises payments by period and helps you track what has been paid and what is outstanding.
+
+If no payments are registered, the dashboard shows **No data to display** instead of zero-value cards and empty grids.
 
 ---
 
@@ -384,6 +390,8 @@ The **Calculators** menu includes:
 - **IMI** (`/CalculadoraIMI`) — municipal property tax calculation.
 - **VPT** (`/CalculadoraVPT`) — taxable property value calculation.
 - **IMI coefficient management** (`/ManutencaoCoeficientesIMI`).
+
+> ℹ️ The IMI and VPT calculators need registered properties and units. With no data, the dropdowns are disabled, a warning is shown and the **Calculate** button is disabled. Select a property and a unit and confirm the taxable value and coefficients to enable calculation.
 
 ### 13.2 Maps
 

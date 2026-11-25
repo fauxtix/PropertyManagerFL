@@ -37,17 +37,29 @@ public partial class CalculadoraVPT
     protected int idxUnit;
     protected bool ShowUnitsCombo;
     protected bool HideResults = true;
-    protected bool ShowCalculateButton = false;
+    protected bool HasProperties => PropertiesLookup?.Any() == true;
+    protected bool CanCalculate => string.IsNullOrEmpty(CalculateRequirementMessage);
+
+    protected string CalculateRequirementMessage =>
+        !HasProperties ? L["CalculadoraSemImoveis"]
+        : idxProperty == 0 ? L["CalculadoraSelecioneImovelEFracao"]
+        : UnitsLookup?.Any() != true ? L["CalculadoraSemFracoes"]
+        : idxUnit == 0 ? L["CalculadoraSelecioneImovelEFracao"]
+        : ValorPatrimonio <= 0 || AreaBrutaConstrucao <= 0 || CoeficienteVetustez <= 0 || PrecoConstrucaoMetroQuadrado <= 0
+            ? L["CalculadoraDadosInsuficientes"]
+        : string.Empty;
+
+    protected bool ShowCalculateButton => CanCalculate;
 
     protected SfDropDownList<int, LookupTableVM>? ddlUnits;
     protected override async Task OnInitializedAsync()
     {
-        PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables();
+        PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables() ?? Enumerable.Empty<LookupTableVM>();
         ValorPatrimonialTributario = 0;
     }
     private void Calculate()
     {
-        if (ValorPatrimonio == 0) return;
+        if (!CanCalculate) return;
 
         ValorPatrimonialTributario = Math.Round(PrecoConstrucaoMetroQuadrado * AreaBrutaConstrucao *
         CoeficienteAfetacao * CoeficienteLocalizacao * CoeficienteQualidadeConforto * CoeficienteVetustez);
@@ -59,12 +71,25 @@ public partial class CalculadoraVPT
     protected async Task OnChangeProperty(ChangeEventArgs<int, LookupTableVM> args)
     {
         idxProperty = args.Value;
+        idxUnit = 0;
+        ShowUnitsCombo = false;
+        HideResults = true;
+        ValorPatrimonialTributario = 0;
+        ValorPatrimonio = 0;
+        AreaBrutaConstrucao = 0;
+        AnoAvaliacao = string.Empty;
+        CoeficienteVetustez = 0;
+
+        UnitsLookup = new();
+        Units = new();
 
         if (idxProperty == 0) return;
 
-        await ddlUnits!.ClearAsync();
+        if (ddlUnits is not null)
+        {
+            await ddlUnits.ClearAsync();
+        }
 
-        UnitsLookup = new();
         Units = (await FracoesService!.GetFracoes_Imovel(idxProperty)).ToList();
         foreach (var unit in Units)
         {
@@ -73,9 +98,9 @@ public partial class CalculadoraVPT
         }
 
         var property = await ImoveisService.GetImovel_ById(idxProperty);
-        if (property != null)
+        if (property is not null && int.TryParse(property.AnoConstrucao, out var anoConstrucao))
         {
-            IdadePredio = DateTime.Now.Year - int.Parse(property.AnoConstrucao!);
+            IdadePredio = DateTime.Now.Year - anoConstrucao;
             CoeficienteVetustez = CalcularCoeficienteVetustez(IdadePredio);
         }
         else
@@ -83,20 +108,28 @@ public partial class CalculadoraVPT
             CoeficienteVetustez = 0.80;
         }
 
-        // após escolha do imóvel, e filtragem das frações pertencentes ao mesmo, disponibiliza combo das frações
+        // apï¿½s escolha do imï¿½vel, e filtragem das fraï¿½ï¿½es pertencentes ao mesmo, disponibiliza combo das fraï¿½ï¿½es
         ShowUnitsCombo = true;
+        StateHasChanged();
     }
 
     protected async Task OnChangeUnit(ChangeEventArgs<int, LookupTableVM> args)
     {
-        if (args.Value < 1) return;
-        var unit = await FracoesService!.GetFracao_ById(args.Value);
-        // ao escolher uma fração, guarda valor tributável
+        idxUnit = args.Value;
+        if (idxUnit < 1)
+        {
+            idxUnit = 0;
+            ValorPatrimonio = 0;
+            AreaBrutaConstrucao = 0;
+            return;
+        }
+
+        var unit = await FracoesService!.GetFracao_ById(idxUnit);
+        // ao escolher uma fraï¿½ï¿½o, guarda valor tributï¿½vel
         ValorPatrimonio = unit.ValorUltAvaliacao;
         AreaBrutaConstrucao = unit.AreaBrutaPrivativa + unit.AreaBrutaDependente;
         AnoAvaliacao = unit.AnoUltAvaliacao;
 
-        ShowCalculateButton = true;
         StateHasChanged();
     }
 
@@ -128,11 +161,20 @@ public partial class CalculadoraVPT
     protected async Task Clear()
     {
         idxProperty = 0;
+        idxUnit = 0;
         ShowUnitsCombo = false;
         HideResults = true;
+        ValorPatrimonialTributario = 0;
         ValorPatrimonio = 0;
-        ShowCalculateButton = false;
-        await ddlUnits!.ClearAsync();
+        AreaBrutaConstrucao = 0;
+        AnoAvaliacao = string.Empty;
+        CoeficienteVetustez = 0;
+        UnitsLookup = new();
+        Units = new();
+        if (ddlUnits is not null)
+        {
+            await ddlUnits.ClearAsync();
+        }
 
     }
     protected void GoBack()

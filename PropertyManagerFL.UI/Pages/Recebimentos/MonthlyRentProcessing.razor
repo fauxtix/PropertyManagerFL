@@ -42,7 +42,7 @@ else
         <div class="container-fluid">
             <div class="group-box-left">
                 <SfButton CssClass="e-success e-round-corner" IconCss="fas fa-plus" Content="@L["NewMsg"]"
-                  @onclick="@(()=>ConfirmVisibility = true)" IsPrimary="true">
+                  Disabled="@(!CanProcessMonthlyRents)" @onclick="@OpenMonthlyRentProcessingDialog" IsPrimary="true">
                 </SfButton>
             </div>
             <div class="w-25 mt-2">

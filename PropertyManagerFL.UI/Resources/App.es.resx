@@ -4154,4 +4154,19 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="TopBarManageAccount" xml:space="preserve">
     <value>Gestionar cuenta</value>
   </data>
+  <data name="CalculadoraSemImoveis" xml:space="preserve">
+    <value>No hay inmuebles registrados. Registre un inmueble para usar esta calculadora.</value>
+  </data>
+  <data name="CalculadoraSemFracoes" xml:space="preserve">
+    <value>El inmueble seleccionado no tiene fracciones registradas. Registre una fracción para continuar.</value>
+  </data>
+  <data name="CalculadoraSelecioneImovelEFracao" xml:space="preserve">
+    <value>Seleccione un inmueble y una fracción antes de calcular.</value>
+  </data>
+  <data name="CalculadoraDadosInsuficientes" xml:space="preserve">
+    <value>Introduzca el valor patrimonial y confirme el coeficiente antes de calcular.</value>
+  </data>
+  <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
+    <value>No se puede crear un arrendamiento hasta que existan registrados propietario, inmueble, fracción, inquilino y fiador.</value>
+  </data>
 </root>

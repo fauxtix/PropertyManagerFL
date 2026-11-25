@@ -43,6 +43,12 @@
 else
 {
     <div id="expensescontainer" class="mt-0 container-fluid w-100">
+        @if (!Transactions.Any())
+        {
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+            </div>
+        }
         <div class="group-box-left">
             <SfButton CssClass="e-success e-round-corner" IconCss="fas fa-plus" Content="@L["NewMsg"]"
                       @onclick="@onAddTransaction" IsPrimary="true">

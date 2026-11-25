@@ -51,7 +51,18 @@ public partial class CalculadoraIMI
 
     protected int pagamentosFracionados = 1;
 
-    protected bool ShowCalculateButton = false;
+    protected bool HasProperties => PropertiesLookup?.Any() == true;
+    protected bool CanCalculate => string.IsNullOrEmpty(CalculateRequirementMessage);
+
+    protected string CalculateRequirementMessage =>
+        !HasProperties ? L["CalculadoraSemImoveis"]
+        : idxProperty == 0 ? L["CalculadoraSelecioneImovelEFracao"]
+        : UnitsLookup?.Any() != true ? L["CalculadoraSemFracoes"]
+        : idxUnit == 0 ? L["CalculadoraSelecioneImovelEFracao"]
+        : valorPatrimonio <= 0 || coeficiente <= 0 ? L["CalculadoraDadosInsuficientes"]
+        : string.Empty;
+
+    protected bool ShowCalculateButton => CanCalculate;
     protected bool ResultVisibility = false;
     protected string? DescricaoImovel = "";
     protected string? DescricaoFracao = "";
@@ -68,9 +79,9 @@ public partial class CalculadoraIMI
         coeficiente = 0;
         valorIMI = 0;
         distritoSelected = false;
-        Distritos = (await DistritosConcelhosService!.GetDistritos()).ToList();
-        Concelhos = (await DistritosConcelhosService.GetConcelhos()).ToList();
-        PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables();
+        Distritos = (await DistritosConcelhosService!.GetDistritos() ?? Enumerable.Empty<LookupTableVM>()).ToList();
+        Concelhos = (await DistritosConcelhosService.GetConcelhos() ?? Enumerable.Empty<DistritoConcelho>()).ToList();
+        PropertiesLookup = await ImoveisService!.GetPropertiesAsLookupTables() ?? Enumerable.Empty<LookupTableVM>();
     }
 
     protected async void OnChangeDistrito(ChangeEventArgs<int, LookupTableVM> args)
@@ -104,10 +115,23 @@ public partial class CalculadoraIMI
     protected async Task OnChangeProperty(ChangeEventArgs<int, LookupTableVM> args)
     {
         idxProperty = args.Value;
+        idxUnit = 0;
+        ShowUnitsCombo = false;
+        HideResults = true;
+        ResultVisibility = false;
+        valorPatrimonio = 0;
+        valorIMI = 0;
+        valorPrestacaoIMI = 0;
+        DescricaoImovel = "";
+        DescricaoFracao = "";
+
+        UnitsLookup = new();
+        Units = new();
 
         if (idxProperty == 0) return;
 
-        var freguesia = (await ImoveisService.GetImovel_ById(idxProperty)).FreguesiaImovel;
+        var property = await ImoveisService.GetImovel_ById(idxProperty);
+        var freguesia = property?.FreguesiaImovel;
         if (freguesia is not null)
         {
             var concelhos = await DistritosConcelhosService.GetConcelhos();
@@ -131,14 +155,15 @@ public partial class CalculadoraIMI
                 idxDistrito = 0;
                 idxConcelho = 0;
                 coeficiente = 0;
+                coeficienteCaption = string.Empty;
             }
-
-            await ddlUnits!.ClearAsync();
-
-            StateHasChanged();
         }
 
-        UnitsLookup = new();
+        if (ddlUnits is not null)
+        {
+            await ddlUnits.ClearAsync();
+        }
+
         Units = (await FracoesService!.GetFracoes_Imovel(idxProperty)).ToList();
         foreach (var unit in Units)
         {
@@ -148,37 +173,55 @@ public partial class CalculadoraIMI
 
         // ap�s escolha do im�vel, e filtragem das fra��es pertencentes ao mesmo, disponibiliza combo das fra��es
         ShowUnitsCombo = true;
+        StateHasChanged();
     }
     protected async Task OnChangeUnit(ChangeEventArgs<int, LookupTableVM> args)
     {
-        if (args.Value < 1) return;
-        var unit = await FracoesService!.GetFracao_ById(args.Value);
+        idxUnit = args.Value;
+        if (idxUnit < 1)
+        {
+            idxUnit = 0;
+            valorPatrimonio = 0;
+            return;
+        }
+
+        var unit = await FracoesService!.GetFracao_ById(idxUnit);
         // ao escolher uma fra��o, guarda valor tribut�vel
         valorPatrimonio = unit.ValorUltAvaliacao;
 
         DescricaoImovel = unit.DescricaoImovel;
         DescricaoFracao = unit.Descricao;
-
-        ShowCalculateButton = true;
-
     }
 
     protected async Task Clear()
     {
         idxProperty = 0;
+        idxUnit = 0;
         idxDistrito = 0;
+        idxConcelho = 0;
+        coeficiente = 0;
+        coeficienteCaption = string.Empty;
         idxTipoImovel = 1;
         ShowUnitsCombo = false;
         HideResults = true;
+        ResultVisibility = false;
         valorPatrimonio = 0;
         valorIMI = 0;
         valorPrestacaoIMI = 0;
-        ShowCalculateButton = false;
-        await ddlUnits!.ClearAsync();
+        DescricaoImovel = "";
+        DescricaoFracao = "";
+        UnitsLookup = new();
+        Units = new();
+        if (ddlUnits is not null)
+        {
+            await ddlUnits.ClearAsync();
+        }
     }
 
     protected void Calculate()
     {
+        if (!CanCalculate) return;
+
         listaCaptionsPrestacoes.Clear();
         coefCaption = $"{coeficiente:F2}%";
         valorIMI = Math.Round(valorPatrimonio * (decimal)coeficiente, 2);

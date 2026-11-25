@@ -247,6 +247,8 @@ O arrendamento liga um **inquilino** a uma **fração**, com data de início, pr
 3. Indique **data de início**, **prazo** e **valor da renda**.
 4. Guarde.
 
+> ⚠️ Para criar ou gravar um arrendamento é necessário ter registados proprietário, imóvel, fração, inquilino e fiador. Enquanto não existirem, os botões **Novo**, **Contrato existente** e **Gravar** ficam desactivados e é apresentado um aviso.
+
 ### 7.3 Ações na grelha
 
 A barra de ferramentas e o menu de contexto permitem:
@@ -286,9 +288,13 @@ A grelha permite pesquisar, ordenar e exportar a Excel.
 
 > ⚠️ O processamento em lote cria vários registos de uma só vez. Reveja sempre a lista antes de confirmar.
 
+> ℹ️ Se não existirem arrendamentos ou frações registadas, o botão **Novo** fica desactivado e é apresentado o motivo. O ecrã deixa de ficar preso em "Preparando dados".
+
 ### 8.3 Dashboard de pagamentos
 
 O dashboard (`/payments/dashboard`) resume os recebimentos por período e permite acompanhar o que foi pago e o que está pendente.
+
+Se não houver recebimentos registados, o painel apresenta **Sem dados para mostrar** em vez de cartões a zero e grelhas vazias.
 
 ---
 
@@ -384,6 +390,8 @@ No menu **Calculadoras** estão disponíveis:
 - **IMI** (`/CalculadoraIMI`) — cálculo do Imposto Municipal sobre Imóveis.
 - **VPT** (`/CalculadoraVPT`) — cálculo do valor patrimonial tributário.
 - **Gestão de coeficientes IMI** (`/ManutencaoCoeficientesIMI`).
+
+> ℹ️ As calculadoras IMI e VPT precisam de imóveis e frações registados. Sem dados, as combos ficam desactivadas, é apresentado um aviso e o botão **Calcular** fica desactivado. Selecione um imóvel e uma fração e confirme o valor patrimonial e os coeficientes para activar o cálculo.
 
 ### 13.2 Mapas
 

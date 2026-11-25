@@ -17,6 +17,12 @@
 {
     <LoadingData />
 }
+else if (paymentsList is null || !paymentsList.Any())
+{
+    <div class="container-fluid">
+        <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+    </div>
+}
 else
 {
 

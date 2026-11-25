@@ -1,3 +1,4 @@
+using System.Net;
 using AutoMapper;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
@@ -197,13 +198,28 @@ namespace PropertyManagerFL.UI.ApiWrappers
         {
             try
             {
-                var propertiesLookup = await _httpClient.GetFromJsonAsync<IEnumerable<LookupTableVM>>($"{_uri}/GetPropertiesLookup");
-                return propertiesLookup!;
+                using var response = await _httpClient.GetAsync($"{_uri}/GetPropertiesLookup");
+                if (response.IsSuccessStatusCode)
+                {
+                    var propertiesLookup = await response.Content.ReadFromJsonAsync<IEnumerable<LookupTableVM>>();
+                    return propertiesLookup ?? Enumerable.Empty<LookupTableVM>();
+                }
+
+                if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation("Sem imóveis registados (Imoveis/GetPropertiesLookup).");
+                }
+                else
+                {
+                    _logger.LogError("Erro ao pesquisar API (Imoveis/GetPropertiesLookup): {StatusCode}", response.StatusCode);
+                }
+
+                return Enumerable.Empty<LookupTableVM>();
             }
             catch (Exception exc)
             {
                 _logger.LogError(exc, "Erro ao pesquisar API (Imoveis/GetPropertiesAsLookupTables)");
-                return null!;
+                return Enumerable.Empty<LookupTableVM>();
             }
         }
 

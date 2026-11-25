@@ -4170,4 +4170,19 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="TopBarManageAccount" xml:space="preserve">
     <value>Gérer le compte</value>
   </data>
+  <data name="CalculadoraSemImoveis" xml:space="preserve">
+    <value>Aucun bien enregistré. Enregistrez un bien pour utiliser cette calculatrice.</value>
+  </data>
+  <data name="CalculadoraSemFracoes" xml:space="preserve">
+    <value>Le bien sélectionné ne contient aucune fraction enregistrée. Enregistrez une fraction pour continuer.</value>
+  </data>
+  <data name="CalculadoraSelecioneImovelEFracao" xml:space="preserve">
+    <value>Sélectionnez un bien et une fraction avant de calculer.</value>
+  </data>
+  <data name="CalculadoraDadosInsuficientes" xml:space="preserve">
+    <value>Saisissez la valeur patrimoniale et confirmez le coefficient avant de calculer.</value>
+  </data>
+  <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
+    <value>Impossible de créer un bail tant que le propriétaire, le bien, la fraction, le locataire et le garant ne sont pas enregistrés.</value>
+  </data>
 </root>

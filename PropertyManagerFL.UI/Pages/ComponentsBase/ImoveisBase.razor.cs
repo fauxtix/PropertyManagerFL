@@ -98,7 +98,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             IsDirty = false;
 
             properties = await GetAllProperties();
-            if (properties is null)
+            if (!properties.Any())
             {
                 WarningMessage = L["TituloSemDadosParaMostrar"];
                 WarningVisibility = true;
@@ -111,7 +111,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task<IEnumerable<ImovelVM>> GetAllProperties()
         {
-            IEnumerable<ImovelVM>? propertiesList = (await propertiesService!.GetAll()).ToList();
+            IEnumerable<ImovelVM>? propertiesList = (await propertiesService!.GetAll())?.ToList();
+            if (propertiesList is null)
+                return Enumerable.Empty<ImovelVM>();
+
             propertiesList.OrderByDescending(p => p.Id);
             return propertiesList;
         }

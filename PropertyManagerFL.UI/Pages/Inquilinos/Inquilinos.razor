@@ -69,6 +69,12 @@
 else
 {
     <div class="container-fluid">
+        @if (!Tenants.Any())
+        {
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+            </div>
+        }
         <div class="source-options">
             <SfButton CssClass="e-success e-round-corner" IconCss="fa fa-plus" Content="@L["btnNovo"]"
                       @onclick="@onAddTenant" IsPrimary="true">

@@ -12,7 +12,12 @@
 }
 else
 {
-    <div></div>
+    @if (!leases.Any())
+    {
+        <div class="mb-2">
+            <SfMessage Severity="MessageSeverity.Warning">@L["TituloAlertaSemArrendamentos"]</SfMessage>
+        </div>
+    }
     <div class="container-fluid d-flex">
         <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
                        DialogTitle="@L["TituloMenuAtualizacaoRendas"]"
@@ -88,6 +93,7 @@ else
         WarningMessage = "";
 
         leases = await GetAll();
+        AlertVisibility = leases.Any();
     }
 
     /// <summary>
@@ -98,7 +104,7 @@ else
     {
         try
         {
-            return await arrendamentosService!.GetAll();
+            return await arrendamentosService!.GetAll() ?? Enumerable.Empty<ArrendamentoVM>();
         }
         catch (Exception ex)
         {

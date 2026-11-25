@@ -117,7 +117,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             await Task.Delay(200);
             await SpinnerObj!.ShowAsync();
 
-            Transactions = (await transactionsService!.GetAll()).ToList();
+            Transactions = (await transactionsService!.GetAll())?.ToList() ?? Enumerable.Empty<RecebimentoVM>();
 
             await Task.Delay(200);
             await SpinnerObj.HideAsync();
@@ -130,7 +130,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             // Antes de criar transação, verificar se há registo de frações/arrendamento disponíveis...
 
             var leases = await leasesService.GetAll();
-            var canContinue = leases.Count() > 0;
+            var canContinue = leases?.Count() > 0;
             if (canContinue == false)
             {
                 AlertVisibility = true;

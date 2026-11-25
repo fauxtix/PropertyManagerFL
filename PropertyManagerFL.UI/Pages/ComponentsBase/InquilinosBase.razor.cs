@@ -196,8 +196,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected IEnumerable<HistoricoAtualizacaoRendasVM> GetTenantRentUpdates()
         {
-            IEnumerable<HistoricoAtualizacaoRendasVM> result = Task.Run(async () => await inquilinoService!.GetAllRentUpdates()).Result;
-            return result;
+            IEnumerable<HistoricoAtualizacaoRendasVM>? result = Task.Run(async () => await inquilinoService!.GetAllRentUpdates()).Result;
+            return result ?? Enumerable.Empty<HistoricoAtualizacaoRendasVM>();
 
         }
 

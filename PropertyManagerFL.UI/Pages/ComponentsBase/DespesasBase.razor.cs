@@ -138,7 +138,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             await Task.Delay(200);
             await SpinnerObj!.ShowAsync();
 
-            expensesList = (await expensesService!.GetAll()).ToList();
+            expensesList = (await expensesService!.GetAll())?.ToList() ?? Enumerable.Empty<DespesaVM>();
 
             ShowToolbarOptions = expensesList.Any();
 

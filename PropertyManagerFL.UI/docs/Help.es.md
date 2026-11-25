@@ -247,6 +247,8 @@ Un arrendamiento vincula un **inquilino** a una **unidad**, con fecha de inicio,
 3. Introduzca la **fecha de inicio**, el **plazo** y el **importe de la renta**.
 4. Guarde.
 
+> ⚠️ Para crear o guardar un arrendamiento es necesario registrar propietario, inmueble, unidad, inquilino y fiador. Mientras no existan, los botones **Nuevo**, **Contrato existente** y **Guardar** permanecen desactivados y se muestra un aviso.
+
 ### 7.3 Acciones en la rejilla
 
 La barra de herramientas y el menú contextual permiten:
@@ -286,9 +288,13 @@ La rejilla permite buscar, ordenar y exportar a Excel.
 
 > ⚠️ El procesamiento por lotes crea varios registros a la vez. Revise siempre la lista antes de confirmar.
 
+> ℹ️ Si no hay arrendamientos o unidades registradas, el botón **Nuevo** queda desactivado y se muestra el motivo. La página ya no se queda en "Preparando datos".
+
 ### 8.3 Panel de pagos
 
 El panel (`/payments/dashboard`) resume los pagos por período y permite seguir lo que se ha pagado y lo que está pendiente.
+
+Si no hay pagos registrados, el panel muestra **No hay datos para mostrar** en lugar de tarjetas a cero y rejillas vacías.
 
 ---
 
@@ -384,6 +390,8 @@ El menú **Calculadoras** incluye:
 - **IMI** (`/CalculadoraIMI`) — cálculo del impuesto municipal sobre inmuebles.
 - **VPT** (`/CalculadoraVPT`) — cálculo del valor patrimonial tributario.
 - **Gestión de coeficientes IMI** (`/ManutencaoCoeficientesIMI`).
+
+> ℹ️ Las calculadoras IMI y VPT necesitan inmuebles y unidades registradas. Sin datos, los selector quedan desactivados, se muestra un aviso y el botón **Calcular** queda desactivado. Seleccione un inmueble y una unidad y confirme el valor patrimonial y los coeficientes para activar el cálculo.
 
 ### 13.2 Mapas
 

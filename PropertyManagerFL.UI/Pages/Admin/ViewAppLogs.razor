@@ -89,9 +89,16 @@
 }
 else
 {
+    @if (!Logs.Any())
+    {
+        <div class="mb-2">
+            <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+        </div>
+    }
     <div class="source-options">
-        <SfButton CssClass="e-danger e-round-corner mx-3" 
+        <SfButton CssClass="e-danger e-round-corner mx-3"
                   IconCss="fa fa-trash" Content="@L["DeleteMsg"]"
+                  Disabled="@(!Logs.Any())"
                   @onclick="@onDeleteLogs">
         </SfButton>
     </div>

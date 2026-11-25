@@ -64,6 +64,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected AlertMessageType AlertMessageType = AlertMessageType.Warning;
 
         protected bool NoProcessedMonth { get; set; } = false;
+        protected bool CanProcessMonthlyRents { get; set; } = false;
         protected IEnumerable<ProcessamentoRendasDTO>? ProcessedRents { get; set; }
 
         protected override async Task OnInitializedAsync()
@@ -73,9 +74,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             {
                 WarningMessage = retMessage;
                 WarningVisibility = true;
+                CanProcessMonthlyRents = false;
+                ProcessedRents = Enumerable.Empty<ProcessamentoRendasDTO>();
+                NoProcessedMonth = true;
                 return;
             }
 
+            CanProcessMonthlyRents = true;
             AlertTitle = L["TituloProcessamentoRendas"];
             ToastTitle = AlertTitle;
 
@@ -121,15 +126,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             // Antes de criar transação, verificar se há registo de frações/arrendamento disponíveis...
             var errorMessage = "";
             var leases = await LeasesService.GetAll();
-            var canContinue = leases is not null || leases.Count() > 0;
-            if (leases.Any() == false)
+            if (leases is null || !leases.Any())
             {
                 WarningVisibility = true;
                 errorMessage = L["TituloAlertaSemArrendamentos"];
             }
 
-            canContinue = await UnitsService!.GetFracoes_Disponiveis() is not null;
-            if (canContinue == false)
+            var units = await UnitsService!.GetAll();
+            if (units is null || !units.Any())
             {
                 WarningVisibility = true;
                 errorMessage = L["TituloAlertaSemFracoes"];
@@ -154,6 +158,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
         }
 
+        protected void OpenMonthlyRentProcessingDialog()
+        {
+            if (!CanProcessMonthlyRents) return;
+
+            ConfirmVisibility = true;
+        }
+
         /// <summary>
         /// Processamento mensal de rendas
         /// </summary>
@@ -161,6 +172,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         protected async Task ProcessMonthlyRents(EventCallbackArgs args)
         {
+            if (!CanProcessMonthlyRents) return;
+
             try
             {
                 var selectedMonth = args.ProcessingMonth;

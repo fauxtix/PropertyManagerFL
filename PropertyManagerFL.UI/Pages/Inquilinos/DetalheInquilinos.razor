@@ -31,6 +31,13 @@
         </div>
         <hr />
 
+        @if (!Tenants.Any())
+        {
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Warning">@L["TituloSemDadosParaMostrar"]</SfMessage>
+            </div>
+        }
+
         <SfAccordion @ref="@accObj" ID="acc" ExpandMode="ExpandMode.Single">
             <AccordionEvents Expanded="OnExpanded"></AccordionEvents>
             <AccordionItems>
@@ -182,18 +189,24 @@
 
         await GetTenantsDetails();
 
-        var firstId = Tenants.FirstOrDefault(r => r.Id > 0).Id;
-        await GetTenantCheckingAcount(firstId);
+        var firstTenant = Tenants?.FirstOrDefault(r => r.Id > 0);
+        if (firstTenant is null)
+        {
+            spinnerVisible = false;
+            return;
+        }
+
+        await GetTenantCheckingAcount(firstTenant.Id);
         await Task.Delay(100);
 
-        await GetTenantRentAdjustments(firstId);
+        await GetTenantRentAdjustments(firstTenant.Id);
         spinnerVisible = false;        
 
     }
 
     private async Task GetTenantsDetails()
     {
-        Tenants = (await TenantsService!.GetAll()).ToList();
+        Tenants = (await TenantsService!.GetAll())?.ToList() ?? Enumerable.Empty<InquilinoVM>();
     }
 
     private async Task GetTenantDocuments(int Id)
