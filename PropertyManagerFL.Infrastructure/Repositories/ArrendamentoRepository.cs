@@ -1151,6 +1151,37 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             return;
         }
 
+        /// <summary>
+        /// Terminates a lease in one database transaction: lease, unit, tenant/guarantor archiving and history.
+        /// </summary>
+        public async Task<EndLeaseResult> EndLeaseAsync(int id, DateTime leaveDate, string reason, string? notes, string? actorUserId)
+        {
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@Id", id);
+                    parameters.Add("@LeaveDate", leaveDate);
+                    parameters.Add("@Reason", reason ?? string.Empty);
+                    parameters.Add("@Notes", notes ?? string.Empty);
+                    parameters.Add("@ActorUserId", actorUserId);
+
+                    var result = await connection.QueryFirstOrDefaultAsync<EndLeaseResult>(
+                        "usp_Arrendamentos_EndLease",
+                        param: parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                    return result ?? new EndLeaseResult { Message = "Não foi possível terminar o contrato." };
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Operation failed");
+                return new EndLeaseResult { Message = "Falha ao terminar o contrato. Verifique o log." };
+            }
+        }
+
 
         public async Task<IEnumerable<LookupTableVM>> GetApplicableLaws()
         {

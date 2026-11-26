@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PropertyManagerFL.Application.Interfaces.Repositories;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 
 namespace PropertyManagerFL.Api.Controllers
@@ -344,6 +345,31 @@ namespace PropertyManagerFL.Api.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Arquiva o fiador (soft delete), preservando contratos, rendas, documentos e histórico.
+        /// </summary>
+        [HttpPost("ArchiveFiador/{id:int}")]
+        [ProducesResponseType(typeof(ArchiveResult), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ArchiveResult), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> ArchiveFiador(int id)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (id < 1)
+                    return BadRequest(new ArchiveResult { Code = "INVALID_ID", Message = "Invalid guarantor id." });
+
+                var result = await _repoFiadores.ArchiveFiador(id);
+                return result.Success ? Ok(result) : BadRequest(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "{Location}: Operation failed", location);
+                return InternalError($"{location}: {ex.Message} - {ex.InnerException}");
+            }
+        }
 
         private string GetControllerActionNames()
         {

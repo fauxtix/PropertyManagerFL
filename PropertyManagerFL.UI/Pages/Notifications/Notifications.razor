@@ -3,10 +3,12 @@
 @using PropertyManagerFL.Application.Interfaces.Services.AppManager
 @using PropertyManagerFL.Application.ViewModels.Notifications
 @using System.Security.Claims
+@using PropertyManagerFL.UI.Services
 @inject INotificationService NotificationService
 @inject NavigationManager Navigation
 @inject IStringLocalizer<App> L
 @inject ILogger<Notifications> Logger
+@inject INotificationTextFormatter Formatter
 
 <PageTitle>@L["TituloNotificacoes"]</PageTitle>
 
@@ -14,8 +16,11 @@
     <h1 class="notifications-title">@L["TituloNotificacoes"]</h1>
 
     <div class="notifications-actions">
-        <SfButton CssClass="e-small" Disabled="@(!_items.Any(i => !i.IsRead))" OnClick="MarkAllReadAsync">
-            @L["NotificationsMarkAllRead"]
+        <button type="button" class="notifications-close" title="@L["NotificationsCloseList"]" @onclick="ClosePageAsync">
+            <i class="fa fa-times" aria-hidden="true"></i> @L["NotificationsCloseList"]
+        </button>
+        <SfButton CssClass="e-small" Disabled="@(!_items.Any(i => !i.IsCompleted))" OnClick="OpenMarkAllDialog">
+            @L["NotificationsMarkAllComplete"]
         </SfButton>
     </div>
 
@@ -36,26 +41,40 @@
                                 <h2 class="notification-group-title">@group.Key</h2>
                                 @foreach (var item in group)
                                 {
-                                    <div class="notification-row @(item.IsRead ? "" : "notification-row-unread")" @onclick="() => OpenItemAsync(item)">
+                                    <div class="notification-row @(item.IsCompleted ? "notification-row-completed" : "notification-row-unread")" @onclick="() => OpenItemAsync(item)">
                                         <span class="notification-row-icon notification-severity-@item.Severity.ToLowerInvariant()">
                                             <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
                                         </span>
                                         <div class="notification-row-body">
-                                            <strong>@item.Title</strong>
-                                            <span>@item.Body</span>
+                                            <strong>@Formatter.Title(item)</strong>
+                                            <span>@Formatter.Body(item)</span>
                                             @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
                                             {
                                                 <span class="notification-row-suggestion">
-                                                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                                    @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                    <i class="fa fa-lightbulb" aria-hidden="true"></i>
+                                                    @L["NotificationsSuggestedAction"] @Formatter.SuggestedAction(item)
                                                 </span>
                                             }
                                             <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
                                         </div>
-                                        @if (!item.IsRead)
+                                        @if (item.IsCompleted)
                                         {
-                                            <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                            <span class="notification-completed-label" title="@L["NotificationsCompleted"]">
+                                                <i class="fa fa-check" aria-hidden="true"></i>
+                                            </span>
                                         }
+                                        else
+                                        {
+                                            <span class="notification-unread-dot" aria-label="@L["NotificationsPending"]"></span>
+                                        }
+                                        <button type="button"
+                                                class="notification-toggle"
+                                                title="@(item.IsCompleted ? L["NotificationsReopen"] : L["NotificationsComplete"])"
+                                                aria-label="@(item.IsCompleted ? L["NotificationsReopen"] : L["NotificationsComplete"])"
+                                                @onclick="() => ToggleCompleteAsync(item)"
+                                                @onclick:stopPropagation="true">
+                                            <i class="fa @(item.IsCompleted ? "fa-undo" : "fa-square-check")" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 }
                             </div>
@@ -64,15 +83,15 @@
                 </ContentTemplate>
             </TabItem>
             <TabItem>
-                <ChildContent><TabHeader Text="@L["NotificationsUnread"]"></TabHeader></ChildContent>
+                <ChildContent><TabHeader Text="@L["NotificationsPending"]"></TabHeader></ChildContent>
                 <ContentTemplate>
-                    @if (!UnreadItems.Any())
+                    @if (!PendingItems.Any())
                     {
                         <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
                     }
                     else
                     {
-                        @foreach (var group in GroupItems(UnreadItems))
+                        @foreach (var group in GroupItems(PendingItems))
                         {
                             <div class="notification-group">
                                 <h2 class="notification-group-title">@group.Key</h2>
@@ -83,18 +102,26 @@
                                             <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
                                         </span>
                                         <div class="notification-row-body">
-                                            <strong>@item.Title</strong>
-                                            <span>@item.Body</span>
+                                            <strong>@Formatter.Title(item)</strong>
+                                            <span>@Formatter.Body(item)</span>
                                             @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
                                             {
                                                 <span class="notification-row-suggestion">
-                                                    <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                                    @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                    <i class="fa fa-lightbulb" aria-hidden="true"></i>
+                                                    @L["NotificationsSuggestedAction"] @Formatter.SuggestedAction(item)
                                                 </span>
                                             }
                                             <small>@item.CreatedAt.ToLocalTime().ToString("g")</small>
                                         </div>
-                                        <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                        <span class="notification-unread-dot" aria-label="@L["NotificationsPending"]"></span>
+                                        <button type="button"
+                                                class="notification-toggle"
+                                                title="@L["NotificationsComplete"]"
+                                                aria-label="@L["NotificationsComplete"]"
+                                                @onclick="() => ToggleCompleteAsync(item)"
+                                                @onclick:stopPropagation="true">
+                                            <i class="fa fa-square-check" aria-hidden="true"></i>
+                                        </button>
                                     </div>
                                 }
                             </div>
@@ -105,3 +132,19 @@
         </TabItems>
     </SfTab>
 </div>
+
+<SfDialog @bind-Visible="ConfirmAllDialogVisible" Width="420px" IsModal="true"
+          CloseOnEscape="true" ShowCloseIcon="true"
+          Header="@L["NotificationsMarkAllComplete"]">
+    <DialogTemplates>
+        <Content>
+            <p class="notification-dialog-message">@L["NotificationsConfirmMarkAllComplete"]</p>
+        </Content>
+        <FooterTemplate>
+            <div class="notification-dialog-actions">
+                <SfButton CssClass="e-small e-flat" OnClick="CancelMarkAll">@L["Cancelar"]</SfButton>
+                <SfButton CssClass="e-small e-primary" OnClick="ConfirmMarkAllAsync">@L["NotificationsMarkAllComplete"]</SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

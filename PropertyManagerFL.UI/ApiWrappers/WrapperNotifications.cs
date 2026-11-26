@@ -107,6 +107,24 @@ public class WrapperNotifications : INotificationService
         }
     }
 
+    public async Task<bool> SetCompletedAsync(int id, string recipientUserId, bool completed)
+    {
+        try
+        {
+            using var response = await _httpClient.SendAsync(
+                CreateRequest(HttpMethod.Post, $"/{id}/complete", recipientUserId,
+                    JsonContent.Create(new SetCompletedVM { Completed = completed })));
+            return response.IsSuccessStatusCode;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao alterar estado da notificação");
+            return false;
+        }
+    }
+
+    public async Task<int> MarkAllCompleteAsync(string recipientUserId) => await MarkAllReadAsync(recipientUserId);
+
     public async Task<int> MarkAllReadAsync(string recipientUserId)
     {
         try
@@ -151,6 +169,22 @@ public class WrapperNotifications : INotificationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao atualizar alertas operacionais");
+            return 0;
+        }
+    }
+
+    public async Task<int> SeedAlertsForAllUsersAsync()
+    {
+        try
+        {
+            using var response = await _httpClient.SendAsync(
+                CreateRequest(HttpMethod.Post, "/alerts/refresh-all", string.Empty));
+            if (!response.IsSuccessStatusCode) return 0;
+            return await response.Content.ReadFromJsonAsync<int>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Erro ao gerar alertas iniciais");
             return 0;
         }
     }

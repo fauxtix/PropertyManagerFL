@@ -1,4 +1,5 @@
 ﻿using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 
@@ -7,6 +8,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
     public interface IFiadorRepository
     {
         Task ApagaFiador(int id);
+        Task<ArchiveResult> ArchiveFiador(int id);
         Task<Fiador> AtualizaFiador(AlteraFiador Fiador);
         Task AtualizaSaldo(int id, decimal saldoCorrente);
         Task<bool> CanFiadorBeDeleted(int id);

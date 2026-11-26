@@ -182,6 +182,8 @@ Uma **fração** é uma unidade dentro do imóvel — por exemplo um apartamento
 - **Seguro** associado.
 - **Ativa / inativa**.
 
+> 💡 Ao desmarcar **Ativa**, a **situação** passa automaticamente a **Reservada**: uma fração inativa não pode continuar «Alugada». Ao reativar a fração, a situação passa a **Livre**.
+
 ### 5.3 Imagens
 
 1. Abra o gestor de imagens (`/fracoes/imagesmanager`).
@@ -230,6 +232,12 @@ O menu de contexto do inquilino permite gerar diretamente:
 
 > ⚠️ Antes de gerar uma carta, confirme que os dados do contrato e do inquilino estão corretos — a carta usa os valores guardados.
 
+### 6.5 Arquivar inquilino ou fiador
+
+- O botão da grelha com o ícone de caixa mudou de **Eliminar** para **Arquivar**. A operação marca `Ativo=0` e anexa uma nota com a data da decisão; não apaga registos.
+- Contratos, recibos, documentos, histórico e notificações continuam consultáveis, incluindo os contratos antigos.
+- Não é possível arquivar um inquilino ou fiador com contrato ativo: termine primeiro o contrato. O registo mantém-se na grelha com o campo **Ativo** desmarcado.
+
 ---
 
 ## 7. Arrendamentos {#arrendamentos}
@@ -258,7 +266,22 @@ A barra de ferramentas e o menu de contexto permitem:
 - **Atualizar rendas** e gerar a carta correspondente.
 - Consultar o **saldo corrente do inquilino** (`/saldocorrenteinquilino`).
 
-### 7.4 Coeficientes de atualização
+### 7.4 Terminar contrato (arquivamento)
+
+1. Na vista **Activos** (predefinida), selecione um contrato ativo.
+2. Clique em **Terminar contrato** na barra de ferramentas — o botão só está ativo com um contrato ativo selecionado.
+3. Indique a **data de saída**, o **motivo** e, se quiser, **notas**; confirme.
+4. O contrato passa para **Histórico**. Em **Todos**, a coluna **Estado** mostra quais os contratos ativos e históricos.
+
+Terminar é uma operação **transacional**: marca a data de saída, liberta a fração, grava o histórico e anexa `Contrato já não está ativo; decisão tomada em <data>` às notas do contrato, do inquilino e do fiador elegível. Nada é apagado — inquilinos, fiadores e contratos continuam consultáveis. O inquilino é arquivado; o fiador só é arquivado se não estiver noutro contrato ativo.
+
+> ⚠️ Existirem rendas em dívida **não impede** o fim do contrato, mas gera um alerta de aviso para todos os utilizadores, com sugestão de regularizar a dívida.
+
+> ℹ️ O diálogo também avisa, sem bloquear, sobre a **carta de revogação**: usa os prazos configurados para o envio e a resposta e pede confirmação quando não há registo de envio, a resposta está atrasada ou a carta foi enviada com pouca antecedência. A data do contrato nunca é alterada automaticamente.
+
+> 💡 `Data_Fim` não é editável no formulário. A **renovação automática** apenas produz um aviso para confirmar o termo; nunca altera a data sem confirmação. Para atualizar o prazo, use **Estender o prazo do contrato**.
+
+### 7.5 Coeficientes de atualização
 
 Em **Arrendamentos → Coeficientes** (`/updatecoefficients`) pode gerir os coeficientes usados no cálculo das atualizações anuais de renda.
 
@@ -287,6 +310,8 @@ A grelha permite pesquisar, ordenar e exportar a Excel.
 4. Confirme o processamento.
 
 > ⚠️ O processamento em lote cria vários registos de uma só vez. Reveja sempre a lista antes de confirmar.
+
+> ⚠️ Apenas contratos **ativos** e dentro do prazo geram rendas. Contratos terminados ficam no histórico e não produzem novos movimentos.
 
 > ℹ️ Se não existirem arrendamentos ou frações registadas, o botão **Novo** fica desactivado e é apresentado o motivo. O ecrã deixa de ficar preso em "Preparando dados".
 
@@ -345,7 +370,10 @@ O **sino** na barra superior abre o centro de notificações. Também pode abrir
 - Cada aviso pode trazer uma **sugestão de ação** — por exemplo, abrir a ficha do inquilino, registar um pagamento ou gerar a carta correspondente.
 - Os alertas incluem: rendas em atraso, falta de carta de aviso, rendas a vencer em breve, carta de revogação sem resposta e contrato emitido sem documento gerado.
 - As mensagens por ler aparecem assinaladas.
-- Ao abrir uma notificação, esta é marcada como lida.
+- Cada aviso funciona como uma tarefa: use o botão **Concluir** para o marcar como concluído e **Reabrir** para o devolver a pendente. Abrir o aviso apenas navega para a página sugerida — não o conclui.
+- A aba **Todas** mostra pendentes e concluídos; a aba **Por tratar** mostra apenas os pendentes. O contador do sino conta os pendentes.
+- O rodapé do painel tem **Marcar todas como concluídas** (pede confirmação); o ícone no cabeçalho abre a lista completa em `/notifications`, que tem um botão para fechar.
+- Os alertas pendentes são gerados automaticamente ao arranque da API, incluindo numa base nova; abrir o sino não os duplica.
 
 ### 11.2 Mensagens
 

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.UI.Services.ClientApi;
@@ -105,6 +107,29 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
                 _logger.LogError(exc, $"Erro ao apagar Fiador)");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Arquiva o fiador sem apagar contratos, rendas, documentos ou histórico.
+        /// </summary>
+        public async Task<ArchiveResult> ArchiveFiador(int id)
+        {
+            try
+            {
+                using (HttpResponseMessage result = await _httpClient.PostAsync($"{_uri}/ArchiveFiador/{id}", null))
+                {
+                    var data = await result.Content.ReadAsStringAsync();
+                    var archiveResult = JsonConvert.DeserializeObject<ArchiveResult>(data)
+                                        ?? new ArchiveResult { Code = "ERROR", Message = "Empty API response." };
+                    archiveResult.Success = archiveResult.Success && result.IsSuccessStatusCode;
+                    return archiveResult;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao arquivar Fiador");
+                return new ArchiveResult { Success = false, Code = "ERROR", Message = exc.Message };
             }
         }
 

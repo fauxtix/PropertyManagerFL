@@ -59,6 +59,9 @@ public class NotificationsController : ControllerBase
         return Ok(inserted);
     }
 
+    [HttpPost("alerts/refresh-all")]
+    public async Task<IActionResult> RefreshAllAlerts() => Ok(await _service.SeedAlertsForAllUsersAsync());
+
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateNotificationVM notification)
     {
@@ -73,6 +76,18 @@ public class NotificationsController : ControllerBase
         return Ok(id);
     }
 
+    [HttpPost("{id:int}/complete")]
+    public async Task<IActionResult> SetCompleted(int id, [FromBody] SetCompletedVM? payload)
+    {
+        var userId = GetUserId();
+        if (string.IsNullOrWhiteSpace(userId)) return BadRequest("X-User-Id header is required.");
+        if (payload is null) return BadRequest("Completion state is required.");
+        var ok = await _service.SetCompletedAsync(id, userId, payload.Completed);
+        if (!ok) return StatusCode(StatusCodes.Status500InternalServerError);
+        await NotifyClientAsync(userId);
+        return NoContent();
+    }
+
     [HttpPost("{id:int}/read")]
     public async Task<IActionResult> MarkRead(int id)
     {
@@ -83,6 +98,9 @@ public class NotificationsController : ControllerBase
         await NotifyClientAsync(userId);
         return NoContent();
     }
+
+    [HttpPost("complete-all")]
+    public async Task<IActionResult> MarkAllComplete() => await MarkAllRead();
 
     [HttpPost("read-all")]
     public async Task<IActionResult> MarkAllRead()

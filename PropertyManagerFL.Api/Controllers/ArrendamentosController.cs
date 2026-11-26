@@ -16,6 +16,7 @@ namespace PropertyManagerFL.Api.Controllers
     {
         private readonly IArrendamentoRepository _repoArrendamentos;
         private readonly IInquilinoRepository _repoInquilinos;
+        private readonly INotificationRepository _repoNotifications;
         private readonly IMapper _mapper;
         private readonly ILogger<ArrendamentosController> _logger;
         private readonly IWebHostEnvironment _environment;
@@ -34,13 +35,15 @@ namespace PropertyManagerFL.Api.Controllers
                                        IMapper mapper,
                                        ILogger<ArrendamentosController> logger,
                                        IInquilinoRepository repoInquilinos,
-                                       IWebHostEnvironment environment)
+                                       IWebHostEnvironment environment,
+                                       INotificationRepository repoNotifications)
         {
             _repoArrendamentos = repoArrendamentos;
             _mapper = mapper;
             _logger = logger;
             _repoInquilinos = repoInquilinos;
             _environment = environment;
+            _repoNotifications = repoNotifications;
         }
 
         [HttpPost("InsertArrendamento")]
@@ -1115,6 +1118,57 @@ namespace PropertyManagerFL.Api.Controllers
                 await _repoArrendamentos.ExtendLeaseTerm(Id);
 
                 return Ok();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "{Location}: Operation failed", location);
+                return InternalError($"{location}: {e.Message} - {e.InnerException}");
+            }
+        }
+
+        /// <summary>
+        /// Terminates the lease, frees the unit, archives tenant/guarantor and writes history.
+        /// Outstanding debt is allowed; it raises a notification for all application users.
+        /// </summary>
+        [HttpPost("EndLease/{id:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> EndLease(int id, [FromBody] EndLeaseRequest request)
+        {
+            var location = GetControllerActionNames();
+            try
+            {
+                if (request is null || id <= 0)
+                    return BadRequest("Id de arrendamento inválido.");
+
+                var leaveDate = request.LeaveDate == default ? DateTime.Today : request.LeaveDate;
+                var result = await _repoArrendamentos.EndLeaseAsync(
+                    id, leaveDate, request.Reason ?? string.Empty, request.Notes, null);
+
+                if (result.Success && result.OutstandingDebt > 0)
+                {
+                    var recipients = await _repoNotifications.GetRecipientUserIdsAsync();
+                    foreach (var recipient in recipients)
+                    {
+                        await _repoNotifications.InsertAsync(new Notification
+                        {
+                            RecipientUserId = recipient,
+                            TenantId = result.TenantId > 0 ? result.TenantId : null,
+                            Kind = "LeaseEndedWithDebt",
+                            Title = "Contrato terminado com rendas em dívida",
+                            Body = $"O contrato {id} foi terminado em {leaveDate:dd/MM/yyyy}, mas existem rendas em dívida no valor de {result.OutstandingDebt:N2} €.",
+                            Link = "/recebimentos",
+                            Severity = "Warning",
+                            SuggestedAction = "Regularizar a dívida antes de considerar o inquilino definitivamente arquivado.",
+                            ResourceType = "Arrendamento",
+                            ResourceId = id,
+                            CreatedAt = DateTime.Now
+                        });
+                    }
+                }
+
+                return Ok(result);
             }
             catch (Exception e)
             {

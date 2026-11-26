@@ -4,7 +4,6 @@
 @using PropertyManagerFL.Application.ViewModels.Arrendamentos
 @using PropertyManagerFL.UI.Pages.ComponentsBase
 @using System.Globalization;
-@using PropertyManagerFL.UI.Pages.Notifications
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
 @inherits ArrendamentosBase
@@ -56,6 +55,20 @@
         ShowAlwaysInPopup = true,
         Visible = ShowToolbaContractLeaseTerm,
     },
+        new ItemModel()
+    {
+        Type = ItemType.Separator
+    },
+    new ItemModel()
+    {
+        PrefixIcon = "fa fa-stop", CssClass = "e-btn e-danger e-outline e-round-corner",
+        Text = L["TituloTerminarContrato"],
+        Id = "EndLease",
+        ShowTextOn = Syncfusion.Blazor.Navigations.DisplayMode.Overflow,
+        ShowAlwaysInPopup = true,
+        Visible = true,
+        Disabled = !ShowToolbarEndLease,
+    },
     });
 }
 
@@ -87,15 +100,24 @@ else
             </SfButton>
         </div>
 
+        <div class="mb-2">
+            <SfButton CssClass="@(LeaseFilter == "Active" ? "e-primary e-round-corner" : "e-outline e-round-corner")"
+                      Content="@L["LeaseFilterActive"]" @onclick="@(() => ChangeLeaseFilter("Active"))" />
+            <SfButton CssClass="@(LeaseFilter == "History" ? "e-primary e-round-corner ms-2" : "e-outline e-round-corner ms-2")"
+                      Content="@L["LeaseFilterHistory"]" @onclick="@(() => ChangeLeaseFilter("History"))" />
+            <SfButton CssClass="@(LeaseFilter == "All" ? "e-primary e-round-corner ms-2" : "e-outline e-round-corner ms-2")"
+                      Content="@L["LeaseFilterAll"]" @onclick="@(() => ChangeLeaseFilter("All"))" />
+        </div>
+
         <hr class="divider" />
         <div class="table table-stripped table-hover">
-            <SfGrid ID="Leases_Grid"
+            <SfGrid ID="Leases_Grid" @key="LeaseFilter"
                     Height="100%" @ref="leasesGridObj"
                     Toolbar="@Tool"
                     EnableStickyHeader="true"
                     EnableAltRow="true"
                     EnableHover="true"
-                    DataSource="@leases"
+                    DataSource="@VisibleLeases"
                     AllowFiltering="false"
                     AllowSelection="true"
                     AllowGrouping="false"
@@ -113,6 +135,23 @@ else
                     <GridColumn Field=@nameof(ArrendamentoVM.Fracao) HeaderText="@L["TituloFracao"]" Width="150"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Ativo) HeaderText="@L["chkActive"]"
                                 TextAlign="TextAlign.Center" DisplayAsCheckBox="true" Width="100"></GridColumn>
+                    @if (LeaseFilter == "All")
+                    {
+                        <GridColumn HeaderText="@L["LeaseState"]" Width="120" TextAlign="TextAlign.Center">
+                            <Template>
+                                @{
+                                    var currentLease = (context as ArrendamentoVM)!;
+                                    var stateText = currentLease.Ativo ? L["LeaseStateActive"] : L["LeaseStateHistorical"];
+                                    var stateCss = currentLease.Ativo ? "e-success" : "e-outline e-danger";
+                                    <SfChip>
+                                        <ChipItems>
+                                            <ChipItem Text="@stateText" CssClass="@stateCss"></ChipItem>
+                                        </ChipItems>
+                                    </SfChip>
+                                }
+                            </Template>
+                        </GridColumn>
+                    }
                     <GridColumn Field=@nameof(ArrendamentoVM.Data_Inicio) HeaderText="@L["TituloInicio"]" Width="110" Format="d"></GridColumn>
                     <GridColumn Field=@nameof(ArrendamentoVM.Data_Fim) HeaderText="@L["TituloFim"]" Width="110" Format="d">
                         <Template>
@@ -265,27 +304,6 @@ else
                 </GridColumns>
             </SfGrid>
         </div>
-        <div>
-            @if (LeaseAlerts.Any())
-            {
-                foreach (var item in LeaseAlerts)
-                {
-                    if (item.Value == 1)
-                    {
-                        <SfMessage Severity="MessageSeverity.Success" Variant="MessageVariant.Text">@item.Key</SfMessage>
-                    }
-                    else if (item.Value == 2)
-                    {
-                        <SfMessage Severity="MessageSeverity.Warning" Variant="MessageVariant.Text">@item.Key</SfMessage>
-                    }
-                    else if (item.Value == 3)
-                    {
-                        <SfMessage Severity="MessageSeverity.Error" Variant="MessageVariant.Text">@item.Key</SfMessage>
-                    }
-
-                }
-            }
-        </div>
     </div>
 
     <SfSpinner @ref="SpinnerObj"
@@ -320,6 +338,54 @@ else
         </FooterTemplate>
     </DialogTemplates>
     <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+</SfDialog>
+
+@* Terminate lease: archives tenant/guarantor and frees the unit. Debt does not block it. *@
+<SfDialog Width="45%"
+          Height="auto"
+          IsModal="true"
+          ShowCloseIcon="true"
+          CloseOnEscape="true"
+          @bind-Visible="EndLeaseVisibility">
+    <DialogTemplates>
+        <Header>@L["TituloTerminarContrato"]</Header>
+        <Content>
+            <div class="mb-2">
+                <SfMessage Severity="MessageSeverity.Info">
+                    @L["EndLeaseConfirmText"] @SelectedLease?.NomeInquilino - @SelectedLease?.Fracao
+                </SfMessage>
+            </div>
+            <div class="mb-2">
+                <label class="form-label">@L["TituloDataSaida"]</label>
+                <SfDatePicker Placeholder="@L["TituloDataSaida"]" Format="dd/MM/yyyy" Width="180px"
+                              @bind-Value="EndLeaveDate" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">@L["TituloMotivo"]</label>
+                <SfTextBox @bind-Value="EndLeaseReason" Placeholder="@L["TituloMotivo"]" />
+            </div>
+            <div class="mb-2">
+                <label class="form-label">@L["TituloNotas"]</label>
+                <SfTextBox @bind-Value="EndLeaseNotes" Placeholder="@L["TituloNotas"]" Multiline="true" />
+            </div>
+            @if (!string.IsNullOrEmpty(EndLeaseWarning))
+            {
+                <div class="mb-2">
+                    <SfMessage Severity="MessageSeverity.Warning">@EndLeaseWarning</SfMessage>
+                </div>
+            }
+        </Content>
+        <FooterTemplate>
+            <div>
+                <SfButton CssClass="e-danger e-round-corner" IconCss="fa fa-stop"
+                          @onclick="ConfirmEndLeaseAsync" Content="@L["TituloTerminarContrato"]">
+                </SfButton>
+                <SfButton CssClass="e-outline e-round-corner ms-2" IconCss="fas fa-times"
+                          @onclick="CancelEndLease" Content="@L["BtnSalir"]">
+                </SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
 </SfDialog>
 
 <SfDialog Target="#target"

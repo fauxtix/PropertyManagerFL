@@ -182,6 +182,8 @@ Une **unité** est une division à l’intérieur de l’immeuble, par exemple u
 - **Assurance** associée.
 - **Active / inactive**.
 
+> 💡 Lorsque vous décochez **Active**, le **statut** passe automatiquement à **Réservée** : une unité inactive ne peut pas rester « Louée ». La réactiver la fait passer à **Libre**.
+
 ### 5.3 Images
 
 1. Ouvrez le gestionnaire d’images (`/fracoes/imagesmanager`).
@@ -230,6 +232,12 @@ Le menu contextuel du locataire permet de générer directement :
 
 > ⚠️ Avant de générer une lettre, vérifiez que les données du bail et du locataire sont correctes : la lettre utilise les valeurs enregistrées.
 
+### 6.5 Archiver un locataire ou un garant
+
+- Le bouton de la grille à l’icône de boîte est passé de **Supprimer** à **Archiver**. L’opération met `Ativo=0` et ajoute une note avec la date de la décision ; elle ne supprime aucun enregistrement.
+- Les baux, reçus, documents, historique et notifications restent consultables, y compris les anciens contrats.
+- Un locataire ou un garant ayant un bail actif ne peut pas être archivé : terminez d’abord le bail. L’enregistrement reste dans la grille avec le champ **Actif** décoché.
+
 ---
 
 ## 7. Baux {#arrendamentos}
@@ -258,7 +266,22 @@ La barre d’outils et le menu contextuel permettent de :
 - **Mettre à jour les loyers** et générer la lettre correspondante.
 - Consulter le **solde courant du locataire** (`/saldocorrenteinquilino`).
 
-### 7.4 Coefficients de mise à jour
+### 7.4 Terminer un bail (archivage)
+
+1. Dans la vue **Actifs** (par défaut), sélectionnez un bail actif.
+2. Cliquez sur **Terminer le contrat** dans la barre d’outils — le bouton n’est actif que lorsqu’un bail actif est sélectionné.
+3. Indiquez la **date de sortie**, le **motif** et, si vous le souhaitez, des **notes** ; confirmez.
+4. Le bail passe dans **Historique**. Dans **Tous**, la colonne **État** indique quels baux sont actifs et lesquels sont historiques.
+
+Terminer est une opération **transactionnelle** : elle fixe la date de sortie, libère l’unité, écrit l’historique et ajoute `Contrato já não está ativo; decisão tomada em <date>` aux notes du bail, du locataire et du garant éligible. Rien n’est supprimé — locataires, garants et baux restent consultables. Le locataire est archivé ; le garant ne l’est que s’il n’a pas d’autre bail actif.
+
+> ⚠️ Des loyers impayés **n’empêchent pas** la fin du bail, mais déclenchent une alerte d’avertissement pour tous les utilisateurs, avec une suggestion de régularisation.
+
+> ℹ️ Le dialogue affiche aussi un avertissement non bloquant sur la **lettre de révocation** : il utilise les délais configurés pour l’envoi et la réponse et demande confirmation en l’absence de lettre envoyée, si la réponse est en retard ou si la lettre a été envoyée trop tard. La date du bail n’est jamais modifiée automatiquement.
+
+> 💡 `Data_Fim` n’est pas modifiable. Le **renouvellement automatique** génère uniquement une alerte de confirmation ; il ne change jamais la date silencieusement. Pour modifier le terme, utilisez **Prolonger la durée du contrat**.
+
+### 7.5 Coefficients de mise à jour
 
 Dans **Baux → Coefficients** (`/updatecoefficients`), vous pouvez gérer les coefficients utilisés pour calculer les mises à jour annuelles du loyer.
 
@@ -287,6 +310,8 @@ La grille permet de rechercher, trier et exporter au format Excel.
 4. Confirmez le traitement.
 
 > ⚠️ Le traitement par lot crée plusieurs enregistrements à la fois. Vérifiez toujours la liste avant de confirmer.
+
+> ⚠️ Seuls les baux **actifs** et dans leur durée génèrent des loyers. Les baux terminés restent dans l’historique et ne produisent aucun nouveau mouvement.
 
 > ℹ️ Si aucun bail ni aucune unité n’est enregistré, le bouton **Nouveau** est désactivé et le motif est affiché. La page ne reste plus bloquée sur « Préparation des données ».
 
@@ -345,7 +370,10 @@ La **cloche** dans la barre supérieure ouvre le centre de notifications. Vous p
 - Chaque alerte peut inclure une **action suggérée** — par exemple ouvrir la fiche du locataire, enregistrer un paiement ou générer la lettre correspondante.
 - Les alertes comprennent : loyers en retard, lettre de rappel manquante, loyer à échoir prochainement, lettre de révocation sans réponse et bail marqué comme émis sans document généré.
 - Les messages non lus sont mis en évidence.
-- L’ouverture d’une notification la marque comme lue.
+- Chaque alerte fonctionne comme une tâche : utilisez **Marquer comme terminé** pour la terminer et **Rouvrir** pour la remettre en attente. Ouvrir l’alerte suit seulement le lien suggéré ; cela ne la termine pas.
+- L’onglet **Toutes** affiche les alertes en attente et terminées ; l’onglet **À traiter** affiche uniquement les alertes en attente. Le compteur de la cloche compte les alertes en attente.
+- Le pied du panneau contient **Tout marquer comme terminé** (avec confirmation) ; l’icône de l’en-tête ouvre la liste complète sur `/notifications`, qui dispose d’un bouton pour la fermer.
+- Les alertes en attente sont générées automatiquement au démarrage de l’API, même sur une base neuve ; ouvrir la cloche ne les duplique pas.
 
 ### 11.2 Messages
 

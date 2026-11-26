@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
@@ -146,6 +147,29 @@ namespace PropertyManagerFL.UI.ApiWrappers
             {
                 _logger.LogError(exc, $"Erro ao apagar Inquilino)");
                 return false;
+            }
+        }
+
+        /// <summary>
+        /// Arquiva o inquilino sem apagar contratos, rendas, documentos ou histórico.
+        /// </summary>
+        public async Task<ArchiveResult> ArchiveInquilino(int id)
+        {
+            try
+            {
+                using (HttpResponseMessage result = await _httpClient.PostAsync($"{_uri}/ArchiveInquilino/{id}", null))
+                {
+                    var data = await result.Content.ReadAsStringAsync();
+                    var archiveResult = JsonConvert.DeserializeObject<ArchiveResult>(data)
+                                        ?? new ArchiveResult { Code = "ERROR", Message = "Empty API response." };
+                    archiveResult.Success = archiveResult.Success && result.IsSuccessStatusCode;
+                    return archiveResult;
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, "Erro ao arquivar Inquilino");
+                return new ArchiveResult { Success = false, Code = "ERROR", Message = exc.Message };
             }
         }
 

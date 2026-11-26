@@ -6,6 +6,7 @@ using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFLApplication.Utilities;
@@ -70,8 +71,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         protected bool AddEditTenantVisibility { get; set; }
         protected bool AddEditFiadorVisibility { get; set; }
         protected bool AddEditDocumentVisibility { get; set; }
-        protected bool DeleteTenantVisibility { get; set; }
-        protected bool DeleteGuarantorVisibility { get; set; }
+        protected bool ArchiveTenantVisibility { get; set; }
+        protected bool ArchiveGuarantorVisibility { get; set; }
         protected bool DeleteDocumentVisibility { get; set; }
         protected bool WarningVisibility { get; set; }
         protected bool ErrorVisibility { get; set; } = false;
@@ -138,8 +139,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             AddEditTenantVisibility = false;
             AddEditFiadorVisibility = false;
 
-            DeleteTenantVisibility = false;
-            DeleteGuarantorVisibility = false;
+            ArchiveTenantVisibility = false;
+            ArchiveGuarantorVisibility = false;
             DeleteDocumentVisibility = false;
 
             ErrorVisibility = false;
@@ -259,7 +260,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             if (args.CommandColumn.Type == CommandButtonType.Delete)
             {
-                DeleteTenantVisibility = true;
+                ArchiveTenantVisibility = true;
                 DeleteCaption = SelectedTenant?.Nome;
             }
         }
@@ -285,7 +286,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
             if (args.CommandColumn.Type == CommandButtonType.Delete)
             {
-                DeleteGuarantorVisibility = true;
+                ArchiveGuarantorVisibility = true;
                 DeleteCaption = SelectedGuarantor.Nome;
             }
         }
@@ -910,90 +911,95 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
 
 
-        public async Task ConfirmDeleteYes()
+        public async Task ConfirmArchiveYes()
         {
             WarningVisibility = false;
             WarningMessage = "";
-            bool resultOk = true;
 
             try
             {
-                switch (modulo)
+                ArchiveResult result;
+                string title;
+
+                if (modulo == Modules.Inquilinos)
                 {
-                    case Modules.Inquilinos:
-                        ToastTitle = L["DeleteMsg"] + " " + L["TituloInquilino"]; ;
-                        alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
-                        resultOk = await inquilinoService!.ApagaInquilino(SelectedTenant!.Id);
-                        DeleteTenantVisibility = false;
-                        break;
-                    case Modules.Fiadores:
-                        alertTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
-                        ToastTitle = L["DeleteMsg"] + " " + L["TituloFiador"]; ;
-                        resultOk = await FiadorService!.ApagaFiador(SelectedGuarantor!.Id);
-                        DeleteGuarantorVisibility = false;
-                        break;
+                    if (SelectedTenant is null)
+                        return;
+
+                    title = L["ArchiveMsg"] + " " + L["TituloInquilino"];
+                    result = await inquilinoService!.ArchiveInquilino(SelectedTenant.Id);
+                    ArchiveTenantVisibility = false;
+                }
+                else
+                {
+                    if (SelectedGuarantor is null)
+                        return;
+
+                    title = L["ArchiveMsg"] + " " + L["TituloFiador"];
+                    result = await FiadorService!.ArchiveFiador(SelectedGuarantor.Id);
+                    ArchiveGuarantorVisibility = false;
                 }
 
-                if (resultOk)
+                ToastTitle = alertTitle = title;
+
+                if (result.Success)
                 {
                     ToastCss = "e-toast-success";
-                    ToastMessage = L["SuccessDelete"];
                     ToastIcon = "fas fa-check";
+                    ToastMessage = modulo == Modules.Inquilinos
+                        ? L["ArchiveSuccessTenant"]
+                        : L["ArchiveSuccessGuarantor"];
 
                     Tenants = await GetAllTenants();
+                    Guarantors = await FiadorService!.GetAll();
 
                     StateHasChanged();
                     await Task.Delay(100);
                     await ToastObj!.ShowAsync();
+                    return;
                 }
-                else
-                {
-                    switch (modulo)
-                    {
-                        case Modules.Inquilinos:
-                            ToastTitle = L["DeleteMsg"] + " " + L["TituloInquilino"]; ;
-                            alertTitle = L["DeleteMsg"] + " " + L["TituloInquilino"];
-                            WarningMessage = L["Inquilino tem contrato de arrendamento ativo! Verifique, p.f."];
-                            DeleteCaption = SelectedTenant.Nome;
 
-                            resultOk = await inquilinoService!.ApagaInquilino(SelectedTenant!.Id);
-
-                            AddEditTenantVisibility = false;
-                            break;
-                        case Modules.Fiadores:
-                            WarningMessage = L["Erro ao apagar Fiador. Confirme log, p.f."];
-                            alertTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
-                            ToastTitle = L["DeleteMsg"] + " " + L["TituloFiador"];
-                            DeleteCaption = SelectedGuarantor?.Nome;
-
-                            resultOk = await FiadorService!.ApagaFiador(SelectedGuarantor!.Id);
-
-                            AddEditFiadorVisibility = false;
-                            break;
-                    }
-
-                    AlertVisibility = true;
-                }
+                WarningMessage = ArchiveFailureMessage(result);
+                AlertVisibility = true;
             }
             catch (Exception exc)
             {
                 AlertVisibility = true;
-                alertTitle = modulo == Modules.Inquilinos ? L["DeleteMsg"] + " " + L["TituloInquilino"] : L["DeleteMsg"] + " " + L["TituloFiador"];
+                alertTitle = modulo == Modules.Inquilinos
+                    ? L["ArchiveMsg"] + " " + L["TituloInquilino"]
+                    : L["ArchiveMsg"] + " " + L["TituloFiador"];
                 WarningMessage = $"{L["FalhaAnulacaoRegisto"]}. {exc.Message}";
             }
 
             StateHasChanged();
         }
 
-        public void ConfirmDeleteNo()
+        private string ArchiveFailureMessage(ArchiveResult result)
+        {
+            if (result.Code == "ACTIVE_LEASE")
+                return modulo == Modules.Inquilinos
+                    ? L["ArchiveActiveLeaseTenant"]
+                    : L["ArchiveActiveLeaseGuarantor"];
+
+            if (result.Code == "NOT_FOUND")
+                return L["ArchiveNotFound"];
+
+            if (result.Code == "ERROR" &&
+                result.Message.Contains("Failed", StringComparison.OrdinalIgnoreCase))
+                return L["ArchiveFailed"];
+
+            return string.IsNullOrWhiteSpace(result.Message) ? L["ArchiveFailed"] : result.Message;
+        }
+
+        public void ConfirmArchiveNo()
         {
             switch (modulo)
             {
                 case Modules.Inquilinos:
-                    DeleteTenantVisibility = false;
+                    ArchiveTenantVisibility = false;
                     break;
                 case Modules.Fiadores:
-                    DeleteGuarantorVisibility = false;
+                    ArchiveGuarantorVisibility = false;
                     break;
             }
         }

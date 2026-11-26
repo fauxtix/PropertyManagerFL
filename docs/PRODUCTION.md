@@ -1,8 +1,22 @@
 # Produção — deploy IIS, segredos e verificação
 
-> **TL;DR (EN):** Production uses GitHub Secrets (never committed). Deploy with `gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master`; it needs a self-hosted runner registered in **this repo** with label `iis-propertymanager`. The script injects secrets into the published `web.config` as environment variables (Production does not load user-secrets), except the connection string, which comes from `appsettings.Production.json`. Two Syncfusion secrets are required: `PM_SYNCFUSION_LICENSE` (UI) and `PM_SYNCFUSION_LICENSE_API` (API). Pools `PropertyManagerApi` and `PropertyManagerFL` already have SQL logins/`db_owner`. Never use the repo SQL scripts on the Production database.
+> **TL;DR (EN):** Production uses GitHub Secrets (never committed). Deploy with `gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master`; it needs a self-hosted runner registered in **this repo** with label `iis-propertymanager`. The script injects secrets into the published `web.config` as environment variables (Production does not load user-secrets), except the connection string, which comes from `appsettings.Production.json`. Two Syncfusion secrets are required: `PM_SYNCFUSION_LICENSE` (UI) and `PM_SYNCFUSION_LICENSE_API` (API). Pools `PropertyManagerApi` and `PropertyManagerFL` already have SQL logins/`db_owner`. **The CD publishes the apps only: it never creates, drops or migrates a database.**
 
-> **Aviso:** a base de dados de Produção **nunca** é criada nem atualizada com os scripts deste repositório. Ela é gerida pelo responsável da infraestrutura (backups, manutenção e alterações controladas). Os scripts servem apenas para instalações novas em Development/teste.
+> **Aviso:** a base de dados de Produção **nunca** é criada nem atualizada automaticamente pelos scripts ou pelo CD. “Responsável da infraestrutura/DBA” significa apenas quem administra o SQL Server desse ambiente — se fizer deploy no seu PC, é você. Com autorização e backup prévio, aplicar em `PropertyManagerDB_Production` apenas a migração idempotente `PropertyManagerFL.Infrastructure/Database/EndLeaseAndArchiving.sql`; nunca os scripts completos nem o snapshot. A ordem correta é: **BD criada/atualizada → CD → verificação**.
+
+## 0. Base de dados antes do deploy
+
+- As duas aplicações leem `PropertyManagerDB_Production` em `appsettings.Production.json`. Nenhum script do repositório contém `CREATE DATABASE`/`DROP DATABASE`; a BD tem de ser criada pelo administrador do SQL Server (num deploy local, pelo próprio utilizador).
+- **BD nova:** criar vazia e instalar com **um** dos caminhos de [DATABASE.md](DATABASE.md) — scripts modulares ou snapshot gerado. Não executar ambos.
+- **BD já existente:** fazer backup e aplicar uma vez `PropertyManagerFL.Infrastructure/Database/EndLeaseAndArchiving.sql` antes de publicar o código novo. Confirmar:
+
+  ```sql
+  SELECT name FROM sys.procedures
+  WHERE name IN ('usp_Arrendamentos_EndLease','usp_Inquilinos_Archive','usp_Fiadores_Archive');
+  SELECT name FROM sys.tables WHERE name = 'HistoricoArrendamentos';
+  ```
+
+- Só depois disto disparar o CD. Publicar o código novo antes da migração faz as novas endpoints chamarem procedures inexistentes.
 
 ## 1. Como disparar o deploy
 
@@ -121,6 +135,19 @@ netsh http show servicestate
 ```
 
 Esperado: `401`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`. O endpoint de modelos deve listar os `.dotx` (5 para `pt-PT`); lista vazia significa que a publicação não levou a pasta `Reports\Docs`.
+
+Depois da migração e do CD, confirmar também na BD de Produção (os resultados da secção 0 não podem estar vazios):
+
+```sql
+SELECT name FROM sys.procedures
+WHERE name IN ('usp_Arrendamentos_EndLease','usp_Inquilinos_Archive','usp_Fiadores_Archive')
+ORDER BY name;
+SELECT name FROM sys.tables WHERE name = 'HistoricoArrendamentos';
+SELECT COL_LENGTH('dbo.Recebimentos','ID_Arrendamento')     AS RecebimentosID,
+       COL_LENGTH('dbo.RecebimentosTemp','ID_Arrendamento') AS RecebimentosTempID;
+```
+
+Na UI, fazer apenas um smoke não destrutivo: abrir **Terminar contrato** num contrato real e cancelar (o aviso de revogação é informativo), e abrir/cancelar a confirmação **Arquivar** num inquilino com contrato ativo (deve estar bloqueado). Para testar a operação real, criar um registo descartável com autorização e restore prévio.
 
 Para confirmar que o CD concedeu escrita em todas as pastas de runtime:
 

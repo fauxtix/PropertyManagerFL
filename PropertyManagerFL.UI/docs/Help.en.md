@@ -182,6 +182,8 @@ A **unit** is a division inside a property — for example an apartment, a shop 
 - Associated **insurance**.
 - **Active / inactive**.
 
+> 💡 Clearing **Active** automatically changes the **status** to **Reserved**: an inactive unit cannot remain "Rented". Re-activating the unit sets it to **Available**.
+
 ### 5.3 Images
 
 1. Open the image manager (`/fracoes/imagesmanager`).
@@ -230,6 +232,12 @@ The tenant context menu can generate directly:
 
 > ⚠️ Before generating a letter, check that the lease and tenant details are correct — the letter uses the stored values.
 
+### 6.5 Archiving a tenant or guarantor
+
+- The grid button with the box icon changed from **Delete** to **Archive**. It sets `Ativo=0` and appends a note with the decision date; it does not delete records.
+- Leases, receipts, documents, history and notifications remain queryable, including old contracts.
+- A tenant or guarantor with an active lease cannot be archived: end the lease first. The record stays in the grid with **Active** unchecked.
+
 ---
 
 ## 7. Leases {#arrendamentos}
@@ -258,7 +266,22 @@ The toolbar and context menu allow you to:
 - **Update rents** and generate the corresponding letter.
 - Check the tenant's **current balance** (`/saldocorrenteinquilino`).
 
-### 7.4 Update coefficients
+### 7.4 Ending a lease (archiving)
+
+1. In the **Active** view (default), select an active lease.
+2. Click **End lease** in the toolbar — it is enabled only for an active selection.
+3. Enter the **leave date**, **reason** and, optionally, **notes**; confirm.
+4. The lease moves to **History**. In **All**, the **State** column shows which leases are active and which are historical.
+
+Ending is **transactional**: it sets the leave date, frees the unit, writes history and appends `Contrato já não está ativo; decisão tomada em <date>` to the lease, tenant and eligible guarantor notes. Nothing is deleted — tenants, guarantors and leases remain queryable. The tenant is archived; the guarantor is archived only when it has no other active lease.
+
+> ⚠️ Outstanding debt **does not block** termination, but it raises a warning alert for all users with a suggested action to settle the debt.
+
+> ℹ️ The dialog also shows a non-blocking reminder about the **revocation letter**: it uses the configured send/response deadlines and asks for confirmation when there is no sent letter, the response is overdue, or the letter was sent too late. The lease date is never changed automatically.
+
+> 💡 `Data_Fim` is read-only. **Automatic renewal** only raises an alert to confirm the term; it never changes the date silently. To update the term, use **Extend the contract term**.
+
+### 7.5 Update coefficients
 
 In **Leases → Coefficients** (`/updatecoefficients`) you can manage the coefficients used to calculate annual rent updates.
 
@@ -287,6 +310,8 @@ The grid allows searching, sorting and exporting to Excel.
 4. Confirm the processing.
 
 > ⚠️ Batch processing creates several records at once. Always review the list before confirming.
+
+> ⚠️ Only **active** leases within their term generate rents. Ended leases stay in history and produce no new records.
 
 > ℹ️ If no leases or units are registered, the **New** button is disabled and the reason is shown. The page no longer stays on "Preparing data".
 
@@ -345,7 +370,10 @@ The **bell** in the top bar opens the notification centre. You can also open the
 - Each alert can include a **suggested action** — for example, open the tenant record, record a payment or generate the corresponding letter.
 - Alerts include: overdue rent, a missing overdue-rent letter, rent due soon, a revocation letter with no reply, and a lease marked as issued without a generated document.
 - Unread messages are highlighted.
-- Opening a notification marks it as read.
+- Each alert behaves like a task: use **Mark done** to complete it and **Reopen** to make it pending again. Opening an alert only follows its suggested link — it does not complete it.
+- The **All** tab shows both pending and completed alerts; **To do** shows only pending ones. The bell counter shows pending alerts.
+- The panel footer has **Mark all as done** (asks for confirmation); the header icon opens the full list at `/notifications`, which has a button to close it.
+- Pending alerts are generated automatically when the API starts, even on a new database; opening the bell does not duplicate them.
 
 ### 11.2 Messages
 

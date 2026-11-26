@@ -182,6 +182,8 @@ Una **unidad** es una división dentro del inmueble, por ejemplo un apartamento,
 - **Seguro** asociado.
 - **Activa / inactiva**.
 
+> 💡 Al desmarcar **Activa**, el **estado** pasa automáticamente a **Reservada**: una unidad inactiva no puede seguir «Alquilada». Al reactivarla, el estado pasa a **Libre**.
+
 ### 5.3 Imágenes
 
 1. Abra el gestor de imágenes (`/fracoes/imagesmanager`).
@@ -230,6 +232,12 @@ El menú contextual del inquilino permite generar directamente:
 
 > ⚠️ Antes de generar una carta, compruebe que los datos del contrato y del inquilino son correctos: la carta usa los valores guardados.
 
+### 6.5 Archivar inquilino o garante
+
+- El botón de la rejilla con el icono de caja cambió de **Eliminar** a **Archivar**. La operación marca `Ativo=0` y añade una nota con la fecha de la decisión; no elimina registros.
+- Los contratos, recibos, documentos, historial y notificaciones siguen disponibles, incluidos los contratos antiguos.
+- No se puede archivar un inquilino o garante con contrato activo: termine primero el contrato. El registro permanece en la rejilla con el campo **Activo** desmarcado.
+
 ---
 
 ## 7. Arrendamientos {#arrendamentos}
@@ -258,7 +266,22 @@ La barra de herramientas y el menú contextual permiten:
 - **Actualizar rentas** y generar la carta correspondiente.
 - Consultar el **saldo corriente del inquilino** (`/saldocorrenteinquilino`).
 
-### 7.4 Coeficientes de actualización
+### 7.4 Terminar un contrato (archivado)
+
+1. En la vista **Activos** (predeterminada), seleccione un contrato activo.
+2. Haga clic en **Terminar contrato** en la barra de herramientas: solo está habilitado con un contrato activo seleccionado.
+3. Indique la **fecha de salida**, el **motivo** y, si lo desea, las **notas**; confirme.
+4. El contrato pasa a **Histórico**. En **Todos**, la columna **Estado** muestra qué contratos están activos y cuáles son históricos.
+
+Terminar es una operación **transaccional**: establece la fecha de salida, libera la unidad, guarda el historial y añade `Contrato já não está ativo; decisão tomada em <data>` a las notas del contrato, del inquilino y del fiador que cumpla los requisitos. No se elimina nada: inquilinos, fiadores y contratos siguen siendo consultables. El inquilino se archiva; el fiador solo se archiva si no tiene otro contrato activo.
+
+> ⚠️ Tener rentas pendientes **no impide** terminar el contrato, pero genera una alerta de aviso para todos los usuarios con una sugerencia para regularizar la deuda.
+
+> ℹ️ El diálogo también avisa, sin bloquear, sobre la **carta de revocación**: usa los plazos configurados de envío y respuesta y pide confirmación si no hay constancia de envío, la respuesta está atrasada o la carta se envió con poca antelación. La fecha del contrato nunca se cambia automáticamente.
+
+> 💡 `Data_Fim` no es editable. La **renovación automática** solo genera una alerta para confirmar el plazo; nunca cambia la fecha silenciosamente. Para actualizar el plazo, use **Ampliar el plazo del contrato**.
+
+### 7.5 Coeficientes de actualización
 
 En **Arrendamientos → Coeficientes** (`/updatecoefficients`) puede gestionar los coeficientes utilizados en el cálculo de las actualizaciones anuales de la renta.
 
@@ -287,6 +310,8 @@ La rejilla permite buscar, ordenar y exportar a Excel.
 4. Confirme el procesamiento.
 
 > ⚠️ El procesamiento por lotes crea varios registros a la vez. Revise siempre la lista antes de confirmar.
+
+> ⚠️ Solo los contratos **activos** y dentro del plazo generan rentas. Los contratos terminados permanecen en el historial y no producen nuevos movimientos.
 
 > ℹ️ Si no hay arrendamientos o unidades registradas, el botón **Nuevo** queda desactivado y se muestra el motivo. La página ya no se queda en "Preparando datos".
 
@@ -345,7 +370,10 @@ La **campana** de la barra superior abre el centro de notificaciones. También p
 - Cada aviso puede incluir una **acción sugerida** — por ejemplo, abrir la ficha del inquilino, registrar un pago o generar la carta correspondiente.
 - Los avisos incluyen: rentas atrasadas, falta de carta de aviso, rentas próximas a vencer, carta de revocación sin respuesta y contrato marcado como emitido sin documento generado.
 - Los mensajes sin leer aparecen destacados.
-- Al abrir una notificación, se marca como leída.
+- Cada aviso funciona como una tarea: use **Marcar como hecho** para concluirlo y **Reabrir** para devolverlo a pendiente. Abrir el aviso solo navega a la página sugerida; no lo concluye.
+- La pestaña **Todas** muestra pendientes y hechos; la pestaña **Pendientes** muestra solo los pendientes. El contador de la campana cuenta los pendientes.
+- El pie del panel tiene **Marcar todas como hechas** (pide confirmación); el icono del encabezado abre la lista completa en `/notifications`, que tiene un botón para cerrarla.
+- Los avisos pendientes se generan automáticamente al arrancar la API, incluso en una base nueva; abrir la campana no los duplica.
 
 ### 11.2 Mensajes
 

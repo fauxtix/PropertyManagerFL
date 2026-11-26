@@ -3120,7 +3120,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
     <value>Ano da publicação</value>
   </data>
   <data name="NotificationsTitle" xml:space="preserve">
-    <value>NotificaÃ§Ãµes</value>
+    <value>Notificações</value>
   </data>
   <data name="NotificationsSuggestedAction" xml:space="preserve">
     <value>Sugestão:</value>
@@ -3135,7 +3135,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
     <value>Por ler</value>
   </data>
   <data name="NotificationsEmpty" xml:space="preserve">
-    <value>NÃ£o hÃ¡ notificaÃ§Ãµes</value>
+    <value>Não há notificações</value>
   </data>
   <data name="Close" xml:space="preserve">
     <value>Fechar</value>
@@ -3147,7 +3147,7 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
     <value>Todas</value>
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
-    <value>NotificaÃ§Ãµes marcadas como lidas</value>
+    <value>Notificações marcadas como lidas</value>
   </data>
   <data name="TopBarLogout" xml:space="preserve">
     <value>Terminar sessão</value>
@@ -3169,5 +3169,200 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   </data>
   <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
     <value>Não é possível criar um arrendamento enquanto não existirem proprietário, imóvel, fração, inquilino e fiador registados.</value>
+  </data>
+  <data name="NotificationRentLetterTitle" xml:space="preserve">
+    <value>Necessário envio de carta de atualização</value>
+  </data>
+  <data name="NotificationRentUpdateMissingLetter" xml:space="preserve">
+    <value>não foi enviada carta de atualização!</value>
+  </data>
+  <data name="NotificationRentLettersBody" xml:space="preserve">
+    <value>Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano.</value>
+  </data>
+  <data name="NotificationLeaseEndingTitle" xml:space="preserve">
+    <value>Contrato do inquilino {0} ({1}) está prestes a terminar</value>
+  </data>
+  <data name="NotificationLeaseEndingBody" xml:space="preserve">
+    <value>Renovar data-fim, ou enviar carta de revogação</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalBody" xml:space="preserve">
+    <value>Renovação automática ativa; confirme o termo do contrato.</value>
+  </data>
+  <data name="NotificationLeaseEndingSuggested" xml:space="preserve">
+    <value>Renovar data-fim, ou enviar carta de revogação.</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalSuggested" xml:space="preserve">
+    <value>Atualize a data-termo do contrato (1, 3 ou mais anos) ou confirme a renovação.</value>
+  </data>
+  <data name="NotificationRentDueSoonTitle" xml:space="preserve">
+    <value>Renda a vencer — {0} ({1})</value>
+  </data>
+  <data name="NotificationRentDueSoonBody" xml:space="preserve">
+    <value>Data de pagamento: {0}.</value>
+  </data>
+  <data name="NotificationRentDueSoonSuggested" xml:space="preserve">
+    <value>Confirmar a data de pagamento e preparar o movimento de renda.</value>
+  </data>
+  <data name="NotificationPaymentOverdueTitle" xml:space="preserve">
+    <value>Rendas em atraso — {0}</value>
+  </data>
+  <data name="NotificationPaymentOverdueBody" xml:space="preserve">
+    <value>{0} pagamento(s) em falta, num total de {1}.</value>
+  </data>
+  <data name="NotificationPaymentOverdueSuggested" xml:space="preserve">
+    <value>Verificar os movimentos em atraso e enviar carta de aviso ao inquilino.</value>
+  </data>
+  <data name="NotificationLateLetterMissingTitle" xml:space="preserve">
+    <value>Faltam cartas de aviso de rendas em atraso — {0}</value>
+  </data>
+  <data name="NotificationLateLetterMissingBody" xml:space="preserve">
+    <value>{0} meses em dívida e apenas {1} carta(s) registada(s).</value>
+  </data>
+  <data name="NotificationLateLetterMissingSuggested" xml:space="preserve">
+    <value>Emitir as cartas de aviso em falta antes de avançar com a revogação do contrato.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueTitle" xml:space="preserve">
+    <value>Carta de revogação sem resposta — {0} ({1})</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueBody" xml:space="preserve">
+    <value>Enviada em {0}; prazo de {1} dias ultrapassado.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueSuggested" xml:space="preserve">
+    <value>Contactar o inquilino, registar a resposta ou avançar com a oposição à renovação.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingTitle" xml:space="preserve">
+    <value>Contrato emitido sem documento — {0} ({1})</value>
+  </data>
+  <data name="NotificationContractDocumentMissingBody" xml:space="preserve">
+    <value>O contrato está assinalado como emitido mas não tem ficheiro gerado registado.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingSuggested" xml:space="preserve">
+    <value>Gerar novamente o contrato ou corrigir a indicação de emissão.</value>
+  </data>
+  <data name="NotificationsToday" xml:space="preserve">
+    <value>Hoje</value>
+  </data>
+  <data name="NotificationsYesterday" xml:space="preserve">
+    <value>Ontem</value>
+  </data>
+  <data name="NotificationsMinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="NotificationsHoursShort" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="NotificationsDaysShort" xml:space="preserve">
+    <value>{0} d</value>
+  </data>
+  <data name="NotificationsMarkedComplete" xml:space="preserve">
+    <value>Notificação concluída</value>
+  </data>
+  <data name="NotificationsReopened" xml:space="preserve">
+    <value>Notificação reaberta</value>
+  </data>
+  <data name="NotificationsCompleted" xml:space="preserve">
+    <value>Concluído</value>
+  </data>
+  <data name="NotificationsMarkedAllComplete" xml:space="preserve">
+    <value>Notificações marcadas como concluídas</value>
+  </data>
+  <data name="NotificationsReopen" xml:space="preserve">
+    <value>Reabrir</value>
+  </data>
+  <data name="NotificationsCloseList" xml:space="preserve">
+    <value>Fechar lista</value>
+  </data>
+  <data name="NotificationsComplete" xml:space="preserve">
+    <value>Concluir</value>
+  </data>
+  <data name="NotificationsMarkAllComplete" xml:space="preserve">
+    <value>Marcar todas como concluídas</value>
+  </data>
+  <data name="NotificationsOpenFull" xml:space="preserve">
+    <value>Abrir lista completa</value>
+  </data>
+  <data name="NotificationsPending" xml:space="preserve">
+    <value>Por tratar</value>
+  </data>
+  <data name="NotificationsConfirmMarkAllComplete" xml:space="preserve">
+    <value>Tem a certeza de que pretende marcar todas as notificações pendentes como concluídas?</value>
+  </data>
+  <data name="EndLeaseSuccess" xml:space="preserve">
+    <value>Contrato terminado e fração libertada com sucesso.</value>
+  </data>
+  <data name="LeaseStateActive" xml:space="preserve">
+    <value>Ativo</value>
+  </data>
+  <data name="TituloTerminarContrato" xml:space="preserve">
+    <value>Terminar contrato</value>
+  </data>
+  <data name="EndLeaseSuccessWithDebt" xml:space="preserve">
+    <value>Contrato terminado, mas existe dívida pendente:</value>
+  </data>
+  <data name="LeaseState" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="LeaseFilterHistory" xml:space="preserve">
+    <value>Histórico</value>
+  </data>
+  <data name="EndLeaseSelectActive" xml:space="preserve">
+    <value>Selecione um contrato ativo na grelha.</value>
+  </data>
+  <data name="LeaseFilterAll" xml:space="preserve">
+    <value>Todos</value>
+  </data>
+  <data name="LeaseStateHistorical" xml:space="preserve">
+    <value>Histórico</value>
+  </data>
+  <data name="EndLeaseConfirmText" xml:space="preserve">
+    <value>Tem a certeza de que pretende terminar o contrato de</value>
+  </data>
+  <data name="LeaseFilterActive" xml:space="preserve">
+    <value>Ativos</value>
+  </data>
+  <data name="TituloDataSaida" xml:space="preserve">
+    <value>Data de saída</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetter" xml:space="preserve">
+    <value>Não existe registo de carta de revogação enviada. O prazo legal é de {0} dias antes do fim do contrato — confirme se foi cumprido antes de continuar.</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetterNoDeadline" xml:space="preserve">
+    <value>Não existe registo de carta de revogação enviada. Confirme se o prazo legal foi cumprido antes de continuar.</value>
+  </data>
+  <data name="EndLeaseRevocationResponseOverdue" xml:space="preserve">
+    <value>Carta de revogação enviada em {0}; o prazo de resposta de {1} dias terminou em {2}. Confirme a decisão antes de continuar.</value>
+  </data>
+  <data name="EndLeaseRevocationAwaitingResponse" xml:space="preserve">
+    <value>Carta de revogação enviada em {0}; aguarda resposta até {1} ({2} dias).</value>
+  </data>
+  <data name="EndLeaseRevocationShortNotice" xml:space="preserve">
+    <value>Carta enviada em {0}, a menos de {1} dias do fim do contrato ({2}). Confirme se o prazo legal foi cumprido.</value>
+  </data>
+  <data name="ArchiveMsg" xml:space="preserve">
+    <value>Arquivar</value>
+  </data>
+  <data name="ArchiveTenantConfirmText" xml:space="preserve">
+    <value>Tem a certeza de que pretende arquivar o inquilino</value>
+  </data>
+  <data name="ArchiveGuarantorConfirmText" xml:space="preserve">
+    <value>Tem a certeza de que pretende arquivar o fiador</value>
+  </data>
+  <data name="ArchiveSuccessTenant" xml:space="preserve">
+    <value>Inquilino arquivado com sucesso.</value>
+  </data>
+  <data name="ArchiveSuccessGuarantor" xml:space="preserve">
+    <value>Fiador arquivado com sucesso.</value>
+  </data>
+  <data name="ArchiveActiveLeaseTenant" xml:space="preserve">
+    <value>Não foi possível arquivar: o inquilino tem um contrato ativo.</value>
+  </data>
+  <data name="ArchiveActiveLeaseGuarantor" xml:space="preserve">
+    <value>Não foi possível arquivar: o fiador tem um contrato ativo.</value>
+  </data>
+  <data name="ArchiveNotFound" xml:space="preserve">
+    <value>Registo não encontrado.</value>
+  </data>
+  <data name="ArchiveFailed" xml:space="preserve">
+    <value>Não foi possível arquivar o registo. Verifique o log, p.f.</value>
   </data>
 </root>

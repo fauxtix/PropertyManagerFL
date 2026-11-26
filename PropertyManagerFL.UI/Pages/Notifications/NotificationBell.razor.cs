@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.Extensions.Localization;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.ViewModels.Notifications;
@@ -17,11 +18,12 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
     private string _userId = string.Empty;
     private bool ShowPanel { get; set; }
     private int SelectedTab { get; set; }
-    private int UnseenCount { get; set; }
-    private int UnreadCount => _items.Count(i => !i.IsRead);
+    private int BadgeCount { get; set; }
+    private int PendingCount => _items.Count(i => !i.IsCompleted);
     private IEnumerable<NotificationVM> VisibleItems => _items;
-    private IEnumerable<NotificationVM> UnreadItems => _items.Where(i => !i.IsRead);
+    private IEnumerable<NotificationVM> PendingItems => _items.Where(i => !i.IsCompleted);
     private SfToast? ToastObj { get; set; }
+    private bool ConfirmAllDialogVisible { get; set; }
     private string ToastTitle { get; set; } = string.Empty;
     private string ToastMessage { get; set; } = string.Empty;
     private CancellationTokenSource? _pollingCts;
@@ -39,6 +41,7 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
         await LoadAsync();
 
         NotificationClient.NotificationChanged += OnNotificationChanged;
+        Navigation.LocationChanged += OnLocationChanged;
         await NotificationClient.StartAsync(_userId);
 
         _pollingCts = new CancellationTokenSource();
@@ -59,7 +62,7 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
         {
             _items = (await Notifications.GetForUserAsync(_userId)).ToList();
             var count = await Notifications.GetCountAsync(_userId);
-            UnseenCount = count.Unseen;
+            BadgeCount = count.Pending;
         }
         catch (Exception ex)
         {
@@ -92,36 +95,62 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
         if (ShowPanel)
         {
             await LoadAsync();
-            var cleared = await Notifications.MarkSeenAsync(_userId);
-            if (cleared > 0) UnseenCount = 0;
         }
     }
 
     private void ClosePanel() => ShowPanel = false;
 
-    private async Task MarkAllReadAsync()
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        var count = await Notifications.MarkAllReadAsync(_userId);
+        if (!ShowPanel) return;
+        ShowPanel = false;
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    private Task OpenFullPageAsync()
+    {
+        ClosePanel();
+        Navigation.NavigateTo("/notifications");
+        return Task.CompletedTask;
+    }
+
+    private async Task ToggleCompleteAsync(NotificationVM item)
+    {
+        var completed = !item.IsCompleted;
+        if (!await Notifications.SetCompletedAsync(item.Id, _userId, completed)) return;
+
+        item.IsCompleted = completed;
+        ToastTitle = L["NotificationsTitle"];
+        ToastMessage = completed ? L["NotificationsMarkedComplete"] : L["NotificationsReopened"];
+        if (ToastObj is not null) await ToastObj.ShowAsync();
+        await LoadAsync();
+    }
+
+    private void OpenMarkAllDialog() => ConfirmAllDialogVisible = true;
+
+    private void CancelMarkAll() => ConfirmAllDialogVisible = false;
+
+    private async Task ConfirmMarkAllAsync()
+    {
+        ConfirmAllDialogVisible = false;
+        await MarkAllCompleteAsync();
+    }
+
+    private async Task MarkAllCompleteAsync()
+    {
+        var count = await Notifications.MarkAllCompleteAsync(_userId);
         if (count > 0)
         {
-            foreach (var item in _items) item.IsRead = true;
+            foreach (var item in _items) item.IsCompleted = true;
             ToastTitle = L["NotificationsTitle"];
-            ToastMessage = L["NotificationsMarkedAllRead"];
+            ToastMessage = L["NotificationsMarkedAllComplete"];
             if (ToastObj is not null) await ToastObj.ShowAsync();
         }
+        await LoadAsync();
     }
 
     private async Task OpenItemAsync(NotificationVM item)
     {
-        if (!item.IsRead)
-        {
-            var ok = await Notifications.MarkReadAsync(item.Id, _userId);
-            if (ok)
-            {
-                item.IsRead = true;
-                if (UnseenCount > 0) UnseenCount--;
-            }
-        }
         ClosePanel();
         if (!string.IsNullOrWhiteSpace(item.Link)) Navigation.NavigateTo(item.Link);
     }
@@ -134,28 +163,17 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
     private static string IconFor(string kind) => kind switch
     {
         "Appointment" => "fa-calendar",
-        "RentLetter" or "RentUpdate" or "RentLetters" => "fa-file-text-o",
-        "LeaseEnding" => "fa-exclamation-triangle",
+        "RentLetter" or "RentUpdate" or "RentLetters" => "fa-file-lines",
+        "LeaseEnding" => "fa-triangle-exclamation",
         "PaymentOverdue" => "fa-credit-card",
-        "RentDueSoon" => "fa-clock-o",
-        "LateLetterMissing" or "LetterResponseOverdue" => "fa-envelope-o",
-        "ContractDocumentMissing" => "fa-file-o",
+        "RentDueSoon" => "fa-clock",
+        "LateLetterMissing" or "LetterResponseOverdue" => "fa-envelope",
+        "ContractDocumentMissing" => "fa-file",
         "Message" => "fa-envelope",
         "Payment" => "fa-credit-card",
-        "Document" => "fa-file-o",
+        "Document" => "fa-file",
         _ => "fa-bell"
     };
-
-    private static string RelativeTime(DateTime createdAt)
-    {
-        var local = createdAt.ToLocalTime();
-        var delta = DateTime.Now - local;
-        if (delta.TotalMinutes < 1) return "agora";
-        if (delta.TotalMinutes < 60) return $"{(int)delta.TotalMinutes} min";
-        if (delta.TotalHours < 24) return $"{(int)delta.TotalHours} h";
-        if (delta.TotalDays < 7) return $"{(int)delta.TotalDays} d";
-        return local.ToString("dd/MM/yyyy");
-    }
 
     public async ValueTask DisposeAsync()
     {
@@ -164,6 +182,7 @@ public partial class NotificationBell : ComponentBase, IAsyncDisposable
         _pollingCts?.Cancel();
         _pollingCts?.Dispose();
         NotificationClient.NotificationChanged -= OnNotificationChanged;
+        Navigation.LocationChanged -= OnLocationChanged;
         await NotificationClient.StopAsync();
     }
 }

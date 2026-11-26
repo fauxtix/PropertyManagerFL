@@ -13,7 +13,14 @@ public class NotificationVM
     public string? ResourceType { get; set; }
     public int? ResourceId { get; set; }
     public DateTime CreatedAt { get; set; }
-    public bool IsRead { get; set; }
+    /// <summary>True once the user has marked the suggested action as done. Opening the item does not set this.</summary>
+    public bool IsCompleted { get; set; }
+}
+
+/// <summary>Payload for completing or reopening a notification.</summary>
+public class SetCompletedVM
+{
+    public bool Completed { get; set; }
 }
 
 public class CreateNotificationVM

@@ -1,8210 +1,13 @@
 ﻿-- PropertyManagerFL - generated database setup script
--- Source: live PropertyManagerDB (cleaned baseline), generated 2026-11-25.
--- DO NOT EDIT BY HAND. Regenerate from the cleaned DB with SMO: full schema + reference/config data only.
+-- Source: cleaned baseline snapshot (2026-11-25) plus the idempotent EndLeaseAndArchiving.sql migration (2026-11-26).
+-- DO NOT EDIT BY HAND. Regenerate from the cleaned database with SMO: full schema + reference/config data only.
+-- Includes end-of-lease/archiving objects: HistoricoArrendamentos, ID_Arrendamento columns, usp_Arrendamentos_EndLease, usp_Inquilinos_Archive and usp_Fiadores_Archive.
+-- Verified by restoring the generated script into an empty database and comparing object counts and all 79 table row counts.
 -- No operational or sample data is included; creating test data is the user's responsibility (see docs/DATABASE.md).
 -- Sanitised: ApplicationSettings.ApiKey and backup paths are placeholders; personal SMTP fields are NULL.
 USE [PropertyManagerDB]
 GO
 CREATE SCHEMA [Identity]
-GO
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[__EFMigrationsHistory](
-	[MigrationId] [nvarchar](150) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProductVersion] [nvarchar](32) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
-(
-	[MigrationId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[ApplicationSettings](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DisplayName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Username] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Password] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Port] [int] NULL,
-	[Host] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[FromEmail] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[SmtpServer] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[EmailPort] [int] NULL,
-	[EmailUsername] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[EmailPassword] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[HotmailHostname] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[HotmailPort] [nvarchar](10) COLLATE Latin1_General_CI_AS NULL,
-	[UseSSL] [bit] NULL,
-	[HotmailUsername] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[HotmailPassword] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[PaperCutSmtpServer] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[PaperCutPort] [int] NULL,
-	[EnableSsl] [bit] NULL,
-	[ApiKey] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[PrazoContratoEmAnos] [smallint] NULL,
-	[PrazoEnvioCartaAtraso] [smallint] NULL,
-	[PrazoEnvioCartaAumento] [smallint] NULL,
-	[CartasAumentoAutomaticas] [bit] NULL,
-	[TipoEnvioCartasAumento] [char](1) COLLATE Latin1_General_CI_AS NULL,
-	[PrazoEnvioCartaRevogacao] [smallint] NULL,
-	[PrazoRespostaCartaAtraso] [smallint] NULL,
-	[PrazoRespostaCartaAumento] [smallint] NULL,
-	[PrazoRespostaCartaRevogacao] [smallint] NULL,
-	[RenovacaoAutomatica] [bit] NULL,
-	[ComprovativoIRS] [bit] NULL,
-	[ComprovativoReciboVencimento] [bit] NULL,
-	[CaucaoRequerida] [bit] NULL,
-	[PrazoInspecaoGas] [smallint] NULL,
-	[PercentagemMultaPorAtrasoPagamento] [smallint] NULL,
-	[BackupBaseDados] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
-	[BackupOutrosFicheiros] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
-	[DefaultLanguage] [nvarchar](5) COLLATE Latin1_General_CI_AS NULL,
-	[TaxaIRS] [decimal](3, 2) NULL,
- CONSTRAINT [PK__Applicat__3214EC075949783C] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Appointments](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Subject] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Location] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[StartTime] [datetime] NOT NULL,
-	[EndTime] [datetime] NOT NULL,
-	[IsAllDay] [bit] NOT NULL,
-	[CategoryColor] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[RecurrenceRule] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[RecurrenceID] [int] NULL,
-	[FollowingID] [int] NULL,
-	[RecurrenceException] [nvarchar](1024) COLLATE Latin1_General_CI_AS NULL,
-	[StartTimezone] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[EndTimezone] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[ApptType] [int] NULL,
- CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Arrendamentos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Data_Inicio] [datetime] NOT NULL,
-	[Data_Fim] [datetime] NOT NULL,
-	[Data_Saida] [datetime] NULL,
-	[Data_Pagamento] [datetime] NULL,
-	[SaldoInicial] [decimal](10, 2) NULL,
-	[Fiador] [bit] NOT NULL,
-	[Prazo_Meses] [int] NOT NULL,
-	[Prazo] [int] NOT NULL,
-	[Valor_Renda] [decimal](10, 2) NOT NULL,
-	[Caucao] [bit] NOT NULL,
-	[Doc_IRS] [bit] NOT NULL,
-	[Doc_Vencimento] [bit] NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[ID_Fracao] [int] NOT NULL,
-	[ID_Inquilino] [int] NOT NULL,
-	[ID_Fiador] [int] NOT NULL,
-	[ContratoEmitido] [bit] NOT NULL,
-	[DocumentoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[EnvioCartaAtualizacaoRenda] [bit] NULL,
-	[DataEnvioCartaAtualizacao] [datetime] NULL,
-	[DocumentoAtualizacaoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[EnvioCartaRevogacao] [bit] NULL,
-	[DataEnvioCartaRevogacao] [datetime] NULL,
-	[DocumentoRevogacaoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[RespostaCartaRevogacao] [bit] NULL,
-	[DataRespostaCartaRevogacao] [datetime] NULL,
-	[EnvioCartaAtrasoRenda] [bit] NULL,
-	[DocumentoAtrasoRendaGerado] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[DataEnvioCartaAtrasoRenda] [datetime] NULL,
-	[RespostaCartaAtrasoRenda] [bit] NULL,
-	[DataRespostaCartaAtrasoRenda] [datetime] NULL,
-	[FormaPagamento] [int] NOT NULL,
-	[Ativo] [bit] NOT NULL,
-	[LeiVigente] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ArrendamentoNovo] [bit] NOT NULL,
-	[EstadoPagamento] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RenovacaoAutomatica] [bit] NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Arrendamento] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetRoleClaims](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ClaimType] [text] COLLATE Latin1_General_CI_AS NULL,
-	[ClaimValue] [text] COLLATE Latin1_General_CI_AS NULL,
-	[RoleId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_AspNetRoleClaims] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetRoles](
-	[Id] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ConcurrencyStamp] [text] COLLATE Latin1_General_CI_AS NULL,
-	[Name] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[NormalizedName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_AspNetRoles] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetUserClaims](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ClaimType] [text] COLLATE Latin1_General_CI_AS NULL,
-	[ClaimValue] [text] COLLATE Latin1_General_CI_AS NULL,
-	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_AspNetUserClaims] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetUserLogins](
-	[LoginProvider] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProviderKey] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProviderDisplayName] [text] COLLATE Latin1_General_CI_AS NULL,
-	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetUserRoles](
-	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RoleId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetUsers](
-	[Id] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[AccessFailedCount] [int] NOT NULL,
-	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Email] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[EmailConfirmed] [bit] NOT NULL,
-	[LockoutEnabled] [bit] NOT NULL,
-	[LockoutEnd] [datetimeoffset](7) NULL,
-	[NormalizedEmail] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[NormalizedUserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[PasswordHash] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[PhoneNumber] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[PhoneNumberConfirmed] [bit] NOT NULL,
-	[SecurityStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[TwoFactorEnabled] [bit] NOT NULL,
-	[UserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AspNetUserTokens](
-	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[LoginProvider] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Name] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Value] [text] COLLATE Latin1_General_CI_AS NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Audit_26_Jan_2023](
-	[AuditId] [bigint] IDENTITY(1,1) NOT NULL,
-	[Area] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[ControllerName] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[ActionName] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[LoginStatus] [varchar](1) COLLATE Latin1_General_CI_AS NULL,
-	[LoggedInAt] [varchar](23) COLLATE Latin1_General_CI_AS NULL,
-	[LoggedOutAt] [varchar](23) COLLATE Latin1_General_CI_AS NULL,
-	[PageAccessed] [varchar](500) COLLATE Latin1_General_CI_AS NULL,
-	[IPAddress] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[SessionID] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[UserID] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[RoleId] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
-	[LangId] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
-	[IsFirstLogin] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
-	[CurrentDatetime] [varchar](23) COLLATE Latin1_General_CI_AS NULL
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[AuditTrails](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UserId] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Type] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[TableName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[DateTime] [datetime2](7) NOT NULL,
-	[OldValues] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[NewValues] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[AffectedColumns] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[PrimaryKey] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_AuditTrails] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[CategoriaDespesa](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_CategoriaDespesa] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[CC_Inquilinos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DataMovimento] [datetime] NOT NULL,
-	[UpdatedDate] [datetime] NULL,
-	[ValorPago] [decimal](10, 2) NOT NULL,
-	[ValorEmDivida] [decimal](10, 0) NOT NULL,
-	[IdInquilino] [int] NOT NULL,
-	[Renda] [bit] NOT NULL,
-	[ID_TipoRecebimento] [int] NOT NULL,
-	[TransactionId] [int] NOT NULL,
-	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_CC_Inquilinos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[ChatHistory](
-	[Id] [bigint] IDENTITY(1,1) NOT NULL,
-	[FromUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[ToUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[Message] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedDate] [datetime2](7) NOT NULL,
- CONSTRAINT [PK_ChatHistory] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[CoefientesAtualizacaoRendas](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Ano] [nvarchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Coeficiente] [float] NOT NULL,
-	[DiplomaLegal] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
-	[UrlDiploma] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Lei] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
-	[DataPublicacao] [nvarchar](30) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_CoefientesAtualizacaoRendas] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Concelhos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[CodConcelho] [int] NOT NULL,
-	[Descricao] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
-	[IdDistrito] [int] NOT NULL,
-	[Coeficiente] [decimal](6, 5) NOT NULL,
- CONSTRAINT [PK_Concelhos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Condominios](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[IdFracao] [int] NOT NULL,
-	[Quota] [decimal](11, 2) NOT NULL,
-	[Ano] [nvarchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Gestor] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[ContactoGestor] [nvarchar](20) COLLATE Latin1_General_CI_AS NULL,
-	[ValorAvenca] [decimal](11, 2) NULL,
- CONSTRAINT [PK_Condominios] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Contactos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Nome] [varchar](70) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [varchar](70) COLLATE Latin1_General_CI_AS NULL,
-	[Localidade] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[Contacto] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[ID_TipoContacto] [int] NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Contactos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Contratos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DataCelebracao] [datetime] NOT NULL,
-	[Data_Inicio] [datetime] NOT NULL,
-	[Fiador] [bit] NOT NULL,
-	[Prazo_Meses] [int] NOT NULL,
-	[Valor_Renda] [decimal](10, 2) NOT NULL,
-	[Doc_IRS] [bit] NOT NULL,
-	[Doc_Vencimento] [bit] NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[ID_Fracao] [int] NOT NULL,
-	[ID_Inquilino] [int] NOT NULL,
-	[ID_Fiador] [int] NOT NULL,
-	[Caucao] [bit] NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Contratos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Despesas](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DataMovimento] [datetime] NOT NULL,
-	[Valor_Pago] [decimal](10, 2) NOT NULL,
-	[ID_TipoDespesa] [int] NOT NULL,
-	[ID_CategoriaDespesa] [int] NOT NULL,
-	[ID_ModoPagamento] [int] NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[NumeroDocumento] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Despesas] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Distritos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_Distritos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[DistritosConcelhos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[CodigoDistrito] [varchar](4) COLLATE Latin1_General_CI_AS NULL,
-	[DesignacaoDistrito] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[CodigoConcelho] [nvarchar](6) COLLATE Latin1_General_CI_AS NULL,
-	[DesignacaoConcelho] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_DistritosConcelhos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[DocumentExtendedAttributes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime2](7) NOT NULL,
-	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime2](7) NULL,
-	[EntityId] [int] NOT NULL,
-	[Type] [tinyint] NOT NULL,
-	[Key] [nvarchar](max) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Text] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Decimal] [decimal](18, 2) NULL,
-	[DateTime] [datetime2](7) NULL,
-	[Json] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[ExternalId] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Group] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[IsActive] [bit] NOT NULL,
- CONSTRAINT [PK_DocumentExtendedAttributes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[DocumentosInquilino](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[TenantId] [int] NOT NULL,
-	[DocumentType] [int] NOT NULL,
-	[DocumentPath] [varchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Descricao] [varchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CreationDate] [datetime] NOT NULL,
-	[ReferralDate] [datetime] NULL,
-	[AnswerDate] [datetime] NULL,
-	[StorageType] [char](1) COLLATE Latin1_General_CI_AS NOT NULL,
-	[StorageFolder] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
-	[Status] [smallint] NULL,
- CONSTRAINT [PK_DocumentosInquilino] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Documents](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Title] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[IsPublic] [bit] NOT NULL,
-	[URL] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[DocumentTypeId] [int] NOT NULL,
-	[DocumentCategoryId] [int] NULL,
-	[LocalUpload] [bit] NOT NULL,
-	[CreatedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime] NOT NULL,
-	[LastModifiedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime] NULL,
- CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[DocumentTypeCategories](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_DocumentTypeCategories] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[DocumentTypes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Name] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime] NULL,
-	[LastModifiedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime] NULL,
-	[TypeCategoryId] [int] NULL,
- CONSTRAINT [PK_DocumentTypes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[EstadoCivil](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_EstadoCivil] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[EstadoConservacao](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_EstadoConservacao] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [UQ__EstadoCo__008BA9EF8E35619D] UNIQUE NONCLUSTERED 
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[EstadoPagamentoRenda](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_SituacaoPagamentoRenda] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Fiadores](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[IdInquilino] [int] NOT NULL,
-	[Ativo] [bit] NULL,
-	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ValidadeCC] [datetime] NOT NULL,
-	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ID_EstadoCivil] [int] NULL,
-	[Contacto1] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Contacto2] [varchar](20) COLLATE Latin1_General_CI_AS NULL,
-	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[IRSAnual] [decimal](10, 2) NOT NULL,
-	[Vencimento] [decimal](10, 2) NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Fiadores] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[FormaPagamento](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](75) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_FormaPagamento] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Fracoes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Ativa] [bit] NOT NULL,
-	[Descricao] [varchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
-	[AreaBrutaPrivativa] [float] NOT NULL,
-	[AreaBrutaDependente] [float] NOT NULL,
-	[CasasBanho] [int] NOT NULL,
-	[GasCanalizado] [bit] NULL,
-	[CozinhaEquipada] [bit] NULL,
-	[Varanda] [bit] NULL,
-	[Garagem] [bit] NULL,
-	[Terraco] [bit] NULL,
-	[Arrecadacao] [bit] NULL,
-	[LugarEstacionamento] [bit] NULL,
-	[Fotos] [bit] NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[Tipologia] [int] NOT NULL,
-	[LicencaHabitacao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
-	[DataEmissaoLicencaHabitacao] [datetime] NULL,
-	[ID_CertificadoEnergetico] [int] NOT NULL,
-	[Matriz] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Letra] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
-	[Andar] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Lado] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[AnoUltAvaliacao] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ValorUltAvaliacao] [decimal](12, 2) NOT NULL,
-	[ID_TipoPropriedade] [int] NOT NULL,
-	[Id_Imovel] [int] NOT NULL,
-	[Situacao] [int] NOT NULL,
-	[Conservacao] [int] NOT NULL,
-	[ValorRenda] [decimal](12, 2) NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Fracoes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[HelpIndex](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[NomeForm] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Titulo] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[Descricao] [text] COLLATE Latin1_General_CI_AS NULL,
-	[Pagina] [smallint] NULL,
-	[ID_Parent] [int] NULL,
- CONSTRAINT [PK_HelpIndex] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[HelpIndex_Parent](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[NomeProjeto] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[NomeExe] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[NomeWord] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[NomePdf] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Descricao] [text] COLLATE Latin1_General_CI_AS NULL,
-	[dCriacao] [datetime] NOT NULL,
- CONSTRAINT [PK__HelpInde__06A79189EF15DD88] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[HistoricoAtualizacaoRendas](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UnitId] [int] NOT NULL,
-	[DateProcessed] [datetime] NOT NULL,
-	[PriorValue] [decimal](12, 2) NOT NULL,
-	[UpdatedValue] [decimal](12, 2) NOT NULL
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[HistoricoEnvioCartas](
-	[Id] [int] NOT NULL,
-	[DataEnvio] [datetime] NOT NULL,
-	[DataResposta] [datetime] NULL,
-	[IdInquilino] [int] NOT NULL,
-	[IdTipoCarta] [int] NOT NULL,
-	[Tentativa] [smallint] NOT NULL,
- CONSTRAINT [PK_HistoricoEnvioCartas] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[ImagensFracoes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Id_Fracao] [int] NOT NULL,
-	[Foto] [varchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Descricao] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_ImagensFracoes] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Imoveis](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Numero] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CodPst] [varchar](4) COLLATE Latin1_General_CI_AS NULL,
-	[CodPstEx] [varchar](3) COLLATE Latin1_General_CI_AS NULL,
-	[AnoConstrucao] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Freguesia] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Concelho] [varchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Elevador] [bit] NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[Foto] [varchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[Conservacao] [int] NOT NULL,
-	[DataUltimaInspecaoGas] [datetime] NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Imoveis] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Inquilinos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Ativo] [bit] NULL,
-	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Naturalidade] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[DataNascimento] [datetime] NOT NULL,
-	[ID_EstadoCivil] [int] NULL,
-	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ValidadeCC] [datetime] NOT NULL,
-	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Contacto1] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Contacto2] [varchar](20) COLLATE Latin1_General_CI_AS NULL,
-	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[IRSAnual] [decimal](10, 2) NOT NULL,
-	[Vencimento] [decimal](10, 2) NOT NULL,
-	[SaldoCorrente] [decimal](10, 2) NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[Titular] [bit] NOT NULL,
-	[VerCol] [timestamp] NOT NULL,
- CONSTRAINT [PK_Inquilinos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[IrsRendas](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Ano] [int] NOT NULL,
- CONSTRAINT [PK_IrsRendas] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[IrsRendas_Percentagens](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[ParentId] [int] NOT NULL,
-	[Escalao_1] [float] NOT NULL,
-	[Descricao_1] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Escalao_2] [float] NULL,
-	[Descricao_2] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
-	[Escalao_3] [float] NULL,
-	[Descricao_3] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
-	[Escalao_4] [float] NULL,
-	[Descricao_4] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
-	[Escalao_5] [float] NULL,
-	[Descricao_5] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_IrsRendas_Percentagens] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Mediadores](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Localidade] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Contacto1] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Contacto2] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Comissao_Venda] [float] NULL,
-	[DataContacto] [datetime] NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Mediadores] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Messages](
-	[MessageId] [int] IDENTITY(1,1) NOT NULL,
-	[DestinationEmail] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
-	[SenderEmail] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
-	[SubjectTitle] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
-	[MessageContent] [nvarchar](1024) COLLATE Latin1_General_CI_AS NOT NULL,
-	[MessageSentOn] [date] NULL,
-	[MessageReceivedOn] [date] NULL,
-	[MessageType] [int] NOT NULL,
-	[TenantId] [int] NOT NULL,
-	[ReferenceId] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Messages] PRIMARY KEY CLUSTERED 
-(
-	[MessageId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Notifications](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RecipientUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[TenantId] [int] NULL,
-	[ActorUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[Kind] [nvarchar](64) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Title] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Body] [nvarchar](1024) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Link] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[Severity] [nvarchar](32) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ResourceType] [nvarchar](64) COLLATE Latin1_General_CI_AS NULL,
-	[ResourceId] [int] NULL,
-	[CreatedAt] [datetime2](7) NOT NULL,
-	[SeenAt] [datetime2](7) NULL,
-	[ReadAt] [datetime2](7) NULL,
-	[SuggestedAction] [nvarchar](1024) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Notifications] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[PMLogs](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Message] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[MessageTemplate] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[Level] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[TimeStamp] [datetime] NULL,
-	[Exception] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Properties] [text] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_PMLogs] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[PopulacaoResidenteFreguesia$](
-	[Distrito (DT)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação DT] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Concelho (CC)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação CC] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Freguesia (FR)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação FR] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[PopRes_2011 (nº)] [float] NULL,
-	[Rural] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Litorâneo] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[F10] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[PopulacaoResidenteFreguesia$_FilterDatabase](
-	[Distrito (DT)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação DT] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Concelho (CC)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação CC] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Freguesia (FR)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Designação FR] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[PopRes_2011 (nº)] [float] NULL
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[ProcessamentoAtualizacaoRendas](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[Ano] [int] NOT NULL,
-	[DataProcessamento] [datetime] NOT NULL,
- CONSTRAINT [PK_ProcessamentoAtalizacaoRendas] PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[ProcessamentoRendas](
-	[id] [int] IDENTITY(1,1) NOT NULL,
-	[Mes] [int] NULL,
-	[Ano] [int] NULL,
-	[DataProcessamento] [datetime] NULL,
-	[TotalRecebido] [decimal](12, 2) NULL,
- CONSTRAINT [PK_ProcessamentoRendas] PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Proprietarios](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Naturalidade] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ID_EstadoCivil] [int] NULL,
-	[DataNascimento] [datetime] NOT NULL,
-	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ValidadeCC] [datetime] NOT NULL,
-	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Contacto] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NOT NULL,
-	[CodPostal] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Proprietarios] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Recebimentos](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DataMovimento] [datetime] NOT NULL,
-	[Estado] [int] NOT NULL,
-	[ID_Propriedade] [int] NOT NULL,
-	[ID_TipoRecebimento] [int] NOT NULL,
-	[ID_Inquilino] [int] NOT NULL,
-	[GeradoPeloPrograma] [bit] NULL,
-	[Renda] [bit] NOT NULL,
-	[ValorPrevisto] [decimal](10, 2) NOT NULL,
-	[ValorEmFalta] [decimal](10, 2) NOT NULL,
-	[ValorRecebido] [decimal](10, 2) NOT NULL,
-	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NULL,
- CONSTRAINT [PK_Recebimentos] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[RecebimentosTemp](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[DataMovimento] [datetime] NOT NULL,
-	[Estado] [int] NOT NULL,
-	[ID_Propriedade] [int] NOT NULL,
-	[ID_TipoRecebimento] [int] NOT NULL,
-	[ID_Inquilino] [int] NOT NULL,
-	[GeradoPeloPrograma] [bit] NULL,
-	[RendaAtualizada] [bit] NULL,
-	[Renda] [bit] NOT NULL,
-	[ValorPrevisto] [decimal](10, 2) NOT NULL,
-	[ValorEmFalta] [decimal](10, 2) NOT NULL,
-	[ValorRecebido] [decimal](10, 2) NOT NULL,
-	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
-	[VerCol] [timestamp] NULL,
- CONSTRAINT [PK_recebimentostemp] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[RoleDetails](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [UQ__RoleDeta__008BA9EF5C67D6EB] UNIQUE NONCLUSTERED 
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Seguros](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[IdFracao] [int] NOT NULL,
-	[Apolice] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Premio] [decimal](11, 1) NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_Seguros] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[SituacaoFracao](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_SituacaoFracao] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[sysdiagrams](
-	[name] [sysname] COLLATE Latin1_General_CI_AS NOT NULL,
-	[principal_id] [int] NOT NULL,
-	[diagram_id] [int] IDENTITY(1,1) NOT NULL,
-	[version] [int] NULL,
-	[definition] [varbinary](max) NULL,
- CONSTRAINT [PK__sysdiagr__C2B05B61DB438F00] PRIMARY KEY CLUSTERED 
-(
-	[diagram_id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [UK_principal_name] UNIQUE NONCLUSTERED 
-(
-	[principal_id] ASC,
-	[name] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[tblLogLogins](
-	[UserId] [nchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[SessionId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[LoginDate] [datetime] NOT NULL,
- CONSTRAINT [PK_tblLogLogins] PRIMARY KEY CLUSTERED 
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[tblLogOperacoes](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Tabela] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[IdReg] [int] NOT NULL,
-	[QuemCriou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[DataCriacao] [datetime] NULL,
-	[QuemModificou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[DataUltimaAlteracao] [datetime] NULL,
-	[QuemApagou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
-	[DataAnulacao] [datetime] NULL,
- CONSTRAINT [tblLogOperacoes$PrimaryKey] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Templates](
-	[Id] [int] NOT NULL,
-	[FileName] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CreatedAt] [datetime] NOT NULL,
- CONSTRAINT [PK_Templates] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipoCertificadoEnergetico](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_TipoCertificadoEnergetico] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipoContacto](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_TipoContacto] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [UQ__TipoCont__008BA9EF92983270] UNIQUE NONCLUSTERED 
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipoDespesa](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Id_CategoriaDespesa] [int] NOT NULL,
- CONSTRAINT [PK__TipoDesp__3214EC0798D2EC09] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipologiaFracao](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [varchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_TipologiaFracao] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY],
- CONSTRAINT [UQ__Tipologi__008BA9EFD9EA73B7] UNIQUE NONCLUSTERED 
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipoPropriedade](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_TipoPropriedade] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[TipoRecebimento](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_TipoRecebimento] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[User_Info](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RoleId] [int] NOT NULL,
-	[User_Name] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[Pwd] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[First_Name] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
-	[EMail] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Mobile] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
-	[Last_Login_Date] [datetime] NULL,
-	[Password_Change_Date] [datetime] NULL,
-	[IsActive] [int] NULL,
- CONSTRAINT [PK_User_Info] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[UserInfo](
-	[UserId] [int] IDENTITY(1,1) NOT NULL,
-	[DisplayName] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
-	[UserName] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Email] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Password] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
-	[CreatedDate] [datetime] NOT NULL,
- CONSTRAINT [PK_UserInfo] PRIMARY KEY CLUSTERED 
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [dbo].[Utilizadores](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UserID] [int] NOT NULL,
-	[Password] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_Utilizadores] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[RoleClaims](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[RoleId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ClaimType] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[ClaimValue] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime2](7) NOT NULL,
-	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[Group] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime2](7) NULL,
- CONSTRAINT [PK_RoleClaims] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[Roles](
-	[Id] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Name] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[NormalizedName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime2](7) NOT NULL,
-	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime2](7) NULL,
- CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[UserClaims](
-	[Id] [int] IDENTITY(1,1) NOT NULL,
-	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ClaimType] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[ClaimValue] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_UserClaims] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[UserLogins](
-	[LoginProvider] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProviderKey] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[ProviderDisplayName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_UserLogins] PRIMARY KEY CLUSTERED 
-(
-	[LoginProvider] ASC,
-	[ProviderKey] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[UserRoles](
-	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[RoleId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
- CONSTRAINT [PK_UserRoles] PRIMARY KEY CLUSTERED 
-(
-	[UserId] ASC,
-	[RoleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[Users](
-	[Id] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[FirstName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[ProfilePictureDataUrl] [text] COLLATE Latin1_General_CI_AS NULL,
-	[CreatedOn] [datetime2](7) NOT NULL,
-	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[LastModifiedOn] [datetime2](7) NULL,
-	[IsDeleted] [bit] NOT NULL,
-	[DeletedOn] [datetime2](7) NULL,
-	[IsActive] [bit] NOT NULL,
-	[RefreshToken] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[RefreshTokenExpiryTime] [datetime2](7) NOT NULL,
-	[UserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[NormalizedUserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[Email] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[NormalizedEmail] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
-	[EmailConfirmed] [bit] NOT NULL,
-	[PasswordHash] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[SecurityStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[PhoneNumber] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
-	[PhoneNumberConfirmed] [bit] NOT NULL,
-	[TwoFactorEnabled] [bit] NOT NULL,
-	[LockoutEnd] [datetimeoffset](7) NULL,
-	[LockoutEnabled] [bit] NOT NULL,
-	[AccessFailedCount] [int] NOT NULL,
- CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
-(
-	[Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-SET ANSI_NULLS ON
-SET QUOTED_IDENTIFIER ON
-CREATE TABLE [Identity].[UserTokens](
-	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[LoginProvider] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Name] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
-	[Value] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
- CONSTRAINT [PK_UserTokens] PRIMARY KEY CLUSTERED 
-(
-	[UserId] ASC,
-	[LoginProvider] ASC,
-	[Name] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_Fracao] ON [dbo].[Arrendamentos]
-(
-	[ID_Fracao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Inquilino] ON [dbo].[Arrendamentos]
-(
-	[ID_Inquilino] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Descricao] ON [dbo].[CategoriaDespesa]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_ChatHistory_FromUserId] ON [dbo].[ChatHistory]
-(
-	[FromUserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_ChatHistory_ToUserId] ON [dbo].[ChatHistory]
-(
-	[ToUserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Nome] ON [dbo].[Contactos]
-(
-	[Nome] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_DataMovimento] ON [dbo].[Despesas]
-(
-	[DataMovimento] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_DocumentExtendedAttributes_EntityId] ON [dbo].[DocumentExtendedAttributes]
-(
-	[EntityId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Documents_DocumentTypeId] ON [dbo].[Documents]
-(
-	[DocumentTypeId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_DescricaoEC] ON [dbo].[EstadoCivil]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [EX_DescEC] ON [dbo].[EstadoConservacao]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_DESCFracc] ON [dbo].[Fracoes]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Inquilino] ON [dbo].[HistoricoAtualizacaoRendas]
-(
-	[UnitId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_DescImoveis] ON [dbo].[Imoveis]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_NomeInquilino] ON [dbo].[Inquilinos]
-(
-	[Nome] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Notifications_Recipient_Created] ON [dbo].[Notifications]
-(
-	[RecipientUserId] ASC,
-	[CreatedAt] DESC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Notifications_Recipient_Unread] ON [dbo].[Notifications]
-(
-	[RecipientUserId] ASC,
-	[ReadAt] ASC,
-	[SeenAt] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_DMov_Recebimentos] ON [dbo].[Recebimentos]
-(
-	[DataMovimento] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_SF] ON [dbo].[SituacaoFracao]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_TC] ON [dbo].[TipoContacto]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_TP] ON [dbo].[TipoDespesa]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_FK_Categoria] ON [dbo].[TipoDespesa]
-(
-	[Id_CategoriaDespesa] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_TF] ON [dbo].[TipologiaFracao]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_TProp] ON [dbo].[TipoPropriedade]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_Desc_TR] ON [dbo].[TipoRecebimento]
-(
-	[Descricao] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_RoleClaims_RoleId] ON [Identity].[RoleClaims]
-(
-	[RoleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE UNIQUE NONCLUSTERED INDEX [RoleNameIndex] ON [Identity].[Roles]
-(
-	[NormalizedName] ASC
-)
-WHERE ([NormalizedName] IS NOT NULL)
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_UserClaims_UserId] ON [Identity].[UserClaims]
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_UserLogins_UserId] ON [Identity].[UserLogins]
-(
-	[UserId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [IX_UserRoles_RoleId] ON [Identity].[UserRoles]
-(
-	[RoleId] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE NONCLUSTERED INDEX [EmailIndex] ON [Identity].[Users]
-(
-	[NormalizedEmail] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-SET ANSI_PADDING ON
-
-CREATE UNIQUE NONCLUSTERED INDEX [UserNameIndex] ON [Identity].[Users]
-(
-	[NormalizedUserName] ASC
-)
-WHERE ([NormalizedUserName] IS NOT NULL)
-WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, DROP_EXISTING = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-ALTER TABLE [dbo].[ApplicationSettings] ADD  CONSTRAINT [DF_ApplicationSettings_PrazoInspecaoGas]  DEFAULT ((5)) FOR [PrazoInspecaoGas]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_Caucao]  DEFAULT ((1)) FOR [Caucao]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_ContratoEmitido]  DEFAULT ((0)) FOR [ContratoEmitido]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_Ativo]  DEFAULT ((1)) FOR [Ativo]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_ArrendamentoNovo]  DEFAULT ((0)) FOR [ArrendamentoNovo]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_EstadoPagamento]  DEFAULT ('Pendente') FOR [EstadoPagamento]
-ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_RenovacaoAutomatica]  DEFAULT ((1)) FOR [RenovacaoAutomatica]
-ALTER TABLE [dbo].[CC_Inquilinos] ADD  CONSTRAINT [DF_CC_Inquilinos_Renda]  DEFAULT ((0)) FOR [Renda]
-ALTER TABLE [dbo].[Concelhos] ADD  CONSTRAINT [DF_Concelhos_Coeficiente]  DEFAULT ((0.033)) FOR [Coeficiente]
-ALTER TABLE [dbo].[Contratos] ADD  CONSTRAINT [DF__Contratos__Cauca__412EB0B6]  DEFAULT ((1)) FOR [Caucao]
-ALTER TABLE [dbo].[DocumentosInquilino] ADD  CONSTRAINT [DF_DocumentosInquilino_UploadDate]  DEFAULT (getdate()) FOR [CreationDate]
-ALTER TABLE [dbo].[DocumentosInquilino] ADD  CONSTRAINT [DF_DocumentosInquilino_Status]  DEFAULT ((1)) FOR [Status]
-ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF__Documents__Docum__7A672E12]  DEFAULT ((0)) FOR [DocumentTypeId]
-ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_LocalUpload]  DEFAULT ((1)) FOR [LocalUpload]
-ALTER TABLE [dbo].[DocumentTypes] ADD  CONSTRAINT [DF_DocumentTypes_CreatedBy]  DEFAULT ((1)) FOR [CreatedBy]
-ALTER TABLE [dbo].[DocumentTypes] ADD  CONSTRAINT [DF_DocumentTypes_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
-ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiador__Ident__44FF419A]  DEFAULT ((0)) FOR [Identificacao]
-ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiadores__NIF__440B1D61]  DEFAULT ((123456789)) FOR [NIF]
-ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiador__Conta__4316F928]  DEFAULT ((0)) FOR [Contacto2]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Ativa]  DEFAULT ((1)) FOR [Ativa]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_GasCanalizado]  DEFAULT ((0)) FOR [GasCanalizado]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_CozinhaEquipada]  DEFAULT ((0)) FOR [CozinhaEquipada]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Varanda]  DEFAULT ((0)) FOR [Varanda]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Garagem]  DEFAULT ((0)) FOR [Garagem]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Arrecadacao]  DEFAULT ((0)) FOR [Arrecadacao]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_LugarEstacionamento]  DEFAULT ((0)) FOR [LugarEstacionamento]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Fotos]  DEFAULT ((0)) FOR [Fotos]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Tipologia]  DEFAULT ((1)) FOR [Tipologia]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_LicencaHabitacao]  DEFAULT ('') FOR [LicencaHabitacao]
-ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_ValorRenda]  DEFAULT ((0)) FOR [ValorRenda]
-ALTER TABLE [dbo].[HelpIndex_Parent] ADD  DEFAULT (getdate()) FOR [dCriacao]
-ALTER TABLE [dbo].[HistoricoEnvioCartas] ADD  CONSTRAINT [DF_HistoricoEnvioCartas_Tentativa]  DEFAULT ((1)) FOR [Tentativa]
-ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Numero__3A81B327]  DEFAULT ('') FOR [Numero]
-ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Fregues__3B75D760]  DEFAULT ('') FOR [Freguesia]
-ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Concelh__3C69FB99]  DEFAULT ('') FOR [Concelho]
-ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Elevado__3D5E1FD2]  DEFAULT ((0)) FOR [Elevador]
-ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Conserv__3E52440B]  DEFAULT ((1)) FOR [Conservacao]
-ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Ident__44FF419A]  DEFAULT ((43625894)) FOR [Identificacao]
-ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilinos__NIF__440B1D61]  DEFAULT ((122623878)) FOR [NIF]
-ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Conta__4316F928]  DEFAULT ((0)) FOR [Contacto2]
-ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF_Inquilinos_SaldoCorrente]  DEFAULT ((0)) FOR [SaldoCorrente]
-ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Titul__45F365D3]  DEFAULT ((1)) FOR [Titular]
-ALTER TABLE [dbo].[Mediadores] ADD  DEFAULT (getdate()) FOR [DataContacto]
-ALTER TABLE [dbo].[ProcessamentoAtualizacaoRendas] ADD  CONSTRAINT [DF_ProcessamentoAtualizacaoRendas_DataProcessamento]  DEFAULT (getdate()) FOR [DataProcessamento]
-ALTER TABLE [dbo].[ProcessamentoRendas] ADD  CONSTRAINT [DF_ProcessamentoRendas_DataProcessamento]  DEFAULT (getdate()) FOR [DataProcessamento]
-ALTER TABLE [dbo].[Proprietarios] ADD  CONSTRAINT [DF__Proprieta__Ident__47DBAE45]  DEFAULT ((43625894)) FOR [Identificacao]
-ALTER TABLE [dbo].[Proprietarios] ADD  CONSTRAINT [DF__Proprietari__NIF__48CFD27E]  DEFAULT ((122623878)) FOR [NIF]
-ALTER TABLE [dbo].[Recebimentos] ADD  CONSTRAINT [DF_Recebimentos_Estado]  DEFAULT ((1)) FOR [Estado]
-ALTER TABLE [dbo].[Recebimentos] ADD  CONSTRAINT [DF_Recebimentos_Renda]  DEFAULT ((1)) FOR [Renda]
-ALTER TABLE [Identity].[RoleClaims] ADD  DEFAULT ('0001-01-01T00:00:00.0000000') FOR [CreatedOn]
-ALTER TABLE [Identity].[Roles] ADD  DEFAULT ('0001-01-01T00:00:00.0000000') FOR [CreatedOn]
-ALTER TABLE [dbo].[Arrendamentos]  WITH CHECK ADD  CONSTRAINT [FK_Arrendamentos_Fracoes] FOREIGN KEY([ID_Fracao])
-REFERENCES [dbo].[Fracoes] ([Id])
-ALTER TABLE [dbo].[Arrendamentos] CHECK CONSTRAINT [FK_Arrendamentos_Fracoes]
-ALTER TABLE [dbo].[Arrendamentos]  WITH CHECK ADD  CONSTRAINT [FK_Arrendamentos_Inquilinos] FOREIGN KEY([ID_Inquilino])
-REFERENCES [dbo].[Inquilinos] ([Id])
-ALTER TABLE [dbo].[Arrendamentos] CHECK CONSTRAINT [FK_Arrendamentos_Inquilinos]
-ALTER TABLE [dbo].[AspNetRoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId] FOREIGN KEY([RoleId])
-REFERENCES [dbo].[AspNetRoles] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[AspNetRoleClaims] CHECK CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId]
-ALTER TABLE [dbo].[AspNetUserClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId] FOREIGN KEY([UserId])
-REFERENCES [dbo].[AspNetUsers] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[AspNetUserClaims] CHECK CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId]
-ALTER TABLE [dbo].[AspNetUserLogins]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserLogins_AspNetUsers_UserId] FOREIGN KEY([UserId])
-REFERENCES [dbo].[AspNetUsers] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[AspNetUserLogins] CHECK CONSTRAINT [FK_AspNetUserLogins_AspNetUsers_UserId]
-ALTER TABLE [dbo].[AspNetUserRoles]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserRoles_AspNetRoles_RoleId] FOREIGN KEY([RoleId])
-REFERENCES [dbo].[AspNetRoles] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_AspNetUserRoles_AspNetRoles_RoleId]
-ALTER TABLE [dbo].[AspNetUserRoles]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId] FOREIGN KEY([UserId])
-REFERENCES [dbo].[AspNetUsers] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId]
-ALTER TABLE [dbo].[ChatHistory]  WITH CHECK ADD  CONSTRAINT [FK_ChatHistory_Users_FromUserId] FOREIGN KEY([FromUserId])
-REFERENCES [Identity].[Users] ([Id])
-ALTER TABLE [dbo].[ChatHistory] CHECK CONSTRAINT [FK_ChatHistory_Users_FromUserId]
-ALTER TABLE [dbo].[ChatHistory]  WITH CHECK ADD  CONSTRAINT [FK_ChatHistory_Users_ToUserId] FOREIGN KEY([ToUserId])
-REFERENCES [Identity].[Users] ([Id])
-ALTER TABLE [dbo].[ChatHistory] CHECK CONSTRAINT [FK_ChatHistory_Users_ToUserId]
-ALTER TABLE [dbo].[Concelhos]  WITH CHECK ADD  CONSTRAINT [FK_Concelhos_Concelhos] FOREIGN KEY([Id])
-REFERENCES [dbo].[Concelhos] ([Id])
-ALTER TABLE [dbo].[Concelhos] CHECK CONSTRAINT [FK_Concelhos_Concelhos]
-ALTER TABLE [dbo].[Contactos]  WITH CHECK ADD  CONSTRAINT [FK_Contactos_TipoContacto] FOREIGN KEY([ID_TipoContacto])
-REFERENCES [dbo].[TipoContacto] ([Id])
-ALTER TABLE [dbo].[Contactos] CHECK CONSTRAINT [FK_Contactos_TipoContacto]
-ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Fiadores] FOREIGN KEY([ID_Fiador])
-REFERENCES [dbo].[Fiadores] ([Id])
-ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Fiadores]
-ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Fracoes] FOREIGN KEY([ID_Fracao])
-REFERENCES [dbo].[Fracoes] ([Id])
-ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Fracoes]
-ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Inquilinos] FOREIGN KEY([ID_Inquilino])
-REFERENCES [dbo].[Inquilinos] ([Id])
-ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Inquilinos]
-ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_CategoriaDespesa] FOREIGN KEY([ID_CategoriaDespesa])
-REFERENCES [dbo].[CategoriaDespesa] ([Id])
-ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_CategoriaDespesa]
-ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_FormaPagamento] FOREIGN KEY([ID_ModoPagamento])
-REFERENCES [dbo].[FormaPagamento] ([Id])
-ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_FormaPagamento]
-ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_TipoDespesa] FOREIGN KEY([ID_TipoDespesa])
-REFERENCES [dbo].[TipoDespesa] ([Id])
-ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_TipoDespesa]
-ALTER TABLE [dbo].[DocumentExtendedAttributes]  WITH CHECK ADD  CONSTRAINT [FK_DocumentExtendedAttributes_Documents_EntityId] FOREIGN KEY([EntityId])
-REFERENCES [dbo].[Documents] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [dbo].[DocumentExtendedAttributes] CHECK CONSTRAINT [FK_DocumentExtendedAttributes_Documents_EntityId]
-ALTER TABLE [dbo].[DocumentosInquilino]  WITH CHECK ADD  CONSTRAINT [FK_DocumentosInquilino_Inquilinos] FOREIGN KEY([TenantId])
-REFERENCES [dbo].[Inquilinos] ([Id])
-ALTER TABLE [dbo].[DocumentosInquilino] CHECK CONSTRAINT [FK_DocumentosInquilino_Inquilinos]
-ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_DocumentTypes] FOREIGN KEY([DocumentTypeId])
-REFERENCES [dbo].[DocumentTypes] ([Id])
-ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_DocumentTypes]
-ALTER TABLE [dbo].[Fiadores]  WITH CHECK ADD  CONSTRAINT [FK_Fiadores_EstadoCivil] FOREIGN KEY([ID_EstadoCivil])
-REFERENCES [dbo].[EstadoCivil] ([Id])
-ALTER TABLE [dbo].[Fiadores] CHECK CONSTRAINT [FK_Fiadores_EstadoCivil]
-ALTER TABLE [dbo].[Fiadores]  WITH CHECK ADD  CONSTRAINT [FK_Fiadores_Inquilinos] FOREIGN KEY([IdInquilino])
-REFERENCES [dbo].[Inquilinos] ([Id])
-ALTER TABLE [dbo].[Fiadores] CHECK CONSTRAINT [FK_Fiadores_Inquilinos]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_EstadoConservacao] FOREIGN KEY([Conservacao])
-REFERENCES [dbo].[EstadoConservacao] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_EstadoConservacao]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_Imoveis] FOREIGN KEY([Id_Imovel])
-REFERENCES [dbo].[Imoveis] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_Imoveis]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_SituacaoFracao] FOREIGN KEY([Situacao])
-REFERENCES [dbo].[SituacaoFracao] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_SituacaoFracao]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipoCertificadoEnergetico] FOREIGN KEY([ID_CertificadoEnergetico])
-REFERENCES [dbo].[TipoCertificadoEnergetico] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipoCertificadoEnergetico]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipologiaFracao] FOREIGN KEY([Tipologia])
-REFERENCES [dbo].[TipologiaFracao] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipologiaFracao]
-ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipoPropriedade] FOREIGN KEY([ID_TipoPropriedade])
-REFERENCES [dbo].[TipoPropriedade] ([Id])
-ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipoPropriedade]
-ALTER TABLE [dbo].[HelpIndex]  WITH CHECK ADD  CONSTRAINT [FK_HelpIndex_HelpIndex_Parent] FOREIGN KEY([ID_Parent])
-REFERENCES [dbo].[HelpIndex_Parent] ([Id])
-ALTER TABLE [dbo].[HelpIndex] CHECK CONSTRAINT [FK_HelpIndex_HelpIndex_Parent]
-ALTER TABLE [dbo].[ImagensFracoes]  WITH CHECK ADD  CONSTRAINT [FK_ImagensFracoes_Fracoes] FOREIGN KEY([Id_Fracao])
-REFERENCES [dbo].[Fracoes] ([Id])
-ALTER TABLE [dbo].[ImagensFracoes] CHECK CONSTRAINT [FK_ImagensFracoes_Fracoes]
-ALTER TABLE [dbo].[Imoveis]  WITH CHECK ADD  CONSTRAINT [FK_Imoveis_EstadoConservacao] FOREIGN KEY([Conservacao])
-REFERENCES [dbo].[EstadoConservacao] ([Id])
-ALTER TABLE [dbo].[Imoveis] CHECK CONSTRAINT [FK_Imoveis_EstadoConservacao]
-ALTER TABLE [dbo].[Inquilinos]  WITH CHECK ADD  CONSTRAINT [FK_Inquilinos_EstadoCivil] FOREIGN KEY([ID_EstadoCivil])
-REFERENCES [dbo].[EstadoCivil] ([Id])
-ALTER TABLE [dbo].[Inquilinos] CHECK CONSTRAINT [FK_Inquilinos_EstadoCivil]
-ALTER TABLE [dbo].[Recebimentos]  WITH CHECK ADD  CONSTRAINT [FK_Recebimentos_Fracoes] FOREIGN KEY([ID_Propriedade])
-REFERENCES [dbo].[Fracoes] ([Id])
-ALTER TABLE [dbo].[Recebimentos] CHECK CONSTRAINT [FK_Recebimentos_Fracoes]
-ALTER TABLE [dbo].[Recebimentos]  WITH CHECK ADD  CONSTRAINT [FK_Recebimentos_Inquilinos] FOREIGN KEY([ID_Inquilino])
-REFERENCES [dbo].[Inquilinos] ([Id])
-ALTER TABLE [dbo].[Recebimentos] CHECK CONSTRAINT [FK_Recebimentos_Inquilinos]
-ALTER TABLE [Identity].[RoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_RoleClaims_Roles_RoleId] FOREIGN KEY([RoleId])
-REFERENCES [Identity].[Roles] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[RoleClaims] CHECK CONSTRAINT [FK_RoleClaims_Roles_RoleId]
-ALTER TABLE [Identity].[UserClaims]  WITH CHECK ADD  CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY([UserId])
-REFERENCES [Identity].[Users] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[UserClaims] CHECK CONSTRAINT [FK_UserClaims_Users_UserId]
-ALTER TABLE [Identity].[UserLogins]  WITH CHECK ADD  CONSTRAINT [FK_UserLogins_Users_UserId] FOREIGN KEY([UserId])
-REFERENCES [Identity].[Users] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[UserLogins] CHECK CONSTRAINT [FK_UserLogins_Users_UserId]
-ALTER TABLE [Identity].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY([RoleId])
-REFERENCES [Identity].[Roles] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_Roles_RoleId]
-ALTER TABLE [Identity].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY([UserId])
-REFERENCES [Identity].[Users] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_Users_UserId]
-ALTER TABLE [Identity].[UserTokens]  WITH CHECK ADD  CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY([UserId])
-REFERENCES [Identity].[Users] ([Id])
-ON DELETE CASCADE
-ALTER TABLE [Identity].[UserTokens] CHECK CONSTRAINT [FK_UserTokens_Users_UserId]
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW dbo.vwArrendamentos
-AS
-SELECT        Ar.Id, Ar.Valor_Renda, Ar.Data_Inicio, Ar.Data_Fim, Ar.Data_Pagamento, Ar.EstadoPagamento, Ar.RenovacaoAutomatica, Fr.Descricao AS Fracao, Inq.Nome AS NomeInquilino, Im.Descricao AS DescricaoImovel, 
-                         Im.Numero AS Porta
-FROM            dbo.Arrendamentos AS Ar INNER JOIN
-                         dbo.Inquilinos AS Inq ON Ar.ID_Inquilino = Inq.Id INNER JOIN
-                         dbo.Fracoes AS Fr ON Ar.ID_Fracao = Fr.Id INNER JOIN
-                         dbo.Imoveis AS Im ON Fr.Id_Imovel = Im.Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW vwFracoes AS 
-SELECT F.Id, F.Descricao, I.Numero, I.Descricao AS DescrImovel,
-F.Andar, F.Lado, F.Situacao AS CodSituacao, F.AnoUltAvaliacao AS AnoA, 
-F.ValorUltAvaliacao AS ValorA, TF.Descricao Tipologia, SF.Descricao AS Situacao, 
-EC.Descricao AS Conservacao, TP.Descricao AS TipoFracao 
-FROM Fracoes F INNER JOIN Imoveis I ON F.Id_Imovel = I.Id 
-INNER JOIN EstadoConservacao EC ON F.Conservacao = EC.Id INNER JOIN TipoPropriedade TP ON F.ID_TipoPropriedade = TP.Id 
-INNER JOIN SituacaoFracao SF ON F.Situacao = SF.Id INNER JOIN TipologiaFracao TF ON F.Tipologia = TF.Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW vwFracoesComArrendamentos AS 
-SELECT f.* FROM Fracoes f INNER JOIN Arrendamentos a ON f.Id = a.ID_Fracao 
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW vwHelp AS SELECT H.Id, H.NomeForm, H.Descricao AS TextoAjuda, H.Titulo AS TituloProjeto, HP.Id AS Id_Projeto, HP.NomeProjeto, HP.Descricao AS DescricaoProjeto 
-FROM HelpIndex H INNER JOIN HelpIndex_Parent HP ON H.ID_Parent = HP.Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW vwRecebimentos AS 
-SELECT R.ID, R.DataMovimento, R.ID_TipoRecebimento, R.ValorRecebido, F.Descricao AS Fracao,  
-TR.Descricao AS TipoTransacao, Ar.Data_Pagamento, Ar.Valor_Renda, Ar.RenovacaoAutomatica, 
-Inq.Id Inq_Id, Inq.Nome 
-FROM Recebimentos R INNER JOIN fracoes F ON 
-	R.ID_Propriedade = F.Id 
-	INNER JOIN TipoRecebimento TR ON R.ID_TipoRecebimento = TR.Id 
-	INNER JOIN Arrendamentos Ar ON R.ID_Propriedade = Ar.ID_Fracao 
-	INNER JOIN Inquilinos Inq ON R.ID_Inquilino = Inq.id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   VIEW dbo.vwSegurosFracoes
-AS
-SELECT        dbo.Fracoes.Descricao, dbo.Seguros.Apolice, dbo.Seguros.Premio
-FROM            dbo.Fracoes INNER JOIN
-                         dbo.Seguros ON dbo.Fracoes.Id = dbo.Seguros.IdFracao
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_alterdiagram
-	(
-		@diagramname 	sysname,
-		@owner_id	int	= null,
-		@version 	int,
-		@definition 	varbinary(max)
-	)
-	WITH EXECUTE AS 'dbo'
-	AS
-	BEGIN
-		set nocount on
-	
-		declare @theId 			int
-		declare @retval 		int
-		declare @IsDbo 			int
-		
-		declare @UIDFound 		int
-		declare @DiagId			int
-		declare @ShouldChangeUID	int
-	
-		if(@diagramname is null)
-		begin
-			RAISERROR ('Invalid ARG', 16, 1)
-			return -1
-		end
-	
-		execute as caller;
-		select @theId = DATABASE_PRINCIPAL_ID();	 
-		select @IsDbo = IS_MEMBER(N'db_owner'); 
-		if(@owner_id is null)
-			select @owner_id = @theId;
-		revert;
-	
-		select @ShouldChangeUID = 0
-		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
-		
-		if(@DiagId IS NULL or (@IsDbo = 0 and @theId <> @UIDFound))
-		begin
-			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
-			return -3
-		end
-	
-		if(@IsDbo <> 0)
-		begin
-			if(@UIDFound is null or USER_NAME(@UIDFound) is null) -- invalid principal_id
-			begin
-				select @ShouldChangeUID = 1 ;
-			end
-		end
-
-		-- update dds data			
-		update dbo.sysdiagrams set definition = @definition where diagram_id = @DiagId ;
-
-		-- change owner
-		if(@ShouldChangeUID = 1)
-			update dbo.sysdiagrams set principal_id = @theId where diagram_id = @DiagId ;
-
-		-- update dds version
-		if(@version is not null)
-			update dbo.sysdiagrams set version = @version where diagram_id = @DiagId ;
-
-		return 0
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_creatediagram
-	(
-		@diagramname 	sysname,
-		@owner_id		int	= null, 	
-		@version 		int,
-		@definition 	varbinary(max)
-	)
-	WITH EXECUTE AS 'dbo'
-	AS
-	BEGIN
-		set nocount on
-	
-		declare @theId int
-		declare @retval int
-		declare @IsDbo	int
-		declare @userName sysname
-		if(@version is null or @diagramname is null)
-		begin
-			RAISERROR (N'E_INVALIDARG', 16, 1);
-			return -1
-		end
-	
-		execute as caller;
-		select @theId = DATABASE_PRINCIPAL_ID(); 
-		select @IsDbo = IS_MEMBER(N'db_owner');
-		revert; 
-		
-		if @owner_id is null
-		begin
-			select @owner_id = @theId;
-		end
-		else
-		begin
-			if @theId <> @owner_id
-			begin
-				if @IsDbo = 0
-				begin
-					RAISERROR (N'E_INVALIDARG', 16, 1);
-					return -1
-				end
-				select @theId = @owner_id
-			end
-		end
-		-- next 2 line only for test, will be removed after define name unique
-		if EXISTS(select diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @diagramname)
-		begin
-			RAISERROR ('The name is already used.', 16, 1);
-			return -2
-		end
-	
-		insert into dbo.sysdiagrams(name, principal_id , version, definition)
-				VALUES(@diagramname, @theId, @version, @definition) ;
-		
-		select @retval = @@IDENTITY 
-		return @retval
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_dropdiagram
-	(
-		@diagramname 	sysname,
-		@owner_id	int	= null
-	)
-	WITH EXECUTE AS 'dbo'
-	AS
-	BEGIN
-		set nocount on
-		declare @theId 			int
-		declare @IsDbo 			int
-		
-		declare @UIDFound 		int
-		declare @DiagId			int
-	
-		if(@diagramname is null)
-		begin
-			RAISERROR ('Invalid value', 16, 1);
-			return -1
-		end
-	
-		EXECUTE AS CALLER;
-		select @theId = DATABASE_PRINCIPAL_ID();
-		select @IsDbo = IS_MEMBER(N'db_owner'); 
-		if(@owner_id is null)
-			select @owner_id = @theId;
-		REVERT; 
-		
-		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
-		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
-		begin
-			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
-			return -3
-		end
-	
-		delete from dbo.sysdiagrams where diagram_id = @DiagId;
-	
-		return 0;
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_helpdiagramdefinition
-	(
-		@diagramname 	sysname,
-		@owner_id	int	= null 		
-	)
-	WITH EXECUTE AS N'dbo'
-	AS
-	BEGIN
-		set nocount on
-
-		declare @theId 		int
-		declare @IsDbo 		int
-		declare @DiagId		int
-		declare @UIDFound	int
-	
-		if(@diagramname is null)
-		begin
-			RAISERROR (N'E_INVALIDARG', 16, 1);
-			return -1
-		end
-	
-		execute as caller;
-		select @theId = DATABASE_PRINCIPAL_ID();
-		select @IsDbo = IS_MEMBER(N'db_owner');
-		if(@owner_id is null)
-			select @owner_id = @theId;
-		revert; 
-	
-		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname;
-		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId ))
-		begin
-			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
-			return -3
-		end
-
-		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ; 
-		return 0
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_helpdiagrams
-	(
-		@diagramname sysname = NULL,
-		@owner_id int = NULL
-	)
-	WITH EXECUTE AS N'dbo'
-	AS
-	BEGIN
-		DECLARE @user sysname
-		DECLARE @dboLogin bit
-		EXECUTE AS CALLER;
-			SET @user = USER_NAME();
-			SET @dboLogin = CONVERT(bit,IS_MEMBER('db_owner'));
-		REVERT;
-		SELECT
-			[Database] = DB_NAME(),
-			[Name] = name,
-			[ID] = diagram_id,
-			[Owner] = USER_NAME(principal_id),
-			[OwnerID] = principal_id
-		FROM
-			sysdiagrams
-		WHERE
-			(@dboLogin = 1 OR USER_NAME(principal_id) = @user) AND
-			(@diagramname IS NULL OR name = @diagramname) AND
-			(@owner_id IS NULL OR principal_id = @owner_id)
-		ORDER BY
-			4, 5, 1
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_renamediagram
-	(
-		@diagramname 		sysname,
-		@owner_id		int	= null,
-		@new_diagramname	sysname
-	
-	)
-	WITH EXECUTE AS 'dbo'
-	AS
-	BEGIN
-		set nocount on
-		declare @theId 			int
-		declare @IsDbo 			int
-		
-		declare @UIDFound 		int
-		declare @DiagId			int
-		declare @DiagIdTarg		int
-		declare @u_name			sysname
-		if((@diagramname is null) or (@new_diagramname is null))
-		begin
-			RAISERROR ('Invalid value', 16, 1);
-			return -1
-		end
-	
-		EXECUTE AS CALLER;
-		select @theId = DATABASE_PRINCIPAL_ID();
-		select @IsDbo = IS_MEMBER(N'db_owner'); 
-		if(@owner_id is null)
-			select @owner_id = @theId;
-		REVERT;
-	
-		select @u_name = USER_NAME(@owner_id)
-	
-		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
-		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
-		begin
-			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
-			return -3
-		end
-	
-		-- if((@u_name is not null) and (@new_diagramname = @diagramname))	-- nothing will change
-		--	return 0;
-	
-		if(@u_name is null)
-			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @new_diagramname
-		else
-			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @owner_id and name = @new_diagramname
-	
-		if((@DiagIdTarg is not null) and  @DiagId <> @DiagIdTarg)
-		begin
-			RAISERROR ('The name is already used.', 16, 1);
-			return -2
-		end		
-	
-		if(@u_name is null)
-			update dbo.sysdiagrams set [name] = @new_diagramname, principal_id = @theId where diagram_id = @DiagId
-		else
-			update dbo.sysdiagrams set [name] = @new_diagramname where diagram_id = @DiagId
-		return 0
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE dbo.sp_upgraddiagrams
-	AS
-	BEGIN
-		IF OBJECT_ID(N'dbo.sysdiagrams') IS NOT NULL
-			return 0;
-	
-		CREATE TABLE dbo.sysdiagrams
-		(
-			name sysname NOT NULL,
-			principal_id int NOT NULL,	-- we may change it to varbinary(85)
-			diagram_id int PRIMARY KEY IDENTITY,
-			version int,
-	
-			definition varbinary(max)
-			CONSTRAINT UK_principal_name UNIQUE
-			(
-				principal_id,
-				name
-			)
-		);
-
-
-		/* Add this if we need to have some form of extended properties for diagrams */
-		/*
-		IF OBJECT_ID(N'dbo.sysdiagram_properties') IS NULL
-		BEGIN
-			CREATE TABLE dbo.sysdiagram_properties
-			(
-				diagram_id int,
-				name sysname,
-				value varbinary(max) NOT NULL
-			)
-		END
-		*/
-
-		IF OBJECT_ID(N'dbo.dtproperties') IS NOT NULL
-		begin
-			insert into dbo.sysdiagrams
-			(
-				[name],
-				[principal_id],
-				[version],
-				[definition]
-			)
-			select	 
-				convert(sysname, dgnm.[uvalue]),
-				DATABASE_PRINCIPAL_ID(N'dbo'),			-- will change to the sid of sa
-				0,							-- zero for old format, dgdef.[version],
-				dgdef.[lvalue]
-			from dbo.[dtproperties] dgnm
-				inner join dbo.[dtproperties] dggd on dggd.[property] = 'DtgSchemaGUID' and dggd.[objectid] = dgnm.[objectid]	
-				inner join dbo.[dtproperties] dgdef on dgdef.[property] = 'DtgSchemaDATA' and dgdef.[objectid] = dgnm.[objectid]
-				
-			where dgnm.[property] = 'DtgSchemaNAME' and dggd.[uvalue] like N'_EA3E6268-D998-11CE-9454-00AA00A3F36E_' 
-			return 2;
-		end
-		return 1;
-	END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[tools_CS_SPROC_Builder] 
-(
-@objName nvarchar(100)
-)
-AS
-/*
-___________________________________________________________________
-Name:  		CS SPROC Builder
-Version: 	1
-Date:    	10/09/2004
-Author:  	Paul McKenzie
-Description: 	Call this stored procedue passing the name of your 
-  database object that you wish to insert/update
-  from .NET (C#) and the code returns code to copy
-  and paste into your application.  This version is
-  for use with "Microsoft Data Application Block".
-  
-Version: 	1.1
-Date:	 	17/02/2006
-Author:	 	Paul McKenzie
-Description:	a) Updated to include 'UniqueIdentifier' Data Type
-		b) Support for 'ParameterDirection.Output'
-
-*/
-SET NOCOUNT ON
-DECLARE @parameterCount int
-DECLARE @errMsg varchar(100)
-DECLARE @parameterAt varchar(1)
-DECLARE @connName varchar(100)
-DECLARE @outputValues varchar(100)
---Change the following variable to the name of your connection instance
-SET @connName='conn.Connection'
-SET @parameterAt=''
-SET @outputValues=''
-SELECT 
- 	dbo.sysobjects.name AS ObjName, 
- 	dbo.sysobjects.xtype AS ObjType,
- 	dbo.syscolumns.name AS ColName, 
- 	dbo.syscolumns.colorder AS ColOrder, 
- 	dbo.syscolumns.length AS ColLen, 
- 	dbo.syscolumns.colstat AS ColKey, 
- 	dbo.syscolumns.isoutparam AS ColIsOut,
- 	dbo.systypes.xtype
-INTO #t_obj
-FROM         
- 	dbo.syscolumns INNER JOIN
- 	dbo.sysobjects ON dbo.syscolumns.id = dbo.sysobjects.id INNER JOIN
- 	dbo.systypes ON dbo.syscolumns.xtype = dbo.systypes.xtype
-WHERE     
- 	(dbo.sysobjects.name = @objName) 
- 	AND 
- 	(dbo.systypes.status <> 1) 
-ORDER BY 
- 	dbo.sysobjects.name, 
- 	dbo.syscolumns.colorder
-
-SET @parameterCount=(SELECT count(*) FROM #t_obj)
-IF(@parameterCount<1) SET @errMsg='No Parameters/Fields found for ' + @objName
-IF(@errMsg is null)
-	BEGIN
-  		PRINT 'try'
-  		PRINT '   {'
-  		PRINT '   SqlParameter[] paramsToStore = new SqlParameter[' + cast(@parameterCount as varchar) + '];'
-  		PRINT ''
-  
-  		DECLARE @source_name nvarchar,@source_type varchar,
-    			@col_name nvarchar(100),@col_order int,@col_type varchar(20),
-    			@col_len int,@col_key int,@col_xtype int,@col_redef varchar(20), @col_isout tinyint
- 
-  		DECLARE cur CURSOR FOR
-  		SELECT * FROM #t_obj
-  		OPEN cur
-  		-- Perform the first fetch.
-  		FETCH NEXT FROM cur INTO @source_name,@source_type,@col_name,@col_order,@col_len,@col_key,@col_isout,@col_xtype
- 
-  			if(@source_type=N'U') SET @parameterAt='@'
-  			-- Check @@FETCH_STATUS to see if there are any more rows to fetch.
-  			WHILE @@FETCH_STATUS = 0
-  				BEGIN
-   				SET @col_redef=(SELECT CASE @col_xtype
-					WHEN 34 THEN 'Image'
-					WHEN 35 THEN 'Text'
-					WHEN 36 THEN 'UniqueIdentifier'
-					WHEN 48 THEN 'TinyInt'
-					WHEN 52 THEN 'SmallInt'
-					WHEN 56 THEN 'Int'
-					WHEN 58 THEN 'SmallDateTime'
-					WHEN 59 THEN 'Real'
-					WHEN 60 THEN 'Money'
-					WHEN 61 THEN 'DateTime'
-					WHEN 62 THEN 'Float'
-					WHEN 99 THEN 'NText'
-					WHEN 104 THEN 'Bit'
-					WHEN 106 THEN 'Decimal'
-					WHEN 122 THEN 'SmallMoney'
-					WHEN 127 THEN 'BigInt'
-					WHEN 165 THEN 'VarBinary'
-					WHEN 167 THEN 'VarChar'
-					WHEN 173 THEN 'Binary'
-					WHEN 175 THEN 'Char'
-					WHEN 231 THEN 'NVarChar'
-					WHEN 239 THEN 'NChar'
-					ELSE '!MISSING'
-					END AS C) 
-
-				--Write out the parameter
-				PRINT '   paramsToStore[' + cast(@col_order-1 as varchar) 
-				    + '] = new SqlParameter("' + @parameterAt + @col_name
-				    + '", SqlDbType.' + @col_redef
-				    + ');'
-
-				--Write out the parameter direction it is output
-				IF(@col_isout=1)
-					BEGIN
-						PRINT '   paramsToStore['+ cast(@col_order-1 as varchar) +'].Direction=ParameterDirection.Output;'
-						SET @outputValues=@outputValues+'   ?=paramsToStore['+ cast(@col_order-1 as varchar) +'].Value;'
-					END
-					ELSE
-					BEGIN
-						--Write out the parameter value line
-   						PRINT '   paramsToStore['+ cast(@col_order-1 as varchar) + '].Value = ?;'
-					END
-				--If the type is a string then output the size declaration
-				IF(@col_xtype=231)OR(@col_xtype=167)OR(@col_xtype=175)OR(@col_xtype=99)OR(@col_xtype=35)
-					BEGIN
-						PRINT '   paramsToStore[' + cast(@col_order-1 as varchar) + '].Size=' + cast(@col_len as varchar) + ';'
-					END
-
-				 -- This is executed as long as the previous fetch succeeds.
-      			FETCH NEXT FROM cur INTO @source_name,@source_type,@col_name,@col_order, @col_len,@col_key,@col_isout,@col_xtype 
-  	END
-  PRINT ''
-  PRINT '   SqlHelper.ExecuteNonQuery(' + @connName + ', CommandType.StoredProcedure,"' + @objName + '", paramsToStore);'
-  PRINT @outputValues
-  PRINT '   }'
-  PRINT 'catch(Exception excp)'
-  PRINT '   {'
-  PRINT '   }'
-  PRINT 'finally'
-  PRINT '   {'
-  PRINT '   ' + @connName + '.Dispose();'
-  PRINT '   ' + @connName + '.Close();'
-  PRINT '   }'  
-  CLOSE cur
-  DEALLOCATE cur
- END
-if(LEN(@errMsg)>0) PRINT @errMsg
-DROP TABLE #t_obj
-SET NOCOUNT ON
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Appointments_Delete]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DELETE Appointments
-	WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Appointments_GetAll]
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT * FROM Appointments
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Appointments_GetById]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	SELECT * FROM Appointments
-	WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Appointments_Insert]
-(
-	@Id int,
-	@Subject varchar(256),
-	@Location varchar(256),
-	@Description varchar(512),
-	@StartTime datetime,
-	@EndTime datetime,
-	@IsAllDay bit,
-	@CategoryColor varchar(50),
-	@RecurrenceRule varchar(512),
-	@RecurrenceID int,
-	@FollowingID int,
-	@RecurrenceException varchar(1024),
-	@StartTimeZone varchar(128),
-	@EndTimeZone varchar(128),
-	@ApptType int
-
-)
-AS
-	SET NOCOUNT OFF;
-	INSERT INTO [Appointments] 
-		([Subject], [Location], [Description], StartTime, EndTime, IsAllDay, 
-			CategoryColor, RecurrenceRule, RecurrenceId, FollowingId, 
-			RecurrenceException, StartTimeZone, EndTimeZone, ApptType) 
-	VALUES
-		(@Subject, @Location, @Description, @StartTime, @EndTime, @IsAllDay, 
-			@CategoryColor, @RecurrenceRule, @RecurrenceId, @FollowingId, 
-			@RecurrenceException, @StartTimeZone, @EndTimeZone, @ApptType);
-
-	SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Appointments_Update]
-(
-	@Id int,
-	@Subject varchar(256),
-	@Location varchar(256),
-	@Description varchar(512),
-	@StartTime datetime,
-	@EndTime datetime,
-	@IsAllDay bit,
-	@CategoryColor varchar(50),
-	@RecurrenceRule varchar(512),
-	@RecurrenceID int,
-	@FollowingID int,
-	@RecurrenceException varchar(1024),
-	@StartTimeZone varchar(128),
-	@EndTimeZone varchar(128),
-	@ApptType int
-
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [Appointments] 
-	SET 
-		[Subject] = @Subject, [Description] = @Description, StartTime = @StartTime, EndTime = @EndTime, 
-		IsAllDay = @IsAllDay, CategoryColor = @CategoryColor, 
-		RecurrenceRule = @RecurrenceRule, RecurrenceId = @RecurrenceID, RecurrenceException = @RecurrenceException,
-		FollowingId = @FollowingID, StartTimeZone = @StartTimeZone, EndTimeZone = @EndTimeZone,
-		ApptType = @ApptType
-	WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_AppOtherSettings_Update]
-(
-	@PrazoContratoEmAnos tinyint,
-	@PrazoEnvioCartaAtraso tinyint,
-	@PrazoEnvioCartaAumento tinyint,
-	@PrazoEnvioCartaRevogacao tinyint,
-	@PrazoRespostaCartaAtraso tinyint,
-	@PrazoRespostaCartaAumento tinyint,
-	@CartasAumentoAutomaticas bit,
-	@PrazoRespostaCartaRevogacao tinyint,
-
-	@RenovacaoAutomatica bit,
-	@ComprovativoIRS bit,
-	@ComprovativoReciboVencimento bit,
-	@CaucaoRequerida bit,
-
-	@PrazoInspecaoGas tinyint,
-	@PercentagemMultaPorAtrasoPagamento tinyint,
-
-	@BackupBaseDados nvarchar(250),
-	@BackupOutrosFicheiros nvarchar(250),
-	@DefaultLanguage nvarchar(5),
-	@ApiKey nvarchar(255)
-
-	
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [ApplicationSettings] 
-	SET PrazoContratoEmAnos = @PrazoContratoEmAnos,
-		PrazoEnvioCartaAtraso = @PrazoEnvioCartaAtraso,
-		CartasAumentoAutomaticas = @CartasAumentoAutomaticas,
-		PrazoEnvioCartaAumento = @PrazoEnvioCartaAumento,
-		PrazoEnvioCartaRevogacao = @PrazoEnvioCartaRevogacao,
-		PrazoRespostaCartaAtraso = @PrazoRespostaCartaAtraso,
-		PrazoRespostaCartaAumento = @PrazoRespostaCartaAumento,
-		PrazoRespostaCartaRevogacao = @PrazoRespostaCartaRevogacao,
-
-		RenovacaoAutomatica = @RenovacaoAutomatica,
-		ComprovativoIRS = @ComprovativoIRS,
-		ComprovativoReciboVencimento = @ComprovativoReciboVencimento,
-		CaucaoRequerida = @CaucaoRequerida, 
-
-		PrazoInspecaoGas = @PrazoInspecaoGas, 
-		PercentagemMultaPorAtrasoPagamento = @PercentagemMultaPorAtrasoPagamento, 
-
-		BackupBaseDados = @BackupBaseDados , 
-		BackupOutrosFicheiros = @BackupOutrosFicheiros,
-		DefaultLanguage = @DefaultLanguage,
-		ApiKey = @ApiKey
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_AppSettings_Update]
-(
-	@DisplayName nvarchar(255),
-	@Username nvarchar(255),
-	@Password nvarchar(255),
-	@Port int,
-	@Host nvarchar(255),
-
-	@FromEmail nvarchar(255),
-	@SmtpServer nvarchar(255),
-	@EmailPort int,
-	@EmailUsername nvarchar(255),
-	@EmailPassword nvarchar(255),
-
-	@HotmailHostname nvarchar(255),
-	@HotmailPort nvarchar(10),
-	@UseSSL bit,
-	@HotmailUsername nvarchar(255),
-	@HotmailPassword nvarchar(255),
-
-	@PaperCutSmtpServer nvarchar(255),
-	@PaperCutPort int,
-	@EnableSsl bit
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [ApplicationSettings] 
-	SET 
-	DisplayName = @DisplayName,
-	Username = @Username,
-	Password = @Password,
-	Port = @Port,
-	Host = @Host, 
-	FromEmail = @FromEmail, 
-	SmtpServer = @SmtpServer, 
-	EmailPort = @EmailPort, 
-	EmailUsername = @EmailUsername,
-	EmailPassword = @EmailPassword, 
-	HotmailHostname = @HotmailHostname,
-	HotmailPort = @HotmailPort,
-	UseSSL = @UseSSL,
-	HotmailUsername = @HotmailUsername,
-	HotmailPassword = @HotmailPassword,
-	PaperCutSmtpServer = @PaperCutSmtpServer,
-	PaperCutPort = @PaperCutPort,
-	EnableSsl = @EnableSsl
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_AppSettings_UpdateLanguage]
-(
-	@DefaultLanguage nvarchar(5)
-
-	
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [ApplicationSettings] 
-	SET DefaultLanguage = @DefaultLanguage
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_AutoRenewed] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT RenovacaoAutomatica FROM Arrendamentos WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_CheckForPayments] (@Id int) -- id da fração
-AS
-
-SET NOCOUNT ON;
-SELECT	COUNT(1)
-FROM    Recebimentos
-WHERE	ID_Propriedade = @Id -- ID_Propriedade = Id da Fração
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Delete]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DELETE FROM [Arrendamentos] WHERE [Id] = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_ExtendLeaseTerm]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DECLARE @Prazo int
-	DECLARE @NovaData DateTime
-	DECLARE @Data_Fim DateTime
-	SELECT @Prazo = Prazo, @Data_Fim = Data_Fim FROM Arrendamentos WHERE Id = @Id
-	SELECT @NovaData = DATEADD(year, @Prazo, @Data_Fim)
-
-	UPDATE [Arrendamentos] 
-		SET Data_Fim = @NovaData
-	WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_ApplicableLaws]
-AS
-
-SET NOCOUNT ON;
-SELECT Id, DiplomaLegal Descricao 
-FROM CoefientesAtualizacaoRendas
-ORDER BY id DESC
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_CurrentRentCoefficient] (@Ano nvarchar(4))
-AS
-
---- falta o select para 'Porta'!
-SET NOCOUNT ON;
-SELECT Coeficiente 
-FROM CoefientesAtualizacaoRendas
-WHERE Ano = @Ano
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_LastPaymentDate]
-(
-	@Id int -- Unit Id
-
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT [Data_Pagamento]
-	FROM Arrendamentos
-	WHERE [ID_Fracao] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficient_ById] (@Id int)
-AS
-
---- falta o select para 'Porta'!
-SET NOCOUNT ON;
-SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma, 
-		Lei, DataPublicacao
-FROM CoefientesAtualizacaoRendas
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficient_ByYear] (@Year int)
-AS
-
---- falta o select para 'Porta'!
-SET NOCOUNT ON;
-SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma, 
-		Lei, DataPublicacao
-FROM CoefientesAtualizacaoRendas
-WHERE Ano = @Year
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficients] 
-AS
-
---- falta o select para 'Porta'!
-SET NOCOUNT ON;
-SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma,
-		Lei, DataPublicacao
-FROM CoefientesAtualizacaoRendas
-ORDER BY Ano Desc
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetAll]
-AS
-	SET NOCOUNT ON;
-SELECT	A.Id, Data_Inicio, Data_Fim, Data_Pagamento, Fiador, 
-		Prazo_Meses, Prazo, Valor_Renda, Doc_IRS, Doc_Vencimento, A.Notas, 
-		ID_Fracao, ID_Inquilino, ID_Fiador, Caucao, ContratoEmitido, 
-		EnvioCartaAtualizacaoRenda, DataEnvioCartaAtualizacao,
-		DocumentoAtualizacaoGerado, DocumentoGerado, 
-		EnvioCartaRevogacao, DocumentoRevogacaoGerado, DataEnvioCartaRevogacao, DataRespostaCartaRevogacao, RespostaCartaRevogacao,
-		EnvioCartaAtrasoRenda, DocumentoAtrasoRendaGerado, DataEnvioCartaAtrasoRenda, RespostaCartaAtrasoRenda, DataRespostaCartaAtrasoRenda,
-		Data_Saida, FormaPagamento, A.Ativo, A.LeiVigente, ArrendamentoNovo, EstadoPagamento, RenovacaoAutomatica,
-		I.Nome NomeInquilino, F.Descricao Fracao
-FROM    Arrendamentos A INNER JOIN Inquilinos I ON
-			A.ID_Inquilino = I.Id
-		INNER JOIN Fracoes F ON
-			A.ID_Fracao = F.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetById] (@Id int)
-AS
-
---- falta o select para 'Porta'!
-SET NOCOUNT ON;
-SELECT	A.Id, Data_Inicio, Data_Fim, Data_Pagamento, Fiador, 
-		Prazo_Meses, Prazo, Valor_Renda, Doc_IRS, Doc_Vencimento, A.Notas, 
-		EnvioCartaAtualizacaoRenda, DataEnvioCartaAtualizacao,
-		EnvioCartaRevogacao, DocumentoRevogacaoGerado, DataEnvioCartaRevogacao, DataRespostaCartaRevogacao, RespostaCartaRevogacao,
-		EnvioCartaAtrasoRenda, DocumentoAtrasoRendaGerado, DataEnvioCartaAtrasoRenda, RespostaCartaAtrasoRenda, DataRespostaCartaAtrasoRenda,
-		DocumentoAtualizacaoGerado, ID_Fracao, ID_Inquilino, ID_Fiador, 
-		Caucao, ContratoEmitido, DocumentoGerado, Data_Saida, LeiVigente,
-		FormaPagamento, A.Ativo, ArrendamentoNovo, EstadoPagamento, RenovacaoAutomatica,
-		I.Nome NomeInquilino, F.Descricao Fracao
-FROM    Arrendamentos A INNER JOIN Inquilinos I ON
-			A.ID_Inquilino = I.Id
-		INNER JOIN Fracoes F ON
-			A.ID_Fracao = F.Id
-WHERE A.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetGenerated_Document] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT DocumentoGerado
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetLastId] 
-AS
-
-SET NOCOUNT ON;
-
-SELECT	TOP 1 Id
-FROM    Arrendamentos 
-ORDER BY Id DESC
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_GetPropertyUnitsWithNoLease] (@Id int) -- Id imóvel
-AS
-
-BEGIN
-	SELECT	Fracoes.Id, Fracoes.Descricao, Imoveis.Id, Imoveis.Descricao
-	FROM   Fracoes INNER JOIN Imoveis
-		ON Fracoes.Id_Imovel = Imoveis.Id
-	WHERE Fracoes.Id NOT IN(SELECT ID_Fracao  FROM Arrendamentos) 
-		AND Imoveis.Id = @Id
-END
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetRevocation_Generated_Document] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT DocumentoRevogacaoGerado
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetTenantDataToUpdateRents] (@Id int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT Data_Inicio, ID_Fracao
-FROM    Arrendamentos
-WHERE ID_Inquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetUnitId] (@Id int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT	ID_Fracao
-FROM    Arrendamentos 
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_IncomeReceived]
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT SUM(Valor_Renda)
-	FROM Arrendamentos
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert]
-(
-	@Data_Inicio datetime,
-	@Data_Fim datetime,
-	@Data_Pagamento datetime,
-	@SaldoInicial decimal(10,2),
-	@Fiador bit,
-	@Prazo_Meses int,
-	@Prazo int,
-	@Valor_Renda decimal(10, 2),
-	@Doc_IRS bit,
-	@Doc_Vencimento bit,
-	@Notas text,
-	@ID_Fracao int,
-	@ID_Inquilino int,
-	@ID_Fiador int,
-	@Caucao bit,
-	@ContratoEmitido bit,
-	@DocumentoGerado varchar(255),
-	@Data_Saida datetime,
-	@FormaPagamento int,
-	@Ativo bit,
-	@ArrendamentoNovo bit,
-	@EstadoPagamento varchar(15),
-	@RenovacaoAutomatica bit,
-	@LeiVigente varchar(100)
-
-)
-AS
-	SET NOCOUNT OFF;
-	INSERT INTO [Arrendamentos]
-			(
-				[Data_Inicio], [Data_Fim], [Data_Pagamento], [SaldoInicial], [Fiador], 
-				[Prazo_Meses], [Prazo], [Valor_Renda], [Doc_IRS], [Doc_Vencimento], [Notas], 
-				[ID_Fracao], [ID_Inquilino], [ID_Fiador], [Caucao], 
-				[ContratoEmitido], [DocumentoGerado], 
-				[Data_Saida], [FormaPagamento], [Ativo], [LeiVigente],
-				[ArrendamentoNovo], [EstadoPagamento], [RenovacaoAutomatica]
-			) 
-	VALUES (	@Data_Inicio, @Data_Fim, @Data_Pagamento, @SaldoInicial, @Fiador, 
-				@Prazo_Meses, @Prazo, @Valor_Renda, @Doc_IRS, @Doc_Vencimento, @Notas, 
-				@ID_Fracao, @ID_Inquilino, @ID_Fiador,@Caucao,
-				@ContratoEmitido, @DocumentoGerado,
-				@Data_Saida, @FormaPagamento, @Ativo, @LeiVigente,
-				@ArrendamentoNovo, @EstadoPagamento, @RenovacaoAutomatica);	
-
-	SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert_RentCoefficient]
-(
-	@Ano nvarchar(4),
-	@Coeficiente float,
-	@DiplomaLegal nvarchar(120),
-	@UrlDiploma nvarchar(256),
-	@Lei nvarchar(100), 
-	@DataPublicacao nvarchar(30)
-)
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO CoefientesAtualizacaoRendas(Ano, Coeficiente, DiplomaLegal, 
-				UrlDiploma, Lei, DataPublicacao)
-	VALUES (@Ano, @Coeficiente, @DiplomaLegal, @UrlDiploma, 
-			@Lei, @DataPublicacao)
-
-	SELECT CAST(SCOPE_IDENTITY() as int);
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert_UpdateRentsLetterProcess]
-(
-	@Ano int,
-	@DataProcessamento datetime
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [ProcessamentoAtualizacaoRendas] 
-	([Ano], [DataProcessamento])
-VALUES 
-	(@Ano, @DataProcessamento)
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_RentalExist] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT COUNT(1) FROM Arrendamentos 
-	WHERE ID_Fracao = @Id AND Ativo = 1
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLateRentPaymentLetter_Issued]
-(
-	@Id int,
-	@GeneratedDocument varchar(256)
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET EnvioCartaAtrasoRenda = 1, 
-		DocumentoAtrasoRendaGerado = @GeneratedDocument
-	WHERE [Id] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLateRentPaymentLetter_NotIssued]
-(
-	@Id int,
-	@GeneratedDocument varchar(256)
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET EnvioCartaAtrasoRenda = 0, 
-		DocumentoAtrasoRendaGerado = @GeneratedDocument
-	WHERE [Id] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLease_As_Ended]
-(
-	@Id int,
-	@LeaveDate datetime
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET Data_Saida = @LeaveDate, Ativo = 0
-	WHERE [Id] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetLease_As_Issued]
-(
-	@Id int,
-	@GeneratedDocument varchar(256)
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET ContratoEmitido = 1, DocumentoGerado = @GeneratedDocument
-	WHERE [Id] = @Id 
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetLease_NotIssued] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET ContratoEmitido = 0
-	WHERE [Id] = @Id 
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetUpdateRentsLetter_Issued]
-(
-	@Id int,
-	@GeneratedDocument varchar(256)
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET EnvioCartaAtualizacaoRenda = 1, 
-		DataEnvioCartaAtualizacao = GetDate(),
-		DocumentoAtualizacaoGerado = @GeneratedDocument
-	WHERE [Id] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetUpdateRentsLetter_NotIssued]
-(
-	@Id int
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET EnvioCartaAtualizacaoRenda = 0 
-	WHERE [Id] = @Id 
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-/* 
-	= 11/03/2023 =
-	Retirada data do último pagamento (Data_Pag) da lista de parâmetros
-	Caso não haja pagamentos, data vem como "01/01/0001" => inválida
-	Data é atualizada quando há 'processamento mensal de rendas', p.exº.
-*/
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update]
-(
-	@Id int,
-	@Data_Inicio datetime,
-	@Data_Fim datetime,
-	@Fiador bit,
-	@Prazo_Meses int,
-	@Prazo int,
-	@Valor_Renda decimal(10, 2),
-	@Doc_IRS bit,
-	@Doc_Vencimento bit,
-	@Notas text,
-	@ID_Fracao int,
-	@ID_Inquilino int,
-	@ID_Fiador int,
-	@Caucao bit,
-	@ContratoEmitido bit,
-	@DocumentoGerado varchar(255),
-	@Data_Saida datetime,
-	@FormaPagamento int,
-	@Ativo bit,
-	@LeiVigente varchar(100),
-	@ArrendamentoNovo bit,
-	@EstadoPagamento varchar(15),
-	@RenovacaoAutomatica bit
-)
-AS
-	SET NOCOUNT OFF;
-UPDATE [Arrendamentos] 
-SET [Data_Inicio] = @Data_Inicio, [Data_Fim] = @Data_Fim,
-	[Fiador] = @Fiador, [Prazo_Meses] = @Prazo_Meses, [Prazo] = @Prazo,
-	[Valor_Renda] = @Valor_Renda, [Doc_IRS] = @Doc_IRS, 
-	[Doc_Vencimento] = @Doc_Vencimento, [Notas] = @Notas, [ID_Fracao] = @ID_Fracao, [ID_Inquilino] = @ID_Inquilino, 	
-	[ID_Fiador] = @ID_Fiador, [Caucao] = @Caucao, [ContratoEmitido] = @ContratoEmitido, [DocumentoGerado] = @DocumentoGerado,
-	[Data_Saida] = @Data_Saida, [FormaPagamento] = @FormaPagamento, [Ativo] = @Ativo, [ArrendamentoNovo] = @ArrendamentoNovo,
-	[EstadoPagamento] = @EstadoPagamento, [RenovacaoAutomatica] = @RenovacaoAutomatica, LeiVigente = @LeiVigente
-WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Update_Issued_Flag__ToDelete]
-(
-	@Id int,
-	@Issued bit
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET ContratoEmitido = @Issued
-	WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_LastPaymentDate]
-(
-	@Id int, -- Unit Id
-	@date datetime,
-	@estadopagamento varchar(15)
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET [Data_Pagamento] = @date,
-	EstadoPagamento = @estadopagamento
-	WHERE [ID_Fracao] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_LateRentPaymentLetter]
-(
-	@Id int,
-	@EnvioCartaAtrasoRenda bit, 
-	@DocumentoAtrasoRendaGerado varchar(255),
-	@DataEnvioCartaAtrasoRenda datetime
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] 
-	SET [EnvioCartaAtrasoRenda] = @EnvioCartaAtrasoRenda, 
-		[DocumentoAtrasoRendaGerado] = @DocumentoAtrasoRendaGerado,
-		[DataEnvioCartaAtrasoRenda] = @DataEnvioCartaAtrasoRenda
-	WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_RentCoefficient]
-(
-	@Id int,
-	@Ano nvarchar(4),
-	@Coeficiente float,
-	@DiplomaLegal nvarchar(120),
-	@UrlDiploma nvarchar(256),
-	@Lei nvarchar(100),
-	@DataPublicacao nvarchar(30)
-
-)
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE CoefientesAtualizacaoRendas
-	SET Ano = @Ano, Coeficiente = @Coeficiente, 
-	DiplomaLegal = @DiplomaLegal, UrlDiploma = @UrlDiploma,
-	Lei = @Lei, DataPublicacao = @DataPublicacao
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_RevocationLetter]
-(
-	@Id int,
-	@EnvioCartaRevogacao bit, 
-	@DocumentoRevogacaoGerado varchar(255),
-	@DataEnvioCartaRevogacao datetime
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] 
-	SET [EnvioCartaRevogacao] = @EnvioCartaRevogacao, 
-		[DocumentoRevogacaoGerado] = @DocumentoRevogacaoGerado,
-		[DataEnvioCartaRevogacao] = @DataEnvioCartaRevogacao
-	WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_UpdateRevocationLetter_AnswerDate]
-(
-	@Id int,
-	@AnswerDate datetime
-)
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [Arrendamentos] SET DataRespostaCartaRevogacao = @AnswerDate
-	WHERE [Id] = @Id 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_LateRentPaymentLetter_Answered] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT RespostaCartaAtrasoRenda
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_LateRentPaymentLetter_Issued] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT EnvioCartaAtrasoRenda
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Was_Lease_Issued] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT ContratoEmitido 
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_RevocationLetter_Answered] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT RespostaCartaRevogacao 
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Was_RevocationLetter_Issued] (@Id int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT EnvioCartaRevogacao 
-	FROM Arrendamentos 
-	WHERE Id = @Id
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_UpdateRentsLetter_Issued] (@Ano int)
-
-AS
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT COUNT(1)
-	FROM ProcessamentoAtualizacaoRendas
-	WHERE Ano = @Ano
-END
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Delete]
-(
-	@Original_Id int,
-	@Original_Descricao nvarchar(200)
-)
-AS
-	SET NOCOUNT OFF;
-DELETE FROM [CategoriaDespesa] WHERE (([Id] = @Original_Id) AND ([Descricao] = @Original_Descricao))
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_GetAll]
-AS
-	SET NOCOUNT ON;
-SELECT        *
-FROM            CategoriaDespesa
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT *
-FROM	CategoriaDespesa
-WHERE	Id = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Insert]
-(
-	@Descricao nvarchar(200)
-)
-AS
-	SET NOCOUNT OFF;
-	INSERT INTO [CategoriaDespesa] ([Descricao]) VALUES (@Descricao);
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Update]
-(
-    @Id int,
-    @Descricao nvarchar(200)
-)
-AS
-BEGIN
-    SET NOCOUNT OFF;
-    UPDATE [CategoriaDespesa]
-    SET [Descricao] = @Descricao
-    WHERE [Id] = @Id;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [CC_Inquilinos] 
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetAll]
-
-AS
-
-SET NOCOUNT OFF;
-SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida,
-		Renda, ID_TipoRecebimento, CC_I.Notas,
-		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
-FROM [CC_Inquilinos] CC_I
-	INNER JOIN Inquilinos I ON
-		CC_I.IdInquilino = I.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida, 
-		Renda, ID_TipoRecebimento,	CC_I.Notas,
-		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
-FROM [CC_Inquilinos] CC_I
-INNER JOIN Inquilinos I ON
-	CC_I.IdInquilino = I.Id
-WHERE CC_I.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetByTenantId]
-(
-	@TenantId int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida, 
-		Renda, ID_TipoRecebimento,	CC_I.Notas,
-		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
-FROM [CC_Inquilinos] CC_I
-INNER JOIN Inquilinos I ON
-	CC_I.IdInquilino = I.Id
-WHERE CC_I.IdInquilino = @TenantId
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Insert]
-(
-	@DataMovimento datetime,
-	@ValorPago decimal(10,2),
-	@ValorEmDivida decimal(10,2),
-	@Renda bit,
-	@ID_TipoRecebimento int,
-	@Notas varchar(512),
-	@IdInquilino int,
-	@TransactionId int
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [CC_Inquilinos] 
-	(DataMovimento, ValorPago, ValorEmDivida, Renda, ID_TipoRecebimento, Notas, IdInquilino, TransactionId)
-VALUES 
-	(@DataMovimento, @ValorPago, @ValorEmDivida, @Renda, @ID_TipoRecebimento, @Notas, @IdInquilino, @TransactionId);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Update]
-(
-	@Id int,
-	@DataMovimento datetime,
-	@ValorPago decimal(10,2),
-	@ValorEmDivida decimal(10,2),
-	@Renda bit,
-	@ID_TipoRecebimento int,
-	@Notas text,
-	@IdInquilino int,
-	@TransactionId int
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [CC_Inquilinos] 
-	SET DataMovimento = @DataMovimento, ValorPago = @ValorPago, ValorEmDivida = @ValorEmDivida,
-	Renda = @Renda, ID_TipoRecebimento = @ID_TipoRecebimento,
-	Notas = @Notas, IdInquilino = @IdInquilino,
-	TransactionId = @TransactionId
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_CoeficienteIMI_GetById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT Coeficiente FROM [Concelhos] 
-WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_CoeficienteIMI_Update]
-(
-	@IdConcelho int,
-	@CoeficienteIMI decimal(6,5)
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Concelhos] 
-SET [Coeficiente] = @CoeficienteIMI
-WHERE [CodConcelho] = @IdConcelho;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Concelho_GetById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT * FROM [Concelhos] 
-WHERE [CodConcelho] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteByDescription]
-(
-	@Description nvarchar(100)
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT Coeficiente FROM [Concelhos] 
-WHERE Descricao = @Description;
-	
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteByFracao]
-(
-	@UnitId int
-)
-AS
-
-SET NOCOUNT OFF;
-DECLARE @Freguesia varchar(30)
-DECLARE @Coeficiente decimal(6,5)
-DECLARE @PropertyId int
-SELECT @PropertyId = (SELECT Id_Imovel FROM Fracoes WHERE Id = @UnitId)
-SELECT @Freguesia = (SELECT Freguesia FROM Imoveis WHERE Id = @PropertyId)
-EXEC	@Coeficiente = [dbo].[usp_Concelho_GetCoeficienteByDescription]
-		@Description = @Freguesia
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT Coeficiente FROM [Concelhos] 
-WHERE [CodConcelho] = @Id;
-	
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Condominio_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Condominios] 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contactos_Delete]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DELETE FROM [Contactos] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Contactos_GetAll]
-AS
-	SET NOCOUNT ON;
-SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
-FROM    Contactos CO
-		INNER JOIN TipoContacto TC ON
-			CO.ID_TipoContacto = TC.Id
-		
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Contactos_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
-FROM    Contactos CO
-		INNER JOIN TipoContacto TC ON
-			CO.ID_TipoContacto = TC.Id
-WHERE CO.Id = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Contactos_Insert]
-(
-	@Nome varchar(70),
-	@Morada varchar(70),
-	@Localidade varchar(50),
-	@Contacto varchar(50),
-	@eMail varchar(128),
-	@Notas text,
-	@ID_TipoContacto int
-)
-AS
-SET NOCOUNT OFF;
-INSERT INTO [Contactos] ([Nome], [Morada], [Localidade], [Contacto], 
-		[eMail], [Notas], [ID_TipoContacto]) 
-VALUES (@Nome, @Morada, @Localidade, @Contacto, 
-		@eMail, @Notas, @ID_TipoContacto);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Contactos_Update]
-(
-	@Id int,
-	@Nome varchar(70),
-	@Morada varchar(70),
-	@Localidade varchar(50),
-	@Contacto varchar(50),
-	@eMail varchar(128),
-	@Notas text,
-	@ID_TipoContacto int
-)
-AS
-SET NOCOUNT OFF;
-UPDATE [Contactos] 
-	SET [Nome] = @Nome, [Morada] = @Morada, [Localidade] = @Localidade, 
-	[Contacto] = @Contacto, [eMail] = @eMail, [Notas] = @Notas,
-	[ID_TipoContacto] = @ID_TipoContacto
-WHERE [Id] = @Id;
-
-SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
-FROM    Contactos CO
-		INNER JOIN TipoContacto TC ON
-			CO.ID_TipoContacto = TC.Id
-WHERE CO.Id = @Id	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contratos_Delete]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DELETE FROM [Contratos] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contratos_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, DataCelebracao, Data_Inicio, Fiador, Prazo_Meses, Valor_Renda, 
-		Doc_IRS, Doc_Vencimento, Notas, ID_Fracao, ID_Inquilino, ID_Fiador, Caucao
-FROM	Contratos
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contratos_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, DataCelebracao, Data_Inicio, Fiador, Prazo_Meses, Valor_Renda, 
-		Doc_IRS, Doc_Vencimento, Notas, ID_Fracao, ID_Inquilino, ID_Fiador, Caucao
-FROM	Contratos
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contratos_Insert]
-(
-	@DataCelebracao datetime,
-	@Data_Inicio datetime,
-	@Fiador bit,
-	@Prazo_Meses int,
-	@Valor_Renda decimal(10, 2),
-	@Doc_IRS bit,
-	@Doc_Vencimento bit,
-	@Notas text,
-	@ID_Fracao int,
-	@ID_Inquilino int,
-	@ID_Fiador int,
-	@Caucao bit
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Contratos] 
-	([DataCelebracao], [Data_Inicio], [Fiador], [Prazo_Meses], [Valor_Renda], [Doc_IRS], 
-	[Doc_Vencimento], [Notas], [ID_Fracao], [ID_Inquilino], [ID_Fiador], [Caucao]) 
-VALUES 
-	(@DataCelebracao, @Data_Inicio, @Fiador, @Prazo_Meses, @Valor_Renda, @Doc_IRS, 
-	@Doc_Vencimento, @Notas, @ID_Fracao, @ID_Inquilino, @ID_Fiador, @Caucao);
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Contratos_Update]
-(
-	@Id int,
-	@DataCelebracao datetime,
-	@Data_Inicio datetime,
-	@Fiador bit,
-	@Prazo_Meses int,
-	@Valor_Renda decimal(10, 2),
-	@Doc_IRS bit,
-	@Doc_Vencimento bit,
-	@Notas text,
-	@ID_Fracao int,
-	@ID_Inquilino int,
-	@ID_Fiador int,
-	@Caucao bit
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Contratos] 
-SET [DataCelebracao] = @DataCelebracao, [Data_Inicio] = @Data_Inicio, [Fiador] = @Fiador, 
-	[Prazo_Meses] = @Prazo_Meses, [Valor_Renda] = @Valor_Renda, [Doc_IRS] = @Doc_IRS,
-	[Doc_Vencimento] = @Doc_Vencimento, [Notas] = @Notas, [ID_Fracao] = @ID_Fracao,
-	[ID_Inquilino] = @ID_Inquilino, [ID_Fiador] = @ID_Fiador, [Caucao] = @Caucao 
-WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROC usp_Despesas_CalculateIRS
-
-AS
-BEGIN
-	SELECT Descricao Fracao, Round(ValorRenda, 2) as ValorRenda, Round(ValorRenda * 0.28, 2) as ValorIRS
-	FROM fracoes
-	WHERE situacao = 1
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Despesas_Categorias_GetExpensesByType]
-
-AS
-BEGIN
-
-	SELECT YEAR(D.DataMovimento) YearOfExpenses, MONTH(D.DataMovimento) month, DATENAME(month, D.DataMovimento) MonthOfExpenses, 
-	SUM(D.Valor_Pago) TotalOfMonthExpenses, CD.Descricao TypeOfExpenses
-	FROM Despesas D
-	INNER JOIN CategoriaDespesa CD ON D.ID_CategoriaDespesa = CD.Id
-	GROUP BY YEAR(D.DataMovimento), MONTH(D.DataMovimento), DATENAME(month, D.DataMovimento), CD.Descricao
-	ORDER BY MONTH(D.DataMovimento)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Despesas_Categorias_GetExpensesByTypeAndYear]
-	@year int
-AS
-BEGIN
-
-	SELECT MONTH(D.DataMovimento) [Month], DATENAME(month, D.DataMovimento) MonthOfExpenses, 
-	SUM(D.Valor_Pago) TotalOfMonthExpenses, CD.Descricao TypeOfExpenses
-	FROM Despesas D
-	INNER JOIN CategoriaDespesa CD ON D.ID_CategoriaDespesa = CD.Id
-	WHERE YEAR(D.DataMovimento) = @year
-	GROUP BY MONTH(D.DataMovimento), DATENAME(month, D.DataMovimento), CD.Descricao
-	ORDER BY MONTH(D.DataMovimento)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE Procedure [dbo].[usp_Despesas_Categorias_GetExpensesByYear]
-	@year int
-AS
-BEGIN
-	SELECT MONTH(Datamovimento), DATENAME(month, d.DataMovimento) Descricao, 
-	SUM(D.Valor_Pago) TotalDespesas, COUNT(1) NumeroMovimentos
-	FROM Despesas D
-	WHERE YEAR(D.DataMovimento) = @year
-	GROUP BY MONTH(DataMovimento), DATENAME(month, d.DataMovimento) 
-	ORDER BY MONTH(DataMovimento)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE Procedure [dbo].[usp_Despesas_Categorias_GetSum]
-	@year int
-AS
-BEGIN
-	SELECT C.Descricao, SUM(D.Valor_Pago) TotalDespesas, COUNT(1) NumeroMovimentos
-	FROM Despesas D
-	INNER JOIN CategoriaDespesa C
-	ON D.ID_CategoriaDespesa = C.Id
-	WHERE YEAR(D.DataMovimento) = @year
-	GROUP BY C.Descricao
-	ORDER BY SUM(D.Valor_Pago) DESC
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_Delete]
-(
-	@Id int
-)
-AS
-	SET NOCOUNT OFF;
-	DELETE FROM [Despesas] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_GetAll]
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	SELECT  D.Id, DataMovimento, Valor_Pago, ID_TipoDespesa, ID_ModoPagamento, 
-			D.Id_CategoriaDespesa, NumeroDocumento, Notas,
-			TD.Descricao TipoDespesa, CD.Descricao DescrImputacao, 
-			FP.Descricao ModoPagamento
-	FROM    Despesas D 
-		INNER JOIN TipoDespesa TD ON
-			D.ID_TipoDespesa = TD.Id
-		INNER JOIN CategoriaDespesa CD ON
-			TD.Id_CategoriaDespesa = CD.Id
-		INNER JOIN FormaPagamento FP ON
-			D.ID_ModoPagamento = FP.Id
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_GetById] (@Id int)
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	SELECT  D.Id, DataMovimento, Valor_Pago, ID_TipoDespesa, ID_ModoPagamento, NumeroDocumento,
-			Notas,TD.Descricao TipoDespesa, CD.Descricao DescrImputacao, FP.Descricao ModoPagamento,
-			D.Id_CategoriaDespesa
-	FROM    Despesas D 
-		INNER JOIN TipoDespesa TD ON
-			D.ID_TipoDespesa = TD.Id
-		INNER JOIN CategoriaDespesa CD ON
-			TD.Id_CategoriaDespesa = CD.Id
-		INNER JOIN FormaPagamento FP ON
-			D.ID_ModoPagamento = FP.Id
-						
-	WHERE D.Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Despesas_GetMostSpendCategories_ByYear]
-(
-	@year int
-)
-AS
-BEGIN
-
-	SELECT c.Descricao, count(1) NumeroMovimentos, sum(d.Valor_Pago) TotalDespesas
-	FROM CategoriaDespesa c 
-	INNER JOIN Despesas d
-		ON c.Id = d.ID_CategoriaDespesa
-	WHERE YEAR(d.DataMovimento) = @year
-	GROUP BY c.Descricao
-	ORDER BY sum(d.Valor_Pago) DESC
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROC [dbo].[usp_Despesas_GetMostSpendCategory]
-
-AS
-BEGIN
-
-	SELECT TOP 2
-		c.Descricao, sum(d.Valor_Pago) as TotalDespesas, COUNT(1) NumeroMovimentos
-	FROM CategoriaDespesa c 
-	INNER JOIN Despesas d
-		ON c.id = d.ID_CategoriaDespesa
-	WHERE YEAR(d.DataMovimento) = YEAR(GetDate())
-	GROUP BY c.Descricao
-	ORDER BY sum(d.Valor_Pago) DESC
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_GetTipoDespesaByCategory] (@Id int)
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	SELECT id, Descricao 
-	FROM TipoDespesa
-	WHERE Id_CategoriaDespesa = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_Insert]
-(
-	@DataMovimento datetime,
-	@Valor_Pago decimal(10, 2),
-	@NumeroDocumento nvarchar(50),
-	@ID_CategoriaDespesa int,
-	@ID_TipoDespesa int,
-	@ID_ModoPagamento int,
-	@Notas text
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Despesas]
-	([DataMovimento], [Valor_Pago], [ID_ModoPagamento], [NumeroDocumento],
-	[ID_TipoDespesa], [ID_CategoriaDespesa], [Notas]) 
-VALUES 
-	(@DataMovimento, @Valor_Pago, @ID_ModoPagamento, @NumeroDocumento,
-	@ID_TipoDespesa, @ID_CategoriaDespesa, @Notas);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM  TipoDespesa
-WHERE Id = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesa_GetAll]
-
-AS
-
-SET NOCOUNT OFF;
-SELECT TD.Id, TD.Descricao, TD.Id_CategoriaDespesa, CD.Descricao CategoriaDespesa
-FROM  TipoDespesa TD 
-INNER JOIN CategoriaDespesa CD ON
-	TD.Id_CategoriaDespesa = CD.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesa_GetById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT TD.Id, TD.Descricao, TD.Id_CategoriaDespesa, CD.Descricao CategoriaDespesa
-FROM  TipoDespesa TD 
-INNER JOIN CategoriaDespesa CD ON
-	TD.Id_CategoriaDespesa = CD.Id
-WHERE TD.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Insert]
-(
-	@Descricao nvarchar(255),
-	@Id_CategoriaDespesa int
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO TipoDespesa
-	(Descricao, [Id_CategoriaDespesa])
-VALUES 
-	(@Descricao, @Id_CategoriaDespesa);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Update]
-(
-	@Id int,
-	@Descricao nvarchar(255),
-	@Id_CategoriaDespesa int
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE TipoDespesa
-	 SET [Descricao] = @Descricao, [Id_CategoriaDespesa] = @Id_CategoriaDespesa
-WHERE Id = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesas_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
-
-
-AS
-
-declare @CanDelete bit
-
-SET NOCOUNT ON;
-SELECT	@CanDelete = COUNT(1)
-FROM    Despesas
-WHERE	ID_TipoDespesa = @Id
-
-SELECT @OkToDelete = @CanDelete
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Despesas_Update]
-(
-	@Id int,
-	@DataMovimento datetime,
-	@Valor_Pago decimal(10, 2),
-	@NumeroDocumento nvarchar(50),
-	@ID_TipoDespesa int,
-	@ID_CategoriaDespesa int,
-	@ID_ModoPagamento int,
-	@Notas text
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Despesas] 
-SET [DataMovimento] = @DataMovimento, [Valor_Pago] = @Valor_Pago, 
-	[NumeroDocumento] = @NumeroDocumento, [ID_ModoPagamento] = @ID_ModoPagamento,
-	[ID_TipoDespesa] = @ID_TipoDespesa, [ID_CategoriaDespesa] = @ID_CategoriaDespesa,
-	[Notas] = @Notas 
-WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Development_CloneRecebimentos]
-AS
-BEGIN
-	INSERT INTO Recebimentos(DataMovimento, estado, ID_Propriedade, 
-		ID_Inquilino, ID_TipoRecebimento, GeradoPeloPrograma, renda, ValorPrevisto, 
-		ValorEmFalta, ValorRecebido, notas)
-	SELECT DataMovimento, estado, ID_Propriedade, 
-		ID_Inquilino, ID_TipoRecebimento, GeradoPeloPrograma, renda, ValorPrevisto, 
-		ValorEmFalta, ValorRecebido, notas
-		FROM RecebimentosTemp;
-
-	INSERT INTO ProcessamentoRendas(Mes, Ano, DataProcessamento)
-	SELECT Mes, Ano, DataProcessamento FROM ProcessamentoRendas;
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
--- =============================================
--- Author:		Fausto Luis
--- Create date: 2023-01-09
--- Description:	Inicializa tabelas
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Development_initializeRentPaymentTables] 
-AS
-BEGIN
-	SET NOCOUNT ON;
-	truncate table PMlogs
-	truncate table ProcessamentoRendas;
-	truncate table ProcessamentoAtualizacaoRendas;
-	truncate table CC_Inquilinos;
-	truncate table DocumentosInquilino;
-	truncate table Recebimentos;
-	truncate table RecebimentosTemp;
-	truncate table HistoricoAtualizacaoRendas;
-	truncate table Appointments;
-
-	Update Inquilinos SET SaldoCorrente = 0, Notas = ''
-	Update Arrendamentos SET 
-	Data_Pagamento = Cast(Cast(dateadd(month, -1, GETDATE()) as Date) as Datetime),
-	EnvioCartaAtrasoRenda = NULL, 
-	DocumentoAtrasoRendaGerado = NULL, 
-	DataEnvioCartaAtrasoRenda = NULL,
-	DataEnvioCartaAtualizacao = NULL,
-	DataEnvioCartaRevogacao = NULL,
-	DocumentoAtualizacaoGerado = NULL,
-	EnvioCartaAtualizacaoRenda = NULL,
-	EstadoPagamento = 'Ok';
-	update Fracoes set ValorRenda = 0 WHERE Id = 1; -- JJM - 3E
-	update Fracoes set ValorRenda = 600 WHERE Id = 2; --JJM 3D
-	update Fracoes set ValorRenda = 420 WHERE Id = 3; -- JJM 2E
-	update Fracoes set ValorRenda = 250 WHERE Id = 8; -- escritório
-	update Fracoes set ValorRenda = 400 WHERE Id = 10; -- CGG B
-	update Fracoes set ValorRenda = 325 WHERE Id = 11; -- PBC 105
-	update Fracoes set ValorRenda = 450 WHERE Id = 12; -- CGG C
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
--- =============================================
--- Author:		Fausto Luis
--- Create date: 2023-01-09
--- Description:	Inicializa tabelas - exceções: Inquilinos, Fracoes, Proprietário
---				
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Development_initializeWorkTables] 
-AS
-BEGIN
-	SET NOCOUNT ON;
-	truncate table PMLogs;
-	truncate table ProcessamentoRendas;
-	truncate table ProcessamentoAtualizacaoRendas;
-	truncate table CC_Inquilinos;
-	TRUNCATE TABLE Despesas;
-	TRUNCATE TABLE Recebimentos;
-	TRUNCATE TABLE RecebimentosTemp;
-	TRUNCATE TABLE DocumentosInquilino;
-	TRUNCATE TABLE Contratos;
-	TRUNCATE TABLE Arrendamentos;
-
-	UPDATE Inquilinos SET SaldoCorrente = 0, Notas = ''
-	UPDATE Fracoes SET Situacao = 2;
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
--- =============================================
--- Author:		Fausto Luis
--- Create date: 2023-01-09
--- Description:	Inicializa tabelas
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Development_ResetRentsYearUpdate] 
-AS
-BEGIN
-	SET NOCOUNT ON;
-	truncate table ProcessamentoAtualizacaoRendas;
-	Update Arrendamentos SET EnvioCartaAtualizacaoRenda = 0, DocumentoAtualizacaoGerado = ''
-
-	-- Atualizar manualmente o valor das rendas das frações
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Documents_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Documents] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Documents_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, D.LocalUpload,
-		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId,
-		DT.[Name] DocumentType, DTC.Descricao DocumentCategory
-FROM	Documents D
-	INNER JOIN DocumentTypes DT ON
-		D.DocumentTypeId = DT.Id
-	INNER JOIN DocumentTypeCategories DTC ON
-		DT.TypeCategoryId = DTC.Id
-ORDER BY D.CreatedOn DESC
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Documents_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, D.LocalUpload,
-		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId, DT.[Name]DocumentType,
-		 DTC.Id [DocumentCategoryId]
-FROM	Documents D
-INNER JOIN DocumentTypes DT ON
-		D.DocumentTypeId = DT.Id
-			INNER JOIN DocumentTypeCategories DTC ON
-		DT.TypeCategoryId = DTC.Id
-
-WHERE	D.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Documents_Insert]
-(
-	@Title nvarchar(256),
-	@Description nvarchar(512),
-	@IsPublic bit,
-	@URL nvarchar(256),
-	@LocalUpload bit,
-	@CreatedBy nvarchar(70),
-	@CreatedOn datetime,
-	@LastModifiedBy nvarchar(70),
-	@LastModifiedOn datetime,
-	@DocumentTypeId int,
-	@DocumentCategoryId int
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Documents] 
-	([Title], [Description], [IsPublic], [URL], [CreatedBy], [LocalUpload],
-	[CreatedOn], [LastModifiedBy], [LastModifiedOn], [DocumentTypeId], [DocumentCategoryId])
-VALUES 
-	(@Title, @Description, @IsPublic, @URL, @CreatedBy, @LocalUpload,
-	@CreatedOn, @LastModifiedBy, @LastModifiedOn, @DocumentTypeId, @DocumentCategoryId);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Documents_Update]
-(
-	@Id int,
-	@Title nvarchar(256),
-	@Description nvarchar(512),
-	@URL nvarchar(256),
-	@LocalUpload bit, 
-	@IsPublic bit,
-	@LastModifiedBy nvarchar(70),
-	@LastModifiedOn datetime
-
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Documents] 
-SET [Title] = @Title, [Description] = @Description, [IsPublic] = @IsPublic,
-	[URL] = @URL, [LocalUpload] = @LocalUpload,
-	[LastModifiedBy] = @LastModifiedBy, [LastModifiedOn] = @LastModifiedOn
-WHERE [Id] = @Id;
-
-SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, d.LocalUpload,
-		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId, DT.Description DocumentType
-FROM	Documents D
-INNER JOIN DocumentTypes DT ON
-		D.DocumentTypeId = DT.Id
-WHERE	D.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_DocumentTypes_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [DocumentTypes] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_DocumentTypes_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, [Name], [Description], CreatedBy, CreatedOn, 
-		LastModifiedBy, LastModifiedOn, TypeCategoryId
-FROM   DocumentTypes
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_DocumentTypes_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, [Name], [Description], CreatedBy, CreatedOn, 
-		LastModifiedBy, LastModifiedOn, TypeCategoryId
-FROM	DocumentTypes
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_DocumentTypes_Insert]
-(
-	@Name nvarchar(128),
-	@Description nvarchar(512),
-	@CreatedBy nvarchar(70),
-	@CreatedOn datetime,
-	@LastModifiedBy nvarchar(70),
-	@LastModifiedOn datetime
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [DocumentTypes] 
-	([Name], [Description], [CreatedBy], [CreatedOn], [LastModifiedBy], [LastModifiedOn])
-VALUES 
-	(@Name, @Description, @CreatedBy, @CreatedOn, @LastModifiedBy, @LastModifiedOn);
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_DocumentTypes_Update]
-(
-	@Id int,
-	@Name nvarchar(128),
-	@Description nvarchar(512),
-	@CreatedBy nvarchar(70),
-	@CreatedOn datetime,
-	@LastModifiedBy nvarchar(70),
-	@LastModifiedOn datetime
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [DocumentTypes] 
-SET [Name] = @Name, [Description] = @Description, [CreatedBy] = @CreatedBy, 
-	[CreatedOn] = @CreatedOn, [LastModifiedBy] = @LastModifiedBy, 
-	[LastModifiedOn] = @LastModifiedOn WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoCivil_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [EstadoCivil] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoCivil_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT Id, Descricao
-FROM   EstadoCivil
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoCivil_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Descricao
-FROM	EstadoCivil
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoCivil_Insert]
-(
-	@Descricao varchar(30)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [EstadoCivil] ([Descricao]) VALUES (@Descricao);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoCivil_Update]
-(
-	@Id int,
-	@Descricao varchar(30)
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [EstadoCivil] SET [Descricao] = @Descricao WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [EstadoConservacao] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoConservacao_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT Id, Descricao
-FROM   EstadoConservacao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoConservacao_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Descricao
-FROM	EstadoConservacao
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Insert]
-(
-	@Descricao varchar(30)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [EstadoConservacao] ([Descricao]) VALUES (@Descricao);
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Update]
-(
-	@Id int,
-	@Descricao varchar(30)
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [EstadoConservacao] SET [Descricao] = @Descricao WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
--- Antes de apagar fiador, verificar se há contratos associados ao mesmo
--- Se a operação resultar em 0 (zero), é válido apagar fiador
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
-
-
-AS
-
-declare @CanDelete bit
-
-SET NOCOUNT ON;
-SELECT	@CanDelete = COUNT(1)
-FROM    Arrendamentos
-WHERE	ID_Fiador = @Id
-
-SELECT @OkToDelete = @CanDelete
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Fiadores] 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Fiadores_Get_ByIdExtended] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Notas, Ativo
-FROM    Fiadores I 
-		INNER JOIN EstadoCivil EC ON
-			I.ID_EstadoCivil = EC.Id		
-WHERE	I.Id = @Id
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_Get_ByTenant] (@Id int) -- Id Inquilino
-AS
-
-SET NOCOUNT ON;
-SELECT	F.Id, IdInquilino, Nome, Morada, ID_EstadoCivil, EC.Descricao EstadoCivil,
-		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Notas, Ativo
-FROM    Fiadores F 
-		INNER JOIN EstadoCivil EC ON
-			F.ID_EstadoCivil = EC.Id		
-WHERE	F.IdInquilino = @Id
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_Get_Disponiveis]
-AS
-
-SET NOCOUNT ON;
-SELECT inq.Id, inq.Nome Descricao 
-FROM Fiadores inq 
-WHERE inq.Id NOT IN(SELECT ID_Fiador FROM Arrendamentos) 
-ORDER BY Inq.Nome
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_GetAll] (@Titular int) -- 0 = Fiadors e Fiadores, 1 = apenas Fiadors
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Notas, Ativo
-FROM    Fiadores I INNER JOIN 
-			EstadoCivil EC ON
-				I.ID_EstadoCivil = ec.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, IdInquilino, Nome, Morada, ID_EstadoCivil, Contacto1, Contacto2, eMail,
-		IRSAnual, Vencimento, Notas, NIF, Identificacao, ValidadeCC
-FROM    Fiadores
-WHERE	Id = @Id
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_GetForLookup]
-AS
-
-SET NOCOUNT ON;
-
-SELECT inq.Id, inq.Nome Descricao 
-FROM Fiadores inq 
-ORDER BY Inq.Nome
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_GetNome] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Nome
-FROM    Fiadores
-WHERE	Id = @Id
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_Insert]
-(
-	@IdInquilino int,
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@ID_EstadoCivil int,
-	@Contacto1 varchar(20),
-	@Contacto2 varchar(20),
-	@eMail varchar(128),
-	@IRSAnual decimal(10, 2),
-	@Vencimento decimal(10, 2),
-	@Notas text,
-	@NIF varchar(9),
-	@Identificacao varchar(20),
-	@ValidadeCC datetime
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Fiadores] 
-	([IdInquilino], [Nome], [Morada], 
-	[ID_EstadoCivil], [Contacto1], [Contacto2], [eMail],
-	[IRSAnual], [Vencimento], [Notas], [NIF], [Identificacao], [ValidadeCC]) 
-	VALUES (@IdInquilino, @Nome, @Morada, @ID_EstadoCivil, @Contacto1, @Contacto2, @eMail, 
-	@IRSAnual, @Vencimento,	@Notas, @NIF, @Identificacao, @ValidadeCC);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Fiadores_Update]
-(
-	@Id int,
-	@IdInquilino int,
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@ID_EstadoCivil int,
-	@Contacto1 varchar(20),
-	@Contacto2 varchar(20),
-	@eMail varchar(128),
-	@IRSAnual decimal(10, 2),
-	@Vencimento decimal(10, 2),
-	@Notas text,
-	@NIF varchar(9),
-	@Identificacao varchar(20),
-	@ValidadeCC datetime
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Fiadores] 
-SET [IdInquilino] = @IdInquilino, [Nome] = @Nome, [Morada] = @Morada, [ID_EstadoCivil] = @ID_EstadoCivil, 
-	[Contacto1] = @Contacto1, [Contacto2] = @Contacto2, [eMail] = @eMail, [IRSAnual] = @IRSAnual, 
-	[Vencimento] = @Vencimento, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao, 
-	[ValidadeCC] = @ValidadeCC
-WHERE [Id] = @Id;
-	
-SELECT	I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Notas, Ativo
-FROM    Fiadores I 
-		INNER JOIN EstadoCivil EC ON
-			I.ID_EstadoCivil = EC.Id
-WHERE	(I.Id = @Id)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_FormaPagamento_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [FormaPagamento] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_FormaPagamento_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT  Id, Descricao
-FROM    FormaPagamento
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_FormaPagamento_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Descricao
-FROM	FormaPagamento
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_FormaPagamento_Insert]
-(
-	@Descricao varchar(75)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [FormaPagamento] ([Descricao]) VALUES (@Descricao);
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_FormaPagamento_Update]
-(
-	@Id int,
-	@Descricao varchar(75)
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [FormaPagamento] 
-SET [Descricao] = @Descricao WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- Antes de apagar fração, verificar se há contratos associados  à mesma
--- Se a operação resultar em 0 (zero), é válido apagar inquilino
-
-CREATE PROCEDURE [dbo].[usp_Fracoes_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
-
-
-AS
-
-declare @CanDelete bit
-
-SET NOCOUNT ON;
-SELECT	@CanDelete = COUNT(1)
-FROM    Contratos
-WHERE	ID_Fracao = @Id
-
-SELECT @OkToDelete = @CanDelete
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Fracoes] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteApolice]
-(	
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM Seguros
-WHERE IdFracao = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteCondominio]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Condominios] 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteImage]
-(	
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-BEGIN
-	DELETE FROM [ImagensFracoes] 
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteImages]
-(	
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-BEGIN
-	DELETE FROM [ImagensFracoes] 
-	WHERE Id_Fracao = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
-		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
-		Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao,
-		LicencaHabitacao, DataEmissaoLicencaHabitacao,
-		ID_CertificadoEnergetico, CE.Descricao CertificadoEnergetico,
-		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, F.GasCanalizado, F.CozinhaEquipada,
-		EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
-		TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
-		TP.Descricao TipoPropriedade
-FROM    Fracoes F 
-			INNER JOIN Imoveis I ON
-				F.Id_Imovel = I.Id
-			INNER JOIN TipologiaFracao TF ON
-				F.Tipologia = TF.Id
-			INNER JOIN SituacaoFracao SF ON
-				F.Situacao = SF.Id
-			INNER JOIN EstadoConservacao EC ON
-				F.Conservacao = EC.Id
-			INNER JOIN TipoPropriedade TP ON
-				F.ID_TipoPropriedade = TP.Id
-			INNER JOIN TipoCertificadoEnergetico CE ON 
-				ID_CertificadoEnergetico = CE.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetApolice_ById]
-(	
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT * FROM Seguros
-WHERE IdFracao = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetApolices]
-AS
-
-SET NOCOUNT OFF;
-SELECT * FROM Seguros
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetAvailable]
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-    SELECT Id, Descricao
-    FROM Fracoes
- 	WHERE Id IN
-		(SELECT ID_Fracao FROM Arrendamentos WHERE Arrendamentos.Ativo = 1) 
-    ORDER BY Fracoes.Descricao
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
-		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
-		Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
-		LicencaHabitacao, DataEmissaoLicencaHabitacao,
-		ID_CertificadoEnergetico, CE.Descricao CertificadoEnergetico,
-		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, GasCanalizado, F.CozinhaEquipada,
-		EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
-		TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
-		TP.Descricao TipoPropriedade
-FROM    Fracoes F 
-			INNER JOIN Imoveis I ON
-				F.Id_Imovel = I.Id
-			INNER JOIN TipologiaFracao TF ON
-				F.Tipologia = TF.Id
-			INNER JOIN SituacaoFracao SF ON
-				F.Situacao = SF.Id
-			INNER JOIN EstadoConservacao EC ON
-				F.Conservacao = EC.Id
-			INNER JOIN TipoPropriedade TP ON
-				F.ID_TipoPropriedade = TP.Id
-			INNER JOIN TipoCertificadoEnergetico CE ON 
-				ID_CertificadoEnergetico = CE.Id
-WHERE	F.Id = 
-	CASE 
-		WHEN  @Id > 0 THEN @Id 
-		ELSE F.Id 
-	END
-ORDER BY Descricao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetCondominio_ById]
-(	
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT * FROM Condominios
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetCondominios]
-AS
-
-SET NOCOUNT OFF;
-SELECT * FROM Condominios
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetFracoes_Lookup] (@Id int) -- id do imóvel
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Descricao
-FROM    Fracoes
-WHERE	Id_Imovel = 
-	CASE 
-		WHEN  @Id > 0 THEN @Id 
-		ELSE Id_Imovel
-	END	
-ORDER BY Descricao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetFracoes_WithDuePayments]
-AS
-
-SET NOCOUNT ON;
-SELECT	F.Id, F.Descricao
-FROM    Fracoes F
-INNER JOIN Recebimentos R ON
-	F.Id = R.ID_Propriedade
-WHERE R.Estado = 2
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetImage_ByUnitId] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT id, Id_Fracao, Descricao, Foto
-FROM ImagensFracoes
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetImages_ByUnitId] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT id, Id_Fracao, Descricao, Foto
-FROM ImagensFracoes
-WHERE Id_Fracao = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetInsuranceData]
-AS
-
-SET NOCOUNT ON;
-SELECT *
-FROM   vwSegurosFracoes
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetPropertyUnits] (@id int)
-AS
-BEGIN
-	SET NOCOUNT ON;
-	SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
-			Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
-			Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
-			ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, GasCanalizado,F.CozinhaEquipada,
-			EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
-			TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
-			TP.Descricao TipoPropriedade
-	FROM    Fracoes F 
-				INNER JOIN Imoveis I ON
-					F.Id_Imovel = I.Id
-				INNER JOIN TipologiaFracao TF ON
-					F.Tipologia = TF.Id
-				INNER JOIN SituacaoFracao SF ON
-					F.Situacao = SF.Id
-				INNER JOIN EstadoConservacao EC ON
-					F.Conservacao = EC.Id
-				INNER JOIN TipoPropriedade TP ON
-					F.ID_TipoPropriedade = TP.Id
-	WHERE F.Id_Imovel = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
-		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, GasCanalizado, F.CozinhaEquipada,
-		Fotos, F.Notas, Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
-		LicencaHabitacao, DataEmissaoLicencaHabitacao,
-		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao 
-		
-FROM    Fracoes F 
-WHERE	F.Id = 
-	CASE 
-		WHEN  @Id > 0 THEN @Id 
-		ELSE F.Id 
-	END
-ORDER BY Descricao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitSituation_ByDescription] (@Descricao varchar(50)) 
-AS
-
-SET NOCOUNT ON;
-SELECT	Id
-FROM    SituacaoFracao
-WHERE	Descricao = @Descricao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitsWithoutLease] (@Id int )
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-    SELECT Id, Descricao
-    FROM Fracoes
- 	WHERE Id_Imovel = @Id AND Id NOT IN
-		(SELECT ID_Fracao FROM Arrendamentos) 
-    ORDER BY Fracoes.Descricao
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Fracoes_Imovel] (@Id int)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    EXEC sp_executesql N'SELECT Id, Ativa, Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, LicencaHabitacao, DataEmissaoLicencaHabitacao, Alugada, Livre, Reservada, Vendida, Contencioso, Varanda, Terraco, Garagem, Arrecadacao, GasCanalizado, CozinhaEquipada, LugarEstacionamento, Fotos, Notas, Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, ID_TipoPropriedade, Id_Imovel, Situacao, Conservacao FROM Fracoes WHERE Id_Imovel = @Id', N'@Id int', @Id=@Id;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_Insert]
-(	
-	@Ativa bit,
-	@Descricao varchar(128),
-	@ValorRenda decimal,
-	@AreaBrutaPrivativa float,
-	@AreaBrutaDependente float,
-	@CasasBanho int,
-	@Varanda bit,
-	@Terraco bit,
-	@Garagem bit,
-	@Arrecadacao bit,
-	@LugarEstacionamento bit,
-	@GasCanalizado bit,
-	@CozinhaEquipada bit, 
-	@Fotos bit,
-	@Notas text,
-	@Tipologia int,
-	@LicencaHabitacao varchar(30),
-	@DataEmissaoLicencaHabitacao datetime,
-	@ID_CertificadoEnergetico varchar(3),
-	@Matriz varchar(50),
-	@Andar varchar(20),
-	@Lado varchar(20),
-	@AnoUltAvaliacao varchar(4),
-	@ValorUltAvaliacao decimal(12, 2),
-	@ID_TipoPropriedade int,
-	@Id_Imovel int,
-	@Situacao int,
-	@Conservacao int
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Fracoes] 
-	([Ativa], [Descricao], [ValorRenda], [AreaBrutaPrivativa], [AreaBrutaDependente], [CasasBanho], 
-	[Varanda], [Terraco], [Garagem], [GasCanalizado], [CozinhaEquipada], [Arrecadacao], [LugarEstacionamento], [Fotos], [Notas], 
-	[Tipologia], [LicencaHabitacao], [DataEmissaoLicencaHabitacao], [ID_CertificadoEnergetico],
-	[Matriz], [Andar], [Lado], [AnoUltAvaliacao], [ValorUltAvaliacao],
-	[ID_TipoPropriedade], [Id_Imovel], [Situacao], [Conservacao])
-VALUES 
-	(@Ativa, @Descricao, @ValorRenda, @AreaBrutaPrivativa, @AreaBrutaDependente, @CasasBanho,
-	@Varanda, @Terraco, @Garagem, @GasCanalizado, @CozinhaEquipada, @Arrecadacao, 
-	@LugarEstacionamento, @Fotos, @Notas, @Tipologia, @LicencaHabitacao, @DataEmissaoLicencaHabitacao,
-	@ID_CertificadoEnergetico, @Matriz, @Andar, @Lado, 
-	@AnoUltAvaliacao, @ValorUltAvaliacao, @ID_TipoPropriedade, @Id_Imovel, 
-	@Situacao, @Conservacao);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_InsertApolice]
-(	
-	@IdFracao int,
-	@Apolice varchar(20),
-	@Premio decimal(11,2),
-	@Notas text
-
-
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Seguros] 
-	([IdFracao], [Apolice], [Premio], [Notas])
-VALUES 
-	(@IdFracao, @Apolice, @Premio, @Notas);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_InsertCondominio]
-(	
-	@IdFracao int,
-	@Quota decimal(11,2),
-	@Gestor varchar(50),
-	@ContactoGestor varchar(20),
-	@ValorAvenca decimal(11,2)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Condominios] 
-	([IdFracao], [Quota], [Ano], [Gestor], [ContactoGestor], [ValorAvenca])
-VALUES 
-	(@IdFracao, @Quota, Cast(YEAR(GetDate()) As Varchar(4)), @Gestor, @ContactoGestor, @ValorAvenca);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_InsertImage]
-(	
-	@Descricao varchar(128),
-	@Foto varchar(256),
-	@Id_Fracao int
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [ImagensFracoes] 
-	([Descricao], [Foto], [Id_Fracao])
-VALUES 
-	(@Descricao, @Foto, @Id_Fracao);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_IsUnitFreeToLease] (@Id int)
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	SELECT 1 
-	FROM Fracoes 
-	WHERE Id = @Id AND Situacao = 2 -- Livre
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROC usp_Fracoes_Resumo
-AS
-BEGIN
-	DECLARE @Coeficiente float;
-	SELECT @Coeficiente = (SELECT Coeficiente FROM Concelhos WHERE Descricao LIKE '%Montijo%');
-	SELECT F.Descricao, F.ValorRenda, F.ValorRenda * 0.28 AS IRS, F.ValorUltAvaliacao * @Coeficiente AS IMI,
-		S.Premio, s.Apolice
-	FROM fracoes F
-	INNER JOIN imoveis I on 
-		F.Id_Imovel = i.Id
-	INNER JOIN Seguros S ON
-		S.IdFracao = F.id
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsFree] 
-(
-	@Id int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = 2 -- free
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsInDispute] 
-(
-	@Id int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = 5
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsRented] 
-(
-	@Id int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = 1 -- alugada
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsReserved] 
-(
-	@Id int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = 3
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsSold] 
-(
-	@Id int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = 4
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_Update]
-(
-	@Id int,
-	@Ativa bit,
-	@Descricao varchar(128),
-	@ValorRenda decimal,
-	@AreaBrutaPrivativa float,
-	@AreaBrutaDependente float,
-	@CasasBanho int,
-	@Varanda bit,
-	@Terraco bit,
-	@Garagem bit,
-	@Arrecadacao bit,
-	@GasCanalizado bit,
-	@CozinhaEquipada bit, 
-	@LugarEstacionamento bit,
-	@Fotos bit,
-	@Notas text,
-	@Tipologia int,
-	@LicencaHabitacao varchar(30),
-	@DataEmissaoLicencaHabitacao datetime,
-	@ID_CertificadoEnergetico varchar(3),
-	@Matriz varchar(50),
-	@Andar varchar(20),
-	@Lado varchar(20),
-	@AnoUltAvaliacao varchar(4),
-	@ValorUltAvaliacao decimal(12, 2),
-	@ID_TipoPropriedade int,
-	@Id_Imovel int,
-	@Situacao int,
-	@Conservacao int
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE Fracoes 
-SET Descricao = @Descricao, 
-	Ativa = @Ativa, 
-	ValorRenda = @ValorRenda, 
-	AreaBrutaPrivativa = @AreaBrutaPrivativa, 
-	AreaBrutaDependente = @AreaBrutaDependente, 
-	CasasBanho = @CasasBanho, 
-	Varanda = @Varanda, 
-	CozinhaEquipada = @CozinhaEquipada,
-	Terraco = @Terraco,
-	Garagem = @Garagem, 
-	Arrecadacao = @Arrecadacao, 
-	GasCanalizado = @GasCanalizado,
-	LugarEstacionamento = @LugarEstacionamento, 
-	Fotos = @Fotos, 
-	Notas = @Notas, 
-	Tipologia = @Tipologia, 
-	LicencaHabitacao = @LicencaHabitacao, DataEmissaoLicencaHabitacao = @DataEmissaoLicencaHabitacao,
-	ID_CertificadoEnergetico = @ID_CertificadoEnergetico, Matriz = @Matriz, 
-	Andar = @Andar,
-	Lado = @Lado,
-	AnoUltAvaliacao = @AnoUltAvaliacao,
-	ValorUltAvaliacao = @ValorUltAvaliacao,
-	ID_TipoPropriedade = @ID_TipoPropriedade, 
-	Id_Imovel = @Id_Imovel, 
-	Situacao = @Situacao, 
-	Conservacao = @Conservacao 
-WHERE Id = @Id;
-
-SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
-		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, GasCanalizado, F.CozinhaEquipada,
-		Fotos, F.Notas, Tipologia, LicencaHabitacao, DataEmissaoLicencaHabitacao,
-		Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
-		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao 
-		
-FROM    Fracoes F 
-WHERE	F.Id = 
-	CASE 
-		WHEN  @Id > 0 THEN @Id 
-		ELSE F.Id 
-	END
-
-ORDER BY Descricao
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateApolice]
-(	
-	@Id int,
-	@Apolice varchar(20),
-	@Premio decimal(11,2),
-	@Notas text
-)
-
-AS
-
-SET NOCOUNT OFF;
-UPDATE Seguros
-	SET 
-		Apolice = @Apolice,
-		Premio = @Premio,
-		Notas = @Notas
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateCondominio]
-(	
-	@Id int,
-	@IdFracao int,
-	@Quota decimal(11,2),
-	@Gestor varchar(50),
-	@ContactoGestor varchar(20),
-	@ValorAvenca decimal(11,2)
-
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE Condominios
-	SET IdFracao = @IdFracao,
-	Quota = @Quota,
-	Gestor = @Gestor,
-	ContactoGestor = @ContactoGestor,
-	ValorAvenca = @ValorAvenca
-WHERE Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateImage]
-(	
-	@Id int,
-	@Descricao varchar(50),
-	@Foto varchar(256),
-	@Id_Fracao int
-)
-AS
-
-SET NOCOUNT OFF;
-BEGIN
-	UPDATE [ImagensFracoes] 
-	SET [Descricao] = @Descricao, [Foto] = @Foto, [Id_Fracao] = @Id_Fracao
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateRentValue] (@Id int, @NewValue decimal(10, 2))
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET ValorRenda = @NewValue
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateStatus] 
-(
-	@Id int,
-	@Status int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE Fracoes
-	SET Situacao = @Status
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Fracoes_UpdateStatusBySituation_todelete]
-(
-    @Id int,
-    @Alugada bit, @Livre bit, @Reservada bit, @Vendida bit, @Contencioso bit
-)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    EXEC sp_executesql N'UPDATE Fracoes SET Alugada=@Alugada, Livre=@Livre, Reservada=@Reservada, Vendida=@Vendida, Contencioso=@Contencioso WHERE Id=@Id', N'@Id int,@Alugada bit,@Livre bit,@Reservada bit,@Vendida bit,@Contencioso bit', @Id=@Id,@Alugada=@Alugada,@Livre=@Livre,@Reservada=@Reservada,@Vendida=@Vendida,@Contencioso=@Contencioso;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE procedure [dbo].[usp_GetConcelhos]
-AS
-BEGIN
-	SELECT D.Descricao Distrito, C.Id, CodConcelho, C.Descricao, IdDistrito, Coeficiente
-	FROM Concelhos C
-	INNER JOIN Distritos D ON
-		C.IdDistrito = D.Id
-	ORDER BY D.Descricao, C.Descricao
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE procedure [dbo].[usp_GetConcelhosDeDistrito](@IdDistrito int)
-AS
-BEGIN
-	SELECT Id, CodConcelho, Descricao, IdDistrito, Coeficiente
-	FROM Concelhos C 
-	WHERE C.IdDistrito = @IdDistrito
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   procedure usp_GetDistritos
-AS
-BEGIN
-	SELECT Id, Descricao
-	FROM Distritos D
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- Antes de apagar imóvel, verificar se há contratos associados ao mesmo
--- Se a operação resultar em 0 (zero), é válido apagar fração
-CREATE PROCEDURE [dbo].[usp_Imoveis_CheckDeleteConstraint] (@Id int)
-
-AS
-
-BEGIN
-	SET NOCOUNT ON;
-	SELECT COUNT(1)
-	FROM   Fracoes
-	WHERE  Id_Imovel = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Imoveis_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Imoveis] WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Imoveis_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, I.Descricao, Morada, Numero, CodPst, CodPstEx, 
-		Freguesia FreguesiaImovel, Concelho ConcelhoImovel, DataUltimaInspecaoGas,
-		AnoConstrucao, Elevador, Notas, Foto, Conservacao, EC.Descricao EstadoConservacao
-FROM	Imoveis I 
-		INNER JOIN EstadoConservacao EC ON
-			I.Conservacao = EC.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Imoveis_GetById](@Id int)
-
-AS
-BEGIN
-SELECT	I.Id, I.Descricao, Morada, Numero, CodPst, CodPstEx, 
-		Freguesia FreguesiaImovel, Concelho ConcelhoImovel, DataUltimaInspecaoGas,
-		AnoConstrucao, Elevador, Notas, Foto, Conservacao, EC.Descricao EstadoConservacao
-FROM	Imoveis I 
-		INNER JOIN EstadoConservacao EC ON
-			I.Conservacao = EC.Id
-		WHERE I.Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Imoveis_GetCodigoImovel](@Id int)
-
-AS
-BEGIN
-			SELECT Id_Imovel 
-			FROM Fracoes
-			WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Imoveis_GetDescricaoImovel](@Id int)
-
-AS
-BEGIN
-	SELECT Descricao 
-	FROM Imoveis
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Imoveis_GetImoveisAsLookupTable]
-
-AS
-BEGIN
-SELECT	Id, Descricao
-FROM   Imoveis 
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Imoveis_GetNumeroPorta](@Id int)
-
-AS
-BEGIN
-	SELECT Numero FROM Imoveis WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Imoveis_Insert]
-(
-	@Descricao varchar(60),
-	@Numero varchar(4),
-	@Morada varchar(60),
-	@CodPst varchar(4),
-	@CodPstEx varchar(3),
-	@AnoConstrucao varchar(4),
-	@FreguesiaImovel varchar(30),
-	@ConcelhoImovel varchar(40),
-	@Elevador bit,
-	@Notas text,
-	@Foto varchar(256),
-	@Conservacao int,
-	@DataUltimaInspecaoGas datetime
-
-)
-AS
-SET NOCOUNT OFF;
-INSERT INTO [Imoveis] 
-	([Descricao], [Numero], [Morada], [CodPst], [CodPstEx], [AnoConstrucao], 
-	[Freguesia], [Concelho], [Elevador], [Notas], [Foto], [Conservacao],
-	[DataUltimaInspecaoGas]) 
-VALUES 
-	(@Descricao, @Numero, @Morada, @CodPst, @CodPstEx, @AnoConstrucao, 
-	@FreguesiaImovel, @ConcelhoImovel, @Elevador, @Notas, @Foto, @Conservacao, 
-	@DataUltimaInspecaoGas);	
-
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Imoveis_Update]
-(
-	@Id int,
-	@Descricao varchar(60),
-	@Numero varchar(4),
-	@Morada varchar(60),
-	@CodPst varchar(4),
-	@CodPstEx varchar(3),
-	@AnoConstrucao varchar(4),
-	@FreguesiaImovel varchar(30),
-	@ConcelhoImovel varchar(40),
-	@Elevador bit,
-	@Notas text,
-	@Foto varchar(256),
-	@Conservacao int,
-	@DataUltimaInspecaoGas datetime
-
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Imoveis] 
-SET [Descricao] = @Descricao, [Numero] = @Numero, [Morada] = @Morada, [CodPst] = @CodPst, 
-	[CodPstEx] = @CodPstEx, [AnoConstrucao] = @AnoConstrucao, [Freguesia] = @FreguesiaImovel, 
-	[Concelho] = @ConcelhoImovel, [Elevador] = @Elevador, [Notas] = @Notas, [Foto] = @Foto,
-	[Conservacao] = @Conservacao, [DataUltimaInspecaoGas] = @DataUltimaInspecaoGas
-WHERE [Id] = @Id;
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- Antes de apagar inquilino, verificar se há contratos associadosao mesmo
--- Se a operação resultar em 0 (zero), é válido apagar inquilino
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
-
-
-AS
-
-declare @CanDelete bit
-
-SET NOCOUNT ON;
-SELECT	@CanDelete = COUNT(1)
-FROM    Arrendamentos
-WHERE	ID_Inquilino = @Id
-
-SELECT @OkToDelete = @CanDelete
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_CheckForPriorRentUpdates]
-(
-	@UnitId int
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT OFF;
-	SELECT COUNT(1) 
-	FROM HistoricoAtualizacaoRendas
-	WHERE UnitId = @UnitId AND
-		YEAR(DateProcessed) = YEAR(GetDate())
-END 
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [Inquilinos] 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_DeleteDocument]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM [DocumentosInquilino] 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAll] 
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente, 
-		dbo.fn_GetSaldoPrevisto_Inquilino(I.Id) SaldoPrevisto
-FROM    Inquilinos I INNER JOIN 
-			EstadoCivil EC ON
-				I.ID_EstadoCivil = ec.Id
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAllDocuments]
-AS
-
-SET NOCOUNT OFF;
-SELECT DI.Id,[Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, 
-		CreationDate, ReferralDate,
-		[StorageType], [StorageFolder], DT.Name TipoDocumento
-FROM [DocumentosInquilino] DI
-	INNER JOIN Inquilinos I ON
-		DI.TenantId = I.Id
-	INNER JOIN DocumentTypes DT
-		ON DI.DocumentType = DT.Id
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAllRentUpdates] 
-AS
-
-SET NOCOUNT ON;
-SELECT	H.Id, H.UnitId, H.DateProcessed, 
-		H.PriorValue, H.UpdatedValue, 
-		F.Descricao DescricaoFracao, I.Nome NomeInquilino
-FROM    HistoricoAtualizacaoRendas H
-	INNER JOIN Arrendamentos A ON
-		H.UnitId = A.ID_Fracao
-	INNER JOIN Inquilinos I ON
-		A.ID_Inquilino = I.Id
-	INNER JOIN Fracoes F ON
-		H.UnitId = F.Id
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetDocumentById]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT DI.Id,[Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, ReferralDate,
-		[StorageType], [StorageFolder], DT.Name TipoDocumento
-FROM [DocumentosInquilino] DI
-	INNER JOIN Inquilinos I ON
-		DI.TenantId = I.Id
-	INNER JOIN DocumentTypes DT
-		ON DI.DocumentType = DT.Id
-
-WHERE DI.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetFiador_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, IdInquilino, Nome, Morada, ID_EstadoCivil, Contacto1, Contacto2, eMail, 
-		IRSAnual, Vencimento, Notas, NIF, Identificacao, ValidadeCC
-FROM    Fiadores
-WHERE	IdInquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Nome, Morada, Naturalidade, ID_EstadoCivil, Contacto1, Contacto2, eMail, 
-		IRSAnual, Vencimento, Notas, NIF, Identificacao, Titular, ValidadeCC, DataNascimento,
-		SaldoCorrente, dbo.fn_GetSaldoPrevisto_Inquilino(Id) SaldoPrevisto
-FROM    Inquilinos
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_Exteded_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, Nome, Morada, Naturalidade, ID_EstadoCivil, 
-		EC.Descricao EstadoCivil, Contacto1, Contacto2, eMail, 
-		IRSAnual, Vencimento, Notas, NIF, Identificacao, 
-		Titular, ValidadeCC, DataNascimento
-FROM    Inquilinos I INNER JOIN EstadoCivil EC ON
-		I.ID_EstadoCivil = EC.Id
-WHERE	I.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_Extended_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente,
-		dbo.fn_GetSaldoPrevisto_Inquilino(I.Id) SaldoPrevisto
-FROM    Inquilinos I 
-		INNER JOIN EstadoCivil EC ON
-			I.ID_EstadoCivil = EC.Id
-WHERE	I.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_AsLookup]
-AS
-
-SET NOCOUNT ON;
-SELECT inq.Id, inq.Nome Descricao 
-FROM Inquilinos inq 
-ORDER BY Inq.Nome
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_Disponiveis]
-AS
-
-SET NOCOUNT ON;
-SELECT inq.Id, inq.Nome Descricao 
-FROM Inquilinos inq 
-WHERE inq.Id NOT IN(
-	SELECT ID_Inquilino	FROM Arrendamentos) 
-ORDER BY Inq.Nome
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_Fiadores](@Titular bit)
-AS
-
-SET NOCOUNT ON;
-
-
-SELECT inq.Id, inq.Nome Descricao 
-FROM Inquilinos inq 
-WHERE Titular = CASE WHEN @Titular = 1 THEN 1 ELSE 0 END
-ORDER BY Inq.Nome
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_SemContrato]
-AS
-
-SET NOCOUNT ON;
-
-SET NOCOUNT ON;
-SELECT Id, Nome Descricao
-FROM Inquilinos
-WHERE Id NOT IN
-	(SELECT ID_Inquilino FROM Arrendamentos) 
-ORDER BY Nome
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetNome] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Nome
-FROM    Inquilinos
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Inquilinos_GetRentAdjustments]
-
-AS
-
-BEGIN
-	SELECT CC.Id, CC.TransactionId, CC.DataMovimento, CC.ValorPago, CC.UpdatedDate,
-	f.ValorRenda ValorRenda, CC.ValorEmDivida, F.Descricao FracaoInquilino, I.Nome NomeInquilino, CC.Notas
-	FROM CC_Inquilinos CC
-	INNER JOIN arrendamentos A ON
-		CC.IdInquilino = A.ID_Inquilino
-	INNER JOIN Fracoes F ON
-		A.ID_Fracao = F.Id
-	INNER JOIN Inquilinos I ON
-		CC.IdInquilino = I.id
-	WHERE ValorEmDivida > 0 OR 
-		ID_TipoRecebimento <> 99
-	ORDER BY CC.DataMovimento
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetRentUpdates_ByTenantId] (@TenantId int)
-AS
-
-SET NOCOUNT ON;
-SELECT	H.Id, H.UnitId, H.DateProcessed, 
-		H.PriorValue, H.UpdatedValue, 
-		F.Descricao DescricaoFracao, I.Nome NomeInquilino
-FROM    HistoricoAtualizacaoRendas H
-	INNER JOIN Arrendamentos A ON
-		H.UnitId = A.ID_Fracao
-	INNER JOIN Inquilinos I ON
-		A.ID_Inquilino = I.Id
-	INNER JOIN Fracoes F ON
-		H.UnitId = F.Id
-WHERE I.Id = @TenantId
-
-
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetTenantDocuments] (@Id int)
-AS
-
-SET NOCOUNT OFF;
-SELECT	DI.Id, [Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, 
-		CreationDate, ReferralDate,
-		[StorageType], [StorageFolder], DT.Description TipoDocumento
-FROM [DocumentosInquilino] DI
-	INNER JOIN Inquilinos I ON
-		DI.TenantId = I.Id
-	INNER JOIN DocumentTypes DT
-		ON DI.DocumentType = DT.Id
-WHERE DI.TenantId = @Id
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROC [dbo].[usp_Inquilinos_GetTenantPayments]
-
-@TenantId int
-
-AS
-
-BEGIN
-	SELECT * FROM Recebimentos
-	WHERE ID_Inquilino = @TenantId
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetTenantPaymentsHistory] (@Id int)
-AS
-
-SET NOCOUNT OFF;
-SELECT	Id, IdInquilino, DataMovimento, 
-		ValorPago, ValorEmDivida, 
-		Renda, ID_TipoRecebimento, 
-		Notas, 
-		TransactionId
-FROM CC_Inquilinos
-WHERE IdInquilino = @Id
-ORDER BY TransactionId, DataMovimento
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Inquilinos_GetValorRenda] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT F.ValorRenda
-FROM Arrendamentos A 
-	INNER JOIN Fracoes F ON
-		A.ID_Fracao = F.Id
-WHERE A.ID_Inquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_Insert]
-(
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@Naturalidade varchar(50),
-	@ID_EstadoCivil int,
-	@Contacto1 varchar(20),
-	@Contacto2 varchar(20),
-	@eMail varchar(128),
-	@IRSAnual decimal(10, 2),
-	@Vencimento decimal(10, 2),
-	@Notas text,
-	@NIF varchar(9),
-	@Identificacao varchar(20),
-	@Titular bit,
-	@ValidadeCC datetime,
-	@DataNascimento datetime
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Inquilinos] 
-	([Nome], [Morada], [Naturalidade], [ID_EstadoCivil], [Contacto1], [Contacto2], [eMail],
-	[IRSAnual], [Vencimento], [Notas], [NIF], [Identificacao], [Titular], [ValidadeCC], [DataNascimento]) 
-	VALUES (@Nome, @Morada, @Naturalidade, @ID_EstadoCivil, @Contacto1, @Contacto2, @eMail, 
-	@IRSAnual, @Vencimento,	@Notas, @NIF, @Identificacao, @Titular, @ValidadeCC, @DataNascimento);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_InsertDocument]
-(
-	@Descricao varchar(512),
-	@DocumentPath varchar(256),
-	@TenantId int,
-	@ReferralDate datetime,
-	@DocumentType int,
-	@StorageType char(1),
-	@StorageFolder varchar(50)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [DocumentosInquilino] 
-	([Descricao], [DocumentPath], [DocumentType], [TenantId],[ReferralDate],[StorageType], [StorageFolder] )
-	VALUES (@Descricao, @DocumentPath, @DocumentType, @TenantId, @ReferralDate, @StorageType, @StorageFolder);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_InsertRentUpdate]
-(
-	@UnitId int,
-	@PriorValue decimal,
-	@UpdatedValue decimal
-)
-
-AS
-
-BEGIN
-	SET NOCOUNT OFF;
-	INSERT INTO HistoricoAtualizacaoRendas(UnitId, DateProcessed, PriorValue, UpdatedValue)
-	VALUES( @UnitId, GetDate(), @PriorValue, @UpdatedValue)
-END 
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE usp_Inquilinos_Stat_LatePaymentLetters
-
-AS
-BEGIN
-	SET LANGUAGE Portuguese
-	select DI.Descricao Description, DI.CreationDate, 
-		UPPER( DATENAME(mm, DI.ReferralDate)) + '-' + CAST(YEAR(DI.ReferralDate) AS VARCHAR(4)) RefersTo,
-		I.Nome NomeInquilino
-	from DocumentosInquilino DI
-	inner join Inquilinos I ON
-	DI.TenantId = I.Id
-	WHERE DI.DocumentType = 18
-	ORDER BY TenantId, CreationDate
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_Stat_RentUpdateLetters]
-
-AS
-BEGIN
-	SET LANGUAGE Portuguese
-	select I.Id, I.Nome, DI.Descricao Description, DI.CreationDate, 
-		UPPER( DATENAME(mm, DI.ReferralDate)) + '-' + CAST(YEAR(DI.ReferralDate) AS VARCHAR(4)) RefersTo,
-		I.Nome NomeInquilino
-	from DocumentosInquilino DI
-	inner join Inquilinos I ON
-	DI.TenantId = I.Id
-	WHERE DI.DocumentType = 16
-	ORDER BY TenantId, CreationDate
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_Update]
-(
-	@Id int,
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@Naturalidade varchar(50),
-	@ID_EstadoCivil int,
-	@Contacto1 varchar(20),
-	@Contacto2 varchar(20),
-	@eMail varchar(128),
-	@IRSAnual decimal(10, 2),
-	@Vencimento decimal(10, 2),
-	@Notas text,
-	@NIF varchar(9),
-	@Identificacao varchar(20),
-	@Titular bit,
-	@ValidadeCC datetime,
-	@DataNascimento datetime
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Inquilinos] 
-SET [Nome] = @Nome, [Morada] = @Morada, [Naturalidade] = @Naturalidade, [ID_EstadoCivil] = @ID_EstadoCivil, 
-	[Contacto1] = @Contacto1, [Contacto2] = @Contacto2, [eMail] = @eMail, [IRSAnual] = @IRSAnual, 
-	[Vencimento] = @Vencimento, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao, 
-	[Titular] = @Titular, [ValidadeCC] = @ValidadeCC, [DataNascimento] = @DataNascimento 
-WHERE [Id] = @Id;
-	
-SELECT	I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
-		DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
-		eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente,
-		dbo.fn_GetSaldoPrevisto_Inquilino(I.Id) SaldoPrevisto
-FROM    Inquilinos I 
-		INNER JOIN EstadoCivil EC ON
-			I.ID_EstadoCivil = EC.Id
-WHERE	(I.Id = @Id)
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_Update_LetterAnswerDate]
-(
-	@Id int, -- Tenant document Id
-	@LetterAnswerDate datetime
-)
-AS
-	SET NOCOUNT OFF;
-	UPDATE [DocumentosInquilino] 
-	SET [AnswerDate] = @LetterAnswerDate
-	WHERE [Id] = @Id 
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_UpdateDocument]
-(
-	@Id int,
-	@Descricao varchar(512)
-
-)
-AS
-
-BEGIN
-	SET NOCOUNT OFF;
-	UPDATE [DocumentosInquilino] 
-	SET Descricao = @Descricao,
-	ReferralDate = GETDATE()
-	WHERE [Id] = @Id
-END 
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Inquilinos_UpdateSaldoCorrente]
-(
-	@TenantId int,
-	@NovoSaldoCorrente decimal
-)
-AS
-
-SET NOCOUNT OFF
-BEGIN
-	UPDATE Inquilinos
-	SET SaldoCorrente = @NovoSaldoCorrente
-	WHERE Id = @TenantId
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[Usp_InsertAuditLogs] 
-    @UrlReferrer VARCHAR(500)
-	,@ActionName VARCHAR(50)
-	,@Area VARCHAR(50)
-	,@ControllerName VARCHAR(50)
-	,@LoginStatus VARCHAR(1)
-	,@LoggedInAt VARCHAR(50)
-	,@LoggedOutAt VARCHAR(50)
-	,@PageAccessed VARCHAR(500)
-	,@IPAddress VARCHAR(50)
-	,@SessionID VARCHAR(50)
-	,@UserID VARCHAR(10)
-	,@RoleId VARCHAR(2)
-	,@LangId VARCHAR(2)
-	,@IsFirstLogin VARCHAR(2)
-
-AS
-BEGIN
-	DECLARE @table VARCHAR(15)
-		,@sql NVARCHAR(MAX)
-		,@sqlcreate NVARCHAR(MAX)
-		,@newtable VARCHAR(30)
-		,@currentdate VARCHAR(23);
-
-	SET @currentdate = (CONVERT(VARCHAR, getdate(), 20))
-	SET @table = (
-			SELECT REPLACE(CONVERT(VARCHAR(11), getdate(), 106), ' ', '_')
-			)
-	SET @newtable = 'Audit_' + @table
-
-	SELECT @newtable
-
-	IF (
-			EXISTS (
-				SELECT *
-				FROM INFORMATION_SCHEMA.TABLES
-				WHERE TABLE_NAME = @newtable
-				)
-			)
-	BEGIN
-		SET @sql = CONCAT (
-				'INSERT INTO ['
-				,@newtable
-				,'] (Area,ControllerName,ActionName,LoginStatus,LoggedInAt,LoggedOutAt,PageAccessed,IPAddress,SessionID,UserID,RoleId,LangId,IsFirstLogin,CurrentDatetime) '
-				,'VALUES ('''
-				,@Area
-				,''','''
-				,@ControllerName
-				,''','''
-				,@ActionName
-				,''','''
-				,@LoginStatus
-				,''','''
-				,@LoggedInAt
-				,''','''
-				,@LoggedOutAt
-				,''','''
-				,@PageAccessed
-				,''','''
-				,@IPAddress
-				,''','''
-				,@SessionID
-				,''','''
-				,@UserID
-				,''','''
-				,@RoleId
-				,''','''
-				,@LangId
-				,''','''
-				,@IsFirstLogin
-				,''','''
-				,@currentdate
-				
-			
-				,''')'
-				);
-
-		EXEC (@sql);
-	END
-	ELSE
-	BEGIN
-		SET @sqlcreate = 'CREATE TABLE ' + '[' + @newtable + ']' + '(
- [AuditId] [bigint] IDENTITY(1,1) NOT NULL,
- [Area] [varchar](50) NULL,
- [ControllerName] [varchar](50) NULL,
- [ActionName] [varchar](50) NULL,
- [LoginStatus] [varchar](1) NULL,
- [LoggedInAt] [varchar](23) NULL,
- [LoggedOutAt] [varchar](23) NULL,
- [PageAccessed] [varchar](500) NULL,
- [IPAddress] [varchar](50) NULL,
- [SessionID] [varchar](50) NULL,
- [UserID] [varchar](50) NULL,
- [RoleId] [varchar](2) NULL,
- [LangId] [varchar](2) NULL,
- [IsFirstLogin] [varchar](2) NULL,
- [CurrentDatetime] [varchar](23) NULL
- )'
-
-		EXEC sp_executesql @sqlcreate;
-
-		SET @sql = CONCAT (
-				'INSERT INTO ['
-				,@newtable
-				,'] (Area,ControllerName,ActionName,LoginStatus,LoggedInAt,LoggedOutAt,PageAccessed,IPAddress,SessionID,UserID,RoleId,LangId,IsFirstLogin,CurrentDatetime) '
-				,'VALUES ('''
-				,@Area
-				,''','''
-				,@ControllerName
-				,''','''
-				,@ActionName
-				,''','''
-				,@LoginStatus
-				,''','''
-				,@LoggedInAt
-				,''','''
-				,@LoggedOutAt
-				,''','''
-				,@PageAccessed
-				,''','''
-				,@IPAddress
-				,''','''
-				,@SessionID
-				,''','''
-				,@UserID
-				,''','''
-				,@RoleId
-				,''','''
-				,@LangId
-				,''','''
-				,@IsFirstLogin
-				,''','''
-				,@currentdate
-				
-				,''')'
-				);
-
-		EXEC (@sql);
-	END
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 27-01-2024
--- Description:	Atualiza data-resposta da carta enviada ao inquilino
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Letters_Answer_Update] 
-@Id int,
-@DataResposta datetime
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	UPDATE HistoricoEnvioCartas
-	SET DataResposta = @DataResposta
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 27-01-2024
--- Description:	Atualiza data-resposta da carta enviada ao inquilino
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Letters_GetAll] 
-
-AS
-BEGIN
-	SELECT Id, DataEnvio, DataResposta, Tentativa
-	FROM HistoricoEnvioCartas
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 27-01-2024
--- Description:	Get letter by id
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Letters_GetAnswerLetter] 
-
-@Id int
-
-AS
-BEGIN
-	SELECT Id, DataEnvio, DataResposta, Tentativa
-	FROM HistoricoEnvioCartas
-	WHERE Id = @Id
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 27-01-2024
--- Description:	Cria registo no histórico de cartas enviadas ao inquilino
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Letters_Insert] 
-@DataEnvio datetime,
-@IdInquilino int,
-@IdTipoCarta int,
-@Tentativa smallint
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO HistoricoEnvioCartas( DataEnvio, IdInquilino, IdTipoCarta, Tentativa)
-	VALUES(@DataEnvio, @IdInquilino, @IdTipoCarta, @Tentativa)
-
-	SELECT CAST(SCOPE_IDENTITY() as int);
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 28/01/2022
--- Description:	Cria registo de login na tabela de logins
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Log_Login_Create] 
-
-@UserId nvarchar(450),
-@SessionId nvarchar(250),
-@LoginDate datetime
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO tblLogLogins(UserId, LoginDate, SessionId)
-	VALUES(@UserId, @LoginDate, @SessionId)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Log_Login_Select]
-AS
-BEGIN
-    SET NOCOUNT ON;
-    EXEC sp_executesql N'SELECT Id, UserId, SessionId, LoginDate, LogoutDate FROM tblLogLogins ORDER BY Id DESC';
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Log_Login_Update]
-    @SessionId varchar(250),
-    @LogoutDate DateTime
-AS
-BEGIN
-    SET NOCOUNT ON;
-    EXEC sp_executesql N'UPDATE tblLogLogins SET LogoutDate = @LogoutDate WHERE SessionId = @SessionId', N'@SessionId varchar(250),@LogoutDate DateTime', @SessionId=@SessionId, @LogoutDate=@LogoutDate;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 28/01/2022
--- Description:	Cria registo de log (operações CRUD - C)
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Create]
-	@Tabela nvarchar(255),
-	@IdReg int,
-	@QuemCriou nvarchar(450),
-	@DataCriacao datetime
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemCriou, DataCriacao)
-	VALUES(@Tabela, @IdReg, @QuemCriou, @DataCriacao)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 28/01/2022
--- Description:	Apaga registo na tabela de logOperações
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Delete] 
-	@Tabela nvarchar(255),
-	@IdReg int,
-	@QuemApagou nvarchar(450),
-	@DataAnulacao datetime
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemApagou, DataAnulacao)
-	VALUES(@Tabela, @IdReg, @QuemApagou, @DataAnulacao)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 28/01/2022
--- Description:	Atualiza registo na tabela de logOperações
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Update] 
-	@Tabela nvarchar(255),
-	@IdReg int,
-	@QuemModificou nvarchar(450),
-	@DataUltimaAlteracao datetime
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemModificou, DataUltimaAlteracao)
-	VALUES(@Tabela, @IdReg, @QuemModificou, @DataUltimaAlteracao)
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Logs_ById] (@Id int)
-AS
-	SET NOCOUNT ON;
-	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
-	FROM    PMlogs
-	WHERE Id = @Id;
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Logs_DeleteAll]
-AS
-	SET NOCOUNT ON;
-	TRUNCATE TABLE PMlogs
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Logs_DeleteById] (@Id int)
-AS
-BEGIN
-	SET NOCOUNT ON;
-	DELETE FROM PMLogs
-	WHERE Id = @Id
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Logs_GetAll]
-AS
-	SET NOCOUNT ON;
-	SELECT	*
-	FROM    PMlogs
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 12/03/2023
--- Description:	visualiza registos de logs (logins)
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Logs_GetLoginEntries] 
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
-	FROM PMLogs
-	WHERE [Message] LIKE '%' + 'Logged' + '%'
-	ORDER BY TimeStamp DESC
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Logs_GetLogs] 
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
-	FROM PMLogs
-	ORDER BY TimeStamp DESC
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 24-04-2023
--- Description:	Apaga registo na tabela de mensagens
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Messages_Delete] 
-
-@MessageId int
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	Delete From Messages
-	Where MessageId = @MessageId
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 24-04-2023
--- Description:	Seleciona todos os registos da tabela de mensagens
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Messages_GetAll] 
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	Select MessageId, DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
-	MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
-	FROM Messages
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 24-04-2023
--- Description:	Seleciona registo na tabela de mensagens, por Id da mensagem
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Messages_GetById] 
-
-@MessageId int 
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	Select MessageId, DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
-	MessageType, MessageSentOn, MessageReceivedOn,
-		MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
-	FROM Messages
-	Where MessageId = @MessageId
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 24-04-2023
--- Description:	Cria registo na tabela de mensagens
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Messages_Insert] 
-
-@DestinationEmail nvarchar(250),
-@SenderEmail nvarchar(250),
-@SubjectTitle nvarchar(100),
-@MessageContent nvarchar(512),
-@MessageType int,
-@MessageSentOn Date,
-@MessageReceivedOn Date,
-@TenantId int,
-@ReferenceId varchar(50)
-
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	INSERT INTO Messages(DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
-		MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
-)
-	VALUES(@DestinationEmail, @SenderEmail, @SubjectTitle, @MessageContent,
-		@MessageType, @MessageSentOn, @MessageReceivedOn, @TenantId, @ReferenceId
-);
-
-	SELECT CAST(SCOPE_IDENTITY() as int);
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
--- =============================================
--- Author:		Fausto Luís
--- Create date: 24-04-2023
--- Description:	Atualiza registo na tabela de mensagens
--- =============================================
-CREATE PROCEDURE [dbo].[usp_Messages_Update] 
-
-@MessageId int,
-@DestinationEmail nvarchar(250),
-@SenderEmail nvarchar(250),
-@SubjectTitle nvarchar(100),
-@MessageContent nvarchar(512),
-@MessageType int,
-@MessageSentOn Date,
-@MessageReceivedOn Date,
-@TenantId int, 
-@ReferenceId varchar(50)
-
-AS
-BEGIN
-	SET NOCOUNT ON;
-	Update Messages
-		SET DestinationEmail = @DestinationEmail, 
-		SenderEmail = @SenderEmail, SubjectTitle = @SubjectTitle, 
-		MessageContent = @MessageContent, MessageType = @MessageType,
-		MessageSentOn = @MessageSentOn, MessageReceivedOn = @MessageReceivedOn,
-		TenantId = @TenantId, ReferenceId = @ReferenceId
-	Where MessageId = @MessageId
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_ExistsRecent]
-    @RecipientUserId nvarchar(450),
-    @Kind nvarchar(64),
-    @ResourceType nvarchar(64) = NULL,
-    @ResourceId int = NULL,
-    @Since datetime2
-AS
-BEGIN
-    SET NOCOUNT ON;
-    IF EXISTS (
-        SELECT 1
-        FROM [dbo].[Notifications]
-        WHERE [RecipientUserId] = @RecipientUserId
-          AND [Kind] = @Kind
-          AND ISNULL([ResourceType], N'') = ISNULL(@ResourceType, N'')
-          AND ISNULL([ResourceId], 0) = ISNULL(@ResourceId, 0)
-          AND [CreatedAt] >= @Since
-    )
-        SELECT CAST(1 AS bit);
-    ELSE
-        SELECT CAST(0 AS bit);
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_GetForUser]
-    @RecipientUserId nvarchar(450),
-    @Take int = 100
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT TOP (@Take)
-        [Id],[RecipientUserId],[TenantId],[ActorUserId],[Kind],[Title],[Body],[Link],[Severity],[SuggestedAction],
-        [ResourceType],[ResourceId],[CreatedAt],[SeenAt],[ReadAt]
-    FROM [dbo].[Notifications]
-    WHERE [RecipientUserId] = @RecipientUserId
-    ORDER BY [CreatedAt] DESC, [Id] DESC;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_GetUnreadCount]
-    @RecipientUserId nvarchar(450)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    SELECT
-        ISNULL(SUM(CASE WHEN [ReadAt] IS NULL THEN 1 ELSE 0 END), 0) AS Unread,
-        ISNULL(SUM(CASE WHEN [SeenAt] IS NULL AND [ReadAt] IS NULL THEN 1 ELSE 0 END), 0) AS Unseen
-    FROM [dbo].[Notifications]
-    WHERE [RecipientUserId] = @RecipientUserId;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_Insert]
-    @RecipientUserId nvarchar(450),
-    @TenantId int = NULL,
-    @ActorUserId nvarchar(450) = NULL,
-    @Kind nvarchar(64),
-    @Title nvarchar(256),
-    @Body nvarchar(1024),
-    @Link nvarchar(512) = NULL,
-    @Severity nvarchar(32) = 'Info',
-    @SuggestedAction nvarchar(1024) = NULL,
-    @ResourceType nvarchar(64) = NULL,
-    @ResourceId int = NULL,
-    @CreatedAt datetime2 = NULL
-AS
-BEGIN
-    SET NOCOUNT ON;
-    INSERT INTO [dbo].[Notifications]
-        ([RecipientUserId],[TenantId],[ActorUserId],[Kind],[Title],[Body],[Link],[Severity],[SuggestedAction],[ResourceType],[ResourceId],[CreatedAt])
-    VALUES
-        (@RecipientUserId,@TenantId,@ActorUserId,@Kind,@Title,@Body,@Link,@Severity,@SuggestedAction,@ResourceType,@ResourceId,COALESCE(@CreatedAt, SYSDATETIME()));
-    SELECT CAST(SCOPE_IDENTITY() AS int);
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_MarkAllRead]
-    @RecipientUserId nvarchar(450)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE [dbo].[Notifications]
-    SET [ReadAt] = SYSDATETIME()
-    WHERE [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NULL;
-    SELECT @@ROWCOUNT;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_MarkRead]
-    @Id int,
-    @RecipientUserId nvarchar(450)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE [dbo].[Notifications]
-    SET [ReadAt] = COALESCE([ReadAt], SYSDATETIME())
-    WHERE [Id] = @Id AND [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NULL;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_MarkSeen]
-    @RecipientUserId nvarchar(450)
-AS
-BEGIN
-    SET NOCOUNT ON;
-    UPDATE [dbo].[Notifications]
-    SET [SeenAt] = SYSDATETIME()
-    WHERE [RecipientUserId] = @RecipientUserId AND [SeenAt] IS NULL;
-    SELECT @@ROWCOUNT;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Notifications_PurgeOld]
-    @RetentionDays int = 180
-AS
-BEGIN
-    SET NOCOUNT ON;
-    DELETE FROM [dbo].[Notifications]
-    WHERE [CreatedAt] < DATEADD(day, -@RetentionDays, SYSDATETIME()) AND [ReadAt] IS NOT NULL;
-    SELECT @@ROWCOUNT;
-END
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Proprietarios_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM Proprietarios 
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Proprietarios_Existe]
-
-AS
-
-SET NOCOUNT OFF;
-SELECT COUNT(1) FROM Proprietarios
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Proprietarios_GetById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	P.Id, Nome, Morada, CodPostal, Naturalidade, ID_EstadoCivil, DataNascimento, Identificacao,
-		ValidadeCC, NIF, Contacto, eMail, Notas, EC.Descricao EstadoCivil
-FROM    Proprietarios P INNER JOIN
-		EstadoCivil EC ON P.ID_EstadoCivil = EC.Id			
-WHERE	P.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Proprietarios_Insert]
-/*
-Id, Nome, Morada, Naturalidade, ID_EstadoCivil, DataNascimento, Identificacao,
-		ValidadeCC, NIF, Contacto, eMail, Notas
-*/
-(
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@CodPostal varchar(50),
-	@Naturalidade varchar(50),
-	@ID_EstadoCivil int,
-	@DataNascimento datetime,
-	@Identificacao varchar(75),
-	@ValidadeCC datetime,
-	@NIF varchar(9),
-	@Contacto varchar(20),
-	@eMail varchar(128),
-	@Notas text
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Proprietarios] 
-	([Nome], [Morada], [CodPostal], [Naturalidade], [ID_EstadoCivil], [Contacto], [eMail],
-	[Notas], [NIF], [Identificacao], [ValidadeCC], [DataNascimento]) 
-VALUES (@Nome, @Morada, @CodPostal, @Naturalidade, @ID_EstadoCivil, @Contacto, 	@eMail, 
-	@Notas, @NIF, @Identificacao, @ValidadeCC, @DataNascimento);
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Proprietarios_Update]
-
-(
-	@Id int,
-	@Nome varchar(60),
-	@Morada varchar(60),
-	@CodPostal varchar(50),
-	@Naturalidade varchar(50),
-	@ID_EstadoCivil int,
-	@DataNascimento datetime,
-	@Identificacao varchar(75),
-	@ValidadeCC datetime,
-	@NIF varchar(9),
-	@Contacto varchar(20),
-	@eMail varchar(128),
-	@Notas text
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE[Proprietarios] SET 
-	[Nome] = @Nome, [Morada] = @Morada, CodPostal = @CodPostal, [Naturalidade] = @Naturalidade, [ID_EstadoCivil] = @ID_EstadoCivil, 
-	[Contacto] = @Contacto, [eMail] = @eMail, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao,
-	[ValidadeCC] = @ValidadeCC, [DataNascimento] = @DataNascimento
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_AcertaPagamentoRenda]
-(
-	@Id int, -- transaction id
-	@PaymentState int,
-	@Notas varchar(50),
-	@ValorAcerto decimal(10,2),
-	@ValorEmDivida decimal(10,2),
-	@SaldoCorrente decimal(10,2),
-	@ValorRecebido decimal(10, 2),
-	@TenantId int,
-	@UpdatedDate datetime,
-	@Success bit = 0 OUTPUT
-)
-AS
-
-BEGIN
-
-	DECLARE @CodTipoRecebimento int
-	DECLARE @DataMovimento datetime
-	DECLARE @MesMovimento int
-	DECLARE @AnoMovimento int
-
-	SET NOCOUNT OFF;
-
-	BEGIN TRY
-	    BEGIN TRANSACTION ACERTO_RENDA;
-
-			SELECT @DataMovimento = DataMovimento, 
-				@MesMovimento=MONTH(DataMovimento), 
-				@AnoMovimento=YEAR(DataMovimento) 
-			FROM Recebimentos WHERE Id = @Id;
-
-			SELECT @CodTipoRecebimento = Id FROM TipoRecebimento
-				WHERE Descricao LIKE 
-					CASE 
-						WHEN @PaymentState = 3 THEN '%atraso%' 
-						ELSE '%certo%' 
-					END;
-			
-			IF @PaymentState = 3 -- fully paid
-			BEGIN
-				SET @PaymentState = 1
-				UPDATE DocumentosInquilino
-					SET Status = 2
-				WHERE DocumentType = 18 AND
-					TenantId = @TenantId AND
-					MONTH(ReferralDate) = @MesMovimento AND
-					YEAR(ReferralDate) = @AnoMovimento
-			END
-
-			IF @ValorAcerto = @ValorEmDivida
-			BEGIN
-				SET @ValorEmDivida = 0
-			END
-
-			UPDATE [Recebimentos] SET	
-				[ValorRecebido] = @ValorRecebido,
-				[ValorEmFalta] = @ValorEmDivida, 
-				[Estado] = 1, -- acertos são sempre sobre valores totais em falta (1 = pago)
-				[Renda] = 1,-- regularização de pagamentos - são sempre sobre rendas 
-				[Notas] = @Notas
-			WHERE Id = @Id;
-
-
-			INSERT INTO [CC_Inquilinos] 
-			(DataMovimento, UpdatedDate, ValorPago, ValorEmDivida, IdInquilino, Renda, ID_TipoRecebimento, Notas, TransactionId)
-			VALUES 
-			(@DataMovimento, @UpdatedDate, @ValorAcerto, @ValorEmDivida, @TenantId, 0, @CodTipoRecebimento, @Notas, @Id); 
-
-			UPDATE [Inquilinos] 
-				SET SaldoCorrente = @SaldoCorrente
-			WHERE [Id] = @TenantId;
-
-			-- 18-05-2023
-			UPDATE Arrendamentos SET
-				Data_Pagamento = @DataMovimento
-			WHERE ID_Inquilino = @TenantId
-
-			SELECT @Success = 1;
-
-		COMMIT TRANSACTION ACERTO_RENDA;
-	END TRY
-	BEGIN CATCH
-		IF @@TRANCOUNT > 0
-		BEGIN 
-			SELECT @Success = 0;
-			ROLLBACK TRANSACTION ACERTO_RENDA;                        
-		END
-		SELECT
-			ERROR_NUMBER() AS ErrorNumber,
-			ERROR_SEVERITY() AS ErrorSeverity,
-			ERROR_STATE() AS ErrorState,
-			ERROR_PROCEDURE() AS ErrorProcedure,
-			ERROR_LINE() AS ErrorLine,
-			ERROR_MESSAGE() AS ErrorMessage;
-	END CATCH
-
-END
-
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Delete]
-(
-	@Id int
-)
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM Recebimentos
-WHERE [Id] = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Recebimentos_Delete_Temp]
-AS
-
-SET NOCOUNT OFF;
-DELETE FROM RecebimentosTemp
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	R.Id, DataMovimento, Estado, ValorPrevisto, ValorRecebido, Renda, ValorEmFalta, 
-		ID_Propriedade, ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas,
-		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
-FROM	Recebimentos R 
-		INNER JOIN Fracoes F ON
-			R.ID_Propriedade = F.Id
-		INNER JOIN Inquilinos INQ ON
-			R.ID_Inquilino = INQ.Id
-		LEFT JOIN TipoRecebimento TR ON
-			R.ID_TipoRecebimento = TR.Id
--- WHERE Estado != 3 -- 3 = Não pago
-ORDER BY R.DataMovimento Desc
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetLastPeriodProcessed]
-AS
-
-SET NOCOUNT ON;
-
-SELECT TOP 1 Mes, Ano
-FROM ProcessamentoRendas
-ORDER BY Ano Desc, Mes Desc
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   Procedure [dbo].[usp_Recebimentos_GetPaymentsByYear]
-	@year int
-AS
-BEGIN 
-	SELECT 'Pagamento de Renda' Descricao,
-	SUM(D.ValorRecebido) TotalPagamentos, COUNT(1) NumeroMovimentos
-	FROM Recebimentos D
-	WHERE D.Renda = 1 AND YEAR(D.DataMovimento) = @year
-UNION
-	SELECT TR.Descricao,
-	SUM(D.ValorRecebido) TotalPagamentos, COUNT(1) NumeroMovimentos
-	FROM Recebimentos D
-	INNER JOIN TipoRecebimento TR
-		ON D.ID_TipoRecebimento = TR.Id
-	WHERE YEAR(D.DataMovimento) = @year
-	GROUP BY TR.Descricao
-
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	R.Id, DataMovimento, Estado, Renda, 
-		ValorPrevisto, ValorRecebido, ValorEmFalta, ID_Propriedade, 
-		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
-		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
-FROM	Recebimentos R 
-		INNER JOIN Fracoes F ON
-			R.ID_Propriedade = F.Id
-		INNER JOIN Inquilinos INQ ON
-			R.ID_Inquilino = INQ.Id
-		LEFT JOIN TipoRecebimento TR ON
-			R.ID_TipoRecebimento = TR.Id
-WHERE	R.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_Temp_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	R.Id, DataMovimento, Estado, Renda, ValorPrevisto, ValorRecebido, ValorEmFalta, ID_Propriedade, 
-		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
-		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
-FROM	RecebimentosTemp R 
-		INNER JOIN Fracoes F ON
-			R.ID_Propriedade = F.Id
-		INNER JOIN Inquilinos INQ ON
-			R.ID_Inquilino = INQ.Id
-		LEFT JOIN TipoRecebimento TR ON
-			R.ID_TipoRecebimento = TR.Id
-WHERE	R.Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_TempById_ToDelete] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	R.Id, DataMovimento, Estado, Renda, ValorRecebido, ValorEmFalta, ID_Propriedade, 
-		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
-		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
-FROM	RecebimentosTemp R 
-		INNER JOIN Fracoes F ON
-			R.ID_Propriedade = F.Id
-		INNER JOIN Inquilinos INQ ON
-			R.ID_Inquilino = INQ.Id
-		LEFT JOIN TipoRecebimento TR ON
-			R.ID_TipoRecebimento = TR.Id
-WHERE	R.Id = @Id
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetTotalByMonthAndYear] (@month int, @year int, @totalPaid decimal(10,2) out)
-AS
-
-SET NOCOUNT ON;
-
-SELECT @totalPaid = sum(valorrecebido)
-from RecebimentosTemp
-WHERE Renda = 1 AND 
-	Month(DataMovimento) = @month AND
-	Year(DataMovimento) = @year
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetTotalReceived] (@Id int = 0)
-AS
-
-SET NOCOUNT ON;
-
-SELECT SUM(ValorRecebido)
-FROM Recebimentos
-WHERE ID_TipoRecebimento = 
-	CASE 
-		WHEN @Id > 0 THEN @Id ELSE ID_TipoRecebimento 
-	END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_GetValorUltimaRendaPaga_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT TOP 1 ValorRecebido
-FROM		Recebimentos
-WHERE		ID_Inquilino = @Id AND
-			Renda = 1
-ORDER BY	DataMovimento Desc
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Insert]
-(
-	@DataMovimento datetime,
-	@Renda bit, 
-	@Estado int,
-	@ValorPrevisto decimal,
-	@ValorRecebido decimal,
-	@ValorEmFalta decimal,
-	@ID_Propriedade int,
-	@ID_TipoRecebimento int,
-	@ID_Inquilino int,
-	@GeradoPeloPrograma bit,
-	@Notas varchar(512)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [Recebimentos] 
-	([DataMovimento], [Estado], [Renda], [ValorPrevisto], [ValorRecebido], ValorEmFalta,
-	[ID_Propriedade], [ID_TipoRecebimento], [ID_Inquilino], Notas)
-VALUES 
-	(@DataMovimento, @Estado, @Renda, @ValorPrevisto, @ValorRecebido, @ValorEmFalta,
-	@ID_Propriedade, @ID_TipoRecebimento, @ID_Inquilino, @Notas)
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Insert_Temp]
-(
-	@DataMovimento datetime,
-	@Renda bit, 
-	@Estado int,
-	@RendaAtualizada bit = 0,
-	@ValorPrevisto decimal,
-	@ValorRecebido decimal,
-	@ValorEmFalta decimal,
-	@ID_Propriedade int,
-	@ID_TipoRecebimento int,
-	@ID_Inquilino int,
-	@GeradoPeloPrograma bit,
-	@Notas varchar(512)
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [RecebimentosTemp] 
-	([DataMovimento], [Estado], [Renda], [RendaAtualizada], [ValorPrevisto], [ValorRecebido], [ValorEmFalta], 
-	[ID_Propriedade], [ID_TipoRecebimento], [ID_Inquilino], Notas)
-VALUES 
-	(@DataMovimento, @Estado, @Renda, @RendaAtualizada, @ValorPrevisto, @ValorRecebido, @ValorEmFalta,
-	@ID_Propriedade, @ID_TipoRecebimento, @ID_Inquilino, @Notas)
-	
-SELECT CAST(SCOPE_IDENTITY() as int);
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_MonthlyRentsProcessed] (@year int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT Mes, Ano, DataProcessamento, TotalRecebido
-FROM ProcessamentoRendas
-WHERE Ano = @Year
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_OutrosRecebimentos_MaxValueAllowed_ByTenant] (@Id int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT SUM(ValorPrevisto) - SUM(ValorRecebido)
-FROM Recebimentos
-WHERE ID_Inquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoAtualizacaoRendas_Insert_ToDelete]
-(
-	@Ano int,
-	@DataProcessamento datetime
-)
-AS
-
-SET NOCOUNT OFF;
-INSERT INTO [ProcessamentoRendas] 
-	([Ano], [DataProcessamento])
-VALUES 
-	(@Ano, @DataProcessamento)
-	
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_ById] (@Id int)
-AS
-
-SET NOCOUNT ON;
-SELECT	Id, Mes, Ano, DataProcessamento, TotalRecebido
-FROM	ProcessamentoRendas
-WHERE	Id = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_Check]
-(
-	@month int, 
-	@year int
-)
-AS
-
-SET NOCOUNT OFF;
-SELECT COUNT(1)
-FROM [ProcessamentoRendas] 
-WHERE Mes = @month AND Ano = @year
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_Insert] (@month int, @year int, @TotalRecebido decimal(12,2))
-
-AS
-
-SET NOCOUNT OFF;
-DECLARE @ProcessingDate date
-
-SELECT @ProcessingDate = datefromparts(@year, @month, 9);
-
-INSERT INTO [ProcessamentoRendas] 
-	([Mes], [Ano], [DataProcessamento], [TotalRecebido])
-VALUES 
-	(@month, @year, @ProcessingDate, @TotalRecebido)
-	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_SetAsNotPaid]
-(
-	@Id int
-)
-AS
-
-BEGIN
-	SET NOCOUNT OFF;
-
-	DECLARE @rentValue decimal 
-	SET @rentValue = (SELECT ValorRecebido FROM Recebimentos WHERE Id = @Id);
-	UPDATE Recebimentos SET Estado = 3, ValorEmFalta = ValorPrevisto, ValorRecebido = 0
-	WHERE [Id] = @Id;
-END
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Temp_GetAll]
-AS
-
-SET NOCOUNT ON;
-SELECT	R.Id, DataMovimento, Estado, ValorPrevisto, ValorRecebido, Renda, RendaAtualizada, ValorEmFalta, 
-		ID_Propriedade, ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas,
-		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
-FROM	RecebimentosTemp R 
-		INNER JOIN Fracoes F ON
-			R.ID_Propriedade = F.Id
-		INNER JOIN Inquilinos INQ ON
-			R.ID_Inquilino = INQ.Id
-		LEFT JOIN TipoRecebimento TR ON
-			R.ID_TipoRecebimento = TR.Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Temp_Update]
-(
-	@Id int,
-	@DataMovimento datetime,
-	@Estado int,
-	@Renda bit,
-	@RendaAtualizada bit = 0,
-	@ValorPrevisto decimal,
-	@ValorRecebido decimal,
-	@ID_Propriedade int,
-	@ID_TipoRecebimento int,
-	@ID_Inquilino int,
-	@Notas varchar(512),
-	@ValorEmFalta decimal,
-	@GeradoPeloPrograma bit
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [RecebimentosTemp] 
-SET	[DataMovimento] = @DataMovimento, [Estado] = @Estado, [Renda] = @Renda, [RendaAtualizada] = @RendaAtualizada,
-	[ValorPrevisto] = @ValorPrevisto, [ValorRecebido] = @ValorRecebido, [ValorEmFalta] = @ValorEmFalta, 
-	[Notas] = @Notas,[ID_Propriedade] = @ID_Propriedade, 
-	[ID_TipoRecebimento] = @ID_TipoRecebimento,	[ID_Inquilino] = @ID_Inquilino
-WHERE Id = @Id	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-
-
-CREATE PROCEDURE [dbo].[usp_Recebimentos_TotalExpected_ByTenant] (@Id int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT SUM(ValorPrevisto)
-FROM Recebimentos
-WHERE ID_Inquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE   PROCEDURE [dbo].[usp_Recebimentos_TotalReceived_ByTenant] (@Id int)
-AS
-
-SET NOCOUNT ON;
-
-SELECT SUM(ValorRecebido)
-FROM Recebimentos
-WHERE ID_Inquilino = @Id
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE PROCEDURE [dbo].[usp_Recebimentos_Update]
-(
-	@Id int,
-	@DataMovimento datetime,
-	@Estado int,
-	@Renda bit,
-	@ValorPrevisto decimal,
-	@ValorRecebido decimal,
-	@ID_Propriedade int,
-	@ID_TipoRecebimento int,
-	@ID_Inquilino int,
-	@Notas varchar(512),
-	@ValorEmFalta decimal,
-	@GeradoPeloPrograma bit
-)
-AS
-
-SET NOCOUNT OFF;
-UPDATE [Recebimentos] 
-SET	[DataMovimento] = @DataMovimento, [Estado] = @Estado, [Renda] = @Renda, 
-	[ValorPrevisto] = @ValorPrevisto, [ValorRecebido] = @ValorRecebido, [ValorEmFalta] = @ValorEmFalta, 
-	[Notas] = @Notas,[ID_Propriedade] = @ID_Propriedade, 
-	[ID_TipoRecebimento] = @ID_TipoRecebimento,	[ID_Inquilino] = @ID_Inquilino
-WHERE Id = @Id	
-
-GO
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
--- display create datetime and last modified datetime
-CREATE PROC [dbo].[usp_ShowStoredProcedures]
-AS
-BEGIN
-	select 
-	 [database name] = db_name() 
-	,[schema name] =  SCHEMA_NAME([schema_id])
-	,name [stored proc name]
-	,create_date [create date]
-	,modify_date [last modify date]
-	from sys.objects
-	where type = 'P'
-	order by [stored proc name] asc
-END
-
 GO
 SET ANSI_NULLS ON
 GO
@@ -8275,16 +78,1684 @@ WHERE ID_Inquilino = @in_TenantId)
 
 	RETURN @TotalExpected
 END
-
 GO
+SET ANSI_NULLS ON
 GO
-INSERT [dbo].[AspNetRoles] ([Id], [ConcurrencyStamp], [Name], [NormalizedName]) VALUES (N'18f6e580-7007-4605-a1b1-a95e6a88db9c', N'48ad88c2-c1f9-476c-8824-c4fbb80999bf', N'User', N'USER')
+SET QUOTED_IDENTIFIER ON
 GO
-INSERT [dbo].[AspNetRoles] ([Id], [ConcurrencyStamp], [Name], [NormalizedName]) VALUES (N'800850ef-da38-42d9-95ed-75b180f724cc', N'b8d1fe2a-a501-4dcc-86b3-9a70ddb72071', N'Administrator', N'ADMINISTRATOR')
+SET ANSI_PADDING ON
 GO
-INSERT [dbo].[AspNetUsers] ([Id], [AccessFailedCount], [ConcurrencyStamp], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [NormalizedEmail], [NormalizedUserName], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) VALUES (N'380a3a6b-2635-465e-824b-a14dad0b9b5a', 0, N'b6f14876-38a8-4f6e-a469-268c9f1c7d43', N'admin@propertymanager.pt', 1, 1, NULL, N'ADMIN@PROPERTYMANAGER.PT', N'ADMIN@PROPERTYMANAGER.PT', N'AQAAAAIAAYagAAAAEEOv2m3jrwZA3904JwvQEAKEcn0BFk1a1HleZtKOpsQrVdIc1YwsrKQOhGd0/V1Whg==', N'', 1, N'36SRUFG7F5GL23ZUOAAUOG643WM3SWCS', 0, N'admin@propertymanager.pt')
+CREATE TABLE [dbo].[Arrendamentos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Data_Inicio] [datetime] NOT NULL,
+	[Data_Fim] [datetime] NOT NULL,
+	[Data_Saida] [datetime] NULL,
+	[Data_Pagamento] [datetime] NULL,
+	[SaldoInicial] [decimal](10, 2) NULL,
+	[Fiador] [bit] NOT NULL,
+	[Prazo_Meses] [int] NOT NULL,
+	[Prazo] [int] NOT NULL,
+	[Valor_Renda] [decimal](10, 2) NOT NULL,
+	[Caucao] [bit] NOT NULL,
+	[Doc_IRS] [bit] NOT NULL,
+	[Doc_Vencimento] [bit] NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[ID_Fracao] [int] NOT NULL,
+	[ID_Inquilino] [int] NOT NULL,
+	[ID_Fiador] [int] NOT NULL,
+	[ContratoEmitido] [bit] NOT NULL,
+	[DocumentoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[EnvioCartaAtualizacaoRenda] [bit] NULL,
+	[DataEnvioCartaAtualizacao] [datetime] NULL,
+	[DocumentoAtualizacaoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[EnvioCartaRevogacao] [bit] NULL,
+	[DataEnvioCartaRevogacao] [datetime] NULL,
+	[DocumentoRevogacaoGerado] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[RespostaCartaRevogacao] [bit] NULL,
+	[DataRespostaCartaRevogacao] [datetime] NULL,
+	[EnvioCartaAtrasoRenda] [bit] NULL,
+	[DocumentoAtrasoRendaGerado] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[DataEnvioCartaAtrasoRenda] [datetime] NULL,
+	[RespostaCartaAtrasoRenda] [bit] NULL,
+	[DataRespostaCartaAtrasoRenda] [datetime] NULL,
+	[FormaPagamento] [int] NOT NULL,
+	[Ativo] [bit] NOT NULL,
+	[LeiVigente] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ArrendamentoNovo] [bit] NOT NULL,
+	[EstadoPagamento] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RenovacaoAutomatica] [bit] NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Arrendamento] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-INSERT [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'380a3a6b-2635-465e-824b-a14dad0b9b5a', N'800850ef-da38-42d9-95ed-75b180f724cc')
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Fracoes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Ativa] [bit] NOT NULL,
+	[Descricao] [varchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
+	[AreaBrutaPrivativa] [float] NOT NULL,
+	[AreaBrutaDependente] [float] NOT NULL,
+	[CasasBanho] [int] NOT NULL,
+	[GasCanalizado] [bit] NULL,
+	[CozinhaEquipada] [bit] NULL,
+	[Varanda] [bit] NULL,
+	[Garagem] [bit] NULL,
+	[Terraco] [bit] NULL,
+	[Arrecadacao] [bit] NULL,
+	[LugarEstacionamento] [bit] NULL,
+	[Fotos] [bit] NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[Tipologia] [int] NOT NULL,
+	[LicencaHabitacao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+	[DataEmissaoLicencaHabitacao] [datetime] NULL,
+	[ID_CertificadoEnergetico] [int] NOT NULL,
+	[Matriz] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Letra] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
+	[Andar] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Lado] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[AnoUltAvaliacao] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ValorUltAvaliacao] [decimal](12, 2) NOT NULL,
+	[ID_TipoPropriedade] [int] NOT NULL,
+	[Id_Imovel] [int] NOT NULL,
+	[Situacao] [int] NOT NULL,
+	[Conservacao] [int] NOT NULL,
+	[ValorRenda] [decimal](12, 2) NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Fracoes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Imoveis](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Numero] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CodPst] [varchar](4) COLLATE Latin1_General_CI_AS NULL,
+	[CodPstEx] [varchar](3) COLLATE Latin1_General_CI_AS NULL,
+	[AnoConstrucao] [varchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Freguesia] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Concelho] [varchar](40) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Elevador] [bit] NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[Foto] [varchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[Conservacao] [int] NOT NULL,
+	[DataUltimaInspecaoGas] [datetime] NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Imoveis] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Inquilinos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Ativo] [bit] NOT NULL,
+	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Naturalidade] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[DataNascimento] [datetime] NOT NULL,
+	[ID_EstadoCivil] [int] NULL,
+	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ValidadeCC] [datetime] NOT NULL,
+	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Contacto1] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Contacto2] [varchar](20) COLLATE Latin1_General_CI_AS NULL,
+	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[IRSAnual] [decimal](10, 2) NOT NULL,
+	[Vencimento] [decimal](10, 2) NOT NULL,
+	[SaldoCorrente] [decimal](10, 2) NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[Titular] [bit] NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Inquilinos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW dbo.vwArrendamentos
+AS
+SELECT        Ar.Id, Ar.Valor_Renda, Ar.Data_Inicio, Ar.Data_Fim, Ar.Data_Pagamento, Ar.EstadoPagamento, Ar.RenovacaoAutomatica, Fr.Descricao AS Fracao, Inq.Nome AS NomeInquilino, Im.Descricao AS DescricaoImovel, 
+                         Im.Numero AS Porta
+FROM            dbo.Arrendamentos AS Ar INNER JOIN
+                         dbo.Inquilinos AS Inq ON Ar.ID_Inquilino = Inq.Id INNER JOIN
+                         dbo.Fracoes AS Fr ON Ar.ID_Fracao = Fr.Id INNER JOIN
+                         dbo.Imoveis AS Im ON Fr.Id_Imovel = Im.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[SituacaoFracao](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_SituacaoFracao] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[TipologiaFracao](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](3) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_TipologiaFracao] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TipoPropriedade](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_TipoPropriedade] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[EstadoConservacao](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_EstadoConservacao] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW vwFracoes AS 
+SELECT F.Id, F.Descricao, I.Numero, I.Descricao AS DescrImovel,
+F.Andar, F.Lado, F.Situacao AS CodSituacao, F.AnoUltAvaliacao AS AnoA, 
+F.ValorUltAvaliacao AS ValorA, TF.Descricao Tipologia, SF.Descricao AS Situacao, 
+EC.Descricao AS Conservacao, TP.Descricao AS TipoFracao 
+FROM Fracoes F INNER JOIN Imoveis I ON F.Id_Imovel = I.Id 
+INNER JOIN EstadoConservacao EC ON F.Conservacao = EC.Id INNER JOIN TipoPropriedade TP ON F.ID_TipoPropriedade = TP.Id 
+INNER JOIN SituacaoFracao SF ON F.Situacao = SF.Id INNER JOIN TipologiaFracao TF ON F.Tipologia = TF.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW vwFracoesComArrendamentos AS 
+SELECT f.* FROM Fracoes f INNER JOIN Arrendamentos a ON f.Id = a.ID_Fracao 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[HelpIndex](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[NomeForm] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Titulo] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[Descricao] [text] COLLATE Latin1_General_CI_AS NULL,
+	[Pagina] [smallint] NULL,
+	[ID_Parent] [int] NULL,
+ CONSTRAINT [PK_HelpIndex] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[HelpIndex_Parent](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[NomeProjeto] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[NomeExe] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[NomeWord] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[NomePdf] [varchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Descricao] [text] COLLATE Latin1_General_CI_AS NULL,
+	[dCriacao] [datetime] NOT NULL,
+ CONSTRAINT [PK__HelpInde__06A79189EF15DD88] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW vwHelp AS SELECT H.Id, H.NomeForm, H.Descricao AS TextoAjuda, H.Titulo AS TituloProjeto, HP.Id AS Id_Projeto, HP.NomeProjeto, HP.Descricao AS DescricaoProjeto 
+FROM HelpIndex H INNER JOIN HelpIndex_Parent HP ON H.ID_Parent = HP.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Recebimentos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DataMovimento] [datetime] NOT NULL,
+	[Estado] [int] NOT NULL,
+	[ID_Propriedade] [int] NOT NULL,
+	[ID_TipoRecebimento] [int] NOT NULL,
+	[ID_Inquilino] [int] NOT NULL,
+	[GeradoPeloPrograma] [bit] NULL,
+	[Renda] [bit] NOT NULL,
+	[ValorPrevisto] [decimal](10, 2) NOT NULL,
+	[ValorEmFalta] [decimal](10, 2) NOT NULL,
+	[ValorRecebido] [decimal](10, 2) NOT NULL,
+	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NULL,
+	[ID_Arrendamento] [int] NULL,
+ CONSTRAINT [PK_Recebimentos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TipoRecebimento](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_TipoRecebimento] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW vwRecebimentos AS 
+SELECT R.ID, R.DataMovimento, R.ID_TipoRecebimento, R.ValorRecebido, F.Descricao AS Fracao,  
+TR.Descricao AS TipoTransacao, Ar.Data_Pagamento, Ar.Valor_Renda, Ar.RenovacaoAutomatica, 
+Inq.Id Inq_Id, Inq.Nome 
+FROM Recebimentos R INNER JOIN fracoes F ON 
+	R.ID_Propriedade = F.Id 
+	INNER JOIN TipoRecebimento TR ON R.ID_TipoRecebimento = TR.Id 
+	INNER JOIN Arrendamentos Ar ON R.ID_Propriedade = Ar.ID_Fracao 
+	INNER JOIN Inquilinos Inq ON R.ID_Inquilino = Inq.id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Seguros](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[IdFracao] [int] NOT NULL,
+	[Apolice] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Premio] [decimal](11, 1) NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_Seguros] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   VIEW dbo.vwSegurosFracoes
+AS
+SELECT        dbo.Fracoes.Descricao, dbo.Seguros.Apolice, dbo.Seguros.Premio
+FROM            dbo.Fracoes INNER JOIN
+                         dbo.Seguros ON dbo.Fracoes.Id = dbo.Seguros.IdFracao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[__EFMigrationsHistory](
+	[MigrationId] [nvarchar](150) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProductVersion] [nvarchar](32) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY CLUSTERED 
+(
+	[MigrationId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[ApplicationSettings](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DisplayName] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Username] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Password] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Port] [int] NULL,
+	[Host] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[FromEmail] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[SmtpServer] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[EmailPort] [int] NULL,
+	[EmailUsername] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[EmailPassword] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[HotmailHostname] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[HotmailPort] [nvarchar](10) COLLATE Latin1_General_CI_AS NULL,
+	[UseSSL] [bit] NULL,
+	[HotmailUsername] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[HotmailPassword] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[PaperCutSmtpServer] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[PaperCutPort] [int] NULL,
+	[EnableSsl] [bit] NULL,
+	[ApiKey] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[PrazoContratoEmAnos] [smallint] NULL,
+	[PrazoEnvioCartaAtraso] [smallint] NULL,
+	[PrazoEnvioCartaAumento] [smallint] NULL,
+	[CartasAumentoAutomaticas] [bit] NULL,
+	[TipoEnvioCartasAumento] [char](1) COLLATE Latin1_General_CI_AS NULL,
+	[PrazoEnvioCartaRevogacao] [smallint] NULL,
+	[PrazoRespostaCartaAtraso] [smallint] NULL,
+	[PrazoRespostaCartaAumento] [smallint] NULL,
+	[PrazoRespostaCartaRevogacao] [smallint] NULL,
+	[RenovacaoAutomatica] [bit] NULL,
+	[ComprovativoIRS] [bit] NULL,
+	[ComprovativoReciboVencimento] [bit] NULL,
+	[CaucaoRequerida] [bit] NULL,
+	[PrazoInspecaoGas] [smallint] NULL,
+	[PercentagemMultaPorAtrasoPagamento] [smallint] NULL,
+	[BackupBaseDados] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
+	[BackupOutrosFicheiros] [nvarchar](250) COLLATE Latin1_General_CI_AS NULL,
+	[DefaultLanguage] [nvarchar](5) COLLATE Latin1_General_CI_AS NULL,
+	[TaxaIRS] [decimal](3, 2) NULL,
+ CONSTRAINT [PK__Applicat__3214EC075949783C] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Appointments](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Subject] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Location] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[StartTime] [datetime] NOT NULL,
+	[EndTime] [datetime] NOT NULL,
+	[IsAllDay] [bit] NOT NULL,
+	[CategoryColor] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[RecurrenceRule] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[RecurrenceID] [int] NULL,
+	[FollowingID] [int] NULL,
+	[RecurrenceException] [nvarchar](1024) COLLATE Latin1_General_CI_AS NULL,
+	[StartTimezone] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[EndTimezone] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[ApptType] [int] NULL,
+ CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetRoleClaims](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ClaimType] [text] COLLATE Latin1_General_CI_AS NULL,
+	[ClaimValue] [text] COLLATE Latin1_General_CI_AS NULL,
+	[RoleId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_AspNetRoleClaims] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetRoles](
+	[Id] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ConcurrencyStamp] [text] COLLATE Latin1_General_CI_AS NULL,
+	[Name] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[NormalizedName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_AspNetRoles] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetUserClaims](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ClaimType] [text] COLLATE Latin1_General_CI_AS NULL,
+	[ClaimValue] [text] COLLATE Latin1_General_CI_AS NULL,
+	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_AspNetUserClaims] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetUserLogins](
+	[LoginProvider] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProviderKey] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProviderDisplayName] [text] COLLATE Latin1_General_CI_AS NULL,
+	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetUserRoles](
+	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RoleId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetUsers](
+	[Id] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[AccessFailedCount] [int] NOT NULL,
+	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Email] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[EmailConfirmed] [bit] NOT NULL,
+	[LockoutEnabled] [bit] NOT NULL,
+	[LockoutEnd] [datetimeoffset](7) NULL,
+	[NormalizedEmail] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[NormalizedUserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[PasswordHash] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[PhoneNumber] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[PhoneNumberConfirmed] [bit] NOT NULL,
+	[SecurityStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[TwoFactorEnabled] [bit] NOT NULL,
+	[UserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_AspNetUsers] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AspNetUserTokens](
+	[UserId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[LoginProvider] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Name] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Value] [text] COLLATE Latin1_General_CI_AS NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Audit_26_Jan_2023](
+	[AuditId] [bigint] IDENTITY(1,1) NOT NULL,
+	[Area] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[ControllerName] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[ActionName] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[LoginStatus] [varchar](1) COLLATE Latin1_General_CI_AS NULL,
+	[LoggedInAt] [varchar](23) COLLATE Latin1_General_CI_AS NULL,
+	[LoggedOutAt] [varchar](23) COLLATE Latin1_General_CI_AS NULL,
+	[PageAccessed] [varchar](500) COLLATE Latin1_General_CI_AS NULL,
+	[IPAddress] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[SessionID] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[UserID] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[RoleId] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
+	[LangId] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
+	[IsFirstLogin] [varchar](2) COLLATE Latin1_General_CI_AS NULL,
+	[CurrentDatetime] [varchar](23) COLLATE Latin1_General_CI_AS NULL
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[AuditTrails](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Type] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[TableName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[DateTime] [datetime2](7) NOT NULL,
+	[OldValues] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[NewValues] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[AffectedColumns] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[PrimaryKey] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_AuditTrails] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CategoriaDespesa](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_CategoriaDespesa] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[CC_Inquilinos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DataMovimento] [datetime] NOT NULL,
+	[UpdatedDate] [datetime] NULL,
+	[ValorPago] [decimal](10, 2) NOT NULL,
+	[ValorEmDivida] [decimal](10, 0) NOT NULL,
+	[IdInquilino] [int] NOT NULL,
+	[Renda] [bit] NOT NULL,
+	[ID_TipoRecebimento] [int] NOT NULL,
+	[TransactionId] [int] NOT NULL,
+	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_CC_Inquilinos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ChatHistory](
+	[Id] [bigint] IDENTITY(1,1) NOT NULL,
+	[FromUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[ToUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[Message] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedDate] [datetime2](7) NOT NULL,
+ CONSTRAINT [PK_ChatHistory] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[CoefientesAtualizacaoRendas](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Ano] [nvarchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Coeficiente] [float] NOT NULL,
+	[DiplomaLegal] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
+	[UrlDiploma] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Lei] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
+	[DataPublicacao] [nvarchar](30) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_CoefientesAtualizacaoRendas] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Concelhos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CodConcelho] [int] NOT NULL,
+	[Descricao] [nvarchar](100) COLLATE Latin1_General_CI_AS NOT NULL,
+	[IdDistrito] [int] NOT NULL,
+	[Coeficiente] [decimal](6, 5) NOT NULL,
+ CONSTRAINT [PK_Concelhos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Condominios](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[IdFracao] [int] NOT NULL,
+	[Quota] [decimal](11, 2) NOT NULL,
+	[Ano] [nvarchar](4) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Gestor] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[ContactoGestor] [nvarchar](20) COLLATE Latin1_General_CI_AS NULL,
+	[ValorAvenca] [decimal](11, 2) NULL,
+ CONSTRAINT [PK_Condominios] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Contactos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [varchar](70) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [varchar](70) COLLATE Latin1_General_CI_AS NULL,
+	[Localidade] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[Contacto] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[ID_TipoContacto] [int] NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Contactos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Contratos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DataCelebracao] [datetime] NOT NULL,
+	[Data_Inicio] [datetime] NOT NULL,
+	[Fiador] [bit] NOT NULL,
+	[Prazo_Meses] [int] NOT NULL,
+	[Valor_Renda] [decimal](10, 2) NOT NULL,
+	[Doc_IRS] [bit] NOT NULL,
+	[Doc_Vencimento] [bit] NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[ID_Fracao] [int] NOT NULL,
+	[ID_Inquilino] [int] NOT NULL,
+	[ID_Fiador] [int] NOT NULL,
+	[Caucao] [bit] NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Contratos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Despesas](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DataMovimento] [datetime] NOT NULL,
+	[Valor_Pago] [decimal](10, 2) NOT NULL,
+	[ID_TipoDespesa] [int] NOT NULL,
+	[ID_CategoriaDespesa] [int] NOT NULL,
+	[ID_ModoPagamento] [int] NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[NumeroDocumento] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Despesas] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Distritos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_Distritos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[DistritosConcelhos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CodigoDistrito] [varchar](4) COLLATE Latin1_General_CI_AS NULL,
+	[DesignacaoDistrito] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[CodigoConcelho] [nvarchar](6) COLLATE Latin1_General_CI_AS NULL,
+	[DesignacaoConcelho] [nvarchar](100) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_DistritosConcelhos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentExtendedAttributes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime2](7) NOT NULL,
+	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime2](7) NULL,
+	[EntityId] [int] NOT NULL,
+	[Type] [tinyint] NOT NULL,
+	[Key] [nvarchar](max) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Text] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Decimal] [decimal](18, 2) NULL,
+	[DateTime] [datetime2](7) NULL,
+	[Json] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[ExternalId] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Group] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[IsActive] [bit] NOT NULL,
+ CONSTRAINT [PK_DocumentExtendedAttributes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[DocumentosInquilino](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[TenantId] [int] NOT NULL,
+	[DocumentType] [int] NOT NULL,
+	[DocumentPath] [varchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Descricao] [varchar](512) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CreationDate] [datetime] NOT NULL,
+	[ReferralDate] [datetime] NULL,
+	[AnswerDate] [datetime] NULL,
+	[StorageType] [char](1) COLLATE Latin1_General_CI_AS NOT NULL,
+	[StorageFolder] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[VerCol] [timestamp] NOT NULL,
+	[Status] [smallint] NULL,
+ CONSTRAINT [PK_DocumentosInquilino] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Documents](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Title] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[IsPublic] [bit] NOT NULL,
+	[URL] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[DocumentTypeId] [int] NOT NULL,
+	[DocumentCategoryId] [int] NULL,
+	[LocalUpload] [bit] NOT NULL,
+	[CreatedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime] NOT NULL,
+	[LastModifiedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime] NULL,
+ CONSTRAINT [PK_Documents] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentTypeCategories](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_DocumentTypeCategories] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[DocumentTypes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[Description] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime] NULL,
+	[LastModifiedBy] [nvarchar](70) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime] NULL,
+	[TypeCategoryId] [int] NULL,
+ CONSTRAINT [PK_DocumentTypes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[EstadoCivil](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_EstadoCivil] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[EstadoPagamentoRenda](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_SituacaoPagamentoRenda] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Fiadores](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[IdInquilino] [int] NOT NULL,
+	[Ativo] [bit] NOT NULL,
+	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ValidadeCC] [datetime] NOT NULL,
+	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ID_EstadoCivil] [int] NULL,
+	[Contacto1] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Contacto2] [varchar](20) COLLATE Latin1_General_CI_AS NULL,
+	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[IRSAnual] [decimal](10, 2) NOT NULL,
+	[Vencimento] [decimal](10, 2) NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_Fiadores] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[FormaPagamento](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](75) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_FormaPagamento] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[HistoricoArrendamentos](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ArrendamentoId] [int] NOT NULL,
+	[Data_Inicio] [datetime] NULL,
+	[Data_Fim] [datetime] NULL,
+	[Data_Saida] [datetime] NULL,
+	[MotivoFim] [nvarchar](64) COLLATE Latin1_General_CI_AS NULL,
+	[ID_Fracao] [int] NULL,
+	[ID_Inquilino] [int] NULL,
+	[ID_Fiador] [int] NULL,
+	[Valor_Renda] [decimal](10, 2) NULL,
+	[Notas] [nvarchar](4000) COLLATE Latin1_General_CI_AS NULL,
+	[ActorUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+ CONSTRAINT [PK_HistoricoArrendamentos] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[HistoricoAtualizacaoRendas](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UnitId] [int] NOT NULL,
+	[DateProcessed] [datetime] NOT NULL,
+	[PriorValue] [decimal](12, 2) NOT NULL,
+	[UpdatedValue] [decimal](12, 2) NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[HistoricoEnvioCartas](
+	[Id] [int] NOT NULL,
+	[DataEnvio] [datetime] NOT NULL,
+	[DataResposta] [datetime] NULL,
+	[IdInquilino] [int] NOT NULL,
+	[IdTipoCarta] [int] NOT NULL,
+	[Tentativa] [smallint] NOT NULL,
+ CONSTRAINT [PK_HistoricoEnvioCartas] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[ImagensFracoes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Id_Fracao] [int] NOT NULL,
+	[Foto] [varchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Descricao] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NOT NULL,
+ CONSTRAINT [PK_ImagensFracoes] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[IrsRendas](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Ano] [int] NOT NULL,
+ CONSTRAINT [PK_IrsRendas] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[IrsRendas_Percentagens](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[ParentId] [int] NOT NULL,
+	[Escalao_1] [float] NOT NULL,
+	[Descricao_1] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Escalao_2] [float] NULL,
+	[Descricao_2] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
+	[Escalao_3] [float] NULL,
+	[Descricao_3] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
+	[Escalao_4] [float] NULL,
+	[Descricao_4] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
+	[Escalao_5] [float] NULL,
+	[Descricao_5] [varchar](30) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_IrsRendas_Percentagens] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Mediadores](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Localidade] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Contacto1] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Contacto2] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Comissao_Venda] [float] NULL,
+	[DataContacto] [datetime] NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_Mediadores] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Messages](
+	[MessageId] [int] IDENTITY(1,1) NOT NULL,
+	[DestinationEmail] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
+	[SenderEmail] [nvarchar](128) COLLATE Latin1_General_CI_AS NOT NULL,
+	[SubjectTitle] [nvarchar](200) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MessageContent] [nvarchar](1024) COLLATE Latin1_General_CI_AS NOT NULL,
+	[MessageSentOn] [date] NULL,
+	[MessageReceivedOn] [date] NULL,
+	[MessageType] [int] NOT NULL,
+	[TenantId] [int] NOT NULL,
+	[ReferenceId] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_Messages] PRIMARY KEY CLUSTERED 
+(
+	[MessageId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Notifications](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RecipientUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[TenantId] [int] NULL,
+	[ActorUserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[Kind] [nvarchar](64) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Title] [nvarchar](256) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Body] [nvarchar](1024) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Link] [nvarchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[Severity] [nvarchar](32) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ResourceType] [nvarchar](64) COLLATE Latin1_General_CI_AS NULL,
+	[ResourceId] [int] NULL,
+	[CreatedAt] [datetime2](7) NOT NULL,
+	[SeenAt] [datetime2](7) NULL,
+	[ReadAt] [datetime2](7) NULL,
+	[SuggestedAction] [nvarchar](1024) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_Notifications] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PMLogs](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Message] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[MessageTemplate] [nvarchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[Level] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[TimeStamp] [datetime] NULL,
+	[Exception] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Properties] [text] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_PMLogs] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PopulacaoResidenteFreguesia$](
+	[Distrito (DT)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação DT] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Concelho (CC)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação CC] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Freguesia (FR)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação FR] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[PopRes_2011 (nº)] [float] NULL,
+	[Rural] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Litorâneo] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[F10] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[PopulacaoResidenteFreguesia$_FilterDatabase](
+	[Distrito (DT)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação DT] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Concelho (CC)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação CC] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Freguesia (FR)] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Designação FR] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[PopRes_2011 (nº)] [float] NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProcessamentoAtualizacaoRendas](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Ano] [int] NOT NULL,
+	[DataProcessamento] [datetime] NOT NULL,
+ CONSTRAINT [PK_ProcessamentoAtalizacaoRendas] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ProcessamentoRendas](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[Mes] [int] NULL,
+	[Ano] [int] NULL,
+	[DataProcessamento] [datetime] NULL,
+	[TotalRecebido] [decimal](12, 2) NULL,
+ CONSTRAINT [PK_ProcessamentoRendas] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[Proprietarios](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Nome] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Morada] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Naturalidade] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ID_EstadoCivil] [int] NULL,
+	[DataNascimento] [datetime] NOT NULL,
+	[Identificacao] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ValidadeCC] [datetime] NOT NULL,
+	[NIF] [varchar](9) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Contacto] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[eMail] [varchar](128) COLLATE Latin1_General_CI_AS NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NOT NULL,
+	[CodPostal] [varchar](50) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_Proprietarios] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[RecebimentosTemp](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[DataMovimento] [datetime] NOT NULL,
+	[Estado] [int] NOT NULL,
+	[ID_Propriedade] [int] NOT NULL,
+	[ID_TipoRecebimento] [int] NOT NULL,
+	[ID_Inquilino] [int] NOT NULL,
+	[GeradoPeloPrograma] [bit] NULL,
+	[RendaAtualizada] [bit] NULL,
+	[Renda] [bit] NOT NULL,
+	[ValorPrevisto] [decimal](10, 2) NOT NULL,
+	[ValorEmFalta] [decimal](10, 2) NOT NULL,
+	[ValorRecebido] [decimal](10, 2) NOT NULL,
+	[Notas] [varchar](512) COLLATE Latin1_General_CI_AS NULL,
+	[VerCol] [timestamp] NULL,
+	[ID_Arrendamento] [int] NULL,
+ CONSTRAINT [PK_recebimentostemp] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[RoleDetails](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[sysdiagrams](
+	[name] [sysname] COLLATE Latin1_General_CI_AS NOT NULL,
+	[principal_id] [int] NOT NULL,
+	[diagram_id] [int] IDENTITY(1,1) NOT NULL,
+	[version] [int] NULL,
+	[definition] [varbinary](max) NULL,
+ CONSTRAINT [PK__sysdiagr__C2B05B61DB438F00] PRIMARY KEY CLUSTERED 
+(
+	[diagram_id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[tblLogLogins](
+	[UserId] [nchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[SessionId] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[LoginDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_tblLogLogins] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[tblLogOperacoes](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Tabela] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[IdReg] [int] NOT NULL,
+	[QuemCriou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[DataCriacao] [datetime] NULL,
+	[QuemModificou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[DataUltimaAlteracao] [datetime] NULL,
+	[QuemApagou] [nvarchar](450) COLLATE Latin1_General_CI_AS NULL,
+	[DataAnulacao] [datetime] NULL,
+ CONSTRAINT [tblLogOperacoes$PrimaryKey] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Templates](
+	[Id] [int] NOT NULL,
+	[FileName] [nvarchar](250) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+ CONSTRAINT [PK_Templates] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TipoCertificadoEnergetico](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_TipoCertificadoEnergetico] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[TipoContacto](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [varchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Notas] [text] COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_TipoContacto] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[TipoDespesa](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Descricao] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Id_CategoriaDespesa] [int] NOT NULL,
+ CONSTRAINT [PK__TipoDesp__3214EC0798D2EC09] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User_Info](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RoleId] [int] NOT NULL,
+	[User_Name] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[Pwd] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[First_Name] [nvarchar](50) COLLATE Latin1_General_CI_AS NULL,
+	[EMail] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Mobile] [nvarchar](255) COLLATE Latin1_General_CI_AS NULL,
+	[Last_Login_Date] [datetime] NULL,
+	[Password_Change_Date] [datetime] NULL,
+	[IsActive] [int] NULL,
+ CONSTRAINT [PK_User_Info] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].[UserInfo](
+	[UserId] [int] IDENTITY(1,1) NOT NULL,
+	[DisplayName] [varchar](60) COLLATE Latin1_General_CI_AS NOT NULL,
+	[UserName] [varchar](30) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Email] [varchar](50) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Password] [varchar](20) COLLATE Latin1_General_CI_AS NOT NULL,
+	[CreatedDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_UserInfo] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING OFF
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Utilizadores](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserID] [int] NOT NULL,
+	[Password] [nvarchar](255) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_Utilizadores] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[RoleClaims](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RoleId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ClaimType] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[ClaimValue] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime2](7) NOT NULL,
+	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[Group] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime2](7) NULL,
+ CONSTRAINT [PK_RoleClaims] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[Roles](
+	[Id] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Name] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[NormalizedName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime2](7) NOT NULL,
+	[Description] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime2](7) NULL,
+ CONSTRAINT [PK_Roles] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[UserClaims](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ClaimType] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[ClaimValue] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_UserClaims] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[UserLogins](
+	[LoginProvider] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProviderKey] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[ProviderDisplayName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_UserLogins] PRIMARY KEY CLUSTERED 
+(
+	[LoginProvider] ASC,
+	[ProviderKey] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[UserRoles](
+	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[RoleId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+ CONSTRAINT [PK_UserRoles] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[RoleId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[Users](
+	[Id] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[FirstName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastName] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[CreatedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[ProfilePictureDataUrl] [text] COLLATE Latin1_General_CI_AS NULL,
+	[CreatedOn] [datetime2](7) NOT NULL,
+	[LastModifiedBy] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[LastModifiedOn] [datetime2](7) NULL,
+	[IsDeleted] [bit] NOT NULL,
+	[DeletedOn] [datetime2](7) NULL,
+	[IsActive] [bit] NOT NULL,
+	[RefreshToken] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[RefreshTokenExpiryTime] [datetime2](7) NOT NULL,
+	[UserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[NormalizedUserName] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[Email] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[NormalizedEmail] [nvarchar](256) COLLATE Latin1_General_CI_AS NULL,
+	[EmailConfirmed] [bit] NOT NULL,
+	[PasswordHash] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[SecurityStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[ConcurrencyStamp] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[PhoneNumber] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+	[PhoneNumberConfirmed] [bit] NOT NULL,
+	[TwoFactorEnabled] [bit] NOT NULL,
+	[LockoutEnd] [datetimeoffset](7) NULL,
+	[LockoutEnabled] [bit] NOT NULL,
+	[AccessFailedCount] [int] NOT NULL,
+ CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [Identity].[UserTokens](
+	[UserId] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[LoginProvider] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Name] [nvarchar](450) COLLATE Latin1_General_CI_AS NOT NULL,
+	[Value] [nvarchar](max) COLLATE Latin1_General_CI_AS NULL,
+ CONSTRAINT [PK_UserTokens] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[LoginProvider] ASC,
+	[Name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210413122110_initial', N'5.0.7')
 GO
@@ -8295,14 +1766,20 @@ GO
 INSERT [dbo].[__EFMigrationsHistory] ([MigrationId], [ProductVersion]) VALUES (N'20210613102039_AddDocumentTypeAndExtendedAttribute', N'5.0.7')
 GO
 SET IDENTITY_INSERT [dbo].[ApplicationSettings] ON 
-
 GO
 INSERT [dbo].[ApplicationSettings] ([Id], [DisplayName], [Username], [Password], [Port], [Host], [FromEmail], [SmtpServer], [EmailPort], [EmailUsername], [EmailPassword], [HotmailHostname], [HotmailPort], [UseSSL], [HotmailUsername], [HotmailPassword], [PaperCutSmtpServer], [PaperCutPort], [EnableSsl], [ApiKey], [PrazoContratoEmAnos], [PrazoEnvioCartaAtraso], [PrazoEnvioCartaAumento], [CartasAumentoAutomaticas], [TipoEnvioCartasAumento], [PrazoEnvioCartaRevogacao], [PrazoRespostaCartaAtraso], [PrazoRespostaCartaAumento], [PrazoRespostaCartaRevogacao], [RenovacaoAutomatica], [ComprovativoIRS], [ComprovativoReciboVencimento], [CaucaoRequerida], [PrazoInspecaoGas], [PercentagemMultaPorAtrasoPagamento], [BackupBaseDados], [BackupOutrosFicheiros], [DefaultLanguage], [TaxaIRS]) VALUES (1, N'Property Manager', NULL, NULL, 587, N'smtp-mail.outlook.com', NULL, N'smtp.gmail.com', 465, NULL, NULL, N'pop-mail.outlook.com', N'995', 1, NULL, NULL, N'localhost', 25, 0, N'REPLACE_WITH_PROD_API_KEY', 1, 30, 30, 1, N'M', 120, 10, 10, 10, 1, 1, 1, 1, 5, 20, N'REPLACE_WITH_BACKUP_BASE_PATH', N'REPLACE_WITH_BACKUP_FILES_PATH', N'en-US', NULL)
 GO
 SET IDENTITY_INSERT [dbo].[ApplicationSettings] OFF
 GO
+INSERT [dbo].[AspNetRoles] ([Id], [ConcurrencyStamp], [Name], [NormalizedName]) VALUES (N'18f6e580-7007-4605-a1b1-a95e6a88db9c', N'48ad88c2-c1f9-476c-8824-c4fbb80999bf', N'User', N'USER')
+GO
+INSERT [dbo].[AspNetRoles] ([Id], [ConcurrencyStamp], [Name], [NormalizedName]) VALUES (N'800850ef-da38-42d9-95ed-75b180f724cc', N'b8d1fe2a-a501-4dcc-86b3-9a70ddb72071', N'Administrator', N'ADMINISTRATOR')
+GO
+INSERT [dbo].[AspNetUserRoles] ([UserId], [RoleId]) VALUES (N'380a3a6b-2635-465e-824b-a14dad0b9b5a', N'800850ef-da38-42d9-95ed-75b180f724cc')
+GO
+INSERT [dbo].[AspNetUsers] ([Id], [AccessFailedCount], [ConcurrencyStamp], [Email], [EmailConfirmed], [LockoutEnabled], [LockoutEnd], [NormalizedEmail], [NormalizedUserName], [PasswordHash], [PhoneNumber], [PhoneNumberConfirmed], [SecurityStamp], [TwoFactorEnabled], [UserName]) VALUES (N'380a3a6b-2635-465e-824b-a14dad0b9b5a', 0, N'b6f14876-38a8-4f6e-a469-268c9f1c7d43', N'admin@propertymanager.pt', 1, 1, NULL, N'ADMIN@PROPERTYMANAGER.PT', N'ADMIN@PROPERTYMANAGER.PT', N'AQAAAAIAAYagAAAAEEOv2m3jrwZA3904JwvQEAKEcn0BFk1a1HleZtKOpsQrVdIc1YwsrKQOhGd0/V1Whg==', N'', 1, N'36SRUFG7F5GL23ZUOAAUOG643WM3SWCS', 0, N'admin@propertymanager.pt')
+GO
 SET IDENTITY_INSERT [dbo].[CategoriaDespesa] ON 
-
 GO
 INSERT [dbo].[CategoriaDespesa] ([Id], [Descricao]) VALUES (7, N'Custas judiciais')
 GO
@@ -8327,13 +1804,12 @@ GO
 SET IDENTITY_INSERT [dbo].[CategoriaDespesa] OFF
 GO
 SET IDENTITY_INSERT [dbo].[CoefientesAtualizacaoRendas] ON 
-
 GO
 INSERT [dbo].[CoefientesAtualizacaoRendas] ([Id], [Ano], [Coeficiente], [DiplomaLegal], [UrlDiploma], [Lei], [DataPublicacao]) VALUES (1, N'2019', 1.0115000009536743, N'Aviso n.º 13745/2018', N'https://dre.pt/dre/detalhe/aviso/13745-2018-116506186', N'Decreto-Lei n.º 294/2009', NULL)
 GO
 INSERT [dbo].[CoefientesAtualizacaoRendas] ([Id], [Ano], [Coeficiente], [DiplomaLegal], [UrlDiploma], [Lei], [DataPublicacao]) VALUES (2, N'2020', 1.0051000118255615, N'Aviso n.º 15225/2019', N'https://dre.pt/dre/detalhe/aviso/15225-2019-125030927', N'Decreto-Lei n.º 294/2009', NULL)
 GO
-INSERT [dbo].[CoefientesAtualizacaoRendas] ([Id], [Ano], [Coeficiente], [DiplomaLegal], [UrlDiploma], [Lei], [DataPublicacao]) VALUES (3, N'2021', 0.99970000982284546, N'Aviso n.º 15365/2020', N'https://dre.pt/dre/detalhe/aviso/15365-2020-144452182', N'Decreto-Lei n.º 294/2009', N'13 de outubro de 2020')
+INSERT [dbo].[CoefientesAtualizacaoRendas] ([Id], [Ano], [Coeficiente], [DiplomaLegal], [UrlDiploma], [Lei], [DataPublicacao]) VALUES (3, N'2021', 0.9997000098228455, N'Aviso n.º 15365/2020', N'https://dre.pt/dre/detalhe/aviso/15365-2020-144452182', N'Decreto-Lei n.º 294/2009', N'13 de outubro de 2020')
 GO
 INSERT [dbo].[CoefientesAtualizacaoRendas] ([Id], [Ano], [Coeficiente], [DiplomaLegal], [UrlDiploma], [Lei], [DataPublicacao]) VALUES (4, N'2022', 1.0042999982833862, N'Aviso n.º 17989/2021', N'https://dre.pt/dre/detalhe/aviso/17989-2021-171775585', N'Decreto-Lei n.º 294/2009', N'13 de outubro de 2021')
 GO
@@ -8358,7 +1834,6 @@ GO
 SET IDENTITY_INSERT [dbo].[CoefientesAtualizacaoRendas] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Concelhos] ON 
-
 GO
 INSERT [dbo].[Concelhos] ([Id], [CodConcelho], [Descricao], [IdDistrito], [Coeficiente]) VALUES (1, 1401, N'Abrantes', 14, CAST(0.00330 AS Decimal(6, 5)))
 GO
@@ -8919,7 +2394,6 @@ GO
 SET IDENTITY_INSERT [dbo].[Concelhos] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Distritos] ON 
-
 GO
 INSERT [dbo].[Distritos] ([Id], [Descricao]) VALUES (1, N'Aveiro')
 GO
@@ -8960,7 +2434,6 @@ GO
 SET IDENTITY_INSERT [dbo].[Distritos] OFF
 GO
 SET IDENTITY_INSERT [dbo].[DistritosConcelhos] ON 
-
 GO
 INSERT [dbo].[DistritosConcelhos] ([Id], [CodigoDistrito], [DesignacaoDistrito], [CodigoConcelho], [DesignacaoConcelho]) VALUES (1, N'''01''', N'Aveiro', N'''0101''', N'Águeda')
 GO
@@ -9521,7 +2994,6 @@ GO
 SET IDENTITY_INSERT [dbo].[DistritosConcelhos] OFF
 GO
 SET IDENTITY_INSERT [dbo].[DocumentTypeCategories] ON 
-
 GO
 INSERT [dbo].[DocumentTypeCategories] ([Id], [Descricao]) VALUES (1, N'Imóveis                                           ')
 GO
@@ -9538,7 +3010,6 @@ GO
 SET IDENTITY_INSERT [dbo].[DocumentTypeCategories] OFF
 GO
 SET IDENTITY_INSERT [dbo].[DocumentTypes] ON 
-
 GO
 INSERT [dbo].[DocumentTypes] ([Id], [Name], [Description], [CreatedBy], [CreatedOn], [LastModifiedBy], [LastModifiedOn], [TypeCategoryId]) VALUES (1, N'Fotografias digitais', NULL, N'1', CAST(N'2023-01-31T12:23:48.560' AS DateTime), NULL, NULL, 2)
 GO
@@ -9582,7 +3053,6 @@ GO
 SET IDENTITY_INSERT [dbo].[DocumentTypes] OFF
 GO
 SET IDENTITY_INSERT [dbo].[EstadoCivil] ON 
-
 GO
 INSERT [dbo].[EstadoCivil] ([Id], [Descricao]) VALUES (2, N'Casado')
 GO
@@ -9597,7 +3067,6 @@ GO
 SET IDENTITY_INSERT [dbo].[EstadoCivil] OFF
 GO
 SET IDENTITY_INSERT [dbo].[EstadoConservacao] ON 
-
 GO
 INSERT [dbo].[EstadoConservacao] ([Id], [Descricao]) VALUES (7, N'A necessitar de obras')
 GO
@@ -9610,7 +3079,6 @@ GO
 SET IDENTITY_INSERT [dbo].[EstadoConservacao] OFF
 GO
 SET IDENTITY_INSERT [dbo].[EstadoPagamentoRenda] ON 
-
 GO
 INSERT [dbo].[EstadoPagamentoRenda] ([Id], [Descricao]) VALUES (1, N'Pago')
 GO
@@ -9621,7 +3089,6 @@ GO
 SET IDENTITY_INSERT [dbo].[EstadoPagamentoRenda] OFF
 GO
 SET IDENTITY_INSERT [dbo].[FormaPagamento] ON 
-
 GO
 INSERT [dbo].[FormaPagamento] ([Id], [Descricao]) VALUES (1, N'Dinheiro')
 GO
@@ -9636,14 +3103,12 @@ GO
 SET IDENTITY_INSERT [dbo].[FormaPagamento] OFF
 GO
 SET IDENTITY_INSERT [dbo].[IrsRendas] ON 
-
 GO
 INSERT [dbo].[IrsRendas] ([Id], [Ano]) VALUES (1, 2023)
 GO
 SET IDENTITY_INSERT [dbo].[IrsRendas] OFF
 GO
 SET IDENTITY_INSERT [dbo].[IrsRendas_Percentagens] ON 
-
 GO
 INSERT [dbo].[IrsRendas_Percentagens] ([Id], [ParentId], [Escalao_1], [Descricao_1], [Escalao_2], [Descricao_2], [Escalao_3], [Descricao_3], [Escalao_4], [Descricao_4], [Escalao_5], [Descricao_5]) VALUES (1, 1, 26, N'2 a 5 anos', 15, N'entre 5 e anos', 10, N'entre 10 e 20 anos', 5, N'mais de 20 anos', NULL, N'')
 GO
@@ -15414,7 +8879,6 @@ GO
 INSERT [dbo].[PopulacaoResidenteFreguesia$] ([Distrito (DT)], [Designação DT], [Concelho (CC)], [Designação CC], [Freguesia (FR)], [Designação FR], [PopRes_2011 (nº)], [Rural], [Litorâneo], [F10]) VALUES (N'''18''', N'Viseu', N'''1824''', N'Vouzela', N'''182415''', N'União das freguesias de Vouzela e Paços de Vilharigues', 1997, N'S', NULL, NULL)
 GO
 SET IDENTITY_INSERT [dbo].[RoleDetails] ON 
-
 GO
 INSERT [dbo].[RoleDetails] ([Id], [Descricao]) VALUES (1, N'Admin')
 GO
@@ -15423,7 +8887,6 @@ GO
 SET IDENTITY_INSERT [dbo].[RoleDetails] OFF
 GO
 SET IDENTITY_INSERT [dbo].[SituacaoFracao] ON 
-
 GO
 INSERT [dbo].[SituacaoFracao] ([Id], [Descricao]) VALUES (1, N'Alugada')
 GO
@@ -15438,7 +8901,6 @@ GO
 SET IDENTITY_INSERT [dbo].[SituacaoFracao] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipoCertificadoEnergetico] ON 
-
 GO
 INSERT [dbo].[TipoCertificadoEnergetico] ([Id], [Descricao]) VALUES (1, N'A+ (0% a 25%)')
 GO
@@ -15459,7 +8921,6 @@ GO
 SET IDENTITY_INSERT [dbo].[TipoCertificadoEnergetico] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipoContacto] ON 
-
 GO
 INSERT [dbo].[TipoContacto] ([Id], [Descricao], [Notas]) VALUES (1, N'Pinturas', N'')
 GO
@@ -15484,7 +8945,6 @@ GO
 SET IDENTITY_INSERT [dbo].[TipoContacto] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipoDespesa] ON 
-
 GO
 INSERT [dbo].[TipoDespesa] ([Id], [Descricao], [Id_CategoriaDespesa]) VALUES (1, N'Eletricidade', 4)
 GO
@@ -15525,7 +8985,6 @@ GO
 SET IDENTITY_INSERT [dbo].[TipoDespesa] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipologiaFracao] ON 
-
 GO
 INSERT [dbo].[TipologiaFracao] ([Id], [Descricao]) VALUES (1, N'T0')
 GO
@@ -15542,7 +9001,6 @@ GO
 SET IDENTITY_INSERT [dbo].[TipologiaFracao] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipoPropriedade] ON 
-
 GO
 INSERT [dbo].[TipoPropriedade] ([Id], [Descricao]) VALUES (1, N'Apartamento')
 GO
@@ -15563,7 +9021,6 @@ GO
 SET IDENTITY_INSERT [dbo].[TipoPropriedade] OFF
 GO
 SET IDENTITY_INSERT [dbo].[TipoRecebimento] ON 
-
 GO
 INSERT [dbo].[TipoRecebimento] ([Id], [Descricao]) VALUES (12, N'Acerto de renda')
 GO
@@ -15577,3 +9034,6728 @@ INSERT [dbo].[TipoRecebimento] ([Id], [Descricao]) VALUES (1, N'Pagamento parcia
 GO
 SET IDENTITY_INSERT [dbo].[TipoRecebimento] OFF
 GO
+SET ANSI_PADDING ON
+GO
+ALTER TABLE [dbo].[EstadoConservacao] ADD  CONSTRAINT [UQ__EstadoCo__008BA9EF8E35619D] UNIQUE NONCLUSTERED 
+(
+	[Descricao] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+ALTER TABLE [dbo].[RoleDetails] ADD  CONSTRAINT [UQ__RoleDeta__008BA9EF5C67D6EB] UNIQUE NONCLUSTERED 
+(
+	[Descricao] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+ALTER TABLE [dbo].[sysdiagrams] ADD  CONSTRAINT [UK_principal_name] UNIQUE NONCLUSTERED 
+(
+	[principal_id] ASC,
+	[name] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+ALTER TABLE [dbo].[TipoContacto] ADD  CONSTRAINT [UQ__TipoCont__008BA9EF92983270] UNIQUE NONCLUSTERED 
+(
+	[Descricao] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+ALTER TABLE [dbo].[TipologiaFracao] ADD  CONSTRAINT [UQ__Tipologi__008BA9EFD9EA73B7] UNIQUE NONCLUSTERED 
+(
+	[Descricao] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, SORT_IN_TEMPDB = OFF, IGNORE_DUP_KEY = OFF, ONLINE = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[ApplicationSettings] ADD  CONSTRAINT [DF_ApplicationSettings_PrazoInspecaoGas]  DEFAULT ((5)) FOR [PrazoInspecaoGas]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_Caucao]  DEFAULT ((1)) FOR [Caucao]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_ContratoEmitido]  DEFAULT ((0)) FOR [ContratoEmitido]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_Ativo]  DEFAULT ((1)) FOR [Ativo]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_ArrendamentoNovo]  DEFAULT ((0)) FOR [ArrendamentoNovo]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_EstadoPagamento]  DEFAULT ('Pendente') FOR [EstadoPagamento]
+GO
+ALTER TABLE [dbo].[Arrendamentos] ADD  CONSTRAINT [DF_Arrendamento_RenovacaoAutomatica]  DEFAULT ((1)) FOR [RenovacaoAutomatica]
+GO
+ALTER TABLE [dbo].[CC_Inquilinos] ADD  CONSTRAINT [DF_CC_Inquilinos_Renda]  DEFAULT ((0)) FOR [Renda]
+GO
+ALTER TABLE [dbo].[Concelhos] ADD  CONSTRAINT [DF_Concelhos_Coeficiente]  DEFAULT ((0.033)) FOR [Coeficiente]
+GO
+ALTER TABLE [dbo].[Contratos] ADD  CONSTRAINT [DF__Contratos__Cauca__412EB0B6]  DEFAULT ((1)) FOR [Caucao]
+GO
+ALTER TABLE [dbo].[DocumentosInquilino] ADD  CONSTRAINT [DF_DocumentosInquilino_UploadDate]  DEFAULT (getdate()) FOR [CreationDate]
+GO
+ALTER TABLE [dbo].[DocumentosInquilino] ADD  CONSTRAINT [DF_DocumentosInquilino_Status]  DEFAULT ((1)) FOR [Status]
+GO
+ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF__Documents__Docum__7A672E12]  DEFAULT ((0)) FOR [DocumentTypeId]
+GO
+ALTER TABLE [dbo].[Documents] ADD  CONSTRAINT [DF_Documents_LocalUpload]  DEFAULT ((1)) FOR [LocalUpload]
+GO
+ALTER TABLE [dbo].[DocumentTypes] ADD  CONSTRAINT [DF_DocumentTypes_CreatedBy]  DEFAULT ((1)) FOR [CreatedBy]
+GO
+ALTER TABLE [dbo].[DocumentTypes] ADD  CONSTRAINT [DF_DocumentTypes_CreatedOn]  DEFAULT (getdate()) FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF_Fiadores_Ativo]  DEFAULT ((1)) FOR [Ativo]
+GO
+ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiador__Ident__44FF419A]  DEFAULT ((0)) FOR [Identificacao]
+GO
+ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiadores__NIF__440B1D61]  DEFAULT ((123456789)) FOR [NIF]
+GO
+ALTER TABLE [dbo].[Fiadores] ADD  CONSTRAINT [DF__Fiador__Conta__4316F928]  DEFAULT ((0)) FOR [Contacto2]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Ativa]  DEFAULT ((1)) FOR [Ativa]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_GasCanalizado]  DEFAULT ((0)) FOR [GasCanalizado]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_CozinhaEquipada]  DEFAULT ((0)) FOR [CozinhaEquipada]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Varanda]  DEFAULT ((0)) FOR [Varanda]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Garagem]  DEFAULT ((0)) FOR [Garagem]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Arrecadacao]  DEFAULT ((0)) FOR [Arrecadacao]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_LugarEstacionamento]  DEFAULT ((0)) FOR [LugarEstacionamento]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Fotos]  DEFAULT ((0)) FOR [Fotos]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_Tipologia]  DEFAULT ((1)) FOR [Tipologia]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_LicencaHabitacao]  DEFAULT ('') FOR [LicencaHabitacao]
+GO
+ALTER TABLE [dbo].[Fracoes] ADD  CONSTRAINT [DF_Fracoes_ValorRenda]  DEFAULT ((0)) FOR [ValorRenda]
+GO
+ALTER TABLE [dbo].[HelpIndex_Parent] ADD  DEFAULT (getdate()) FOR [dCriacao]
+GO
+ALTER TABLE [dbo].[HistoricoArrendamentos] ADD  CONSTRAINT [DF_HistoricoArrendamentos_CreatedAt]  DEFAULT (sysdatetime()) FOR [CreatedAt]
+GO
+ALTER TABLE [dbo].[HistoricoEnvioCartas] ADD  CONSTRAINT [DF_HistoricoEnvioCartas_Tentativa]  DEFAULT ((1)) FOR [Tentativa]
+GO
+ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Numero__3A81B327]  DEFAULT ('') FOR [Numero]
+GO
+ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Fregues__3B75D760]  DEFAULT ('') FOR [Freguesia]
+GO
+ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Concelh__3C69FB99]  DEFAULT ('') FOR [Concelho]
+GO
+ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Elevado__3D5E1FD2]  DEFAULT ((0)) FOR [Elevador]
+GO
+ALTER TABLE [dbo].[Imoveis] ADD  CONSTRAINT [DF__Imoveis__Conserv__3E52440B]  DEFAULT ((1)) FOR [Conservacao]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF_Inquilinos_Ativo]  DEFAULT ((1)) FOR [Ativo]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Ident__44FF419A]  DEFAULT ((43625894)) FOR [Identificacao]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilinos__NIF__440B1D61]  DEFAULT ((122623878)) FOR [NIF]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Conta__4316F928]  DEFAULT ((0)) FOR [Contacto2]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF_Inquilinos_SaldoCorrente]  DEFAULT ((0)) FOR [SaldoCorrente]
+GO
+ALTER TABLE [dbo].[Inquilinos] ADD  CONSTRAINT [DF__Inquilino__Titul__45F365D3]  DEFAULT ((1)) FOR [Titular]
+GO
+ALTER TABLE [dbo].[Mediadores] ADD  DEFAULT (getdate()) FOR [DataContacto]
+GO
+ALTER TABLE [dbo].[ProcessamentoAtualizacaoRendas] ADD  CONSTRAINT [DF_ProcessamentoAtualizacaoRendas_DataProcessamento]  DEFAULT (getdate()) FOR [DataProcessamento]
+GO
+ALTER TABLE [dbo].[ProcessamentoRendas] ADD  CONSTRAINT [DF_ProcessamentoRendas_DataProcessamento]  DEFAULT (getdate()) FOR [DataProcessamento]
+GO
+ALTER TABLE [dbo].[Proprietarios] ADD  CONSTRAINT [DF__Proprieta__Ident__47DBAE45]  DEFAULT ((43625894)) FOR [Identificacao]
+GO
+ALTER TABLE [dbo].[Proprietarios] ADD  CONSTRAINT [DF__Proprietari__NIF__48CFD27E]  DEFAULT ((122623878)) FOR [NIF]
+GO
+ALTER TABLE [dbo].[Recebimentos] ADD  CONSTRAINT [DF_Recebimentos_Estado]  DEFAULT ((1)) FOR [Estado]
+GO
+ALTER TABLE [dbo].[Recebimentos] ADD  CONSTRAINT [DF_Recebimentos_Renda]  DEFAULT ((1)) FOR [Renda]
+GO
+ALTER TABLE [Identity].[RoleClaims] ADD  DEFAULT ('0001-01-01T00:00:00.0000000') FOR [CreatedOn]
+GO
+ALTER TABLE [Identity].[Roles] ADD  DEFAULT ('0001-01-01T00:00:00.0000000') FOR [CreatedOn]
+GO
+ALTER TABLE [dbo].[Arrendamentos]  WITH CHECK ADD  CONSTRAINT [FK_Arrendamentos_Fracoes] FOREIGN KEY([ID_Fracao])
+REFERENCES [dbo].[Fracoes] ([Id])
+GO
+ALTER TABLE [dbo].[Arrendamentos] CHECK CONSTRAINT [FK_Arrendamentos_Fracoes]
+GO
+ALTER TABLE [dbo].[Arrendamentos]  WITH CHECK ADD  CONSTRAINT [FK_Arrendamentos_Inquilinos] FOREIGN KEY([ID_Inquilino])
+REFERENCES [dbo].[Inquilinos] ([Id])
+GO
+ALTER TABLE [dbo].[Arrendamentos] CHECK CONSTRAINT [FK_Arrendamentos_Inquilinos]
+GO
+ALTER TABLE [dbo].[AspNetRoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[AspNetRoles] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AspNetRoleClaims] CHECK CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId]
+GO
+ALTER TABLE [dbo].[AspNetUserClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId] FOREIGN KEY([UserId])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AspNetUserClaims] CHECK CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId]
+GO
+ALTER TABLE [dbo].[AspNetUserLogins]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserLogins_AspNetUsers_UserId] FOREIGN KEY([UserId])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AspNetUserLogins] CHECK CONSTRAINT [FK_AspNetUserLogins_AspNetUsers_UserId]
+GO
+ALTER TABLE [dbo].[AspNetUserRoles]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserRoles_AspNetRoles_RoleId] FOREIGN KEY([RoleId])
+REFERENCES [dbo].[AspNetRoles] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_AspNetUserRoles_AspNetRoles_RoleId]
+GO
+ALTER TABLE [dbo].[AspNetUserRoles]  WITH CHECK ADD  CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId] FOREIGN KEY([UserId])
+REFERENCES [dbo].[AspNetUsers] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId]
+GO
+ALTER TABLE [dbo].[ChatHistory]  WITH CHECK ADD  CONSTRAINT [FK_ChatHistory_Users_FromUserId] FOREIGN KEY([FromUserId])
+REFERENCES [Identity].[Users] ([Id])
+GO
+ALTER TABLE [dbo].[ChatHistory] CHECK CONSTRAINT [FK_ChatHistory_Users_FromUserId]
+GO
+ALTER TABLE [dbo].[ChatHistory]  WITH CHECK ADD  CONSTRAINT [FK_ChatHistory_Users_ToUserId] FOREIGN KEY([ToUserId])
+REFERENCES [Identity].[Users] ([Id])
+GO
+ALTER TABLE [dbo].[ChatHistory] CHECK CONSTRAINT [FK_ChatHistory_Users_ToUserId]
+GO
+ALTER TABLE [dbo].[Concelhos]  WITH CHECK ADD  CONSTRAINT [FK_Concelhos_Concelhos] FOREIGN KEY([Id])
+REFERENCES [dbo].[Concelhos] ([Id])
+GO
+ALTER TABLE [dbo].[Concelhos] CHECK CONSTRAINT [FK_Concelhos_Concelhos]
+GO
+ALTER TABLE [dbo].[Contactos]  WITH CHECK ADD  CONSTRAINT [FK_Contactos_TipoContacto] FOREIGN KEY([ID_TipoContacto])
+REFERENCES [dbo].[TipoContacto] ([Id])
+GO
+ALTER TABLE [dbo].[Contactos] CHECK CONSTRAINT [FK_Contactos_TipoContacto]
+GO
+ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Fiadores] FOREIGN KEY([ID_Fiador])
+REFERENCES [dbo].[Fiadores] ([Id])
+GO
+ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Fiadores]
+GO
+ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Fracoes] FOREIGN KEY([ID_Fracao])
+REFERENCES [dbo].[Fracoes] ([Id])
+GO
+ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Fracoes]
+GO
+ALTER TABLE [dbo].[Contratos]  WITH CHECK ADD  CONSTRAINT [FK_Contratos_Inquilinos] FOREIGN KEY([ID_Inquilino])
+REFERENCES [dbo].[Inquilinos] ([Id])
+GO
+ALTER TABLE [dbo].[Contratos] CHECK CONSTRAINT [FK_Contratos_Inquilinos]
+GO
+ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_CategoriaDespesa] FOREIGN KEY([ID_CategoriaDespesa])
+REFERENCES [dbo].[CategoriaDespesa] ([Id])
+GO
+ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_CategoriaDespesa]
+GO
+ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_FormaPagamento] FOREIGN KEY([ID_ModoPagamento])
+REFERENCES [dbo].[FormaPagamento] ([Id])
+GO
+ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_FormaPagamento]
+GO
+ALTER TABLE [dbo].[Despesas]  WITH CHECK ADD  CONSTRAINT [FK_Despesas_TipoDespesa] FOREIGN KEY([ID_TipoDespesa])
+REFERENCES [dbo].[TipoDespesa] ([Id])
+GO
+ALTER TABLE [dbo].[Despesas] CHECK CONSTRAINT [FK_Despesas_TipoDespesa]
+GO
+ALTER TABLE [dbo].[DocumentExtendedAttributes]  WITH CHECK ADD  CONSTRAINT [FK_DocumentExtendedAttributes_Documents_EntityId] FOREIGN KEY([EntityId])
+REFERENCES [dbo].[Documents] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[DocumentExtendedAttributes] CHECK CONSTRAINT [FK_DocumentExtendedAttributes_Documents_EntityId]
+GO
+ALTER TABLE [dbo].[DocumentosInquilino]  WITH CHECK ADD  CONSTRAINT [FK_DocumentosInquilino_Inquilinos] FOREIGN KEY([TenantId])
+REFERENCES [dbo].[Inquilinos] ([Id])
+GO
+ALTER TABLE [dbo].[DocumentosInquilino] CHECK CONSTRAINT [FK_DocumentosInquilino_Inquilinos]
+GO
+ALTER TABLE [dbo].[Documents]  WITH CHECK ADD  CONSTRAINT [FK_Documents_DocumentTypes] FOREIGN KEY([DocumentTypeId])
+REFERENCES [dbo].[DocumentTypes] ([Id])
+GO
+ALTER TABLE [dbo].[Documents] CHECK CONSTRAINT [FK_Documents_DocumentTypes]
+GO
+ALTER TABLE [dbo].[Fiadores]  WITH CHECK ADD  CONSTRAINT [FK_Fiadores_EstadoCivil] FOREIGN KEY([ID_EstadoCivil])
+REFERENCES [dbo].[EstadoCivil] ([Id])
+GO
+ALTER TABLE [dbo].[Fiadores] CHECK CONSTRAINT [FK_Fiadores_EstadoCivil]
+GO
+ALTER TABLE [dbo].[Fiadores]  WITH CHECK ADD  CONSTRAINT [FK_Fiadores_Inquilinos] FOREIGN KEY([IdInquilino])
+REFERENCES [dbo].[Inquilinos] ([Id])
+GO
+ALTER TABLE [dbo].[Fiadores] CHECK CONSTRAINT [FK_Fiadores_Inquilinos]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_EstadoConservacao] FOREIGN KEY([Conservacao])
+REFERENCES [dbo].[EstadoConservacao] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_EstadoConservacao]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_Imoveis] FOREIGN KEY([Id_Imovel])
+REFERENCES [dbo].[Imoveis] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_Imoveis]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_SituacaoFracao] FOREIGN KEY([Situacao])
+REFERENCES [dbo].[SituacaoFracao] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_SituacaoFracao]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipoCertificadoEnergetico] FOREIGN KEY([ID_CertificadoEnergetico])
+REFERENCES [dbo].[TipoCertificadoEnergetico] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipoCertificadoEnergetico]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipologiaFracao] FOREIGN KEY([Tipologia])
+REFERENCES [dbo].[TipologiaFracao] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipologiaFracao]
+GO
+ALTER TABLE [dbo].[Fracoes]  WITH CHECK ADD  CONSTRAINT [FK_Fracoes_TipoPropriedade] FOREIGN KEY([ID_TipoPropriedade])
+REFERENCES [dbo].[TipoPropriedade] ([Id])
+GO
+ALTER TABLE [dbo].[Fracoes] CHECK CONSTRAINT [FK_Fracoes_TipoPropriedade]
+GO
+ALTER TABLE [dbo].[HelpIndex]  WITH CHECK ADD  CONSTRAINT [FK_HelpIndex_HelpIndex_Parent] FOREIGN KEY([ID_Parent])
+REFERENCES [dbo].[HelpIndex_Parent] ([Id])
+GO
+ALTER TABLE [dbo].[HelpIndex] CHECK CONSTRAINT [FK_HelpIndex_HelpIndex_Parent]
+GO
+ALTER TABLE [dbo].[ImagensFracoes]  WITH CHECK ADD  CONSTRAINT [FK_ImagensFracoes_Fracoes] FOREIGN KEY([Id_Fracao])
+REFERENCES [dbo].[Fracoes] ([Id])
+GO
+ALTER TABLE [dbo].[ImagensFracoes] CHECK CONSTRAINT [FK_ImagensFracoes_Fracoes]
+GO
+ALTER TABLE [dbo].[Imoveis]  WITH CHECK ADD  CONSTRAINT [FK_Imoveis_EstadoConservacao] FOREIGN KEY([Conservacao])
+REFERENCES [dbo].[EstadoConservacao] ([Id])
+GO
+ALTER TABLE [dbo].[Imoveis] CHECK CONSTRAINT [FK_Imoveis_EstadoConservacao]
+GO
+ALTER TABLE [dbo].[Inquilinos]  WITH CHECK ADD  CONSTRAINT [FK_Inquilinos_EstadoCivil] FOREIGN KEY([ID_EstadoCivil])
+REFERENCES [dbo].[EstadoCivil] ([Id])
+GO
+ALTER TABLE [dbo].[Inquilinos] CHECK CONSTRAINT [FK_Inquilinos_EstadoCivil]
+GO
+ALTER TABLE [dbo].[Recebimentos]  WITH CHECK ADD  CONSTRAINT [FK_Recebimentos_Fracoes] FOREIGN KEY([ID_Propriedade])
+REFERENCES [dbo].[Fracoes] ([Id])
+GO
+ALTER TABLE [dbo].[Recebimentos] CHECK CONSTRAINT [FK_Recebimentos_Fracoes]
+GO
+ALTER TABLE [dbo].[Recebimentos]  WITH CHECK ADD  CONSTRAINT [FK_Recebimentos_Inquilinos] FOREIGN KEY([ID_Inquilino])
+REFERENCES [dbo].[Inquilinos] ([Id])
+GO
+ALTER TABLE [dbo].[Recebimentos] CHECK CONSTRAINT [FK_Recebimentos_Inquilinos]
+GO
+ALTER TABLE [Identity].[RoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_RoleClaims_Roles_RoleId] FOREIGN KEY([RoleId])
+REFERENCES [Identity].[Roles] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[RoleClaims] CHECK CONSTRAINT [FK_RoleClaims_Roles_RoleId]
+GO
+ALTER TABLE [Identity].[UserClaims]  WITH CHECK ADD  CONSTRAINT [FK_UserClaims_Users_UserId] FOREIGN KEY([UserId])
+REFERENCES [Identity].[Users] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[UserClaims] CHECK CONSTRAINT [FK_UserClaims_Users_UserId]
+GO
+ALTER TABLE [Identity].[UserLogins]  WITH CHECK ADD  CONSTRAINT [FK_UserLogins_Users_UserId] FOREIGN KEY([UserId])
+REFERENCES [Identity].[Users] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[UserLogins] CHECK CONSTRAINT [FK_UserLogins_Users_UserId]
+GO
+ALTER TABLE [Identity].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_Roles_RoleId] FOREIGN KEY([RoleId])
+REFERENCES [Identity].[Roles] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_Roles_RoleId]
+GO
+ALTER TABLE [Identity].[UserRoles]  WITH CHECK ADD  CONSTRAINT [FK_UserRoles_Users_UserId] FOREIGN KEY([UserId])
+REFERENCES [Identity].[Users] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[UserRoles] CHECK CONSTRAINT [FK_UserRoles_Users_UserId]
+GO
+ALTER TABLE [Identity].[UserTokens]  WITH CHECK ADD  CONSTRAINT [FK_UserTokens_Users_UserId] FOREIGN KEY([UserId])
+REFERENCES [Identity].[Users] ([Id])
+ON DELETE CASCADE
+GO
+ALTER TABLE [Identity].[UserTokens] CHECK CONSTRAINT [FK_UserTokens_Users_UserId]
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_alterdiagram
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null,
+		@version 	int,
+		@definition 	varbinary(max)
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+	
+		declare @theId 			int
+		declare @retval 		int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+		declare @ShouldChangeUID	int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR ('Invalid ARG', 16, 1)
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID();	 
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		revert;
+	
+		select @ShouldChangeUID = 0
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		
+		if(@DiagId IS NULL or (@IsDbo = 0 and @theId <> @UIDFound))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
+			return -3
+		end
+	
+		if(@IsDbo <> 0)
+		begin
+			if(@UIDFound is null or USER_NAME(@UIDFound) is null) -- invalid principal_id
+			begin
+				select @ShouldChangeUID = 1 ;
+			end
+		end
+
+		-- update dds data			
+		update dbo.sysdiagrams set definition = @definition where diagram_id = @DiagId ;
+
+		-- change owner
+		if(@ShouldChangeUID = 1)
+			update dbo.sysdiagrams set principal_id = @theId where diagram_id = @DiagId ;
+
+		-- update dds version
+		if(@version is not null)
+			update dbo.sysdiagrams set version = @version where diagram_id = @DiagId ;
+
+		return 0
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_creatediagram
+	(
+		@diagramname 	sysname,
+		@owner_id		int	= null, 	
+		@version 		int,
+		@definition 	varbinary(max)
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+	
+		declare @theId int
+		declare @retval int
+		declare @IsDbo	int
+		declare @userName sysname
+		if(@version is null or @diagramname is null)
+		begin
+			RAISERROR (N'E_INVALIDARG', 16, 1);
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID(); 
+		select @IsDbo = IS_MEMBER(N'db_owner');
+		revert; 
+		
+		if @owner_id is null
+		begin
+			select @owner_id = @theId;
+		end
+		else
+		begin
+			if @theId <> @owner_id
+			begin
+				if @IsDbo = 0
+				begin
+					RAISERROR (N'E_INVALIDARG', 16, 1);
+					return -1
+				end
+				select @theId = @owner_id
+			end
+		end
+		-- next 2 line only for test, will be removed after define name unique
+		if EXISTS(select diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @diagramname)
+		begin
+			RAISERROR ('The name is already used.', 16, 1);
+			return -2
+		end
+	
+		insert into dbo.sysdiagrams(name, principal_id , version, definition)
+				VALUES(@diagramname, @theId, @version, @definition) ;
+		
+		select @retval = @@IDENTITY 
+		return @retval
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_dropdiagram
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+		declare @theId 			int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR ('Invalid value', 16, 1);
+			return -1
+		end
+	
+		EXECUTE AS CALLER;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		REVERT; 
+		
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
+			return -3
+		end
+	
+		delete from dbo.sysdiagrams where diagram_id = @DiagId;
+	
+		return 0;
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_helpdiagramdefinition
+	(
+		@diagramname 	sysname,
+		@owner_id	int	= null 		
+	)
+	WITH EXECUTE AS N'dbo'
+	AS
+	BEGIN
+		set nocount on
+
+		declare @theId 		int
+		declare @IsDbo 		int
+		declare @DiagId		int
+		declare @UIDFound	int
+	
+		if(@diagramname is null)
+		begin
+			RAISERROR (N'E_INVALIDARG', 16, 1);
+			return -1
+		end
+	
+		execute as caller;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner');
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		revert; 
+	
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname;
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId ))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1);
+			return -3
+		end
+
+		select version, definition FROM dbo.sysdiagrams where diagram_id = @DiagId ; 
+		return 0
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_helpdiagrams
+	(
+		@diagramname sysname = NULL,
+		@owner_id int = NULL
+	)
+	WITH EXECUTE AS N'dbo'
+	AS
+	BEGIN
+		DECLARE @user sysname
+		DECLARE @dboLogin bit
+		EXECUTE AS CALLER;
+			SET @user = USER_NAME();
+			SET @dboLogin = CONVERT(bit,IS_MEMBER('db_owner'));
+		REVERT;
+		SELECT
+			[Database] = DB_NAME(),
+			[Name] = name,
+			[ID] = diagram_id,
+			[Owner] = USER_NAME(principal_id),
+			[OwnerID] = principal_id
+		FROM
+			sysdiagrams
+		WHERE
+			(@dboLogin = 1 OR USER_NAME(principal_id) = @user) AND
+			(@diagramname IS NULL OR name = @diagramname) AND
+			(@owner_id IS NULL OR principal_id = @owner_id)
+		ORDER BY
+			4, 5, 1
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_renamediagram
+	(
+		@diagramname 		sysname,
+		@owner_id		int	= null,
+		@new_diagramname	sysname
+	
+	)
+	WITH EXECUTE AS 'dbo'
+	AS
+	BEGIN
+		set nocount on
+		declare @theId 			int
+		declare @IsDbo 			int
+		
+		declare @UIDFound 		int
+		declare @DiagId			int
+		declare @DiagIdTarg		int
+		declare @u_name			sysname
+		if((@diagramname is null) or (@new_diagramname is null))
+		begin
+			RAISERROR ('Invalid value', 16, 1);
+			return -1
+		end
+	
+		EXECUTE AS CALLER;
+		select @theId = DATABASE_PRINCIPAL_ID();
+		select @IsDbo = IS_MEMBER(N'db_owner'); 
+		if(@owner_id is null)
+			select @owner_id = @theId;
+		REVERT;
+	
+		select @u_name = USER_NAME(@owner_id)
+	
+		select @DiagId = diagram_id, @UIDFound = principal_id from dbo.sysdiagrams where principal_id = @owner_id and name = @diagramname 
+		if(@DiagId IS NULL or (@IsDbo = 0 and @UIDFound <> @theId))
+		begin
+			RAISERROR ('Diagram does not exist or you do not have permission.', 16, 1)
+			return -3
+		end
+	
+		-- if((@u_name is not null) and (@new_diagramname = @diagramname))	-- nothing will change
+		--	return 0;
+	
+		if(@u_name is null)
+			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @theId and name = @new_diagramname
+		else
+			select @DiagIdTarg = diagram_id from dbo.sysdiagrams where principal_id = @owner_id and name = @new_diagramname
+	
+		if((@DiagIdTarg is not null) and  @DiagId <> @DiagIdTarg)
+		begin
+			RAISERROR ('The name is already used.', 16, 1);
+			return -2
+		end		
+	
+		if(@u_name is null)
+			update dbo.sysdiagrams set [name] = @new_diagramname, principal_id = @theId where diagram_id = @DiagId
+		else
+			update dbo.sysdiagrams set [name] = @new_diagramname where diagram_id = @DiagId
+		return 0
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE dbo.sp_upgraddiagrams
+	AS
+	BEGIN
+		IF OBJECT_ID(N'dbo.sysdiagrams') IS NOT NULL
+			return 0;
+	
+		CREATE TABLE dbo.sysdiagrams
+		(
+			name sysname NOT NULL,
+			principal_id int NOT NULL,	-- we may change it to varbinary(85)
+			diagram_id int PRIMARY KEY IDENTITY,
+			version int,
+	
+			definition varbinary(max)
+			CONSTRAINT UK_principal_name UNIQUE
+			(
+				principal_id,
+				name
+			)
+		);
+
+
+		/* Add this if we need to have some form of extended properties for diagrams */
+		/*
+		IF OBJECT_ID(N'dbo.sysdiagram_properties') IS NULL
+		BEGIN
+			CREATE TABLE dbo.sysdiagram_properties
+			(
+				diagram_id int,
+				name sysname,
+				value varbinary(max) NOT NULL
+			)
+		END
+		*/
+
+		IF OBJECT_ID(N'dbo.dtproperties') IS NOT NULL
+		begin
+			insert into dbo.sysdiagrams
+			(
+				[name],
+				[principal_id],
+				[version],
+				[definition]
+			)
+			select	 
+				convert(sysname, dgnm.[uvalue]),
+				DATABASE_PRINCIPAL_ID(N'dbo'),			-- will change to the sid of sa
+				0,							-- zero for old format, dgdef.[version],
+				dgdef.[lvalue]
+			from dbo.[dtproperties] dgnm
+				inner join dbo.[dtproperties] dggd on dggd.[property] = 'DtgSchemaGUID' and dggd.[objectid] = dgnm.[objectid]	
+				inner join dbo.[dtproperties] dgdef on dgdef.[property] = 'DtgSchemaDATA' and dgdef.[objectid] = dgnm.[objectid]
+				
+			where dgnm.[property] = 'DtgSchemaNAME' and dggd.[uvalue] like N'_EA3E6268-D998-11CE-9454-00AA00A3F36E_' 
+			return 2;
+		end
+		return 1;
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[tools_CS_SPROC_Builder] 
+(
+@objName nvarchar(100)
+)
+AS
+/*
+___________________________________________________________________
+Name:  		CS SPROC Builder
+Version: 	1
+Date:    	10/09/2004
+Author:  	Paul McKenzie
+Description: 	Call this stored procedue passing the name of your 
+  database object that you wish to insert/update
+  from .NET (C#) and the code returns code to copy
+  and paste into your application.  This version is
+  for use with "Microsoft Data Application Block".
+  
+Version: 	1.1
+Date:	 	17/02/2006
+Author:	 	Paul McKenzie
+Description:	a) Updated to include 'UniqueIdentifier' Data Type
+		b) Support for 'ParameterDirection.Output'
+
+*/
+SET NOCOUNT ON
+DECLARE @parameterCount int
+DECLARE @errMsg varchar(100)
+DECLARE @parameterAt varchar(1)
+DECLARE @connName varchar(100)
+DECLARE @outputValues varchar(100)
+--Change the following variable to the name of your connection instance
+SET @connName='conn.Connection'
+SET @parameterAt=''
+SET @outputValues=''
+SELECT 
+ 	dbo.sysobjects.name AS ObjName, 
+ 	dbo.sysobjects.xtype AS ObjType,
+ 	dbo.syscolumns.name AS ColName, 
+ 	dbo.syscolumns.colorder AS ColOrder, 
+ 	dbo.syscolumns.length AS ColLen, 
+ 	dbo.syscolumns.colstat AS ColKey, 
+ 	dbo.syscolumns.isoutparam AS ColIsOut,
+ 	dbo.systypes.xtype
+INTO #t_obj
+FROM         
+ 	dbo.syscolumns INNER JOIN
+ 	dbo.sysobjects ON dbo.syscolumns.id = dbo.sysobjects.id INNER JOIN
+ 	dbo.systypes ON dbo.syscolumns.xtype = dbo.systypes.xtype
+WHERE     
+ 	(dbo.sysobjects.name = @objName) 
+ 	AND 
+ 	(dbo.systypes.status <> 1) 
+ORDER BY 
+ 	dbo.sysobjects.name, 
+ 	dbo.syscolumns.colorder
+
+SET @parameterCount=(SELECT count(*) FROM #t_obj)
+IF(@parameterCount<1) SET @errMsg='No Parameters/Fields found for ' + @objName
+IF(@errMsg is null)
+	BEGIN
+  		PRINT 'try'
+  		PRINT '   {'
+  		PRINT '   SqlParameter[] paramsToStore = new SqlParameter[' + cast(@parameterCount as varchar) + '];'
+  		PRINT ''
+  
+  		DECLARE @source_name nvarchar,@source_type varchar,
+    			@col_name nvarchar(100),@col_order int,@col_type varchar(20),
+    			@col_len int,@col_key int,@col_xtype int,@col_redef varchar(20), @col_isout tinyint
+ 
+  		DECLARE cur CURSOR FOR
+  		SELECT * FROM #t_obj
+  		OPEN cur
+  		-- Perform the first fetch.
+  		FETCH NEXT FROM cur INTO @source_name,@source_type,@col_name,@col_order,@col_len,@col_key,@col_isout,@col_xtype
+ 
+  			if(@source_type=N'U') SET @parameterAt='@'
+  			-- Check @@FETCH_STATUS to see if there are any more rows to fetch.
+  			WHILE @@FETCH_STATUS = 0
+  				BEGIN
+   				SET @col_redef=(SELECT CASE @col_xtype
+					WHEN 34 THEN 'Image'
+					WHEN 35 THEN 'Text'
+					WHEN 36 THEN 'UniqueIdentifier'
+					WHEN 48 THEN 'TinyInt'
+					WHEN 52 THEN 'SmallInt'
+					WHEN 56 THEN 'Int'
+					WHEN 58 THEN 'SmallDateTime'
+					WHEN 59 THEN 'Real'
+					WHEN 60 THEN 'Money'
+					WHEN 61 THEN 'DateTime'
+					WHEN 62 THEN 'Float'
+					WHEN 99 THEN 'NText'
+					WHEN 104 THEN 'Bit'
+					WHEN 106 THEN 'Decimal'
+					WHEN 122 THEN 'SmallMoney'
+					WHEN 127 THEN 'BigInt'
+					WHEN 165 THEN 'VarBinary'
+					WHEN 167 THEN 'VarChar'
+					WHEN 173 THEN 'Binary'
+					WHEN 175 THEN 'Char'
+					WHEN 231 THEN 'NVarChar'
+					WHEN 239 THEN 'NChar'
+					ELSE '!MISSING'
+					END AS C) 
+
+				--Write out the parameter
+				PRINT '   paramsToStore[' + cast(@col_order-1 as varchar) 
+				    + '] = new SqlParameter("' + @parameterAt + @col_name
+				    + '", SqlDbType.' + @col_redef
+				    + ');'
+
+				--Write out the parameter direction it is output
+				IF(@col_isout=1)
+					BEGIN
+						PRINT '   paramsToStore['+ cast(@col_order-1 as varchar) +'].Direction=ParameterDirection.Output;'
+						SET @outputValues=@outputValues+'   ?=paramsToStore['+ cast(@col_order-1 as varchar) +'].Value;'
+					END
+					ELSE
+					BEGIN
+						--Write out the parameter value line
+   						PRINT '   paramsToStore['+ cast(@col_order-1 as varchar) + '].Value = ?;'
+					END
+				--If the type is a string then output the size declaration
+				IF(@col_xtype=231)OR(@col_xtype=167)OR(@col_xtype=175)OR(@col_xtype=99)OR(@col_xtype=35)
+					BEGIN
+						PRINT '   paramsToStore[' + cast(@col_order-1 as varchar) + '].Size=' + cast(@col_len as varchar) + ';'
+					END
+
+				 -- This is executed as long as the previous fetch succeeds.
+      			FETCH NEXT FROM cur INTO @source_name,@source_type,@col_name,@col_order, @col_len,@col_key,@col_isout,@col_xtype 
+  	END
+  PRINT ''
+  PRINT '   SqlHelper.ExecuteNonQuery(' + @connName + ', CommandType.StoredProcedure,"' + @objName + '", paramsToStore);'
+  PRINT @outputValues
+  PRINT '   }'
+  PRINT 'catch(Exception excp)'
+  PRINT '   {'
+  PRINT '   }'
+  PRINT 'finally'
+  PRINT '   {'
+  PRINT '   ' + @connName + '.Dispose();'
+  PRINT '   ' + @connName + '.Close();'
+  PRINT '   }'  
+  CLOSE cur
+  DEALLOCATE cur
+ END
+if(LEN(@errMsg)>0) PRINT @errMsg
+DROP TABLE #t_obj
+SET NOCOUNT ON
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Appointments_Delete]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DELETE Appointments
+	WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Appointments_GetAll]
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT * FROM Appointments
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Appointments_GetById]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	SELECT * FROM Appointments
+	WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Appointments_Insert]
+(
+	@Id int,
+	@Subject varchar(256),
+	@Location varchar(256),
+	@Description varchar(512),
+	@StartTime datetime,
+	@EndTime datetime,
+	@IsAllDay bit,
+	@CategoryColor varchar(50),
+	@RecurrenceRule varchar(512),
+	@RecurrenceID int,
+	@FollowingID int,
+	@RecurrenceException varchar(1024),
+	@StartTimeZone varchar(128),
+	@EndTimeZone varchar(128),
+	@ApptType int
+
+)
+AS
+	SET NOCOUNT OFF;
+	INSERT INTO [Appointments] 
+		([Subject], [Location], [Description], StartTime, EndTime, IsAllDay, 
+			CategoryColor, RecurrenceRule, RecurrenceId, FollowingId, 
+			RecurrenceException, StartTimeZone, EndTimeZone, ApptType) 
+	VALUES
+		(@Subject, @Location, @Description, @StartTime, @EndTime, @IsAllDay, 
+			@CategoryColor, @RecurrenceRule, @RecurrenceId, @FollowingId, 
+			@RecurrenceException, @StartTimeZone, @EndTimeZone, @ApptType);
+
+	SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Appointments_Update]
+(
+	@Id int,
+	@Subject varchar(256),
+	@Location varchar(256),
+	@Description varchar(512),
+	@StartTime datetime,
+	@EndTime datetime,
+	@IsAllDay bit,
+	@CategoryColor varchar(50),
+	@RecurrenceRule varchar(512),
+	@RecurrenceID int,
+	@FollowingID int,
+	@RecurrenceException varchar(1024),
+	@StartTimeZone varchar(128),
+	@EndTimeZone varchar(128),
+	@ApptType int
+
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [Appointments] 
+	SET 
+		[Subject] = @Subject, [Description] = @Description, StartTime = @StartTime, EndTime = @EndTime, 
+		IsAllDay = @IsAllDay, CategoryColor = @CategoryColor, 
+		RecurrenceRule = @RecurrenceRule, RecurrenceId = @RecurrenceID, RecurrenceException = @RecurrenceException,
+		FollowingId = @FollowingID, StartTimeZone = @StartTimeZone, EndTimeZone = @EndTimeZone,
+		ApptType = @ApptType
+	WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_AppOtherSettings_Update]
+(
+	@PrazoContratoEmAnos tinyint,
+	@PrazoEnvioCartaAtraso tinyint,
+	@PrazoEnvioCartaAumento tinyint,
+	@PrazoEnvioCartaRevogacao tinyint,
+	@PrazoRespostaCartaAtraso tinyint,
+	@PrazoRespostaCartaAumento tinyint,
+	@CartasAumentoAutomaticas bit,
+	@PrazoRespostaCartaRevogacao tinyint,
+
+	@RenovacaoAutomatica bit,
+	@ComprovativoIRS bit,
+	@ComprovativoReciboVencimento bit,
+	@CaucaoRequerida bit,
+
+	@PrazoInspecaoGas tinyint,
+	@PercentagemMultaPorAtrasoPagamento tinyint,
+
+	@BackupBaseDados nvarchar(250),
+	@BackupOutrosFicheiros nvarchar(250),
+	@DefaultLanguage nvarchar(5),
+	@ApiKey nvarchar(255)
+
+	
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [ApplicationSettings] 
+	SET PrazoContratoEmAnos = @PrazoContratoEmAnos,
+		PrazoEnvioCartaAtraso = @PrazoEnvioCartaAtraso,
+		CartasAumentoAutomaticas = @CartasAumentoAutomaticas,
+		PrazoEnvioCartaAumento = @PrazoEnvioCartaAumento,
+		PrazoEnvioCartaRevogacao = @PrazoEnvioCartaRevogacao,
+		PrazoRespostaCartaAtraso = @PrazoRespostaCartaAtraso,
+		PrazoRespostaCartaAumento = @PrazoRespostaCartaAumento,
+		PrazoRespostaCartaRevogacao = @PrazoRespostaCartaRevogacao,
+
+		RenovacaoAutomatica = @RenovacaoAutomatica,
+		ComprovativoIRS = @ComprovativoIRS,
+		ComprovativoReciboVencimento = @ComprovativoReciboVencimento,
+		CaucaoRequerida = @CaucaoRequerida, 
+
+		PrazoInspecaoGas = @PrazoInspecaoGas, 
+		PercentagemMultaPorAtrasoPagamento = @PercentagemMultaPorAtrasoPagamento, 
+
+		BackupBaseDados = @BackupBaseDados , 
+		BackupOutrosFicheiros = @BackupOutrosFicheiros,
+		DefaultLanguage = @DefaultLanguage,
+		ApiKey = @ApiKey
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_AppSettings_Update]
+(
+	@DisplayName nvarchar(255),
+	@Username nvarchar(255),
+	@Password nvarchar(255),
+	@Port int,
+	@Host nvarchar(255),
+
+	@FromEmail nvarchar(255),
+	@SmtpServer nvarchar(255),
+	@EmailPort int,
+	@EmailUsername nvarchar(255),
+	@EmailPassword nvarchar(255),
+
+	@HotmailHostname nvarchar(255),
+	@HotmailPort nvarchar(10),
+	@UseSSL bit,
+	@HotmailUsername nvarchar(255),
+	@HotmailPassword nvarchar(255),
+
+	@PaperCutSmtpServer nvarchar(255),
+	@PaperCutPort int,
+	@EnableSsl bit
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [ApplicationSettings] 
+	SET 
+	DisplayName = @DisplayName,
+	Username = @Username,
+	Password = @Password,
+	Port = @Port,
+	Host = @Host, 
+	FromEmail = @FromEmail, 
+	SmtpServer = @SmtpServer, 
+	EmailPort = @EmailPort, 
+	EmailUsername = @EmailUsername,
+	EmailPassword = @EmailPassword, 
+	HotmailHostname = @HotmailHostname,
+	HotmailPort = @HotmailPort,
+	UseSSL = @UseSSL,
+	HotmailUsername = @HotmailUsername,
+	HotmailPassword = @HotmailPassword,
+	PaperCutSmtpServer = @PaperCutSmtpServer,
+	PaperCutPort = @PaperCutPort,
+	EnableSsl = @EnableSsl
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_AppSettings_UpdateLanguage]
+(
+	@DefaultLanguage nvarchar(5)
+
+	
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [ApplicationSettings] 
+	SET DefaultLanguage = @DefaultLanguage
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_AutoRenewed] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT RenovacaoAutomatica FROM Arrendamentos WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_CheckForPayments] (@Id int) -- id da fração
+AS
+
+SET NOCOUNT ON;
+SELECT	COUNT(1)
+FROM    Recebimentos
+WHERE	ID_Propriedade = @Id -- ID_Propriedade = Id da Fração
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Delete]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DELETE FROM [Arrendamentos] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 8. One transactional operation for the whole end-of-lease transition.
+      Returns: Success, Message, OutstandingDebt, TenantId. */
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_EndLease]
+(
+    @Id int,
+    @LeaveDate datetime,
+    @Reason nvarchar(64),
+    @Notes nvarchar(4000) = NULL,
+    @ActorUserId nvarchar(450) = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @Success bit = 0;
+    DECLARE @Message nvarchar(512) = N'';
+    DECLARE @OutstandingDebt decimal(10,2) = 0;
+    DECLARE @TenantId int = 0;
+    DECLARE @GuarantorId int = 0;
+    DECLARE @UnitId int = 0;
+    DECLARE @Stamp nvarchar(32) = CONVERT(nvarchar(32), @LeaveDate, 103);
+    DECLARE @TerminationNote nvarchar(4000);
+    DECLARE @TenantNote nvarchar(4000);
+    DECLARE @GuarantorNote nvarchar(4000);
+
+    IF @Id IS NULL OR @Id <= 0
+    BEGIN
+        SELECT @Success AS [Success], N'Id de arrendamento inválido.' AS [Message], @OutstandingDebt AS [OutstandingDebt], @TenantId AS [TenantId];
+        RETURN;
+    END;
+
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [Id] = @Id)
+    BEGIN
+        SELECT @Success AS [Success], N'Arrendamento não encontrado.' AS [Message], @OutstandingDebt AS [OutstandingDebt], @TenantId AS [TenantId];
+        RETURN;
+    END;
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [Id] = @Id AND [Ativo] = 0)
+    BEGIN
+        SELECT @Success AS [Success], N'O contrato já não está ativo.' AS [Message], @OutstandingDebt AS [OutstandingDebt], @TenantId AS [TenantId];
+        RETURN;
+    END;
+
+    SET @TerminationNote = N'Contrato já não está ativo; decisão tomada em ' + @Stamp + N'.';
+    IF ISNULL(@Reason, N'') <> N''
+        SET @TerminationNote = @TerminationNote + N' Motivo: ' + @Reason + N'.';
+    IF ISNULL(@Notes, N'') <> N''
+        SET @TerminationNote = @TerminationNote + N' ' + @Notes;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        SELECT @TenantId = [ID_Inquilino], @GuarantorId = [ID_Fiador], @UnitId = [ID_Fracao]
+        FROM [dbo].[Arrendamentos] WHERE [Id] = @Id;
+
+        UPDATE [dbo].[Arrendamentos]
+        SET [Ativo] = 0,
+            [Data_Saida] = @LeaveDate,
+            [Notas] = ISNULL(CONVERT(nvarchar(max), [Notas]), N'') +
+                      CASE WHEN ISNULL(CONVERT(nvarchar(max), [Notas]), N'') = N'' THEN N'' ELSE N' | ' END +
+                      @TerminationNote
+        WHERE [Id] = @Id;
+
+        UPDATE [dbo].[Fracoes] SET [Situacao] = 2 WHERE [Id] = @UnitId;
+
+        IF NOT EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [ID_Inquilino] = @TenantId AND [Ativo] = 1)
+        BEGIN
+            SET @TenantNote = ISNULL(CONVERT(nvarchar(max), (SELECT [Notas] FROM [dbo].[Inquilinos] WHERE [Id] = @TenantId)), N'');
+            SET @TenantNote = @TenantNote +
+                CASE WHEN @TenantNote = N'' THEN N'' ELSE N' | ' END +
+                N'Contrato já não está ativo; decisão tomada em ' + @Stamp + N'.';
+
+            UPDATE [dbo].[Inquilinos]
+            SET [Ativo] = 0,
+                [Notas] = @TenantNote
+            WHERE [Id] = @TenantId;
+
+            IF @GuarantorId > 0
+               AND NOT EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [ID_Fiador] = @GuarantorId AND [Ativo] = 1)
+            BEGIN
+                SET @GuarantorNote = ISNULL(CONVERT(nvarchar(max), (SELECT [Notas] FROM [dbo].[Fiadores] WHERE [Id] = @GuarantorId)), N'');
+                SET @GuarantorNote = @GuarantorNote +
+                    CASE WHEN @GuarantorNote = N'' THEN N'' ELSE N' | ' END +
+                    N'Contrato já não está ativo; decisão tomada em ' + @Stamp + N'.';
+
+                UPDATE [dbo].[Fiadores]
+                SET [Ativo] = 0,
+                    [Notas] = @GuarantorNote
+                WHERE [Id] = @GuarantorId;
+            END;
+        END;
+
+        INSERT INTO [dbo].[HistoricoArrendamentos]
+            ([ArrendamentoId], [Data_Inicio], [Data_Fim], [Data_Saida], [MotivoFim],
+             [ID_Fracao], [ID_Inquilino], [ID_Fiador], [Valor_Renda], [Notas], [ActorUserId], [CreatedAt])
+        SELECT [Id], [Data_Inicio], [Data_Fim], @LeaveDate, @Reason,
+               [ID_Fracao], [ID_Inquilino], [ID_Fiador], [Valor_Renda], @TerminationNote, @ActorUserId, SYSDATETIME()
+        FROM [dbo].[Arrendamentos] WHERE [Id] = @Id;
+
+        SELECT @OutstandingDebt = ISNULL(SUM([ValorEmFalta]), 0)
+        FROM [dbo].[Recebimentos]
+        WHERE [ID_Inquilino] = @TenantId AND ([Estado] = 3 OR [ValorEmFalta] > 0);
+
+        COMMIT TRANSACTION;
+        SET @Success = 1;
+        SET @Message = N'Contrato terminado e fração libertada com sucesso.';
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        SET @Success = 0;
+        SET @Message = N'Falha ao terminar o contrato: ' + ERROR_MESSAGE();
+        SET @OutstandingDebt = 0;
+    END CATCH;
+
+    SELECT @Success AS [Success], @Message AS [Message], @OutstandingDebt AS [OutstandingDebt], @TenantId AS [TenantId];
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_ExtendLeaseTerm]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DECLARE @Prazo int
+	DECLARE @NovaData DateTime
+	DECLARE @Data_Fim DateTime
+	SELECT @Prazo = Prazo, @Data_Fim = Data_Fim FROM Arrendamentos WHERE Id = @Id
+	SELECT @NovaData = DATEADD(year, @Prazo, @Data_Fim)
+
+	UPDATE [Arrendamentos] 
+		SET Data_Fim = @NovaData
+	WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_ApplicableLaws]
+AS
+
+SET NOCOUNT ON;
+SELECT Id, DiplomaLegal Descricao 
+FROM CoefientesAtualizacaoRendas
+ORDER BY id DESC
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_CurrentRentCoefficient] (@Ano nvarchar(4))
+AS
+
+--- falta o select para 'Porta'!
+SET NOCOUNT ON;
+SELECT Coeficiente 
+FROM CoefientesAtualizacaoRendas
+WHERE Ano = @Ano
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_LastPaymentDate]
+(
+	@Id int -- Unit Id
+
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT [Data_Pagamento]
+	FROM Arrendamentos
+	WHERE [ID_Fracao] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficient_ById] (@Id int)
+AS
+
+--- falta o select para 'Porta'!
+SET NOCOUNT ON;
+SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma, 
+		Lei, DataPublicacao
+FROM CoefientesAtualizacaoRendas
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficient_ByYear] (@Year int)
+AS
+
+--- falta o select para 'Porta'!
+SET NOCOUNT ON;
+SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma, 
+		Lei, DataPublicacao
+FROM CoefientesAtualizacaoRendas
+WHERE Ano = @Year
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Get_RentCoefficients] 
+AS
+
+--- falta o select para 'Porta'!
+SET NOCOUNT ON;
+SELECT	Id, Ano, Coeficiente, DiplomaLegal, UrlDiploma,
+		Lei, DataPublicacao
+FROM CoefientesAtualizacaoRendas
+ORDER BY Ano Desc
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetAll]
+AS
+	SET NOCOUNT ON;
+SELECT	A.Id, Data_Inicio, Data_Fim, Data_Pagamento, Fiador, 
+		Prazo_Meses, Prazo, Valor_Renda, Doc_IRS, Doc_Vencimento, A.Notas, 
+		ID_Fracao, ID_Inquilino, ID_Fiador, Caucao, ContratoEmitido, 
+		EnvioCartaAtualizacaoRenda, DataEnvioCartaAtualizacao,
+		DocumentoAtualizacaoGerado, DocumentoGerado, 
+		EnvioCartaRevogacao, DocumentoRevogacaoGerado, DataEnvioCartaRevogacao, DataRespostaCartaRevogacao, RespostaCartaRevogacao,
+		EnvioCartaAtrasoRenda, DocumentoAtrasoRendaGerado, DataEnvioCartaAtrasoRenda, RespostaCartaAtrasoRenda, DataRespostaCartaAtrasoRenda,
+		Data_Saida, FormaPagamento, A.Ativo, A.LeiVigente, ArrendamentoNovo, EstadoPagamento, RenovacaoAutomatica,
+		I.Nome NomeInquilino, F.Descricao Fracao
+FROM    Arrendamentos A INNER JOIN Inquilinos I ON
+			A.ID_Inquilino = I.Id
+		INNER JOIN Fracoes F ON
+			A.ID_Fracao = F.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetById] (@Id int)
+AS
+
+--- falta o select para 'Porta'!
+SET NOCOUNT ON;
+SELECT	A.Id, Data_Inicio, Data_Fim, Data_Pagamento, Fiador, 
+		Prazo_Meses, Prazo, Valor_Renda, Doc_IRS, Doc_Vencimento, A.Notas, 
+		EnvioCartaAtualizacaoRenda, DataEnvioCartaAtualizacao,
+		EnvioCartaRevogacao, DocumentoRevogacaoGerado, DataEnvioCartaRevogacao, DataRespostaCartaRevogacao, RespostaCartaRevogacao,
+		EnvioCartaAtrasoRenda, DocumentoAtrasoRendaGerado, DataEnvioCartaAtrasoRenda, RespostaCartaAtrasoRenda, DataRespostaCartaAtrasoRenda,
+		DocumentoAtualizacaoGerado, ID_Fracao, ID_Inquilino, ID_Fiador, 
+		Caucao, ContratoEmitido, DocumentoGerado, Data_Saida, LeiVigente,
+		FormaPagamento, A.Ativo, ArrendamentoNovo, EstadoPagamento, RenovacaoAutomatica,
+		I.Nome NomeInquilino, F.Descricao Fracao
+FROM    Arrendamentos A INNER JOIN Inquilinos I ON
+			A.ID_Inquilino = I.Id
+		INNER JOIN Fracoes F ON
+			A.ID_Fracao = F.Id
+WHERE A.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetGenerated_Document] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT DocumentoGerado
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetLastId] 
+AS
+
+SET NOCOUNT ON;
+
+SELECT	TOP 1 Id
+FROM    Arrendamentos 
+ORDER BY Id DESC
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_GetPropertyUnitsWithNoLease] (@Id int) -- Id imóvel
+AS
+
+BEGIN
+	SELECT	Fracoes.Id, Fracoes.Descricao, Imoveis.Id, Imoveis.Descricao
+	FROM   Fracoes INNER JOIN Imoveis
+		ON Fracoes.Id_Imovel = Imoveis.Id
+	WHERE Fracoes.Id NOT IN(SELECT ID_Fracao  FROM Arrendamentos) 
+		AND Imoveis.Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetRevocation_Generated_Document] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT DocumentoRevogacaoGerado
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetTenantDataToUpdateRents] (@Id int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT Data_Inicio, ID_Fracao
+FROM    Arrendamentos
+WHERE ID_Inquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_GetUnitId] (@Id int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT	ID_Fracao
+FROM    Arrendamentos 
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_IncomeReceived]
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT SUM(Valor_Renda)
+	FROM Arrendamentos
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert]
+(
+	@Data_Inicio datetime,
+	@Data_Fim datetime,
+	@Data_Pagamento datetime,
+	@SaldoInicial decimal(10,2),
+	@Fiador bit,
+	@Prazo_Meses int,
+	@Prazo int,
+	@Valor_Renda decimal(10, 2),
+	@Doc_IRS bit,
+	@Doc_Vencimento bit,
+	@Notas text,
+	@ID_Fracao int,
+	@ID_Inquilino int,
+	@ID_Fiador int,
+	@Caucao bit,
+	@ContratoEmitido bit,
+	@DocumentoGerado varchar(255),
+	@Data_Saida datetime,
+	@FormaPagamento int,
+	@Ativo bit,
+	@ArrendamentoNovo bit,
+	@EstadoPagamento varchar(15),
+	@RenovacaoAutomatica bit,
+	@LeiVigente varchar(100)
+
+)
+AS
+	SET NOCOUNT OFF;
+	INSERT INTO [Arrendamentos]
+			(
+				[Data_Inicio], [Data_Fim], [Data_Pagamento], [SaldoInicial], [Fiador], 
+				[Prazo_Meses], [Prazo], [Valor_Renda], [Doc_IRS], [Doc_Vencimento], [Notas], 
+				[ID_Fracao], [ID_Inquilino], [ID_Fiador], [Caucao], 
+				[ContratoEmitido], [DocumentoGerado], 
+				[Data_Saida], [FormaPagamento], [Ativo], [LeiVigente],
+				[ArrendamentoNovo], [EstadoPagamento], [RenovacaoAutomatica]
+			) 
+	VALUES (	@Data_Inicio, @Data_Fim, @Data_Pagamento, @SaldoInicial, @Fiador, 
+				@Prazo_Meses, @Prazo, @Valor_Renda, @Doc_IRS, @Doc_Vencimento, @Notas, 
+				@ID_Fracao, @ID_Inquilino, @ID_Fiador,@Caucao,
+				@ContratoEmitido, @DocumentoGerado,
+				@Data_Saida, @FormaPagamento, @Ativo, @LeiVigente,
+				@ArrendamentoNovo, @EstadoPagamento, @RenovacaoAutomatica);	
+
+	SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert_RentCoefficient]
+(
+	@Ano nvarchar(4),
+	@Coeficiente float,
+	@DiplomaLegal nvarchar(120),
+	@UrlDiploma nvarchar(256),
+	@Lei nvarchar(100), 
+	@DataPublicacao nvarchar(30)
+)
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO CoefientesAtualizacaoRendas(Ano, Coeficiente, DiplomaLegal, 
+				UrlDiploma, Lei, DataPublicacao)
+	VALUES (@Ano, @Coeficiente, @DiplomaLegal, @UrlDiploma, 
+			@Lei, @DataPublicacao)
+
+	SELECT CAST(SCOPE_IDENTITY() as int);
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Insert_UpdateRentsLetterProcess]
+(
+	@Ano int,
+	@DataProcessamento datetime
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [ProcessamentoAtualizacaoRendas] 
+	([Ano], [DataProcessamento])
+VALUES 
+	(@Ano, @DataProcessamento)
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_RentalExist] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT COUNT(1) FROM Arrendamentos 
+	WHERE ID_Fracao = @Id AND Ativo = 1
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLateRentPaymentLetter_Issued]
+(
+	@Id int,
+	@GeneratedDocument varchar(256)
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET EnvioCartaAtrasoRenda = 1, 
+		DocumentoAtrasoRendaGerado = @GeneratedDocument
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLateRentPaymentLetter_NotIssued]
+(
+	@Id int,
+	@GeneratedDocument varchar(256)
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET EnvioCartaAtrasoRenda = 0, 
+		DocumentoAtrasoRendaGerado = @GeneratedDocument
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetLease_As_Ended]
+(
+	@Id int,
+	@LeaveDate datetime
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET Data_Saida = @LeaveDate, Ativo = 0
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetLease_As_Issued]
+(
+	@Id int,
+	@GeneratedDocument varchar(256)
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET ContratoEmitido = 1, DocumentoGerado = @GeneratedDocument
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetLease_NotIssued] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET ContratoEmitido = 0
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_SetUpdateRentsLetter_Issued]
+(
+	@Id int,
+	@GeneratedDocument varchar(256)
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET EnvioCartaAtualizacaoRenda = 1, 
+		DataEnvioCartaAtualizacao = GetDate(),
+		DocumentoAtualizacaoGerado = @GeneratedDocument
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_SetUpdateRentsLetter_NotIssued]
+(
+	@Id int
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET EnvioCartaAtualizacaoRenda = 0 
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+/* 
+	= 11/03/2023 =
+	Retirada data do último pagamento (Data_Pag) da lista de parâmetros
+	Caso não haja pagamentos, data vem como "01/01/0001" => inválida
+	Data é atualizada quando há 'processamento mensal de rendas', p.exº.
+*/
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update]
+(
+	@Id int,
+	@Data_Inicio datetime,
+	@Data_Fim datetime,
+	@Fiador bit,
+	@Prazo_Meses int,
+	@Prazo int,
+	@Valor_Renda decimal(10, 2),
+	@Doc_IRS bit,
+	@Doc_Vencimento bit,
+	@Notas text,
+	@ID_Fracao int,
+	@ID_Inquilino int,
+	@ID_Fiador int,
+	@Caucao bit,
+	@ContratoEmitido bit,
+	@DocumentoGerado varchar(255),
+	@Data_Saida datetime,
+	@FormaPagamento int,
+	@Ativo bit,
+	@LeiVigente varchar(100),
+	@ArrendamentoNovo bit,
+	@EstadoPagamento varchar(15),
+	@RenovacaoAutomatica bit
+)
+AS
+	SET NOCOUNT OFF;
+UPDATE [Arrendamentos] 
+SET [Data_Inicio] = @Data_Inicio, [Data_Fim] = @Data_Fim,
+	[Fiador] = @Fiador, [Prazo_Meses] = @Prazo_Meses, [Prazo] = @Prazo,
+	[Valor_Renda] = @Valor_Renda, [Doc_IRS] = @Doc_IRS, 
+	[Doc_Vencimento] = @Doc_Vencimento, [Notas] = @Notas, [ID_Fracao] = @ID_Fracao, [ID_Inquilino] = @ID_Inquilino, 	
+	[ID_Fiador] = @ID_Fiador, [Caucao] = @Caucao, [ContratoEmitido] = @ContratoEmitido, [DocumentoGerado] = @DocumentoGerado,
+	[Data_Saida] = @Data_Saida, [FormaPagamento] = @FormaPagamento, [Ativo] = @Ativo, [ArrendamentoNovo] = @ArrendamentoNovo,
+	[EstadoPagamento] = @EstadoPagamento, [RenovacaoAutomatica] = @RenovacaoAutomatica, LeiVigente = @LeiVigente
+WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Update_Issued_Flag__ToDelete]
+(
+	@Id int,
+	@Issued bit
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET ContratoEmitido = @Issued
+	WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_LastPaymentDate]
+(
+	@Id int, -- Unit Id
+	@date datetime,
+	@estadopagamento varchar(15)
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET [Data_Pagamento] = @date,
+	EstadoPagamento = @estadopagamento
+	WHERE [ID_Fracao] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_LateRentPaymentLetter]
+(
+	@Id int,
+	@EnvioCartaAtrasoRenda bit, 
+	@DocumentoAtrasoRendaGerado varchar(255),
+	@DataEnvioCartaAtrasoRenda datetime
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] 
+	SET [EnvioCartaAtrasoRenda] = @EnvioCartaAtrasoRenda, 
+		[DocumentoAtrasoRendaGerado] = @DocumentoAtrasoRendaGerado,
+		[DataEnvioCartaAtrasoRenda] = @DataEnvioCartaAtrasoRenda
+	WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_RentCoefficient]
+(
+	@Id int,
+	@Ano nvarchar(4),
+	@Coeficiente float,
+	@DiplomaLegal nvarchar(120),
+	@UrlDiploma nvarchar(256),
+	@Lei nvarchar(100),
+	@DataPublicacao nvarchar(30)
+
+)
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE CoefientesAtualizacaoRendas
+	SET Ano = @Ano, Coeficiente = @Coeficiente, 
+	DiplomaLegal = @DiplomaLegal, UrlDiploma = @UrlDiploma,
+	Lei = @Lei, DataPublicacao = @DataPublicacao
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Update_RevocationLetter]
+(
+	@Id int,
+	@EnvioCartaRevogacao bit, 
+	@DocumentoRevogacaoGerado varchar(255),
+	@DataEnvioCartaRevogacao datetime
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] 
+	SET [EnvioCartaRevogacao] = @EnvioCartaRevogacao, 
+		[DocumentoRevogacaoGerado] = @DocumentoRevogacaoGerado,
+		[DataEnvioCartaRevogacao] = @DataEnvioCartaRevogacao
+	WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_UpdateRevocationLetter_AnswerDate]
+(
+	@Id int,
+	@AnswerDate datetime
+)
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [Arrendamentos] SET DataRespostaCartaRevogacao = @AnswerDate
+	WHERE [Id] = @Id 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_LateRentPaymentLetter_Answered] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT RespostaCartaAtrasoRenda
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_LateRentPaymentLetter_Issued] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT EnvioCartaAtrasoRenda
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Was_Lease_Issued] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT ContratoEmitido 
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_RevocationLetter_Answered] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT RespostaCartaRevogacao 
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Arrendamentos_Was_RevocationLetter_Issued] (@Id int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT EnvioCartaRevogacao 
+	FROM Arrendamentos 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Arrendamentos_Was_UpdateRentsLetter_Issued] (@Ano int)
+
+AS
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT COUNT(1)
+	FROM ProcessamentoAtualizacaoRendas
+	WHERE Ano = @Ano
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Delete]
+(
+	@Original_Id int,
+	@Original_Descricao nvarchar(200)
+)
+AS
+	SET NOCOUNT OFF;
+DELETE FROM [CategoriaDespesa] WHERE (([Id] = @Original_Id) AND ([Descricao] = @Original_Descricao))
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_GetAll]
+AS
+	SET NOCOUNT ON;
+SELECT        *
+FROM            CategoriaDespesa
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT *
+FROM	CategoriaDespesa
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Insert]
+(
+	@Descricao nvarchar(200)
+)
+AS
+	SET NOCOUNT OFF;
+	INSERT INTO [CategoriaDespesa] ([Descricao]) VALUES (@Descricao);
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_CategoriaDespesa_Update]
+(
+    @Id int,
+    @Descricao nvarchar(200)
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    UPDATE [CategoriaDespesa]
+    SET [Descricao] = @Descricao
+    WHERE [Id] = @Id;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [CC_Inquilinos] 
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetAll]
+
+AS
+
+SET NOCOUNT OFF;
+SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida,
+		Renda, ID_TipoRecebimento, CC_I.Notas,
+		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
+FROM [CC_Inquilinos] CC_I
+	INNER JOIN Inquilinos I ON
+		CC_I.IdInquilino = I.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida, 
+		Renda, ID_TipoRecebimento,	CC_I.Notas,
+		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
+FROM [CC_Inquilinos] CC_I
+INNER JOIN Inquilinos I ON
+	CC_I.IdInquilino = I.Id
+WHERE CC_I.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_GetByTenantId]
+(
+	@TenantId int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT	CC_I.Id, DataMovimento, ValorPago, ValorEmDivida, 
+		Renda, ID_TipoRecebimento,	CC_I.Notas,
+		IdInquilino, I.Nome NomeInquilino, CC_I.Id TransactionId
+FROM [CC_Inquilinos] CC_I
+INNER JOIN Inquilinos I ON
+	CC_I.IdInquilino = I.Id
+WHERE CC_I.IdInquilino = @TenantId
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Insert]
+(
+	@DataMovimento datetime,
+	@ValorPago decimal(10,2),
+	@ValorEmDivida decimal(10,2),
+	@Renda bit,
+	@ID_TipoRecebimento int,
+	@Notas varchar(512),
+	@IdInquilino int,
+	@TransactionId int
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [CC_Inquilinos] 
+	(DataMovimento, ValorPago, ValorEmDivida, Renda, ID_TipoRecebimento, Notas, IdInquilino, TransactionId)
+VALUES 
+	(@DataMovimento, @ValorPago, @ValorEmDivida, @Renda, @ID_TipoRecebimento, @Notas, @IdInquilino, @TransactionId);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_CC_Inquilinos_Update]
+(
+	@Id int,
+	@DataMovimento datetime,
+	@ValorPago decimal(10,2),
+	@ValorEmDivida decimal(10,2),
+	@Renda bit,
+	@ID_TipoRecebimento int,
+	@Notas text,
+	@IdInquilino int,
+	@TransactionId int
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [CC_Inquilinos] 
+	SET DataMovimento = @DataMovimento, ValorPago = @ValorPago, ValorEmDivida = @ValorEmDivida,
+	Renda = @Renda, ID_TipoRecebimento = @ID_TipoRecebimento,
+	Notas = @Notas, IdInquilino = @IdInquilino,
+	TransactionId = @TransactionId
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_CoeficienteIMI_GetById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT Coeficiente FROM [Concelhos] 
+WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_CoeficienteIMI_Update]
+(
+	@IdConcelho int,
+	@CoeficienteIMI decimal(6,5)
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Concelhos] 
+SET [Coeficiente] = @CoeficienteIMI
+WHERE [CodConcelho] = @IdConcelho;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Concelho_GetById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT * FROM [Concelhos] 
+WHERE [CodConcelho] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteByDescription]
+(
+	@Description nvarchar(100)
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT Coeficiente FROM [Concelhos] 
+WHERE Descricao = @Description;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteByFracao]
+(
+	@UnitId int
+)
+AS
+
+SET NOCOUNT OFF;
+DECLARE @Freguesia varchar(30)
+DECLARE @Coeficiente decimal(6,5)
+DECLARE @PropertyId int
+SELECT @PropertyId = (SELECT Id_Imovel FROM Fracoes WHERE Id = @UnitId)
+SELECT @Freguesia = (SELECT Freguesia FROM Imoveis WHERE Id = @PropertyId)
+EXEC	@Coeficiente = [dbo].[usp_Concelho_GetCoeficienteByDescription]
+		@Description = @Freguesia
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Concelho_GetCoeficienteById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT Coeficiente FROM [Concelhos] 
+WHERE [CodConcelho] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Condominio_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Condominios] 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contactos_Delete]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DELETE FROM [Contactos] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Contactos_GetAll]
+AS
+	SET NOCOUNT ON;
+SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
+FROM    Contactos CO
+		INNER JOIN TipoContacto TC ON
+			CO.ID_TipoContacto = TC.Id
+		
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Contactos_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
+FROM    Contactos CO
+		INNER JOIN TipoContacto TC ON
+			CO.ID_TipoContacto = TC.Id
+WHERE CO.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Contactos_Insert]
+(
+	@Nome varchar(70),
+	@Morada varchar(70),
+	@Localidade varchar(50),
+	@Contacto varchar(50),
+	@eMail varchar(128),
+	@Notas text,
+	@ID_TipoContacto int
+)
+AS
+SET NOCOUNT OFF;
+INSERT INTO [Contactos] ([Nome], [Morada], [Localidade], [Contacto], 
+		[eMail], [Notas], [ID_TipoContacto]) 
+VALUES (@Nome, @Morada, @Localidade, @Contacto, 
+		@eMail, @Notas, @ID_TipoContacto);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Contactos_Update]
+(
+	@Id int,
+	@Nome varchar(70),
+	@Morada varchar(70),
+	@Localidade varchar(50),
+	@Contacto varchar(50),
+	@eMail varchar(128),
+	@Notas text,
+	@ID_TipoContacto int
+)
+AS
+SET NOCOUNT OFF;
+UPDATE [Contactos] 
+	SET [Nome] = @Nome, [Morada] = @Morada, [Localidade] = @Localidade, 
+	[Contacto] = @Contacto, [eMail] = @eMail, [Notas] = @Notas,
+	[ID_TipoContacto] = @ID_TipoContacto
+WHERE [Id] = @Id;
+
+SELECT  CO.Id, Nome, Morada, Localidade, Contacto, eMail, CO.Notas, ID_TipoContacto, TC.Descricao TipoContacto
+FROM    Contactos CO
+		INNER JOIN TipoContacto TC ON
+			CO.ID_TipoContacto = TC.Id
+WHERE CO.Id = @Id	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contratos_Delete]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DELETE FROM [Contratos] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contratos_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, DataCelebracao, Data_Inicio, Fiador, Prazo_Meses, Valor_Renda, 
+		Doc_IRS, Doc_Vencimento, Notas, ID_Fracao, ID_Inquilino, ID_Fiador, Caucao
+FROM	Contratos
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contratos_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, DataCelebracao, Data_Inicio, Fiador, Prazo_Meses, Valor_Renda, 
+		Doc_IRS, Doc_Vencimento, Notas, ID_Fracao, ID_Inquilino, ID_Fiador, Caucao
+FROM	Contratos
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contratos_Insert]
+(
+	@DataCelebracao datetime,
+	@Data_Inicio datetime,
+	@Fiador bit,
+	@Prazo_Meses int,
+	@Valor_Renda decimal(10, 2),
+	@Doc_IRS bit,
+	@Doc_Vencimento bit,
+	@Notas text,
+	@ID_Fracao int,
+	@ID_Inquilino int,
+	@ID_Fiador int,
+	@Caucao bit
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Contratos] 
+	([DataCelebracao], [Data_Inicio], [Fiador], [Prazo_Meses], [Valor_Renda], [Doc_IRS], 
+	[Doc_Vencimento], [Notas], [ID_Fracao], [ID_Inquilino], [ID_Fiador], [Caucao]) 
+VALUES 
+	(@DataCelebracao, @Data_Inicio, @Fiador, @Prazo_Meses, @Valor_Renda, @Doc_IRS, 
+	@Doc_Vencimento, @Notas, @ID_Fracao, @ID_Inquilino, @ID_Fiador, @Caucao);
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Contratos_Update]
+(
+	@Id int,
+	@DataCelebracao datetime,
+	@Data_Inicio datetime,
+	@Fiador bit,
+	@Prazo_Meses int,
+	@Valor_Renda decimal(10, 2),
+	@Doc_IRS bit,
+	@Doc_Vencimento bit,
+	@Notas text,
+	@ID_Fracao int,
+	@ID_Inquilino int,
+	@ID_Fiador int,
+	@Caucao bit
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Contratos] 
+SET [DataCelebracao] = @DataCelebracao, [Data_Inicio] = @Data_Inicio, [Fiador] = @Fiador, 
+	[Prazo_Meses] = @Prazo_Meses, [Valor_Renda] = @Valor_Renda, [Doc_IRS] = @Doc_IRS,
+	[Doc_Vencimento] = @Doc_Vencimento, [Notas] = @Notas, [ID_Fracao] = @ID_Fracao,
+	[ID_Inquilino] = @ID_Inquilino, [ID_Fiador] = @ID_Fiador, [Caucao] = @Caucao 
+WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROC usp_Despesas_CalculateIRS
+
+AS
+BEGIN
+	SELECT Descricao Fracao, Round(ValorRenda, 2) as ValorRenda, Round(ValorRenda * 0.28, 2) as ValorIRS
+	FROM fracoes
+	WHERE situacao = 1
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Despesas_Categorias_GetExpensesByType]
+
+AS
+BEGIN
+
+	SELECT YEAR(D.DataMovimento) YearOfExpenses, MONTH(D.DataMovimento) month, DATENAME(month, D.DataMovimento) MonthOfExpenses, 
+	SUM(D.Valor_Pago) TotalOfMonthExpenses, CD.Descricao TypeOfExpenses
+	FROM Despesas D
+	INNER JOIN CategoriaDespesa CD ON D.ID_CategoriaDespesa = CD.Id
+	GROUP BY YEAR(D.DataMovimento), MONTH(D.DataMovimento), DATENAME(month, D.DataMovimento), CD.Descricao
+	ORDER BY MONTH(D.DataMovimento)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Despesas_Categorias_GetExpensesByTypeAndYear]
+	@year int
+AS
+BEGIN
+
+	SELECT MONTH(D.DataMovimento) [Month], DATENAME(month, D.DataMovimento) MonthOfExpenses, 
+	SUM(D.Valor_Pago) TotalOfMonthExpenses, CD.Descricao TypeOfExpenses
+	FROM Despesas D
+	INNER JOIN CategoriaDespesa CD ON D.ID_CategoriaDespesa = CD.Id
+	WHERE YEAR(D.DataMovimento) = @year
+	GROUP BY MONTH(D.DataMovimento), DATENAME(month, D.DataMovimento), CD.Descricao
+	ORDER BY MONTH(D.DataMovimento)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[usp_Despesas_Categorias_GetExpensesByYear]
+	@year int
+AS
+BEGIN
+	SELECT MONTH(Datamovimento), DATENAME(month, d.DataMovimento) Descricao, 
+	SUM(D.Valor_Pago) TotalDespesas, COUNT(1) NumeroMovimentos
+	FROM Despesas D
+	WHERE YEAR(D.DataMovimento) = @year
+	GROUP BY MONTH(DataMovimento), DATENAME(month, d.DataMovimento) 
+	ORDER BY MONTH(DataMovimento)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE Procedure [dbo].[usp_Despesas_Categorias_GetSum]
+	@year int
+AS
+BEGIN
+	SELECT C.Descricao, SUM(D.Valor_Pago) TotalDespesas, COUNT(1) NumeroMovimentos
+	FROM Despesas D
+	INNER JOIN CategoriaDespesa C
+	ON D.ID_CategoriaDespesa = C.Id
+	WHERE YEAR(D.DataMovimento) = @year
+	GROUP BY C.Descricao
+	ORDER BY SUM(D.Valor_Pago) DESC
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_Delete]
+(
+	@Id int
+)
+AS
+	SET NOCOUNT OFF;
+	DELETE FROM [Despesas] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_GetAll]
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	SELECT  D.Id, DataMovimento, Valor_Pago, ID_TipoDespesa, ID_ModoPagamento, 
+			D.Id_CategoriaDespesa, NumeroDocumento, Notas,
+			TD.Descricao TipoDespesa, CD.Descricao DescrImputacao, 
+			FP.Descricao ModoPagamento
+	FROM    Despesas D 
+		INNER JOIN TipoDespesa TD ON
+			D.ID_TipoDespesa = TD.Id
+		INNER JOIN CategoriaDespesa CD ON
+			TD.Id_CategoriaDespesa = CD.Id
+		INNER JOIN FormaPagamento FP ON
+			D.ID_ModoPagamento = FP.Id
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_GetById] (@Id int)
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	SELECT  D.Id, DataMovimento, Valor_Pago, ID_TipoDespesa, ID_ModoPagamento, NumeroDocumento,
+			Notas,TD.Descricao TipoDespesa, CD.Descricao DescrImputacao, FP.Descricao ModoPagamento,
+			D.Id_CategoriaDespesa
+	FROM    Despesas D 
+		INNER JOIN TipoDespesa TD ON
+			D.ID_TipoDespesa = TD.Id
+		INNER JOIN CategoriaDespesa CD ON
+			TD.Id_CategoriaDespesa = CD.Id
+		INNER JOIN FormaPagamento FP ON
+			D.ID_ModoPagamento = FP.Id
+						
+	WHERE D.Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Despesas_GetMostSpendCategories_ByYear]
+(
+	@year int
+)
+AS
+BEGIN
+
+	SELECT c.Descricao, count(1) NumeroMovimentos, sum(d.Valor_Pago) TotalDespesas
+	FROM CategoriaDespesa c 
+	INNER JOIN Despesas d
+		ON c.Id = d.ID_CategoriaDespesa
+	WHERE YEAR(d.DataMovimento) = @year
+	GROUP BY c.Descricao
+	ORDER BY sum(d.Valor_Pago) DESC
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROC [dbo].[usp_Despesas_GetMostSpendCategory]
+
+AS
+BEGIN
+
+	SELECT TOP 2
+		c.Descricao, sum(d.Valor_Pago) as TotalDespesas, COUNT(1) NumeroMovimentos
+	FROM CategoriaDespesa c 
+	INNER JOIN Despesas d
+		ON c.id = d.ID_CategoriaDespesa
+	WHERE YEAR(d.DataMovimento) = YEAR(GetDate())
+	GROUP BY c.Descricao
+	ORDER BY sum(d.Valor_Pago) DESC
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_GetTipoDespesaByCategory] (@Id int)
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	SELECT id, Descricao 
+	FROM TipoDespesa
+	WHERE Id_CategoriaDespesa = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_Insert]
+(
+	@DataMovimento datetime,
+	@Valor_Pago decimal(10, 2),
+	@NumeroDocumento nvarchar(50),
+	@ID_CategoriaDespesa int,
+	@ID_TipoDespesa int,
+	@ID_ModoPagamento int,
+	@Notas text
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Despesas]
+	([DataMovimento], [Valor_Pago], [ID_ModoPagamento], [NumeroDocumento],
+	[ID_TipoDespesa], [ID_CategoriaDespesa], [Notas]) 
+VALUES 
+	(@DataMovimento, @Valor_Pago, @ID_ModoPagamento, @NumeroDocumento,
+	@ID_TipoDespesa, @ID_CategoriaDespesa, @Notas);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM  TipoDespesa
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesa_GetAll]
+
+AS
+
+SET NOCOUNT OFF;
+SELECT TD.Id, TD.Descricao, TD.Id_CategoriaDespesa, CD.Descricao CategoriaDespesa
+FROM  TipoDespesa TD 
+INNER JOIN CategoriaDespesa CD ON
+	TD.Id_CategoriaDespesa = CD.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesa_GetById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT TD.Id, TD.Descricao, TD.Id_CategoriaDespesa, CD.Descricao CategoriaDespesa
+FROM  TipoDespesa TD 
+INNER JOIN CategoriaDespesa CD ON
+	TD.Id_CategoriaDespesa = CD.Id
+WHERE TD.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Insert]
+(
+	@Descricao nvarchar(255),
+	@Id_CategoriaDespesa int
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO TipoDespesa
+	(Descricao, [Id_CategoriaDespesa])
+VALUES 
+	(@Descricao, @Id_CategoriaDespesa);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Despesas_TipoDespesa_Update]
+(
+	@Id int,
+	@Descricao nvarchar(255),
+	@Id_CategoriaDespesa int
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE TipoDespesa
+	 SET [Descricao] = @Descricao, [Id_CategoriaDespesa] = @Id_CategoriaDespesa
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Despesas_TipoDespesas_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
+
+
+AS
+
+declare @CanDelete bit
+
+SET NOCOUNT ON;
+SELECT	@CanDelete = COUNT(1)
+FROM    Despesas
+WHERE	ID_TipoDespesa = @Id
+
+SELECT @OkToDelete = @CanDelete
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Despesas_Update]
+(
+	@Id int,
+	@DataMovimento datetime,
+	@Valor_Pago decimal(10, 2),
+	@NumeroDocumento nvarchar(50),
+	@ID_TipoDespesa int,
+	@ID_CategoriaDespesa int,
+	@ID_ModoPagamento int,
+	@Notas text
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Despesas] 
+SET [DataMovimento] = @DataMovimento, [Valor_Pago] = @Valor_Pago, 
+	[NumeroDocumento] = @NumeroDocumento, [ID_ModoPagamento] = @ID_ModoPagamento,
+	[ID_TipoDespesa] = @ID_TipoDespesa, [ID_CategoriaDespesa] = @ID_CategoriaDespesa,
+	[Notas] = @Notas 
+WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Development_CloneRecebimentos]
+AS
+BEGIN
+	INSERT INTO Recebimentos(DataMovimento, estado, ID_Propriedade, 
+		ID_Inquilino, ID_TipoRecebimento, GeradoPeloPrograma, renda, ValorPrevisto, 
+		ValorEmFalta, ValorRecebido, notas)
+	SELECT DataMovimento, estado, ID_Propriedade, 
+		ID_Inquilino, ID_TipoRecebimento, GeradoPeloPrograma, renda, ValorPrevisto, 
+		ValorEmFalta, ValorRecebido, notas
+		FROM RecebimentosTemp;
+
+	INSERT INTO ProcessamentoRendas(Mes, Ano, DataProcessamento)
+	SELECT Mes, Ano, DataProcessamento FROM ProcessamentoRendas;
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Fausto Luis
+-- Create date: 2023-01-09
+-- Description:	Inicializa tabelas
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Development_initializeRentPaymentTables] 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	truncate table PMlogs
+	truncate table ProcessamentoRendas;
+	truncate table ProcessamentoAtualizacaoRendas;
+	truncate table CC_Inquilinos;
+	truncate table DocumentosInquilino;
+	truncate table Recebimentos;
+	truncate table RecebimentosTemp;
+	truncate table HistoricoAtualizacaoRendas;
+	truncate table Appointments;
+
+	Update Inquilinos SET SaldoCorrente = 0, Notas = ''
+	Update Arrendamentos SET 
+	Data_Pagamento = Cast(Cast(dateadd(month, -1, GETDATE()) as Date) as Datetime),
+	EnvioCartaAtrasoRenda = NULL, 
+	DocumentoAtrasoRendaGerado = NULL, 
+	DataEnvioCartaAtrasoRenda = NULL,
+	DataEnvioCartaAtualizacao = NULL,
+	DataEnvioCartaRevogacao = NULL,
+	DocumentoAtualizacaoGerado = NULL,
+	EnvioCartaAtualizacaoRenda = NULL,
+	EstadoPagamento = 'Ok';
+	update Fracoes set ValorRenda = 0 WHERE Id = 1; -- JJM - 3E
+	update Fracoes set ValorRenda = 600 WHERE Id = 2; --JJM 3D
+	update Fracoes set ValorRenda = 420 WHERE Id = 3; -- JJM 2E
+	update Fracoes set ValorRenda = 250 WHERE Id = 8; -- escritório
+	update Fracoes set ValorRenda = 400 WHERE Id = 10; -- CGG B
+	update Fracoes set ValorRenda = 325 WHERE Id = 11; -- PBC 105
+	update Fracoes set ValorRenda = 450 WHERE Id = 12; -- CGG C
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Fausto Luis
+-- Create date: 2023-01-09
+-- Description:	Inicializa tabelas - exceções: Inquilinos, Fracoes, Proprietário
+--				
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Development_initializeWorkTables] 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	truncate table PMLogs;
+	truncate table ProcessamentoRendas;
+	truncate table ProcessamentoAtualizacaoRendas;
+	truncate table CC_Inquilinos;
+	TRUNCATE TABLE Despesas;
+	TRUNCATE TABLE Recebimentos;
+	TRUNCATE TABLE RecebimentosTemp;
+	TRUNCATE TABLE DocumentosInquilino;
+	TRUNCATE TABLE Contratos;
+	TRUNCATE TABLE Arrendamentos;
+
+	UPDATE Inquilinos SET SaldoCorrente = 0, Notas = ''
+	UPDATE Fracoes SET Situacao = 2;
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Fausto Luis
+-- Create date: 2023-01-09
+-- Description:	Inicializa tabelas
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Development_ResetRentsYearUpdate] 
+AS
+BEGIN
+	SET NOCOUNT ON;
+	truncate table ProcessamentoAtualizacaoRendas;
+	Update Arrendamentos SET EnvioCartaAtualizacaoRenda = 0, DocumentoAtualizacaoGerado = ''
+
+	-- Atualizar manualmente o valor das rendas das frações
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Documents_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Documents] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Documents_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, D.LocalUpload,
+		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId,
+		DT.[Name] DocumentType, DTC.Descricao DocumentCategory
+FROM	Documents D
+	INNER JOIN DocumentTypes DT ON
+		D.DocumentTypeId = DT.Id
+	INNER JOIN DocumentTypeCategories DTC ON
+		DT.TypeCategoryId = DTC.Id
+ORDER BY D.CreatedOn DESC
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Documents_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, D.LocalUpload,
+		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId, DT.[Name]DocumentType,
+		 DTC.Id [DocumentCategoryId]
+FROM	Documents D
+INNER JOIN DocumentTypes DT ON
+		D.DocumentTypeId = DT.Id
+			INNER JOIN DocumentTypeCategories DTC ON
+		DT.TypeCategoryId = DTC.Id
+
+WHERE	D.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Documents_Insert]
+(
+	@Title nvarchar(256),
+	@Description nvarchar(512),
+	@IsPublic bit,
+	@URL nvarchar(256),
+	@LocalUpload bit,
+	@CreatedBy nvarchar(70),
+	@CreatedOn datetime,
+	@LastModifiedBy nvarchar(70),
+	@LastModifiedOn datetime,
+	@DocumentTypeId int,
+	@DocumentCategoryId int
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Documents] 
+	([Title], [Description], [IsPublic], [URL], [CreatedBy], [LocalUpload],
+	[CreatedOn], [LastModifiedBy], [LastModifiedOn], [DocumentTypeId], [DocumentCategoryId])
+VALUES 
+	(@Title, @Description, @IsPublic, @URL, @CreatedBy, @LocalUpload,
+	@CreatedOn, @LastModifiedBy, @LastModifiedOn, @DocumentTypeId, @DocumentCategoryId);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Documents_Update]
+(
+	@Id int,
+	@Title nvarchar(256),
+	@Description nvarchar(512),
+	@URL nvarchar(256),
+	@LocalUpload bit, 
+	@IsPublic bit,
+	@LastModifiedBy nvarchar(70),
+	@LastModifiedOn datetime
+
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Documents] 
+SET [Title] = @Title, [Description] = @Description, [IsPublic] = @IsPublic,
+	[URL] = @URL, [LocalUpload] = @LocalUpload,
+	[LastModifiedBy] = @LastModifiedBy, [LastModifiedOn] = @LastModifiedOn
+WHERE [Id] = @Id;
+
+SELECT	D.Id, Title, D.[Description], IsPublic, [URL], D.CreatedBy, d.LocalUpload,
+		D.CreatedOn, D.LastModifiedBy, D.LastModifiedOn, DocumentTypeId, DT.Description DocumentType
+FROM	Documents D
+INNER JOIN DocumentTypes DT ON
+		D.DocumentTypeId = DT.Id
+WHERE	D.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_DocumentTypes_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [DocumentTypes] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_DocumentTypes_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, [Name], [Description], CreatedBy, CreatedOn, 
+		LastModifiedBy, LastModifiedOn, TypeCategoryId
+FROM   DocumentTypes
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_DocumentTypes_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, [Name], [Description], CreatedBy, CreatedOn, 
+		LastModifiedBy, LastModifiedOn, TypeCategoryId
+FROM	DocumentTypes
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_DocumentTypes_Insert]
+(
+	@Name nvarchar(128),
+	@Description nvarchar(512),
+	@CreatedBy nvarchar(70),
+	@CreatedOn datetime,
+	@LastModifiedBy nvarchar(70),
+	@LastModifiedOn datetime
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [DocumentTypes] 
+	([Name], [Description], [CreatedBy], [CreatedOn], [LastModifiedBy], [LastModifiedOn])
+VALUES 
+	(@Name, @Description, @CreatedBy, @CreatedOn, @LastModifiedBy, @LastModifiedOn);
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_DocumentTypes_Update]
+(
+	@Id int,
+	@Name nvarchar(128),
+	@Description nvarchar(512),
+	@CreatedBy nvarchar(70),
+	@CreatedOn datetime,
+	@LastModifiedBy nvarchar(70),
+	@LastModifiedOn datetime
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [DocumentTypes] 
+SET [Name] = @Name, [Description] = @Description, [CreatedBy] = @CreatedBy, 
+	[CreatedOn] = @CreatedOn, [LastModifiedBy] = @LastModifiedBy, 
+	[LastModifiedOn] = @LastModifiedOn WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoCivil_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [EstadoCivil] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoCivil_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT Id, Descricao
+FROM   EstadoCivil
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoCivil_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Descricao
+FROM	EstadoCivil
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoCivil_Insert]
+(
+	@Descricao varchar(30)
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [EstadoCivil] ([Descricao]) VALUES (@Descricao);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoCivil_Update]
+(
+	@Id int,
+	@Descricao varchar(30)
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [EstadoCivil] SET [Descricao] = @Descricao WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [EstadoConservacao] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoConservacao_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT Id, Descricao
+FROM   EstadoConservacao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoConservacao_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Descricao
+FROM	EstadoConservacao
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Insert]
+(
+	@Descricao varchar(30)
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [EstadoConservacao] ([Descricao]) VALUES (@Descricao);
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_EstadoConservacao_Update]
+(
+	@Id int,
+	@Descricao varchar(30)
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [EstadoConservacao] SET [Descricao] = @Descricao WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Fiadores_Archive]
+(
+    @Id int,
+    @Success bit OUTPUT,
+    @Code nvarchar(32) OUTPUT,
+    @Message nvarchar(512) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @Success = 0;
+    SET @Code = N'UNKNOWN';
+    SET @Message = N'';
+
+    IF @Id IS NULL OR @Id <= 0
+    BEGIN
+        SET @Code = N'INVALID_ID';
+        SET @Message = N'Invalid guarantor id.';
+        RETURN;
+    END;
+
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[Fiadores] WHERE [Id] = @Id)
+    BEGIN
+        SET @Code = N'NOT_FOUND';
+        SET @Message = N'Guarantor not found.';
+        RETURN;
+    END;
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [ID_Fiador] = @Id AND [Ativo] = 1)
+    BEGIN
+        SET @Code = N'ACTIVE_LEASE';
+        SET @Message = N'Guarantor has an active lease.';
+        RETURN;
+    END;
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Fiadores] WHERE [Id] = @Id AND [Ativo] = 0)
+    BEGIN
+        SET @Success = 1;
+        SET @Code = N'OK';
+        SET @Message = N'Guarantor already archived.';
+        RETURN;
+    END;
+
+    DECLARE @Stamp nvarchar(32) = CONVERT(nvarchar(32), GETDATE(), 103);
+    DECLARE @Note nvarchar(4000) = ISNULL(CONVERT(nvarchar(max), (SELECT [Notas] FROM [dbo].[Fiadores] WHERE [Id] = @Id)), N'');
+    SET @Note = @Note + CASE WHEN @Note = N'' THEN N'' ELSE N' | ' END +
+                N'Fiador arquivado; decisao tomada em ' + @Stamp + N'.';
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        UPDATE [dbo].[Fiadores]
+        SET [Ativo] = 0, [Notas] = @Note
+        WHERE [Id] = @Id;
+        COMMIT TRANSACTION;
+        SET @Success = 1;
+        SET @Code = N'OK';
+        SET @Message = N'Guarantor archived.';
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        SET @Code = N'ERROR';
+        SET @Message = N'Failed to archive guarantor: ' + ERROR_MESSAGE();
+    END CATCH;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+-- Antes de apagar fiador, verificar se há contratos associados ao mesmo
+-- Se a operação resultar em 0 (zero), é válido apagar fiador
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
+
+
+AS
+
+declare @CanDelete bit
+
+SET NOCOUNT ON;
+SELECT	@CanDelete = COUNT(1)
+FROM    Arrendamentos
+WHERE	ID_Fiador = @Id
+
+SELECT @OkToDelete = @CanDelete
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Fiadores] 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Fiadores_Get_ByIdExtended] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
+		eMail, IRSAnual, Vencimento, Notas, Ativo
+FROM    Fiadores I 
+		INNER JOIN EstadoCivil EC ON
+			I.ID_EstadoCivil = EC.Id		
+WHERE	I.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_Get_ByTenant] (@Id int) -- Id Inquilino
+AS
+
+SET NOCOUNT ON;
+SELECT	F.Id, IdInquilino, Nome, Morada, ID_EstadoCivil, EC.Descricao EstadoCivil,
+		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
+		eMail, IRSAnual, Vencimento, Notas, Ativo
+FROM    Fiadores F 
+		INNER JOIN EstadoCivil EC ON
+			F.ID_EstadoCivil = EC.Id		
+WHERE	F.IdInquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Fiadores_Get_Disponiveis]
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    SELECT F.Id, F.Nome Descricao, F.IdInquilino
+    FROM Fiadores F
+    WHERE ISNULL(F.Ativo, 1) = 1
+      AND F.Id NOT IN (SELECT ID_Fiador FROM Arrendamentos WHERE Ativo = 1)
+    ORDER BY F.Nome;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_GetAll] (@Titular int) -- 0 = Fiadors e Fiadores, 1 = apenas Fiadors
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+		Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
+		eMail, IRSAnual, Vencimento, Notas, Ativo
+FROM    Fiadores I INNER JOIN 
+			EstadoCivil EC ON
+				I.ID_EstadoCivil = ec.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, IdInquilino, Nome, Morada, ID_EstadoCivil, Contacto1, Contacto2, eMail,
+		IRSAnual, Vencimento, Notas, NIF, Identificacao, ValidadeCC
+FROM    Fiadores
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_GetForLookup]
+AS
+
+SET NOCOUNT ON;
+
+SELECT inq.Id, inq.Nome Descricao 
+FROM Fiadores inq 
+ORDER BY Inq.Nome
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+
+CREATE PROCEDURE [dbo].[usp_Fiadores_GetNome] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Nome
+FROM    Fiadores
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Fiadores_Insert]
+(
+    @IdInquilino int, @Nome varchar(60), @Morada varchar(60), @ID_EstadoCivil int,
+    @Contacto1 varchar(20), @Contacto2 varchar(20), @eMail varchar(128),
+    @IRSAnual decimal(10,2), @Vencimento decimal(10,2), @Notas text,
+    @NIF varchar(9), @Identificacao varchar(20), @ValidadeCC datetime, @Ativo bit = 1
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    INSERT INTO [Fiadores]
+        ([IdInquilino], [Nome], [Morada], [ID_EstadoCivil], [Contacto1], [Contacto2], [eMail],
+         [IRSAnual], [Vencimento], [Notas], [NIF], [Identificacao], [ValidadeCC], [Ativo])
+    VALUES
+        (@IdInquilino, @Nome, @Morada, @ID_EstadoCivil, @Contacto1, @Contacto2, @eMail,
+         @IRSAnual, @Vencimento, @Notas, @NIF, @Identificacao, @ValidadeCC, @Ativo);
+    SELECT CAST(SCOPE_IDENTITY() AS int);
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Fiadores_Update]
+(
+    @Id int, @IdInquilino int, @Nome varchar(60), @Morada varchar(60), @ID_EstadoCivil int,
+    @Contacto1 varchar(20), @Contacto2 varchar(20), @eMail varchar(128),
+    @IRSAnual decimal(10,2), @Vencimento decimal(10,2), @Notas text,
+    @NIF varchar(9), @Identificacao varchar(20), @ValidadeCC datetime, @Ativo bit = 1
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    UPDATE [Fiadores]
+    SET [IdInquilino] = @IdInquilino, [Nome] = @Nome, [Morada] = @Morada, [ID_EstadoCivil] = @ID_EstadoCivil,
+        [Contacto1] = @Contacto1, [Contacto2] = @Contacto2, [eMail] = @eMail, [IRSAnual] = @IRSAnual,
+        [Vencimento] = @Vencimento, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao,
+        [ValidadeCC] = @ValidadeCC, [Ativo] = @Ativo
+    WHERE [Id] = @Id;
+    SELECT I.Id, I.IdInquilino, Nome, Morada, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+           Contacto1, Contacto2, NIF, Identificacao, ValidadeCC,
+           eMail, IRSAnual, Vencimento, Notas, Ativo
+    FROM Fiadores I INNER JOIN EstadoCivil EC ON I.ID_EstadoCivil = EC.Id
+    WHERE I.Id = @Id;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_FormaPagamento_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [FormaPagamento] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_FormaPagamento_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT  Id, Descricao
+FROM    FormaPagamento
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_FormaPagamento_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Descricao
+FROM	FormaPagamento
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_FormaPagamento_Insert]
+(
+	@Descricao varchar(75)
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [FormaPagamento] ([Descricao]) VALUES (@Descricao);
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_FormaPagamento_Update]
+(
+	@Id int,
+	@Descricao varchar(75)
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [FormaPagamento] 
+SET [Descricao] = @Descricao WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Antes de apagar fração, verificar se há contratos associados  à mesma
+-- Se a operação resultar em 0 (zero), é válido apagar inquilino
+
+CREATE PROCEDURE [dbo].[usp_Fracoes_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
+
+
+AS
+
+declare @CanDelete bit
+
+SET NOCOUNT ON;
+SELECT	@CanDelete = COUNT(1)
+FROM    Contratos
+WHERE	ID_Fracao = @Id
+
+SELECT @OkToDelete = @CanDelete
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Fracoes] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteApolice]
+(	
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM Seguros
+WHERE IdFracao = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteCondominio]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Condominios] 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteImage]
+(	
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+BEGIN
+	DELETE FROM [ImagensFracoes] 
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_DeleteImages]
+(	
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+BEGIN
+	DELETE FROM [ImagensFracoes] 
+	WHERE Id_Fracao = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
+		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
+		Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao,
+		LicencaHabitacao, DataEmissaoLicencaHabitacao,
+		ID_CertificadoEnergetico, CE.Descricao CertificadoEnergetico,
+		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, F.GasCanalizado, F.CozinhaEquipada,
+		EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
+		TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
+		TP.Descricao TipoPropriedade
+FROM    Fracoes F 
+			INNER JOIN Imoveis I ON
+				F.Id_Imovel = I.Id
+			INNER JOIN TipologiaFracao TF ON
+				F.Tipologia = TF.Id
+			INNER JOIN SituacaoFracao SF ON
+				F.Situacao = SF.Id
+			INNER JOIN EstadoConservacao EC ON
+				F.Conservacao = EC.Id
+			INNER JOIN TipoPropriedade TP ON
+				F.ID_TipoPropriedade = TP.Id
+			INNER JOIN TipoCertificadoEnergetico CE ON 
+				ID_CertificadoEnergetico = CE.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetApolice_ById]
+(	
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT * FROM Seguros
+WHERE IdFracao = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetApolices]
+AS
+
+SET NOCOUNT OFF;
+SELECT * FROM Seguros
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetAvailable]
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+    SELECT Id, Descricao
+    FROM Fracoes
+ 	WHERE Id IN
+		(SELECT ID_Fracao FROM Arrendamentos WHERE Arrendamentos.Ativo = 1) 
+    ORDER BY Fracoes.Descricao
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
+		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
+		Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
+		LicencaHabitacao, DataEmissaoLicencaHabitacao,
+		ID_CertificadoEnergetico, CE.Descricao CertificadoEnergetico,
+		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, GasCanalizado, F.CozinhaEquipada,
+		EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
+		TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
+		TP.Descricao TipoPropriedade
+FROM    Fracoes F 
+			INNER JOIN Imoveis I ON
+				F.Id_Imovel = I.Id
+			INNER JOIN TipologiaFracao TF ON
+				F.Tipologia = TF.Id
+			INNER JOIN SituacaoFracao SF ON
+				F.Situacao = SF.Id
+			INNER JOIN EstadoConservacao EC ON
+				F.Conservacao = EC.Id
+			INNER JOIN TipoPropriedade TP ON
+				F.ID_TipoPropriedade = TP.Id
+			INNER JOIN TipoCertificadoEnergetico CE ON 
+				ID_CertificadoEnergetico = CE.Id
+WHERE	F.Id = 
+	CASE 
+		WHEN  @Id > 0 THEN @Id 
+		ELSE F.Id 
+	END
+ORDER BY Descricao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetCondominio_ById]
+(	
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT * FROM Condominios
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetCondominios]
+AS
+
+SET NOCOUNT OFF;
+SELECT * FROM Condominios
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetFracoes_Lookup] (@Id int) -- id do imóvel
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Descricao
+FROM    Fracoes
+WHERE	Id_Imovel = 
+	CASE 
+		WHEN  @Id > 0 THEN @Id 
+		ELSE Id_Imovel
+	END	
+ORDER BY Descricao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetFracoes_WithDuePayments]
+AS
+
+SET NOCOUNT ON;
+SELECT	F.Id, F.Descricao
+FROM    Fracoes F
+INNER JOIN Recebimentos R ON
+	F.Id = R.ID_Propriedade
+WHERE R.Estado = 2
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetImage_ByUnitId] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT id, Id_Fracao, Descricao, Foto
+FROM ImagensFracoes
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetImages_ByUnitId] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT id, Id_Fracao, Descricao, Foto
+FROM ImagensFracoes
+WHERE Id_Fracao = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetInsuranceData]
+AS
+
+SET NOCOUNT ON;
+SELECT *
+FROM   vwSegurosFracoes
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetPropertyUnits] (@id int)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
+			Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, Fotos, F.Notas, 
+			Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
+			ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao, GasCanalizado,F.CozinhaEquipada,
+			EC.Descricao EstadoConservacao, SF.Descricao SituacaoFracao, 
+			TF.Descricao TipologiaFracao, I.Descricao DescricaoImovel,
+			TP.Descricao TipoPropriedade
+	FROM    Fracoes F 
+				INNER JOIN Imoveis I ON
+					F.Id_Imovel = I.Id
+				INNER JOIN TipologiaFracao TF ON
+					F.Tipologia = TF.Id
+				INNER JOIN SituacaoFracao SF ON
+					F.Situacao = SF.Id
+				INNER JOIN EstadoConservacao EC ON
+					F.Conservacao = EC.Id
+				INNER JOIN TipoPropriedade TP ON
+					F.ID_TipoPropriedade = TP.Id
+	WHERE F.Id_Imovel = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
+		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, GasCanalizado, F.CozinhaEquipada,
+		Fotos, F.Notas, Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
+		LicencaHabitacao, DataEmissaoLicencaHabitacao,
+		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao 
+		
+FROM    Fracoes F 
+WHERE	F.Id = 
+	CASE 
+		WHEN  @Id > 0 THEN @Id 
+		ELSE F.Id 
+	END
+ORDER BY Descricao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitSituation_ByDescription] (@Descricao varchar(50)) 
+AS
+
+SET NOCOUNT ON;
+SELECT	Id
+FROM    SituacaoFracao
+WHERE	Descricao = @Descricao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_GetUnitsWithoutLease] (@Id int )
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+    SELECT Id, Descricao
+    FROM Fracoes
+ 	WHERE Id_Imovel = @Id AND Id NOT IN
+		(SELECT ID_Fracao FROM Arrendamentos) 
+    ORDER BY Fracoes.Descricao
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Fracoes_Imovel] (@Id int)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC sp_executesql N'SELECT Id, Ativa, Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, LicencaHabitacao, DataEmissaoLicencaHabitacao, Alugada, Livre, Reservada, Vendida, Contencioso, Varanda, Terraco, Garagem, Arrecadacao, GasCanalizado, CozinhaEquipada, LugarEstacionamento, Fotos, Notas, Tipologia, Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, ID_TipoPropriedade, Id_Imovel, Situacao, Conservacao FROM Fracoes WHERE Id_Imovel = @Id', N'@Id int', @Id=@Id;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_Insert]
+(	
+	@Ativa bit,
+	@Descricao varchar(128),
+	@ValorRenda decimal,
+	@AreaBrutaPrivativa float,
+	@AreaBrutaDependente float,
+	@CasasBanho int,
+	@Varanda bit,
+	@Terraco bit,
+	@Garagem bit,
+	@Arrecadacao bit,
+	@LugarEstacionamento bit,
+	@GasCanalizado bit,
+	@CozinhaEquipada bit, 
+	@Fotos bit,
+	@Notas text,
+	@Tipologia int,
+	@LicencaHabitacao varchar(30),
+	@DataEmissaoLicencaHabitacao datetime,
+	@ID_CertificadoEnergetico varchar(3),
+	@Matriz varchar(50),
+	@Andar varchar(20),
+	@Lado varchar(20),
+	@AnoUltAvaliacao varchar(4),
+	@ValorUltAvaliacao decimal(12, 2),
+	@ID_TipoPropriedade int,
+	@Id_Imovel int,
+	@Situacao int,
+	@Conservacao int
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Fracoes] 
+	([Ativa], [Descricao], [ValorRenda], [AreaBrutaPrivativa], [AreaBrutaDependente], [CasasBanho], 
+	[Varanda], [Terraco], [Garagem], [GasCanalizado], [CozinhaEquipada], [Arrecadacao], [LugarEstacionamento], [Fotos], [Notas], 
+	[Tipologia], [LicencaHabitacao], [DataEmissaoLicencaHabitacao], [ID_CertificadoEnergetico],
+	[Matriz], [Andar], [Lado], [AnoUltAvaliacao], [ValorUltAvaliacao],
+	[ID_TipoPropriedade], [Id_Imovel], [Situacao], [Conservacao])
+VALUES 
+	(@Ativa, @Descricao, @ValorRenda, @AreaBrutaPrivativa, @AreaBrutaDependente, @CasasBanho,
+	@Varanda, @Terraco, @Garagem, @GasCanalizado, @CozinhaEquipada, @Arrecadacao, 
+	@LugarEstacionamento, @Fotos, @Notas, @Tipologia, @LicencaHabitacao, @DataEmissaoLicencaHabitacao,
+	@ID_CertificadoEnergetico, @Matriz, @Andar, @Lado, 
+	@AnoUltAvaliacao, @ValorUltAvaliacao, @ID_TipoPropriedade, @Id_Imovel, 
+	@Situacao, @Conservacao);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_InsertApolice]
+(	
+	@IdFracao int,
+	@Apolice varchar(20),
+	@Premio decimal(11,2),
+	@Notas text
+
+
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Seguros] 
+	([IdFracao], [Apolice], [Premio], [Notas])
+VALUES 
+	(@IdFracao, @Apolice, @Premio, @Notas);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_InsertCondominio]
+(	
+	@IdFracao int,
+	@Quota decimal(11,2),
+	@Gestor varchar(50),
+	@ContactoGestor varchar(20),
+	@ValorAvenca decimal(11,2)
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Condominios] 
+	([IdFracao], [Quota], [Ano], [Gestor], [ContactoGestor], [ValorAvenca])
+VALUES 
+	(@IdFracao, @Quota, Cast(YEAR(GetDate()) As Varchar(4)), @Gestor, @ContactoGestor, @ValorAvenca);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_InsertImage]
+(	
+	@Descricao varchar(128),
+	@Foto varchar(256),
+	@Id_Fracao int
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [ImagensFracoes] 
+	([Descricao], [Foto], [Id_Fracao])
+VALUES 
+	(@Descricao, @Foto, @Id_Fracao);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 7. Availability ignores inactive units as well as rented ones. */
+CREATE   PROCEDURE [dbo].[usp_Fracoes_IsUnitFreeToLease] (@Id int)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    SELECT 1 FROM Fracoes WHERE Id = @Id AND Situacao = 2 AND ISNULL(Ativa, 1) = 1;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROC usp_Fracoes_Resumo
+AS
+BEGIN
+	DECLARE @Coeficiente float;
+	SELECT @Coeficiente = (SELECT Coeficiente FROM Concelhos WHERE Descricao LIKE '%Montijo%');
+	SELECT F.Descricao, F.ValorRenda, F.ValorRenda * 0.28 AS IRS, F.ValorUltAvaliacao * @Coeficiente AS IMI,
+		S.Premio, s.Apolice
+	FROM fracoes F
+	INNER JOIN imoveis I on 
+		F.Id_Imovel = i.Id
+	INNER JOIN Seguros S ON
+		S.IdFracao = F.id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsFree] 
+(
+	@Id int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = 2 -- free
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsInDispute] 
+(
+	@Id int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = 5
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsRented] 
+(
+	@Id int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = 1 -- alugada
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsReserved] 
+(
+	@Id int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = 3
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_SetAsSold] 
+(
+	@Id int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = 4
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_Update]
+(
+	@Id int,
+	@Ativa bit,
+	@Descricao varchar(128),
+	@ValorRenda decimal,
+	@AreaBrutaPrivativa float,
+	@AreaBrutaDependente float,
+	@CasasBanho int,
+	@Varanda bit,
+	@Terraco bit,
+	@Garagem bit,
+	@Arrecadacao bit,
+	@GasCanalizado bit,
+	@CozinhaEquipada bit, 
+	@LugarEstacionamento bit,
+	@Fotos bit,
+	@Notas text,
+	@Tipologia int,
+	@LicencaHabitacao varchar(30),
+	@DataEmissaoLicencaHabitacao datetime,
+	@ID_CertificadoEnergetico varchar(3),
+	@Matriz varchar(50),
+	@Andar varchar(20),
+	@Lado varchar(20),
+	@AnoUltAvaliacao varchar(4),
+	@ValorUltAvaliacao decimal(12, 2),
+	@ID_TipoPropriedade int,
+	@Id_Imovel int,
+	@Situacao int,
+	@Conservacao int
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE Fracoes 
+SET Descricao = @Descricao, 
+	Ativa = @Ativa, 
+	ValorRenda = @ValorRenda, 
+	AreaBrutaPrivativa = @AreaBrutaPrivativa, 
+	AreaBrutaDependente = @AreaBrutaDependente, 
+	CasasBanho = @CasasBanho, 
+	Varanda = @Varanda, 
+	CozinhaEquipada = @CozinhaEquipada,
+	Terraco = @Terraco,
+	Garagem = @Garagem, 
+	Arrecadacao = @Arrecadacao, 
+	GasCanalizado = @GasCanalizado,
+	LugarEstacionamento = @LugarEstacionamento, 
+	Fotos = @Fotos, 
+	Notas = @Notas, 
+	Tipologia = @Tipologia, 
+	LicencaHabitacao = @LicencaHabitacao, DataEmissaoLicencaHabitacao = @DataEmissaoLicencaHabitacao,
+	ID_CertificadoEnergetico = @ID_CertificadoEnergetico, Matriz = @Matriz, 
+	Andar = @Andar,
+	Lado = @Lado,
+	AnoUltAvaliacao = @AnoUltAvaliacao,
+	ValorUltAvaliacao = @ValorUltAvaliacao,
+	ID_TipoPropriedade = @ID_TipoPropriedade, 
+	Id_Imovel = @Id_Imovel, 
+	Situacao = @Situacao, 
+	Conservacao = @Conservacao 
+WHERE Id = @Id;
+
+SELECT	F.Id, F.Ativa, F.Descricao, ValorRenda, AreaBrutaPrivativa, AreaBrutaDependente, CasasBanho, 
+		Varanda, Terraco, Garagem, Arrecadacao, LugarEstacionamento, GasCanalizado, F.CozinhaEquipada,
+		Fotos, F.Notas, Tipologia, LicencaHabitacao, DataEmissaoLicencaHabitacao,
+		Matriz, Andar, Lado, AnoUltAvaliacao, ValorUltAvaliacao, 
+		ID_TipoPropriedade, Id_Imovel, Situacao, F.Conservacao 
+		
+FROM    Fracoes F 
+WHERE	F.Id = 
+	CASE 
+		WHEN  @Id > 0 THEN @Id 
+		ELSE F.Id 
+	END
+
+ORDER BY Descricao
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateApolice]
+(	
+	@Id int,
+	@Apolice varchar(20),
+	@Premio decimal(11,2),
+	@Notas text
+)
+
+AS
+
+SET NOCOUNT OFF;
+UPDATE Seguros
+	SET 
+		Apolice = @Apolice,
+		Premio = @Premio,
+		Notas = @Notas
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateCondominio]
+(	
+	@Id int,
+	@IdFracao int,
+	@Quota decimal(11,2),
+	@Gestor varchar(50),
+	@ContactoGestor varchar(20),
+	@ValorAvenca decimal(11,2)
+
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE Condominios
+	SET IdFracao = @IdFracao,
+	Quota = @Quota,
+	Gestor = @Gestor,
+	ContactoGestor = @ContactoGestor,
+	ValorAvenca = @ValorAvenca
+WHERE Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateImage]
+(	
+	@Id int,
+	@Descricao varchar(50),
+	@Foto varchar(256),
+	@Id_Fracao int
+)
+AS
+
+SET NOCOUNT OFF;
+BEGIN
+	UPDATE [ImagensFracoes] 
+	SET [Descricao] = @Descricao, [Foto] = @Foto, [Id_Fracao] = @Id_Fracao
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateRentValue] (@Id int, @NewValue decimal(10, 2))
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET ValorRenda = @NewValue
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Fracoes_UpdateStatus] 
+(
+	@Id int,
+	@Status int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE Fracoes
+	SET Situacao = @Status
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Fracoes_UpdateStatusBySituation_todelete]
+(
+    @Id int,
+    @Alugada bit, @Livre bit, @Reservada bit, @Vendida bit, @Contencioso bit
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC sp_executesql N'UPDATE Fracoes SET Alugada=@Alugada, Livre=@Livre, Reservada=@Reservada, Vendida=@Vendida, Contencioso=@Contencioso WHERE Id=@Id', N'@Id int,@Alugada bit,@Livre bit,@Reservada bit,@Vendida bit,@Contencioso bit', @Id=@Id,@Alugada=@Alugada,@Livre=@Livre,@Reservada=@Reservada,@Vendida=@Vendida,@Contencioso=@Contencioso;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[usp_GetConcelhos]
+AS
+BEGIN
+	SELECT D.Descricao Distrito, C.Id, CodConcelho, C.Descricao, IdDistrito, Coeficiente
+	FROM Concelhos C
+	INNER JOIN Distritos D ON
+		C.IdDistrito = D.Id
+	ORDER BY D.Descricao, C.Descricao
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE procedure [dbo].[usp_GetConcelhosDeDistrito](@IdDistrito int)
+AS
+BEGIN
+	SELECT Id, CodConcelho, Descricao, IdDistrito, Coeficiente
+	FROM Concelhos C 
+	WHERE C.IdDistrito = @IdDistrito
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   procedure usp_GetDistritos
+AS
+BEGIN
+	SELECT Id, Descricao
+	FROM Distritos D
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Antes de apagar imóvel, verificar se há contratos associados ao mesmo
+-- Se a operação resultar em 0 (zero), é válido apagar fração
+CREATE PROCEDURE [dbo].[usp_Imoveis_CheckDeleteConstraint] (@Id int)
+
+AS
+
+BEGIN
+	SET NOCOUNT ON;
+	SELECT COUNT(1)
+	FROM   Fracoes
+	WHERE  Id_Imovel = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Imoveis_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Imoveis] WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Imoveis_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, I.Descricao, Morada, Numero, CodPst, CodPstEx, 
+		Freguesia FreguesiaImovel, Concelho ConcelhoImovel, DataUltimaInspecaoGas,
+		AnoConstrucao, Elevador, Notas, Foto, Conservacao, EC.Descricao EstadoConservacao
+FROM	Imoveis I 
+		INNER JOIN EstadoConservacao EC ON
+			I.Conservacao = EC.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Imoveis_GetById](@Id int)
+
+AS
+BEGIN
+SELECT	I.Id, I.Descricao, Morada, Numero, CodPst, CodPstEx, 
+		Freguesia FreguesiaImovel, Concelho ConcelhoImovel, DataUltimaInspecaoGas,
+		AnoConstrucao, Elevador, Notas, Foto, Conservacao, EC.Descricao EstadoConservacao
+FROM	Imoveis I 
+		INNER JOIN EstadoConservacao EC ON
+			I.Conservacao = EC.Id
+		WHERE I.Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Imoveis_GetCodigoImovel](@Id int)
+
+AS
+BEGIN
+			SELECT Id_Imovel 
+			FROM Fracoes
+			WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Imoveis_GetDescricaoImovel](@Id int)
+
+AS
+BEGIN
+	SELECT Descricao 
+	FROM Imoveis
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Imoveis_GetImoveisAsLookupTable]
+
+AS
+BEGIN
+SELECT	Id, Descricao
+FROM   Imoveis 
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Imoveis_GetNumeroPorta](@Id int)
+
+AS
+BEGIN
+	SELECT Numero FROM Imoveis WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Imoveis_Insert]
+(
+	@Descricao varchar(60),
+	@Numero varchar(4),
+	@Morada varchar(60),
+	@CodPst varchar(4),
+	@CodPstEx varchar(3),
+	@AnoConstrucao varchar(4),
+	@FreguesiaImovel varchar(30),
+	@ConcelhoImovel varchar(40),
+	@Elevador bit,
+	@Notas text,
+	@Foto varchar(256),
+	@Conservacao int,
+	@DataUltimaInspecaoGas datetime
+
+)
+AS
+SET NOCOUNT OFF;
+INSERT INTO [Imoveis] 
+	([Descricao], [Numero], [Morada], [CodPst], [CodPstEx], [AnoConstrucao], 
+	[Freguesia], [Concelho], [Elevador], [Notas], [Foto], [Conservacao],
+	[DataUltimaInspecaoGas]) 
+VALUES 
+	(@Descricao, @Numero, @Morada, @CodPst, @CodPstEx, @AnoConstrucao, 
+	@FreguesiaImovel, @ConcelhoImovel, @Elevador, @Notas, @Foto, @Conservacao, 
+	@DataUltimaInspecaoGas);	
+
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Imoveis_Update]
+(
+	@Id int,
+	@Descricao varchar(60),
+	@Numero varchar(4),
+	@Morada varchar(60),
+	@CodPst varchar(4),
+	@CodPstEx varchar(3),
+	@AnoConstrucao varchar(4),
+	@FreguesiaImovel varchar(30),
+	@ConcelhoImovel varchar(40),
+	@Elevador bit,
+	@Notas text,
+	@Foto varchar(256),
+	@Conservacao int,
+	@DataUltimaInspecaoGas datetime
+
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Imoveis] 
+SET [Descricao] = @Descricao, [Numero] = @Numero, [Morada] = @Morada, [CodPst] = @CodPst, 
+	[CodPstEx] = @CodPstEx, [AnoConstrucao] = @AnoConstrucao, [Freguesia] = @FreguesiaImovel, 
+	[Concelho] = @ConcelhoImovel, [Elevador] = @Elevador, [Notas] = @Notas, [Foto] = @Foto,
+	[Conservacao] = @Conservacao, [DataUltimaInspecaoGas] = @DataUltimaInspecaoGas
+WHERE [Id] = @Id;
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 9. Soft archive for tenants/guarantors. Never deletes historical data. */
+CREATE   PROCEDURE [dbo].[usp_Inquilinos_Archive]
+(
+    @Id int,
+    @Success bit OUTPUT,
+    @Code nvarchar(32) OUTPUT,
+    @Message nvarchar(512) OUTPUT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET @Success = 0;
+    SET @Code = N'UNKNOWN';
+    SET @Message = N'';
+
+    IF @Id IS NULL OR @Id <= 0
+    BEGIN
+        SET @Code = N'INVALID_ID';
+        SET @Message = N'Invalid tenant id.';
+        RETURN;
+    END;
+
+    IF NOT EXISTS (SELECT 1 FROM [dbo].[Inquilinos] WHERE [Id] = @Id)
+    BEGIN
+        SET @Code = N'NOT_FOUND';
+        SET @Message = N'Tenant not found.';
+        RETURN;
+    END;
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Arrendamentos] WHERE [ID_Inquilino] = @Id AND [Ativo] = 1)
+    BEGIN
+        SET @Code = N'ACTIVE_LEASE';
+        SET @Message = N'Tenant has an active lease.';
+        RETURN;
+    END;
+
+    IF EXISTS (SELECT 1 FROM [dbo].[Inquilinos] WHERE [Id] = @Id AND [Ativo] = 0)
+    BEGIN
+        SET @Success = 1;
+        SET @Code = N'OK';
+        SET @Message = N'Tenant already archived.';
+        RETURN;
+    END;
+
+    DECLARE @Stamp nvarchar(32) = CONVERT(nvarchar(32), GETDATE(), 103);
+    DECLARE @Note nvarchar(4000) = ISNULL(CONVERT(nvarchar(max), (SELECT [Notas] FROM [dbo].[Inquilinos] WHERE [Id] = @Id)), N'');
+    SET @Note = @Note + CASE WHEN @Note = N'' THEN N'' ELSE N' | ' END +
+                N'Inquilino arquivado; decisao tomada em ' + @Stamp + N'.';
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        UPDATE [dbo].[Inquilinos]
+        SET [Ativo] = 0, [Notas] = @Note
+        WHERE [Id] = @Id;
+        COMMIT TRANSACTION;
+        SET @Success = 1;
+        SET @Code = N'OK';
+        SET @Message = N'Tenant archived.';
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        SET @Code = N'ERROR';
+        SET @Message = N'Failed to archive tenant: ' + ERROR_MESSAGE();
+    END CATCH;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- Antes de apagar inquilino, verificar se há contratos associadosao mesmo
+-- Se a operação resultar em 0 (zero), é válido apagar inquilino
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_CheckDeleteConstraint] (@Id int, @OkToDelete bit OUTPUT)
+
+
+AS
+
+declare @CanDelete bit
+
+SET NOCOUNT ON;
+SELECT	@CanDelete = COUNT(1)
+FROM    Arrendamentos
+WHERE	ID_Inquilino = @Id
+
+SELECT @OkToDelete = @CanDelete
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_CheckForPriorRentUpdates]
+(
+	@UnitId int
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT OFF;
+	SELECT COUNT(1) 
+	FROM HistoricoAtualizacaoRendas
+	WHERE UnitId = @UnitId AND
+		YEAR(DateProcessed) = YEAR(GetDate())
+END 
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [Inquilinos] 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_DeleteDocument]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM [DocumentosInquilino] 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAll] 
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+		DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
+		eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente, 
+		dbo.fn_GetSaldoPrevisto_Inquilino(I.Id) SaldoPrevisto
+FROM    Inquilinos I INNER JOIN 
+			EstadoCivil EC ON
+				I.ID_EstadoCivil = ec.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAllDocuments]
+AS
+
+SET NOCOUNT OFF;
+SELECT DI.Id,[Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, 
+		CreationDate, ReferralDate,
+		[StorageType], [StorageFolder], DT.Name TipoDocumento
+FROM [DocumentosInquilino] DI
+	INNER JOIN Inquilinos I ON
+		DI.TenantId = I.Id
+	INNER JOIN DocumentTypes DT
+		ON DI.DocumentType = DT.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetAllRentUpdates] 
+AS
+
+SET NOCOUNT ON;
+SELECT	H.Id, H.UnitId, H.DateProcessed, 
+		H.PriorValue, H.UpdatedValue, 
+		F.Descricao DescricaoFracao, I.Nome NomeInquilino
+FROM    HistoricoAtualizacaoRendas H
+	INNER JOIN Arrendamentos A ON
+		H.UnitId = A.ID_Fracao
+	INNER JOIN Inquilinos I ON
+		A.ID_Inquilino = I.Id
+	INNER JOIN Fracoes F ON
+		H.UnitId = F.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetDocumentById]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT DI.Id,[Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, ReferralDate,
+		[StorageType], [StorageFolder], DT.Name TipoDocumento
+FROM [DocumentosInquilino] DI
+	INNER JOIN Inquilinos I ON
+		DI.TenantId = I.Id
+	INNER JOIN DocumentTypes DT
+		ON DI.DocumentType = DT.Id
+
+WHERE DI.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetFiador_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, IdInquilino, Nome, Morada, ID_EstadoCivil, Contacto1, Contacto2, eMail, 
+		IRSAnual, Vencimento, Notas, NIF, Identificacao, ValidadeCC
+FROM    Fiadores
+WHERE	IdInquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Nome, Morada, Naturalidade, ID_EstadoCivil, Contacto1, Contacto2, eMail, 
+		IRSAnual, Vencimento, Notas, NIF, Identificacao, Titular, ValidadeCC, DataNascimento,
+		SaldoCorrente, dbo.fn_GetSaldoPrevisto_Inquilino(Id) SaldoPrevisto
+FROM    Inquilinos
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_Exteded_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, Nome, Morada, Naturalidade, ID_EstadoCivil, 
+		EC.Descricao EstadoCivil, Contacto1, Contacto2, eMail, 
+		IRSAnual, Vencimento, Notas, NIF, Identificacao, 
+		Titular, ValidadeCC, DataNascimento
+FROM    Inquilinos I INNER JOIN EstadoCivil EC ON
+		I.ID_EstadoCivil = EC.Id
+WHERE	I.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilino_Extended_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+		DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC, 
+		eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente,
+		dbo.fn_GetSaldoPrevisto_Inquilino(I.Id) SaldoPrevisto
+FROM    Inquilinos I 
+		INNER JOIN EstadoCivil EC ON
+			I.ID_EstadoCivil = EC.Id
+WHERE	I.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_AsLookup]
+AS
+
+SET NOCOUNT ON;
+SELECT inq.Id, inq.Nome Descricao 
+FROM Inquilinos inq 
+ORDER BY Inq.Nome
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 6. Lookup lists used to create new leases must not offer archived tenants/guarantors. */
+CREATE   PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_Disponiveis]
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    SELECT I.Id, I.Nome
+    FROM Inquilinos I
+    WHERE ISNULL(I.Ativo, 1) = 1
+      AND I.Id NOT IN (SELECT ID_Inquilino FROM Arrendamentos WHERE Ativo = 1)
+    ORDER BY I.Nome;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_Fiadores](@Titular bit)
+AS
+
+SET NOCOUNT ON;
+
+
+SELECT inq.Id, inq.Nome Descricao 
+FROM Inquilinos inq 
+WHERE Titular = CASE WHEN @Titular = 1 THEN 1 ELSE 0 END
+ORDER BY Inq.Nome
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetInquilinos_SemContrato]
+AS
+
+SET NOCOUNT ON;
+
+SET NOCOUNT ON;
+SELECT Id, Nome Descricao
+FROM Inquilinos
+WHERE Id NOT IN
+	(SELECT ID_Inquilino FROM Arrendamentos) 
+ORDER BY Nome
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetNome] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Nome
+FROM    Inquilinos
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Inquilinos_GetRentAdjustments]
+
+AS
+
+BEGIN
+	SELECT CC.Id, CC.TransactionId, CC.DataMovimento, CC.ValorPago, CC.UpdatedDate,
+	f.ValorRenda ValorRenda, CC.ValorEmDivida, F.Descricao FracaoInquilino, I.Nome NomeInquilino, CC.Notas
+	FROM CC_Inquilinos CC
+	INNER JOIN arrendamentos A ON
+		CC.IdInquilino = A.ID_Inquilino
+	INNER JOIN Fracoes F ON
+		A.ID_Fracao = F.Id
+	INNER JOIN Inquilinos I ON
+		CC.IdInquilino = I.id
+	WHERE ValorEmDivida > 0 OR 
+		ID_TipoRecebimento <> 99
+	ORDER BY CC.DataMovimento
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetRentUpdates_ByTenantId] (@TenantId int)
+AS
+
+SET NOCOUNT ON;
+SELECT	H.Id, H.UnitId, H.DateProcessed, 
+		H.PriorValue, H.UpdatedValue, 
+		F.Descricao DescricaoFracao, I.Nome NomeInquilino
+FROM    HistoricoAtualizacaoRendas H
+	INNER JOIN Arrendamentos A ON
+		H.UnitId = A.ID_Fracao
+	INNER JOIN Inquilinos I ON
+		A.ID_Inquilino = I.Id
+	INNER JOIN Fracoes F ON
+		H.UnitId = F.Id
+WHERE I.Id = @TenantId
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetTenantDocuments] (@Id int)
+AS
+
+SET NOCOUNT OFF;
+SELECT	DI.Id, [Descricao], [DocumentPath], [DocumentType], [TenantId], I.Nome NomeInquilino, 
+		CreationDate, ReferralDate,
+		[StorageType], [StorageFolder], DT.Description TipoDocumento
+FROM [DocumentosInquilino] DI
+	INNER JOIN Inquilinos I ON
+		DI.TenantId = I.Id
+	INNER JOIN DocumentTypes DT
+		ON DI.DocumentType = DT.Id
+WHERE DI.TenantId = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROC [dbo].[usp_Inquilinos_GetTenantPayments]
+
+@TenantId int
+
+AS
+
+BEGIN
+	SELECT * FROM Recebimentos
+	WHERE ID_Inquilino = @TenantId
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetTenantPaymentsHistory] (@Id int)
+AS
+
+SET NOCOUNT OFF;
+SELECT	Id, IdInquilino, DataMovimento, 
+		ValorPago, ValorEmDivida, 
+		Renda, ID_TipoRecebimento, 
+		Notas, 
+		TransactionId
+FROM CC_Inquilinos
+WHERE IdInquilino = @Id
+ORDER BY TransactionId, DataMovimento
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Inquilinos_GetValorRenda] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT F.ValorRenda
+FROM Arrendamentos A 
+	INNER JOIN Fracoes F ON
+		A.ID_Fracao = F.Id
+WHERE A.ID_Inquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 5. Tenant / guarantor writes can persist their active flag. */
+CREATE   PROCEDURE [dbo].[usp_Inquilinos_Insert]
+(
+    @Nome varchar(60), @Morada varchar(60), @Naturalidade varchar(50), @ID_EstadoCivil int,
+    @Contacto1 varchar(20), @Contacto2 varchar(20), @eMail varchar(128),
+    @IRSAnual decimal(10,2), @Vencimento decimal(10,2), @Notas text,
+    @NIF varchar(9), @Identificacao varchar(20), @Titular bit,
+    @ValidadeCC datetime, @DataNascimento datetime, @Ativo bit = 1
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    INSERT INTO [Inquilinos]
+        ([Nome], [Morada], [Naturalidade], [ID_EstadoCivil], [Contacto1], [Contacto2], [eMail],
+         [IRSAnual], [Vencimento], [Notas], [NIF], [Identificacao], [Titular], [ValidadeCC], [DataNascimento], [Ativo])
+    VALUES
+        (@Nome, @Morada, @Naturalidade, @ID_EstadoCivil, @Contacto1, @Contacto2, @eMail,
+         @IRSAnual, @Vencimento, @Notas, @NIF, @Identificacao, @Titular, @ValidadeCC, @DataNascimento, @Ativo);
+    SELECT CAST(SCOPE_IDENTITY() AS int);
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_InsertDocument]
+(
+	@Descricao varchar(512),
+	@DocumentPath varchar(256),
+	@TenantId int,
+	@ReferralDate datetime,
+	@DocumentType int,
+	@StorageType char(1),
+	@StorageFolder varchar(50)
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [DocumentosInquilino] 
+	([Descricao], [DocumentPath], [DocumentType], [TenantId],[ReferralDate],[StorageType], [StorageFolder] )
+	VALUES (@Descricao, @DocumentPath, @DocumentType, @TenantId, @ReferralDate, @StorageType, @StorageFolder);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_InsertRentUpdate]
+(
+	@UnitId int,
+	@PriorValue decimal,
+	@UpdatedValue decimal
+)
+
+AS
+
+BEGIN
+	SET NOCOUNT OFF;
+	INSERT INTO HistoricoAtualizacaoRendas(UnitId, DateProcessed, PriorValue, UpdatedValue)
+	VALUES( @UnitId, GetDate(), @PriorValue, @UpdatedValue)
+END 
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE usp_Inquilinos_Stat_LatePaymentLetters
+
+AS
+BEGIN
+	SET LANGUAGE Portuguese
+	select DI.Descricao Description, DI.CreationDate, 
+		UPPER( DATENAME(mm, DI.ReferralDate)) + '-' + CAST(YEAR(DI.ReferralDate) AS VARCHAR(4)) RefersTo,
+		I.Nome NomeInquilino
+	from DocumentosInquilino DI
+	inner join Inquilinos I ON
+	DI.TenantId = I.Id
+	WHERE DI.DocumentType = 18
+	ORDER BY TenantId, CreationDate
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_Stat_RentUpdateLetters]
+
+AS
+BEGIN
+	SET LANGUAGE Portuguese
+	select I.Id, I.Nome, DI.Descricao Description, DI.CreationDate, 
+		UPPER( DATENAME(mm, DI.ReferralDate)) + '-' + CAST(YEAR(DI.ReferralDate) AS VARCHAR(4)) RefersTo,
+		I.Nome NomeInquilino
+	from DocumentosInquilino DI
+	inner join Inquilinos I ON
+	DI.TenantId = I.Id
+	WHERE DI.DocumentType = 16
+	ORDER BY TenantId, CreationDate
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Inquilinos_Update]
+(
+    @Id int, @Nome varchar(60), @Morada varchar(60), @Naturalidade varchar(50), @ID_EstadoCivil int,
+    @Contacto1 varchar(20), @Contacto2 varchar(20), @eMail varchar(128),
+    @IRSAnual decimal(10,2), @Vencimento decimal(10,2), @Notas text,
+    @NIF varchar(9), @Identificacao varchar(20), @Titular bit,
+    @ValidadeCC datetime, @DataNascimento datetime, @Ativo bit = 1
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    UPDATE [Inquilinos]
+    SET [Nome] = @Nome, [Morada] = @Morada, [Naturalidade] = @Naturalidade, [ID_EstadoCivil] = @ID_EstadoCivil,
+        [Contacto1] = @Contacto1, [Contacto2] = @Contacto2, [eMail] = @eMail, [IRSAnual] = @IRSAnual,
+        [Vencimento] = @Vencimento, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao,
+        [Titular] = @Titular, [ValidadeCC] = @ValidadeCC, [DataNascimento] = @DataNascimento, [Ativo] = @Ativo
+    WHERE [Id] = @Id;
+    SELECT I.Id, Nome, Morada, Naturalidade, I.ID_EstadoCivil, EC.Descricao EstadoCivil,
+           DataNascimento, Contacto1, Contacto2, NIF, Identificacao, ValidadeCC,
+           eMail, IRSAnual, Vencimento, Titular, Notas, Ativo, SaldoCorrente
+    FROM Inquilinos I INNER JOIN EstadoCivil EC ON I.ID_EstadoCivil = EC.Id
+    WHERE I.Id = @Id;
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_Update_LetterAnswerDate]
+(
+	@Id int, -- Tenant document Id
+	@LetterAnswerDate datetime
+)
+AS
+	SET NOCOUNT OFF;
+	UPDATE [DocumentosInquilino] 
+	SET [AnswerDate] = @LetterAnswerDate
+	WHERE [Id] = @Id 
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_UpdateDocument]
+(
+	@Id int,
+	@Descricao varchar(512)
+
+)
+AS
+
+BEGIN
+	SET NOCOUNT OFF;
+	UPDATE [DocumentosInquilino] 
+	SET Descricao = @Descricao,
+	ReferralDate = GETDATE()
+	WHERE [Id] = @Id
+END 
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Inquilinos_UpdateSaldoCorrente]
+(
+	@TenantId int,
+	@NovoSaldoCorrente decimal
+)
+AS
+
+SET NOCOUNT OFF
+BEGIN
+	UPDATE Inquilinos
+	SET SaldoCorrente = @NovoSaldoCorrente
+	WHERE Id = @TenantId
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[Usp_InsertAuditLogs] 
+    @UrlReferrer VARCHAR(500)
+	,@ActionName VARCHAR(50)
+	,@Area VARCHAR(50)
+	,@ControllerName VARCHAR(50)
+	,@LoginStatus VARCHAR(1)
+	,@LoggedInAt VARCHAR(50)
+	,@LoggedOutAt VARCHAR(50)
+	,@PageAccessed VARCHAR(500)
+	,@IPAddress VARCHAR(50)
+	,@SessionID VARCHAR(50)
+	,@UserID VARCHAR(10)
+	,@RoleId VARCHAR(2)
+	,@LangId VARCHAR(2)
+	,@IsFirstLogin VARCHAR(2)
+
+AS
+BEGIN
+	DECLARE @table VARCHAR(15)
+		,@sql NVARCHAR(MAX)
+		,@sqlcreate NVARCHAR(MAX)
+		,@newtable VARCHAR(30)
+		,@currentdate VARCHAR(23);
+
+	SET @currentdate = (CONVERT(VARCHAR, getdate(), 20))
+	SET @table = (
+			SELECT REPLACE(CONVERT(VARCHAR(11), getdate(), 106), ' ', '_')
+			)
+	SET @newtable = 'Audit_' + @table
+
+	SELECT @newtable
+
+	IF (
+			EXISTS (
+				SELECT *
+				FROM INFORMATION_SCHEMA.TABLES
+				WHERE TABLE_NAME = @newtable
+				)
+			)
+	BEGIN
+		SET @sql = CONCAT (
+				'INSERT INTO ['
+				,@newtable
+				,'] (Area,ControllerName,ActionName,LoginStatus,LoggedInAt,LoggedOutAt,PageAccessed,IPAddress,SessionID,UserID,RoleId,LangId,IsFirstLogin,CurrentDatetime) '
+				,'VALUES ('''
+				,@Area
+				,''','''
+				,@ControllerName
+				,''','''
+				,@ActionName
+				,''','''
+				,@LoginStatus
+				,''','''
+				,@LoggedInAt
+				,''','''
+				,@LoggedOutAt
+				,''','''
+				,@PageAccessed
+				,''','''
+				,@IPAddress
+				,''','''
+				,@SessionID
+				,''','''
+				,@UserID
+				,''','''
+				,@RoleId
+				,''','''
+				,@LangId
+				,''','''
+				,@IsFirstLogin
+				,''','''
+				,@currentdate
+				
+			
+				,''')'
+				);
+
+		EXEC (@sql);
+	END
+	ELSE
+	BEGIN
+		SET @sqlcreate = 'CREATE TABLE ' + '[' + @newtable + ']' + '(
+ [AuditId] [bigint] IDENTITY(1,1) NOT NULL,
+ [Area] [varchar](50) NULL,
+ [ControllerName] [varchar](50) NULL,
+ [ActionName] [varchar](50) NULL,
+ [LoginStatus] [varchar](1) NULL,
+ [LoggedInAt] [varchar](23) NULL,
+ [LoggedOutAt] [varchar](23) NULL,
+ [PageAccessed] [varchar](500) NULL,
+ [IPAddress] [varchar](50) NULL,
+ [SessionID] [varchar](50) NULL,
+ [UserID] [varchar](50) NULL,
+ [RoleId] [varchar](2) NULL,
+ [LangId] [varchar](2) NULL,
+ [IsFirstLogin] [varchar](2) NULL,
+ [CurrentDatetime] [varchar](23) NULL
+ )'
+
+		EXEC sp_executesql @sqlcreate;
+
+		SET @sql = CONCAT (
+				'INSERT INTO ['
+				,@newtable
+				,'] (Area,ControllerName,ActionName,LoginStatus,LoggedInAt,LoggedOutAt,PageAccessed,IPAddress,SessionID,UserID,RoleId,LangId,IsFirstLogin,CurrentDatetime) '
+				,'VALUES ('''
+				,@Area
+				,''','''
+				,@ControllerName
+				,''','''
+				,@ActionName
+				,''','''
+				,@LoginStatus
+				,''','''
+				,@LoggedInAt
+				,''','''
+				,@LoggedOutAt
+				,''','''
+				,@PageAccessed
+				,''','''
+				,@IPAddress
+				,''','''
+				,@SessionID
+				,''','''
+				,@UserID
+				,''','''
+				,@RoleId
+				,''','''
+				,@LangId
+				,''','''
+				,@IsFirstLogin
+				,''','''
+				,@currentdate
+				
+				,''')'
+				);
+
+		EXEC (@sql);
+	END
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 27-01-2024
+-- Description:	Atualiza data-resposta da carta enviada ao inquilino
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Letters_Answer_Update] 
+@Id int,
+@DataResposta datetime
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	UPDATE HistoricoEnvioCartas
+	SET DataResposta = @DataResposta
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 27-01-2024
+-- Description:	Atualiza data-resposta da carta enviada ao inquilino
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Letters_GetAll] 
+
+AS
+BEGIN
+	SELECT Id, DataEnvio, DataResposta, Tentativa
+	FROM HistoricoEnvioCartas
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 27-01-2024
+-- Description:	Get letter by id
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Letters_GetAnswerLetter] 
+
+@Id int
+
+AS
+BEGIN
+	SELECT Id, DataEnvio, DataResposta, Tentativa
+	FROM HistoricoEnvioCartas
+	WHERE Id = @Id
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 27-01-2024
+-- Description:	Cria registo no histórico de cartas enviadas ao inquilino
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Letters_Insert] 
+@DataEnvio datetime,
+@IdInquilino int,
+@IdTipoCarta int,
+@Tentativa smallint
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO HistoricoEnvioCartas( DataEnvio, IdInquilino, IdTipoCarta, Tentativa)
+	VALUES(@DataEnvio, @IdInquilino, @IdTipoCarta, @Tentativa)
+
+	SELECT CAST(SCOPE_IDENTITY() as int);
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 28/01/2022
+-- Description:	Cria registo de login na tabela de logins
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Log_Login_Create] 
+
+@UserId nvarchar(450),
+@SessionId nvarchar(250),
+@LoginDate datetime
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO tblLogLogins(UserId, LoginDate, SessionId)
+	VALUES(@UserId, @LoginDate, @SessionId)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Log_Login_Select]
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC sp_executesql N'SELECT Id, UserId, SessionId, LoginDate, LogoutDate FROM tblLogLogins ORDER BY Id DESC';
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Log_Login_Update]
+    @SessionId varchar(250),
+    @LogoutDate DateTime
+AS
+BEGIN
+    SET NOCOUNT ON;
+    EXEC sp_executesql N'UPDATE tblLogLogins SET LogoutDate = @LogoutDate WHERE SessionId = @SessionId', N'@SessionId varchar(250),@LogoutDate DateTime', @SessionId=@SessionId, @LogoutDate=@LogoutDate;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 28/01/2022
+-- Description:	Cria registo de log (operações CRUD - C)
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Create]
+	@Tabela nvarchar(255),
+	@IdReg int,
+	@QuemCriou nvarchar(450),
+	@DataCriacao datetime
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemCriou, DataCriacao)
+	VALUES(@Tabela, @IdReg, @QuemCriou, @DataCriacao)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 28/01/2022
+-- Description:	Apaga registo na tabela de logOperações
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Delete] 
+	@Tabela nvarchar(255),
+	@IdReg int,
+	@QuemApagou nvarchar(450),
+	@DataAnulacao datetime
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemApagou, DataAnulacao)
+	VALUES(@Tabela, @IdReg, @QuemApagou, @DataAnulacao)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 28/01/2022
+-- Description:	Atualiza registo na tabela de logOperações
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Log_Operacoes_Update] 
+	@Tabela nvarchar(255),
+	@IdReg int,
+	@QuemModificou nvarchar(450),
+	@DataUltimaAlteracao datetime
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO tblLogOperacoes(Tabela, IdReg, QuemModificou, DataUltimaAlteracao)
+	VALUES(@Tabela, @IdReg, @QuemModificou, @DataUltimaAlteracao)
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Logs_ById] (@Id int)
+AS
+	SET NOCOUNT ON;
+	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
+	FROM    PMlogs
+	WHERE Id = @Id;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Logs_DeleteAll]
+AS
+	SET NOCOUNT ON;
+	TRUNCATE TABLE PMlogs
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Logs_DeleteById] (@Id int)
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DELETE FROM PMLogs
+	WHERE Id = @Id
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Logs_GetAll]
+AS
+	SET NOCOUNT ON;
+	SELECT	*
+	FROM    PMlogs
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 12/03/2023
+-- Description:	visualiza registos de logs (logins)
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Logs_GetLoginEntries] 
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
+	FROM PMLogs
+	WHERE [Message] LIKE '%' + 'Logged' + '%'
+	ORDER BY TimeStamp DESC
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Logs_GetLogs] 
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	SELECT Id, [Message], MessageTemplate, [Level], [TimeStamp], [Exception], [Properties]
+	FROM PMLogs
+	ORDER BY TimeStamp DESC
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 24-04-2023
+-- Description:	Apaga registo na tabela de mensagens
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Messages_Delete] 
+
+@MessageId int
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	Delete From Messages
+	Where MessageId = @MessageId
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 24-04-2023
+-- Description:	Seleciona todos os registos da tabela de mensagens
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Messages_GetAll] 
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	Select MessageId, DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
+	MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
+	FROM Messages
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 24-04-2023
+-- Description:	Seleciona registo na tabela de mensagens, por Id da mensagem
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Messages_GetById] 
+
+@MessageId int 
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	Select MessageId, DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
+	MessageType, MessageSentOn, MessageReceivedOn,
+		MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
+	FROM Messages
+	Where MessageId = @MessageId
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 24-04-2023
+-- Description:	Cria registo na tabela de mensagens
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Messages_Insert] 
+
+@DestinationEmail nvarchar(250),
+@SenderEmail nvarchar(250),
+@SubjectTitle nvarchar(100),
+@MessageContent nvarchar(512),
+@MessageType int,
+@MessageSentOn Date,
+@MessageReceivedOn Date,
+@TenantId int,
+@ReferenceId varchar(50)
+
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	INSERT INTO Messages(DestinationEmail, SenderEmail, SubjectTitle, MessageContent,
+		MessageType, MessageSentOn, MessageReceivedOn, TenantId, ReferenceId
+)
+	VALUES(@DestinationEmail, @SenderEmail, @SubjectTitle, @MessageContent,
+		@MessageType, @MessageSentOn, @MessageReceivedOn, @TenantId, @ReferenceId
+);
+
+	SELECT CAST(SCOPE_IDENTITY() as int);
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Fausto Luís
+-- Create date: 24-04-2023
+-- Description:	Atualiza registo na tabela de mensagens
+-- =============================================
+CREATE PROCEDURE [dbo].[usp_Messages_Update] 
+
+@MessageId int,
+@DestinationEmail nvarchar(250),
+@SenderEmail nvarchar(250),
+@SubjectTitle nvarchar(100),
+@MessageContent nvarchar(512),
+@MessageType int,
+@MessageSentOn Date,
+@MessageReceivedOn Date,
+@TenantId int, 
+@ReferenceId varchar(50)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	Update Messages
+		SET DestinationEmail = @DestinationEmail, 
+		SenderEmail = @SenderEmail, SubjectTitle = @SubjectTitle, 
+		MessageContent = @MessageContent, MessageType = @MessageType,
+		MessageSentOn = @MessageSentOn, MessageReceivedOn = @MessageReceivedOn,
+		TenantId = @TenantId, ReferenceId = @ReferenceId
+	Where MessageId = @MessageId
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_ExistsRecent]
+    @RecipientUserId nvarchar(450),
+    @Kind nvarchar(64),
+    @ResourceType nvarchar(64) = NULL,
+    @ResourceId int = NULL,
+    @Since datetime2
+AS
+BEGIN
+    SET NOCOUNT ON;
+    IF EXISTS (
+        SELECT 1
+        FROM [dbo].[Notifications]
+        WHERE [RecipientUserId] = @RecipientUserId
+          AND [Kind] = @Kind
+          AND ISNULL([ResourceType], N'') = ISNULL(@ResourceType, N'')
+          AND ISNULL([ResourceId], 0) = ISNULL(@ResourceId, 0)
+          AND [CreatedAt] >= @Since
+    )
+        SELECT CAST(1 AS bit);
+    ELSE
+        SELECT CAST(0 AS bit);
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_GetForUser]
+    @RecipientUserId nvarchar(450),
+    @Take int = 100
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT TOP (@Take)
+        [Id],[RecipientUserId],[TenantId],[ActorUserId],[Kind],[Title],[Body],[Link],[Severity],[SuggestedAction],
+        [ResourceType],[ResourceId],[CreatedAt],[SeenAt],[ReadAt]
+    FROM [dbo].[Notifications]
+    WHERE [RecipientUserId] = @RecipientUserId
+    ORDER BY [CreatedAt] DESC, [Id] DESC;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_GetUnreadCount]
+    @RecipientUserId nvarchar(450)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SELECT
+        ISNULL(SUM(CASE WHEN [ReadAt] IS NULL THEN 1 ELSE 0 END), 0) AS Unread,
+        ISNULL(SUM(CASE WHEN [SeenAt] IS NULL AND [ReadAt] IS NULL THEN 1 ELSE 0 END), 0) AS Unseen
+    FROM [dbo].[Notifications]
+    WHERE [RecipientUserId] = @RecipientUserId;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_Insert]
+    @RecipientUserId nvarchar(450),
+    @TenantId int = NULL,
+    @ActorUserId nvarchar(450) = NULL,
+    @Kind nvarchar(64),
+    @Title nvarchar(256),
+    @Body nvarchar(1024),
+    @Link nvarchar(512) = NULL,
+    @Severity nvarchar(32) = 'Info',
+    @SuggestedAction nvarchar(1024) = NULL,
+    @ResourceType nvarchar(64) = NULL,
+    @ResourceId int = NULL,
+    @CreatedAt datetime2 = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    INSERT INTO [dbo].[Notifications]
+        ([RecipientUserId],[TenantId],[ActorUserId],[Kind],[Title],[Body],[Link],[Severity],[SuggestedAction],[ResourceType],[ResourceId],[CreatedAt])
+    VALUES
+        (@RecipientUserId,@TenantId,@ActorUserId,@Kind,@Title,@Body,@Link,@Severity,@SuggestedAction,@ResourceType,@ResourceId,COALESCE(@CreatedAt, SYSDATETIME()));
+    SELECT CAST(SCOPE_IDENTITY() AS int);
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_MarkAllRead]
+    @RecipientUserId nvarchar(450)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE [dbo].[Notifications]
+    SET [ReadAt] = SYSDATETIME()
+    WHERE [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NULL;
+    SELECT @@ROWCOUNT;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_MarkRead]
+    @Id int,
+    @RecipientUserId nvarchar(450)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE [dbo].[Notifications]
+    SET [ReadAt] = COALESCE([ReadAt], SYSDATETIME())
+    WHERE [Id] = @Id AND [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NULL;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_MarkSeen]
+    @RecipientUserId nvarchar(450)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    UPDATE [dbo].[Notifications]
+    SET [SeenAt] = SYSDATETIME()
+    WHERE [RecipientUserId] = @RecipientUserId AND [SeenAt] IS NULL;
+    SELECT @@ROWCOUNT;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Notifications_PurgeOld]
+    @RetentionDays int = 180
+AS
+BEGIN
+    SET NOCOUNT ON;
+    DELETE FROM [dbo].[Notifications]
+    WHERE [CreatedAt] < DATEADD(day, -@RetentionDays, SYSDATETIME()) AND [ReadAt] IS NOT NULL;
+    SELECT @@ROWCOUNT;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Proprietarios_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM Proprietarios 
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Proprietarios_Existe]
+
+AS
+
+SET NOCOUNT OFF;
+SELECT COUNT(1) FROM Proprietarios
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Proprietarios_GetById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	P.Id, Nome, Morada, CodPostal, Naturalidade, ID_EstadoCivil, DataNascimento, Identificacao,
+		ValidadeCC, NIF, Contacto, eMail, Notas, EC.Descricao EstadoCivil
+FROM    Proprietarios P INNER JOIN
+		EstadoCivil EC ON P.ID_EstadoCivil = EC.Id			
+WHERE	P.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Proprietarios_Insert]
+/*
+Id, Nome, Morada, Naturalidade, ID_EstadoCivil, DataNascimento, Identificacao,
+		ValidadeCC, NIF, Contacto, eMail, Notas
+*/
+(
+	@Nome varchar(60),
+	@Morada varchar(60),
+	@CodPostal varchar(50),
+	@Naturalidade varchar(50),
+	@ID_EstadoCivil int,
+	@DataNascimento datetime,
+	@Identificacao varchar(75),
+	@ValidadeCC datetime,
+	@NIF varchar(9),
+	@Contacto varchar(20),
+	@eMail varchar(128),
+	@Notas text
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [Proprietarios] 
+	([Nome], [Morada], [CodPostal], [Naturalidade], [ID_EstadoCivil], [Contacto], [eMail],
+	[Notas], [NIF], [Identificacao], [ValidadeCC], [DataNascimento]) 
+VALUES (@Nome, @Morada, @CodPostal, @Naturalidade, @ID_EstadoCivil, @Contacto, 	@eMail, 
+	@Notas, @NIF, @Identificacao, @ValidadeCC, @DataNascimento);
+	
+SELECT CAST(SCOPE_IDENTITY() as int);
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Proprietarios_Update]
+
+(
+	@Id int,
+	@Nome varchar(60),
+	@Morada varchar(60),
+	@CodPostal varchar(50),
+	@Naturalidade varchar(50),
+	@ID_EstadoCivil int,
+	@DataNascimento datetime,
+	@Identificacao varchar(75),
+	@ValidadeCC datetime,
+	@NIF varchar(9),
+	@Contacto varchar(20),
+	@eMail varchar(128),
+	@Notas text
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE[Proprietarios] SET 
+	[Nome] = @Nome, [Morada] = @Morada, CodPostal = @CodPostal, [Naturalidade] = @Naturalidade, [ID_EstadoCivil] = @ID_EstadoCivil, 
+	[Contacto] = @Contacto, [eMail] = @eMail, [Notas] = @Notas, [NIF] = @NIF, [Identificacao] = @Identificacao,
+	[ValidadeCC] = @ValidadeCC, [DataNascimento] = @DataNascimento
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_AcertaPagamentoRenda]
+(
+	@Id int, -- transaction id
+	@PaymentState int,
+	@Notas varchar(50),
+	@ValorAcerto decimal(10,2),
+	@ValorEmDivida decimal(10,2),
+	@SaldoCorrente decimal(10,2),
+	@ValorRecebido decimal(10, 2),
+	@TenantId int,
+	@UpdatedDate datetime,
+	@Success bit = 0 OUTPUT
+)
+AS
+
+BEGIN
+
+	DECLARE @CodTipoRecebimento int
+	DECLARE @DataMovimento datetime
+	DECLARE @MesMovimento int
+	DECLARE @AnoMovimento int
+
+	SET NOCOUNT OFF;
+
+	BEGIN TRY
+	    BEGIN TRANSACTION ACERTO_RENDA;
+
+			SELECT @DataMovimento = DataMovimento, 
+				@MesMovimento=MONTH(DataMovimento), 
+				@AnoMovimento=YEAR(DataMovimento) 
+			FROM Recebimentos WHERE Id = @Id;
+
+			SELECT @CodTipoRecebimento = Id FROM TipoRecebimento
+				WHERE Descricao LIKE 
+					CASE 
+						WHEN @PaymentState = 3 THEN '%atraso%' 
+						ELSE '%certo%' 
+					END;
+			
+			IF @PaymentState = 3 -- fully paid
+			BEGIN
+				SET @PaymentState = 1
+				UPDATE DocumentosInquilino
+					SET Status = 2
+				WHERE DocumentType = 18 AND
+					TenantId = @TenantId AND
+					MONTH(ReferralDate) = @MesMovimento AND
+					YEAR(ReferralDate) = @AnoMovimento
+			END
+
+			IF @ValorAcerto = @ValorEmDivida
+			BEGIN
+				SET @ValorEmDivida = 0
+			END
+
+			UPDATE [Recebimentos] SET	
+				[ValorRecebido] = @ValorRecebido,
+				[ValorEmFalta] = @ValorEmDivida, 
+				[Estado] = 1, -- acertos são sempre sobre valores totais em falta (1 = pago)
+				[Renda] = 1,-- regularização de pagamentos - são sempre sobre rendas 
+				[Notas] = @Notas
+			WHERE Id = @Id;
+
+
+			INSERT INTO [CC_Inquilinos] 
+			(DataMovimento, UpdatedDate, ValorPago, ValorEmDivida, IdInquilino, Renda, ID_TipoRecebimento, Notas, TransactionId)
+			VALUES 
+			(@DataMovimento, @UpdatedDate, @ValorAcerto, @ValorEmDivida, @TenantId, 0, @CodTipoRecebimento, @Notas, @Id); 
+
+			UPDATE [Inquilinos] 
+				SET SaldoCorrente = @SaldoCorrente
+			WHERE [Id] = @TenantId;
+
+			-- 18-05-2023
+			UPDATE Arrendamentos SET
+				Data_Pagamento = @DataMovimento
+			WHERE ID_Inquilino = @TenantId
+
+			SELECT @Success = 1;
+
+		COMMIT TRANSACTION ACERTO_RENDA;
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0
+		BEGIN 
+			SELECT @Success = 0;
+			ROLLBACK TRANSACTION ACERTO_RENDA;                        
+		END
+		SELECT
+			ERROR_NUMBER() AS ErrorNumber,
+			ERROR_SEVERITY() AS ErrorSeverity,
+			ERROR_STATE() AS ErrorState,
+			ERROR_PROCEDURE() AS ErrorProcedure,
+			ERROR_LINE() AS ErrorLine,
+			ERROR_MESSAGE() AS ErrorMessage;
+	END CATCH
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_Delete]
+(
+	@Id int
+)
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM Recebimentos
+WHERE [Id] = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_Delete_Temp]
+AS
+
+SET NOCOUNT OFF;
+DELETE FROM RecebimentosTemp
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	R.Id, DataMovimento, Estado, ValorPrevisto, ValorRecebido, Renda, ValorEmFalta, 
+		ID_Propriedade, ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas,
+		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
+FROM	Recebimentos R 
+		INNER JOIN Fracoes F ON
+			R.ID_Propriedade = F.Id
+		INNER JOIN Inquilinos INQ ON
+			R.ID_Inquilino = INQ.Id
+		LEFT JOIN TipoRecebimento TR ON
+			R.ID_TipoRecebimento = TR.Id
+-- WHERE Estado != 3 -- 3 = Não pago
+ORDER BY R.DataMovimento Desc
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetLastPeriodProcessed]
+AS
+
+SET NOCOUNT ON;
+
+SELECT TOP 1 Mes, Ano
+FROM ProcessamentoRendas
+ORDER BY Ano Desc, Mes Desc
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   Procedure [dbo].[usp_Recebimentos_GetPaymentsByYear]
+	@year int
+AS
+BEGIN 
+	SELECT 'Pagamento de Renda' Descricao,
+	SUM(D.ValorRecebido) TotalPagamentos, COUNT(1) NumeroMovimentos
+	FROM Recebimentos D
+	WHERE D.Renda = 1 AND YEAR(D.DataMovimento) = @year
+UNION
+	SELECT TR.Descricao,
+	SUM(D.ValorRecebido) TotalPagamentos, COUNT(1) NumeroMovimentos
+	FROM Recebimentos D
+	INNER JOIN TipoRecebimento TR
+		ON D.ID_TipoRecebimento = TR.Id
+	WHERE YEAR(D.DataMovimento) = @year
+	GROUP BY TR.Descricao
+
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	R.Id, DataMovimento, Estado, Renda, 
+		ValorPrevisto, ValorRecebido, ValorEmFalta, ID_Propriedade, 
+		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
+		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
+FROM	Recebimentos R 
+		INNER JOIN Fracoes F ON
+			R.ID_Propriedade = F.Id
+		INNER JOIN Inquilinos INQ ON
+			R.ID_Inquilino = INQ.Id
+		LEFT JOIN TipoRecebimento TR ON
+			R.ID_TipoRecebimento = TR.Id
+WHERE	R.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_Temp_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	R.Id, DataMovimento, Estado, Renda, ValorPrevisto, ValorRecebido, ValorEmFalta, ID_Propriedade, 
+		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
+		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
+FROM	RecebimentosTemp R 
+		INNER JOIN Fracoes F ON
+			R.ID_Propriedade = F.Id
+		INNER JOIN Inquilinos INQ ON
+			R.ID_Inquilino = INQ.Id
+		LEFT JOIN TipoRecebimento TR ON
+			R.ID_TipoRecebimento = TR.Id
+WHERE	R.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_GetRecebimento_TempById_ToDelete] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	R.Id, DataMovimento, Estado, Renda, ValorRecebido, ValorEmFalta, ID_Propriedade, 
+		ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas, 
+		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
+FROM	RecebimentosTemp R 
+		INNER JOIN Fracoes F ON
+			R.ID_Propriedade = F.Id
+		INNER JOIN Inquilinos INQ ON
+			R.ID_Inquilino = INQ.Id
+		LEFT JOIN TipoRecebimento TR ON
+			R.ID_TipoRecebimento = TR.Id
+WHERE	R.Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetTotalByMonthAndYear] (@month int, @year int, @totalPaid decimal(10,2) out)
+AS
+
+SET NOCOUNT ON;
+
+SELECT @totalPaid = sum(valorrecebido)
+from RecebimentosTemp
+WHERE Renda = 1 AND 
+	Month(DataMovimento) = @month AND
+	Year(DataMovimento) = @year
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetTotalReceived] (@Id int = 0)
+AS
+
+SET NOCOUNT ON;
+
+SELECT SUM(ValorRecebido)
+FROM Recebimentos
+WHERE ID_TipoRecebimento = 
+	CASE 
+		WHEN @Id > 0 THEN @Id ELSE ID_TipoRecebimento 
+	END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_GetValorUltimaRendaPaga_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT TOP 1 ValorRecebido
+FROM		Recebimentos
+WHERE		ID_Inquilino = @Id AND
+			Renda = 1
+ORDER BY	DataMovimento Desc
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+/* 4. Rent writes carry the lease id. */
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_Insert]
+(
+    @DataMovimento datetime,
+    @Renda bit,
+    @Estado int,
+    @ValorPrevisto decimal(10,2),
+    @ValorRecebido decimal(10,2),
+    @ValorEmFalta decimal(10,2),
+    @ID_Propriedade int,
+    @ID_TipoRecebimento int,
+    @ID_Inquilino int,
+    @GeradoPeloPrograma bit,
+    @Notas varchar(512),
+    @ID_Arrendamento int = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    INSERT INTO [Recebimentos]
+        ([DataMovimento], [Estado], [Renda], [ValorPrevisto], [ValorRecebido], [ValorEmFalta],
+         [ID_Propriedade], [ID_TipoRecebimento], [ID_Inquilino], [Notas], [ID_Arrendamento])
+    VALUES
+        (@DataMovimento, @Estado, @Renda, @ValorPrevisto, @ValorRecebido, @ValorEmFalta,
+         @ID_Propriedade, @ID_TipoRecebimento, @ID_Inquilino, @Notas, @ID_Arrendamento);
+    SELECT CAST(SCOPE_IDENTITY() AS int);
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER OFF
+GO
+
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_Insert_Temp]
+(
+    @DataMovimento datetime,
+    @Renda bit,
+    @Estado int,
+    @RendaAtualizada bit = 0,
+    @ValorPrevisto decimal(10,2),
+    @ValorRecebido decimal(10,2),
+    @ValorEmFalta decimal(10,2),
+    @ID_Propriedade int,
+    @ID_TipoRecebimento int,
+    @ID_Inquilino int,
+    @GeradoPeloPrograma bit,
+    @Notas varchar(512),
+    @ID_Arrendamento int = NULL
+)
+AS
+BEGIN
+    SET NOCOUNT OFF;
+    INSERT INTO [RecebimentosTemp]
+        ([DataMovimento], [Estado], [Renda], [RendaAtualizada], [ValorPrevisto], [ValorRecebido], [ValorEmFalta],
+         [ID_Propriedade], [ID_TipoRecebimento], [ID_Inquilino], [Notas], [ID_Arrendamento])
+    VALUES
+        (@DataMovimento, @Estado, @Renda, @RendaAtualizada, @ValorPrevisto, @ValorRecebido, @ValorEmFalta,
+         @ID_Propriedade, @ID_TipoRecebimento, @ID_Inquilino, @Notas, @ID_Arrendamento);
+    SELECT CAST(SCOPE_IDENTITY() AS int);
+END;
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_MonthlyRentsProcessed] (@year int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT Mes, Ano, DataProcessamento, TotalRecebido
+FROM ProcessamentoRendas
+WHERE Ano = @Year
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_OutrosRecebimentos_MaxValueAllowed_ByTenant] (@Id int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT SUM(ValorPrevisto) - SUM(ValorRecebido)
+FROM Recebimentos
+WHERE ID_Inquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoAtualizacaoRendas_Insert_ToDelete]
+(
+	@Ano int,
+	@DataProcessamento datetime
+)
+AS
+
+SET NOCOUNT OFF;
+INSERT INTO [ProcessamentoRendas] 
+	([Ano], [DataProcessamento])
+VALUES 
+	(@Ano, @DataProcessamento)
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_ById] (@Id int)
+AS
+
+SET NOCOUNT ON;
+SELECT	Id, Mes, Ano, DataProcessamento, TotalRecebido
+FROM	ProcessamentoRendas
+WHERE	Id = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_Check]
+(
+	@month int, 
+	@year int
+)
+AS
+
+SET NOCOUNT OFF;
+SELECT COUNT(1)
+FROM [ProcessamentoRendas] 
+WHERE Mes = @month AND Ano = @year
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_ProcessamentoRendas_Insert] (@month int, @year int, @TotalRecebido decimal(12,2))
+
+AS
+
+SET NOCOUNT OFF;
+DECLARE @ProcessingDate date
+
+SELECT @ProcessingDate = datefromparts(@year, @month, 9);
+
+INSERT INTO [ProcessamentoRendas] 
+	([Mes], [Ano], [DataProcessamento], [TotalRecebido])
+VALUES 
+	(@month, @year, @ProcessingDate, @TotalRecebido)
+	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_SetAsNotPaid]
+(
+	@Id int
+)
+AS
+
+BEGIN
+	SET NOCOUNT OFF;
+
+	DECLARE @rentValue decimal 
+	SET @rentValue = (SELECT ValorRecebido FROM Recebimentos WHERE Id = @Id);
+	UPDATE Recebimentos SET Estado = 3, ValorEmFalta = ValorPrevisto, ValorRecebido = 0
+	WHERE [Id] = @Id;
+END
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_Temp_GetAll]
+AS
+
+SET NOCOUNT ON;
+SELECT	R.Id, DataMovimento, Estado, ValorPrevisto, ValorRecebido, Renda, RendaAtualizada, ValorEmFalta, 
+		ID_Propriedade, ID_TipoRecebimento, ID_Inquilino, GeradoPeloPrograma, R.Notas,
+		F.Descricao Imovel, INQ.Nome Inquilino, TR.Descricao TipoRecebimento	
+FROM	RecebimentosTemp R 
+		INNER JOIN Fracoes F ON
+			R.ID_Propriedade = F.Id
+		INNER JOIN Inquilinos INQ ON
+			R.ID_Inquilino = INQ.Id
+		LEFT JOIN TipoRecebimento TR ON
+			R.ID_TipoRecebimento = TR.Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_Temp_Update]
+(
+	@Id int,
+	@DataMovimento datetime,
+	@Estado int,
+	@Renda bit,
+	@RendaAtualizada bit = 0,
+	@ValorPrevisto decimal,
+	@ValorRecebido decimal,
+	@ID_Propriedade int,
+	@ID_TipoRecebimento int,
+	@ID_Inquilino int,
+	@Notas varchar(512),
+	@ValorEmFalta decimal,
+	@GeradoPeloPrograma bit
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [RecebimentosTemp] 
+SET	[DataMovimento] = @DataMovimento, [Estado] = @Estado, [Renda] = @Renda, [RendaAtualizada] = @RendaAtualizada,
+	[ValorPrevisto] = @ValorPrevisto, [ValorRecebido] = @ValorRecebido, [ValorEmFalta] = @ValorEmFalta, 
+	[Notas] = @Notas,[ID_Propriedade] = @ID_Propriedade, 
+	[ID_TipoRecebimento] = @ID_TipoRecebimento,	[ID_Inquilino] = @ID_Inquilino
+WHERE Id = @Id	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[usp_Recebimentos_TotalExpected_ByTenant] (@Id int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT SUM(ValorPrevisto)
+FROM Recebimentos
+WHERE ID_Inquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE   PROCEDURE [dbo].[usp_Recebimentos_TotalReceived_ByTenant] (@Id int)
+AS
+
+SET NOCOUNT ON;
+
+SELECT SUM(ValorRecebido)
+FROM Recebimentos
+WHERE ID_Inquilino = @Id
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE PROCEDURE [dbo].[usp_Recebimentos_Update]
+(
+	@Id int,
+	@DataMovimento datetime,
+	@Estado int,
+	@Renda bit,
+	@ValorPrevisto decimal,
+	@ValorRecebido decimal,
+	@ID_Propriedade int,
+	@ID_TipoRecebimento int,
+	@ID_Inquilino int,
+	@Notas varchar(512),
+	@ValorEmFalta decimal,
+	@GeradoPeloPrograma bit
+)
+AS
+
+SET NOCOUNT OFF;
+UPDATE [Recebimentos] 
+SET	[DataMovimento] = @DataMovimento, [Estado] = @Estado, [Renda] = @Renda, 
+	[ValorPrevisto] = @ValorPrevisto, [ValorRecebido] = @ValorRecebido, [ValorEmFalta] = @ValorEmFalta, 
+	[Notas] = @Notas,[ID_Propriedade] = @ID_Propriedade, 
+	[ID_TipoRecebimento] = @ID_TipoRecebimento,	[ID_Inquilino] = @ID_Inquilino
+WHERE Id = @Id	
+GO
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- display create datetime and last modified datetime
+CREATE PROC [dbo].[usp_ShowStoredProcedures]
+AS
+BEGIN
+	select 
+	 [database name] = db_name() 
+	,[schema name] =  SCHEMA_NAME([schema_id])
+	,name [stored proc name]
+	,create_date [create date]
+	,modify_date [last modify date]
+	from sys.objects
+	where type = 'P'
+	order by [stored proc name] asc
+END

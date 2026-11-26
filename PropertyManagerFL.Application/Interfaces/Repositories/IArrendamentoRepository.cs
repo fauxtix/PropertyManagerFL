@@ -51,5 +51,6 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<IEnumerable<LookupTableVM>> GetApplicableLaws();
         Task<CoeficienteAtualizacaoRendas> GetCoefficient_ByYear(int year);
         Task ExtendLeaseTerm(int Id);
+        Task<EndLeaseResult> EndLeaseAsync(int id, DateTime leaveDate, string reason, string? notes, string? actorUserId);
     }
 }

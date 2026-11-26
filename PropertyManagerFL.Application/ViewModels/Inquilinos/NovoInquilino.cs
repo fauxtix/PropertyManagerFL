@@ -18,6 +18,7 @@
 		public decimal IRSAnual { get; set; }
 		public decimal Vencimento { get; set; }
 		public bool Titular { get; set; }
+		public bool Ativo { get; set; } = true;
 		public string? Notas { get; set; }
 
 		// FK

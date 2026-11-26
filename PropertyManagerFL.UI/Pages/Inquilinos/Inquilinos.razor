@@ -190,6 +190,8 @@ else
                                                 <GridEvents CommandClicked="OnGuarantorCommandClicked" TValue="FiadorVM" />
                                                 <GridColumns>
                                                     <GridColumn Field=@nameof(FiadorVM.Nome) HeaderText="@L["lblNomeAutor"]" Width="250"></GridColumn>
+                                                    <GridColumn Field=@nameof(FiadorVM.Ativo) HeaderText="@L["chkActive"]" HideAtMedia="(min-width: 900px)"
+                                                                Width="100" DisplayAsCheckBox=true TextAlign="TextAlign.Center"></GridColumn>
                                                     <GridColumn Field=@nameof(FiadorVM.Contacto1) HeaderText="@L["TituloCampo3Editoras"]"
                                                                 Width="130" HideAtMedia="(min-width: 900px)"
                                                                 TextAlign="TextAlign.Center"></GridColumn>
@@ -211,11 +213,11 @@ else
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                                                             </GridCommandColumn>
-                                                            <GridCommandColumn Type=CommandButtonType.Delete
+                                                            <GridCommandColumn Type=CommandButtonType.Delete Title="@L["ArchiveMsg"]"
                                                                                ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
-                                                                           IconCss = "fa fa-trash"
+                                                                           IconCss = "fa fa-archive"
                                                                        })">
                                                             </GridCommandColumn>
                                                         </GridCommandColumns>
@@ -406,11 +408,11 @@ else
                                                                            IconCss = "fa fa-edit"
                                                                        })">
                             </GridCommandColumn>
-                            <GridCommandColumn Type=CommandButtonType.Delete
+                            <GridCommandColumn Type=CommandButtonType.Delete Title="@L["ArchiveMsg"]"
                                                ButtonOption="@(new CommandButtonOptions()
                                                                        {
                                                                            CssClass = "e-btn e-danger e-round",
-                                                                           IconCss = "fa fa-trash"
+                                                                           IconCss = "fa fa-archive"
                                                                        })">
                             </GridCommandColumn>
                         </GridCommandColumns>
@@ -611,24 +613,24 @@ else
                    OnConfirmationNo="@(()=>ConfirmManualUpdateRentVisibility = false)" />
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                        DialogTitle="@(L["DeleteMsg"] + " " + L["TituloInquilino"])"
+                        DialogTitle="@(L["ArchiveMsg"] + " " + L["TituloInquilino"])"
                         Message="@DeleteCaption"
-                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
-                        Visible="@DeleteTenantVisibility"
+                        ConfirmationText="@L["ArchiveTenantConfirmText"]"
+                        Visible="@ArchiveTenantVisibility"
                         DialogWidth="20%"
                         DialogHeight="auto"
-                        OnConfirmationYes="ConfirmDeleteYes"
-                        OnConfirmationNo="ConfirmDeleteNo" />
+                        OnConfirmationYes="ConfirmArchiveYes"
+                        OnConfirmationNo="ConfirmArchiveNo" />
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
-                        DialogTitle="@(L["DeleteMsg"] + " " + L["TituloFiador"])"
+                        DialogTitle="@(L["ArchiveMsg"] + " " + L["TituloFiador"])"
                         Message="@DeleteCaption"
-                        ConfirmationText="@L["MSG_ConfirmarOperacao"]"
-                        Visible="@DeleteGuarantorVisibility"
+                        ConfirmationText="@L["ArchiveGuarantorConfirmText"]"
+                        Visible="@ArchiveGuarantorVisibility"
                         DialogWidth="20%"
                         DialogHeight="auto"
-                        OnConfirmationYes="ConfirmDeleteYes"
-                        OnConfirmationNo="ConfirmDeleteNo" />
+                        OnConfirmationYes="ConfirmArchiveYes"
+                        OnConfirmationNo="ConfirmArchiveNo" />
 
 <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                         DialogTitle="@(TenantDocument is not null? TenantDocument.Descricao:"")"

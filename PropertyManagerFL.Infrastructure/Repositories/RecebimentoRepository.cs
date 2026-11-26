@@ -194,6 +194,7 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                                 parameters.Add("@ID_Propriedade", pagamento.ID_Propriedade);
                                 parameters.Add("@ID_TipoRecebimento", pagamento.ID_TipoRecebimento);
                                 parameters.Add("@ID_Inquilino", pagamento.ID_Inquilino);
+                                parameters.Add("@ID_Arrendamento", pagamento.ID_Arrendamento);
                                 parameters.Add("@GeradoPeloPrograma", true);
                                 parameters.Add("@Notas", pagamento.Notas);
 
@@ -846,12 +847,23 @@ namespace PropertyManagerFL.Infrastructure.Repositories
                 List<RecebimentoVM> tempClientPayments = new List<RecebimentoVM>();
                 foreach (var arrendamento in arrendamentos)
                 {
+                    // Só contratos ativos, dentro do prazo, geram rendas. Contratos terminados ficam no histórico.
+                    if (!arrendamento.Ativo)
+                        continue;
+
                     // O código foi substituído, uma vez que o último valor pago, poderá ser diferente do real (pagamento parcial) -- usar sempre o valor da renda que está na fração
                     decimal valorRenda = (await _repoFracoes.GetFracao_ById(arrendamento.ID_Fracao)).ValorRenda;
                     //decimal valorUltimaRendaPaga = await GetValorUltimaRendaPaga(arrendamento.ID_Inquilino); // 0, se não houver pagamentos; nessa situação usa valor do contrato de arrendamento
 
                     DateTime userRequestedDate = new DateTime(year, month, 1).AddMonths(-1); // new 10-04-2023
                     DateTime dataUltimoPagamento = userRequestedDate; // arrendamento.Data_Pagamento;
+                    DateTime dataRenda = dataUltimoPagamento.AddMonths(1);
+
+                    // Não gerar rendas para meses posteriores ao fim do contrato ou à saída do inquilino.
+                    if (arrendamento.Data_Fim != default && dataRenda.Date > arrendamento.Data_Fim.Date)
+                        continue;
+                    if (arrendamento.Data_Saida != default && dataRenda.Date > arrendamento.Data_Saida.Date)
+                        continue;
 
                     // verifica se contrato já iniciou
                     var monthsUntilNow = GetMonthDifference(arrendamento.Data_Inicio, DateTime.Now);
@@ -867,9 +879,10 @@ namespace PropertyManagerFL.Infrastructure.Repositories
 
                     NovoRecebimento recebimentoTemp = new NovoRecebimento()
                     {
-                        DataMovimento = dataUltimoPagamento.AddMonths(1),
+                        DataMovimento = dataRenda,
                         GeradoPeloPrograma = true,
                         ID_Inquilino = arrendamento.ID_Inquilino,
+                        ID_Arrendamento = arrendamento.Id,
                         ID_Propriedade = arrendamento.ID_Fracao,
                         Renda = true,
                         Estado = 1, // Pago, por default

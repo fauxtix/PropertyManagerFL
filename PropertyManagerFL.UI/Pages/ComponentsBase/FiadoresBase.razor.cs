@@ -3,6 +3,7 @@ using Microsoft.Extensions.Localization;
 using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Popups;
@@ -271,10 +272,9 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             try
             {
                 DeleteVisibility = false;
-                var resultOk = await Fiadoreservice!.ApagaFiador(SelectedGuarantor!.Id);
+                var result = await Fiadoreservice!.ArchiveFiador(SelectedGuarantor!.Id);
 
-
-                if (resultOk)
+                if (result.Success)
                 {
                     Guarantors = await GetAllGuarantors();
                 }
@@ -282,15 +282,17 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 {
                     AddEditVisibility = false;
                     AlertVisibility = true;
-                    alertTitle = L["Tentativa de apagar Fiador"];
+                    alertTitle = L["ArchiveMsg"] + " " + L["TituloFiador"];
                     DeleteCaption = SelectedGuarantor.Nome;
-                    WarningMessage = L["Fiador tem contrato de arrendamento ativo! Verifique, p.f."];
+                    WarningMessage = result.Code == "ACTIVE_LEASE"
+                        ? L["ArchiveActiveLeaseGuarantor"]
+                        : (string.IsNullOrWhiteSpace(result.Message) ? L["ArchiveFailed"] : result.Message);
                 }
             }
             catch (Exception exc)
             {
                 AlertVisibility = true;
-                alertTitle = L["Erro ao apagar Fiador"];
+                alertTitle = L["ArchiveMsg"] + " " + L["TituloFiador"];
                 WarningMessage = L["Não foi possível concluir operação. {0}", exc.Message];
             }
             StateHasChanged();

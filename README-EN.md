@@ -9,10 +9,10 @@ Application designed to assist landlords in managing their properties and rental
 - **What it is:** a localhost, single-user application with an **ASP.NET Core API** and a **Blazor Server UI** that must run **at the same time**. It manages properties, tenants, leases, rents, expenses, letters, messages and a **notification centre** (bell + inbox, SignalR with a 60-second polling fallback). Each alert can include a **suggested action** (open the tenant record, record a payment, generate a letter, etc.).
 - **Stack:** C#, .NET 10 LTS, Blazor, **Syncfusion 35.2.12**, Dapper, AutoMapper, FluentValidation, Serilog, SQL Server.
 - **Prerequisites:** .NET 10 SDK (`global.json`), **SQL Server Developer or Community** (both free) with the database created, SSMS/`sqlcmd`, a development HTTPS certificate, SMTP credentials and **your own Syncfusion licences**.
-- **Database:** manual setup — EF migrations are disabled. The scripts (`PropertyManagerFL.Infrastructure/Database/*.sql` or `SqlData_Script/PropertyManagerDB.sql`) are **not idempotent** and must run **on an empty database**, in the order described in [DATABASE.md](docs/DATABASE.md). The full script is generated from the cleaned reference database and contains only configuration/reference data; **test data is the user's responsibility**.
+- **Database:** manual setup — EF migrations are disabled. **No script creates the database**: create an empty `PropertyManagerDB` first. Then choose **one** path: the modular scripts (`PropertyManagerFL.Infrastructure/Database/*.sql`, in the order in [DATABASE.md](docs/DATABASE.md)) **or** the generated snapshot `SqlData_Script/PropertyManagerDB.sql` (regenerated on 2026-11-26 and in sync with the modular scripts). Both contain only configuration/reference data; **test data is the user's responsibility**.
 - **Keys:** the UI and the API each register their own Syncfusion licence. In Development use `dotnet user-secrets set --project ...`; in Production use GitHub Secrets. **Choose a key for version 35.2.x with all editions** — see [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md).
 - **Run locally (Development, Kestrel):** API at `https://localhost:5001`, UI at `https://localhost:7181` — the original project ports, different from IIS (Production: 4300/4310), so both can run at the same time. Full commands in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
-- **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone needs their own database, credentials and licences. Never reuse the maintainer's keys or commit any key.
+- **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone creates their own database manually and needs their own credentials and licences. CD publishes the apps but **does not create or update databases**. Never reuse the maintainer's keys or commit any key.
 - **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — **except the connection string**, which comes from `appsettings.Production.json` and points to `PropertyManagerDB_Production` — see [PRODUCTION.md](docs/PRODUCTION.md).
 - **Tests:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
 
@@ -35,7 +35,7 @@ Application designed to assist landlords in managing their properties and rental
 
 - **Rent Payment Tracking**: PMFL provides a comprehensive system for tracking rent payments, helping landlords stay updated on transactions and promptly address any overdue payments.
 
-- **Notification centre**: a bell and an inbox with operational alerts and a **suggested action** on each alert. Alerts include overdue rent, a missing overdue-rent letter, rent due soon, a revocation letter with no reply, and a lease marked as issued without a generated document. Updates arrive via SignalR, with a 60-second polling fallback.
+- **Notification centre**: a bell and an inbox with operational alerts and a **suggested action** on each alert. Each alert is a task that can be **marked done** or **reopened**; opening it only follows the suggested link. Alerts include overdue rent, a missing overdue-rent letter, rent due soon, a revocation letter with no reply, and a lease marked as issued without a generated document. Updates arrive via SignalR, with a 60-second polling fallback. On startup the API seeds the pending alerts for every user, even on a brand-new database.
 
 - **Keeping track of rental property expenses**: as a landlord, you’ll be lost (even with an accountant) if you aren’t tracking your rental property expenses correctly.
   Keeping detailed expense records will not only help you feel more organized but it will also make filing your taxes easier, allow you to see more opportunities for deductions, and understand the return on each of your rental investments.
@@ -59,6 +59,17 @@ Application designed to assist landlords in managing their properties and rental
 
   >Communicating with tenants - messages sent or received to/from tenants, through the use of e-mail
 
+### Ending a lease, history and archiving
+
+- The **Leases** grid opens on **Active**; **History** and **All** are also available (in **All**, the *State* column identifies each contract). **End lease** is enabled only while an active lease is selected.
+- Ending a lease is **transactional**: it sets `Ativo=0` and `Data_Saida`, frees the unit, writes `HistoricoArrendamentos`, keeps every record queryable and appends `Contrato já não está ativo; decisão tomada em <date>` to the lease, tenant and eligible guarantor notes. Tenants, guarantors and leases are never hard-deleted in the normal flow.
+- The tenant is archived (`Ativo=0`); the guarantor is archived only when it has no other active lease. Outstanding debt does not block termination: it raises a `LeaseEndedWithDebt` warning alert for all users, with a suggested action to settle it.
+- The end-lease dialog shows an informational warning about the revocation letter and the configured deadlines (`PrazoEnvioCartaRevogacao` / `PrazoRespostaCartaRevogacao`). It never blocks the operation or changes the lease date.
+- The tenant/guarantor delete button is now **Archive**: it sets `Ativo=0`, appends a note and preserves leases, receipts, documents, history and notifications. Records with an active lease cannot be archived.
+- Monthly rent processing creates records only for active leases within their term; ended leases stay in history and generate no new rents.
+- `Data_Fim` is read-only in the lease form. Automatic renewal only raises a confirmation alert; it never changes the date silently. Use **Extend the contract term** to update it.
+- On existing Dev/test databases, run the idempotent migration `PropertyManagerFL.Infrastructure/Database/EndLeaseAndArchiving.sql` before using this feature; fresh installs already include it in the modular scripts and the snapshot (see [DATABASE.md](docs/DATABASE.md)). Never run it on Production without authorisation and a backup.
+
 ## Localization, themes and documents
 
 The application supports Portuguese, English, French and Spanish (`en-US` is the default culture; `AppSettings:Language` is `pt-PT`). There is a light/dark theme toggle: **dark** is the default and the choice is persisted in the browser.
@@ -76,7 +87,7 @@ More details in [LOCAL-SETUP.md](docs/LOCAL-SETUP.md).
 
 ## Database
 
-The structure (tables, stored procedures, functions, views) is in the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) and in the full script `SqlData_Script/PropertyManagerDB.sql`, generated from the already cleaned reference database. The notification centre and its procedures are part of those scripts — there is no separate script; the suggested-action column is already included. The full script contains only reference/configuration data (`ApiKey` and backup paths are placeholders); it has **no properties, tenants or other sample data** — each user creates their own with fictional names. EF migrations are disabled: database creation is manual and the scripts must only be run on an empty database. **Never use these scripts to create or update the Production database** — it is managed by the infrastructure owner. The execution order and the upgrade path for older databases are in [DATABASE.md](docs/DATABASE.md).
+The structure (tables, stored procedures, functions, views) is in the [database scripts folder](https://github.com/fauxtix/PropertyManagerFL/tree/master/PropertyManagerFL.Infrastructure/Database) and in the full script `SqlData_Script/PropertyManagerDB.sql`, regenerated on 2026-11-26 from the cleaned snapshot plus the end-lease/archiving migration. The notification centre and its procedures are part of those scripts — there is no separate script; the suggested-action column is already included. The full script contains only reference/configuration data (`ApiKey` and backup paths are placeholders); it has **no properties, tenants or other sample data** — each user creates their own with fictional names. EF migrations are disabled: create the empty database first, because no script contains `CREATE DATABASE`. **Never use these scripts to create or update the Production database** — CD only publishes the application; the database is managed by whoever administers SQL Server (for a local deploy, that is you). The execution order and the upgrade path for older databases are in [DATABASE.md](docs/DATABASE.md).
 
 ## Tests and deployment
 

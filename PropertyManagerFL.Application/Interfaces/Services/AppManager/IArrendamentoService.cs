@@ -62,5 +62,6 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task MarcaCartaAtrasoRendaComoEmitida(int Id, string docGerado);
         Task<IEnumerable<LookupTableVM>> GetApplicableLaws();
         Task<bool> ExtendLeaseTerm(int Id);
+        Task<EndLeaseResult> EndLease(int id, EndLeaseRequest request);
     }
 }

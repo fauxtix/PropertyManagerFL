@@ -1,5 +1,6 @@
 namespace PropertyManagerFL.UI.Pages.ComponentsBase;
 
+using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using ObjectsComparer;
@@ -10,7 +11,6 @@ using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
-using PropertyManagerFL.Application.ViewModels.Notifications;
 using PropertyManagerFL.Core.Entities;
 using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Data;
@@ -32,10 +32,39 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     [Inject] protected IValidationService? validatorService { get; set; }
     [Inject] protected IStringLocalizer<App>? L { get; set; }
     [Inject] protected IAppSettingsService? appSettingsService { get; set; }
-    [Inject] protected INotificationService? notificationService { get; set; }
 
     protected IEnumerable<ArrendamentoVM>? leases { get; set; }
     protected IEnumerable<ArrendamentoVM>? activeLeases { get; set; }
+
+    /// <summary>Client-side view filter — GetAll() still returns every lease.</summary>
+    protected string LeaseFilter { get; set; } = "Active";
+    protected IEnumerable<ArrendamentoVM> VisibleLeases
+    {
+        get
+        {
+            var all = leases ?? Enumerable.Empty<ArrendamentoVM>();
+            return LeaseFilter switch
+            {
+                "History" => all.Where(l => !l.Ativo),
+                "All" => all,
+                _ => all.Where(l => l.Ativo)
+            };
+        }
+    }
+
+    protected void ChangeLeaseFilter(string filter)
+    {
+        LeaseFilter = filter;
+        ShowToolbarEndLease = false;
+        StateHasChanged();
+    }
+
+    protected bool EndLeaseVisibility { get; set; } = false;
+    protected bool ShowToolbarEndLease { get; set; } = false;
+    protected DateTime EndLeaveDate { get; set; } = DateTime.Today;
+    protected string? EndLeaseReason { get; set; } = string.Empty;
+    protected string? EndLeaseNotes { get; set; } = string.Empty;
+    protected string? EndLeaseWarning { get; set; } = string.Empty;
 
     protected IEnumerable<CoeficienteAtualizacaoRendas>? rentCoefficients { get; set; }
     protected ArrendamentoVM? SelectedLease { get; set; }
@@ -98,7 +127,6 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     protected DateTime? DataAtualizacaoRenda { get; set; }
     protected bool SpinnerVisibility { get; set; } = false;
-    protected Dictionary<string, int> LeaseAlerts = new Dictionary<string, int>();
     private List<string> messages = new List<string>();
     protected ApplicationSettingsVM? AppSettings { get; set; } = new();
     protected ArrendamentoVM? Lease { get; set; } = new();
@@ -132,57 +160,10 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
         AppSettings = await GetSettings();
 
-        // Verificar se há alertas para mostrar
-        await CheckForAlerts();
-
         ShowToolbarDueRentLetter = AppSettings.CartasAumentoAutomaticas;
         ShowToolbaContractLeaseTerm = !AppSettings.RenovacaoAutomatica;
         DefaultLeaseTermInYears = AppSettings.PrazoContratoEmAnos;
     }
-
-    /// <summary>
-    /// Alerts are computed once by the server rules engine (the same source used by the inbox).
-    /// This page only applies the localized wording.
-    /// </summary>
-    private async Task CheckForAlerts()
-    {
-        LeaseAlerts.Clear();
-        var alerts = (await notificationService!.GetAlertsAsync() ?? Enumerable.Empty<NotificationAlertVM>())
-            .Where(a => a.Kind is "RentLetter" or "RentUpdate" or "RentLetters" or "LeaseEnding");
-
-        foreach (var alert in alerts)
-        {
-            var (message, severity) = FormatLeaseAlert(alert);
-            LeaseAlerts[message] = severity;
-        }
-    }
-
-    private (string Message, int Severity) FormatLeaseAlert(NotificationAlertVM alert)
-    {
-        return alert.Kind switch
-        {
-            "RentLetter" => (
-                L["Necessário envio de carta de atualização ao inquilino {0}", alert.PrimaryText ?? alert.Body], 1),
-            "RentUpdate" => (
-                L["Necessário atualizar renda do inquilino {0} ({1})", alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty]
-                    + (alert.NeedsAction ? L[" - não foi enviada carta de atualização!"] : string.Empty), 1),
-            "RentLetters" => (
-                L["Cartas de atualização de rendas não foram emitidas para o ano corrente!! Diploma é publicado em Outubro; cartas deverão ser enviadas antes do fim do ano."], 3),
-            "LeaseEnding" => (
-                L[alert.AutoRenewal
-                        ? "LeaseEndingAutoRenewal"
-                        : "Contrato do inquilino {0} ({1}) está prestes a terminar. Renovar data-fim, ou enviar carta de revogação",
-                    alert.PrimaryText ?? string.Empty, alert.SecondaryText ?? string.Empty]
-                + SuggestionSuffix(alert), 2),
-            _ => (alert.Title + SuggestionSuffix(alert), 1)
-        };
-    }
-
-    /// <summary>Appends the recommended next step produced by the shared rules engine.</summary>
-    private string SuggestionSuffix(NotificationAlertVM alert)
-        => string.IsNullOrWhiteSpace(alert.SuggestedAction)
-            ? string.Empty
-            : " " + L["NotificationsSuggestedAction"] + " " + alert.SuggestedAction;
 
     /// <summary>
     /// Get all leases
@@ -343,6 +324,13 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     protected async Task ToolbarClickHandler(Syncfusion.Blazor.Navigations.ClickEventArgs args)
     {
         AlertVisibility = false;
+
+        if (args.Item.Id == "EndLease")
+        {
+            await OpenEndLeaseDialog();
+            return;
+        }
+
         activeLeases = leases?.Where(l => l.Ativo == true);
 
         if (activeLeases?.Count() == 0)
@@ -398,6 +386,142 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         if (args.Item.Id == "Coefs_Grid_pdfexport")
         {
             await coefsGridObj!.ExportToPdfAsync();
+        }
+    }
+
+    private async Task OpenEndLeaseDialog()
+    {
+        if (SelectedLease is null || !SelectedLease.Ativo || LeaseId <= 0)
+        {
+            ToastTitle = L["TituloTerminarContrato"];
+            ToastMessage = L["EndLeaseSelectActive"];
+            ToastCss = "e-toast-warning";
+            _ = ShowToastMessage();
+            return;
+        }
+
+        EndLeaveDate = DateTime.Today;
+        EndLeaseReason = string.Empty;
+        EndLeaseNotes = string.Empty;
+        EndLeaseWarning = await BuildRevocationWarningAsync(SelectedLease);
+        EndLeaseVisibility = true;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Non-blocking reminder about the configured revocation/response deadlines.
+    /// The application never changes Data_Fim automatically.
+    /// </summary>
+    private async Task<string> BuildRevocationWarningAsync(ArrendamentoVM lease)
+    {
+        var warnings = new List<string>();
+
+        ApplicationSettingsVM? settings = null;
+        try
+        {
+            settings = await appSettingsService!.GetSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogWarning(ex, "Could not read application settings for the revocation warning");
+        }
+
+        var sendDays = settings?.PrazoEnvioCartaRevogacao ?? 0;
+        var responseDays = settings?.PrazoRespostaCartaRevogacao > 0
+            ? settings.PrazoRespostaCartaRevogacao
+            : (byte)10;
+
+        if (!lease.EnvioCartaRevogacao || lease.DataEnvioCartaRevogacao == default)
+        {
+            warnings.Add(sendDays > 0
+                ? string.Format(L["EndLeaseNoRevocationLetter"], sendDays)
+                : L["EndLeaseNoRevocationLetterNoDeadline"]);
+            return string.Join(" ", warnings);
+        }
+
+        var sentDate = lease.DataEnvioCartaRevogacao;
+        var responseDueDate = sentDate.AddDays(responseDays);
+
+        if (!lease.RespostaCartaRevogacao)
+        {
+            warnings.Add(responseDueDate.Date < DateTime.Today
+                ? string.Format(L["EndLeaseRevocationResponseOverdue"],
+                    sentDate.ToString("dd/MM/yyyy"), responseDays, responseDueDate.ToString("dd/MM/yyyy"))
+                : string.Format(L["EndLeaseRevocationAwaitingResponse"],
+                    sentDate.ToString("dd/MM/yyyy"), responseDueDate.ToString("dd/MM/yyyy"), responseDays));
+        }
+
+        if (sendDays > 0 && lease.Data_Fim != default &&
+            (lease.Data_Fim.Date - sentDate.Date).TotalDays < sendDays)
+        {
+            warnings.Add(string.Format(L["EndLeaseRevocationShortNotice"],
+                sentDate.ToString("dd/MM/yyyy"), sendDays, lease.Data_Fim.ToString("dd/MM/yyyy")));
+        }
+
+        return string.Join(" ", warnings);
+    }
+
+    protected void CancelEndLease()
+    {
+        EndLeaseVisibility = false;
+        EndLeaseWarning = string.Empty;
+    }
+
+    /// <summary>
+    /// Terminates the contract through the transactional API. Debt is allowed; the API raises an alert.
+    /// </summary>
+    protected async Task ConfirmEndLeaseAsync()
+    {
+        if (SelectedLease is null || LeaseId <= 0)
+            return;
+
+        try
+        {
+            await ShowSpinner();
+            var result = await arrendamentosService!.EndLease(LeaseId, new EndLeaseRequest
+            {
+                LeaveDate = EndLeaveDate,
+                Reason = EndLeaseReason ?? string.Empty,
+                Notes = EndLeaseNotes
+            });
+
+            if (result.Success)
+            {
+                EndLeaseVisibility = false;
+                EndLeaseWarning = string.Empty;
+                ShowToolbarEndLease = false;
+                leases = await GetAllLeases();
+
+                ToastTitle = L["TituloTerminarContrato"];
+                ToastMessage = result.OutstandingDebt > 0
+                    ? L["EndLeaseSuccessWithDebt"] + " " + result.OutstandingDebt.ToString("C", CultureInfo.CreateSpecificCulture("pt-PT"))
+                    : L["EndLeaseSuccess"];
+                ToastCss = result.OutstandingDebt > 0 ? "e-toast-warning" : "e-toast-success";
+            }
+            else
+            {
+                EndLeaseWarning = result.Message;
+                ToastTitle = L["TituloTerminarContrato"];
+                ToastMessage = result.Message;
+                ToastCss = "e-toast-danger";
+            }
+
+            StateHasChanged();
+            await ShowToastMessage();
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Operation failed");
+            EndLeaseWarning = ex.Message;
+            ToastTitle = L["TituloTerminarContrato"];
+            ToastMessage = ex.Message;
+            ToastCss = "e-toast-danger";
+            StateHasChanged();
+            await ShowToastMessage();
+        }
+        finally
+        {
+            await HideSpinner();
         }
     }
 
@@ -534,8 +658,6 @@ public class ArrendamentosBase : ComponentBase, IDisposable
                     ToastCss = "e-toast-success";
 
                     leases = await GetAllLeases();
-
-                    await CheckForAlerts();
 
                     await ShowToastMessage();
                 }
@@ -1112,6 +1234,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
         LeaseId = args.Data.Id;
         SelectedLease = await arrendamentosService!.GetArrendamento_ById(LeaseId);
 
+        ShowToolbarEndLease = SelectedLease?.Ativo == true;
         await ShowToolbar_LetterOptions();
 
     }
@@ -1352,6 +1475,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     {
         //        ShowToolbarDueRentLetter = false;
         ShowToolbarViewContract = false;
+        ShowToolbarEndLease = false;
     }
     private async Task ShowToolbar_LetterOptions()
     {

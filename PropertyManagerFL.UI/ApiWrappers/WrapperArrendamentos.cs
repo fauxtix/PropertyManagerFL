@@ -1119,6 +1119,29 @@ namespace PropertyManagerFL.UI.ApiWrappers
                 return false;
             }
         }
+
+        public async Task<EndLeaseResult> EndLease(int id, EndLeaseRequest request)
+        {
+            try
+            {
+                using var result = await _httpClient.PostAsJsonAsync($"{_uri}/EndLease/{id}", request);
+                if (result.IsSuccessStatusCode)
+                {
+                    var json = await result.Content.ReadAsStringAsync();
+                    var body = JsonConvert.DeserializeObject<EndLeaseResult>(json);
+                    return body ?? new EndLeaseResult { Message = "Resposta inválida da API." };
+                }
+
+                var error = await result.Content.ReadAsStringAsync();
+                _logger.LogError("EndLease failed: {Error}", error);
+                return new EndLeaseResult { Message = "Falha ao terminar o contrato. Verifique o log." };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Operation failed");
+                return new EndLeaseResult { Message = "Falha ao terminar o contrato. Verifique o log." };
+            }
+        }
     }
 }
 

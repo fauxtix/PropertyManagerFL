@@ -60,4 +60,9 @@
 #*.pdf   diff=astextplain
 #*.PDF   diff=astextplain
 #*.rtf   diff=astextplain
+
+###############################################################################
+# Generated SQL snapshot: whitespace is produced by SMO and is not meaningful.
+###############################################################################
+SqlData_Script/PropertyManagerDB.sql whitespace=-trailing-space,-space-before-tab
 #*.RTF   diff=astextplain

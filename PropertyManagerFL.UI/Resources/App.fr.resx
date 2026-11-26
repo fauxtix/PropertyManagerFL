@@ -4162,7 +4162,7 @@ Vérifiez les erreurs, s'il vous plaît</value>
     <value>Toutes</value>
   </data>
   <data name="NotificationsMarkedAllRead" xml:space="preserve">
-    <value>Notifications marquÃ©es comme lues</value>
+    <value>Notifications marquées comme lues</value>
   </data>
   <data name="TopBarLogout" xml:space="preserve">
     <value>Se déconnecter</value>
@@ -4184,5 +4184,200 @@ Vérifiez les erreurs, s'il vous plaît</value>
   </data>
   <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
     <value>Impossible de créer un bail tant que le propriétaire, le bien, la fraction, le locataire et le garant ne sont pas enregistrés.</value>
+  </data>
+  <data name="NotificationRentLetterTitle" xml:space="preserve">
+    <value>Lettre de mise à jour du loyer à envoyer</value>
+  </data>
+  <data name="NotificationRentUpdateMissingLetter" xml:space="preserve">
+    <value>la lettre de mise à jour du loyer n'a pas été envoyée !</value>
+  </data>
+  <data name="NotificationRentLettersBody" xml:space="preserve">
+    <value>Le décret est publié en octobre ; les lettres doivent être envoyées avant la fin de l'année.</value>
+  </data>
+  <data name="NotificationLeaseEndingTitle" xml:space="preserve">
+    <value>Le bail du locataire {0} ({1}) arrive bientôt à échéance</value>
+  </data>
+  <data name="NotificationLeaseEndingBody" xml:space="preserve">
+    <value>Renouveler la date de fin, ou envoyer une lettre de révocation</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalBody" xml:space="preserve">
+    <value>Le renouvellement automatique est actif ; confirmez la durée du bail.</value>
+  </data>
+  <data name="NotificationLeaseEndingSuggested" xml:space="preserve">
+    <value>Renouveler la date de fin, ou envoyer une lettre de révocation.</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalSuggested" xml:space="preserve">
+    <value>Mettez à jour la date de fin du bail (1, 3 ans ou plus) ou confirmez le renouvellement.</value>
+  </data>
+  <data name="NotificationRentDueSoonTitle" xml:space="preserve">
+    <value>Loyer à échoir bientôt — {0} ({1})</value>
+  </data>
+  <data name="NotificationRentDueSoonBody" xml:space="preserve">
+    <value>Date de paiement : {0}.</value>
+  </data>
+  <data name="NotificationRentDueSoonSuggested" xml:space="preserve">
+    <value>Confirmez la date de paiement et préparez l'écriture de loyer.</value>
+  </data>
+  <data name="NotificationPaymentOverdueTitle" xml:space="preserve">
+    <value>Loyers en retard — {0}</value>
+  </data>
+  <data name="NotificationPaymentOverdueBody" xml:space="preserve">
+    <value>{0} paiement(s) manquant(s), pour un total de {1}.</value>
+  </data>
+  <data name="NotificationPaymentOverdueSuggested" xml:space="preserve">
+    <value>Vérifiez les écritures en retard et envoyez une lettre d'avertissement au locataire.</value>
+  </data>
+  <data name="NotificationLateLetterMissingTitle" xml:space="preserve">
+    <value>Lettres d'avertissement pour loyers en retard manquantes — {0}</value>
+  </data>
+  <data name="NotificationLateLetterMissingBody" xml:space="preserve">
+    <value>{0} mois de retard et seulement {1} lettre(s) enregistrée(s).</value>
+  </data>
+  <data name="NotificationLateLetterMissingSuggested" xml:space="preserve">
+    <value>Émettez les lettres d'avertissement manquantes avant d'engager la révocation du bail.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueTitle" xml:space="preserve">
+    <value>Lettre de révocation sans réponse — {0} ({1})</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueBody" xml:space="preserve">
+    <value>Envoyée le {0} ; délai de {1} jours dépassé.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueSuggested" xml:space="preserve">
+    <value>Contactez le locataire, enregistrez la réponse ou poursuivez l'opposition au renouvellement.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingTitle" xml:space="preserve">
+    <value>Bail marqué comme émis sans document — {0} ({1})</value>
+  </data>
+  <data name="NotificationContractDocumentMissingBody" xml:space="preserve">
+    <value>Le bail est marqué comme émis mais aucun fichier généré n'est enregistré.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingSuggested" xml:space="preserve">
+    <value>Générez à nouveau le bail ou corrigez l'indication d'émission.</value>
+  </data>
+  <data name="NotificationsToday" xml:space="preserve">
+    <value>Aujourd'hui</value>
+  </data>
+  <data name="NotificationsYesterday" xml:space="preserve">
+    <value>Hier</value>
+  </data>
+  <data name="NotificationsMinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="NotificationsHoursShort" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="NotificationsDaysShort" xml:space="preserve">
+    <value>{0} j</value>
+  </data>
+  <data name="NotificationsMarkedComplete" xml:space="preserve">
+    <value>Notification marquée comme terminée</value>
+  </data>
+  <data name="NotificationsReopened" xml:space="preserve">
+    <value>Notification rouverte</value>
+  </data>
+  <data name="NotificationsCompleted" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="NotificationsMarkedAllComplete" xml:space="preserve">
+    <value>Notifications marquées comme terminées</value>
+  </data>
+  <data name="NotificationsReopen" xml:space="preserve">
+    <value>Rouvrir</value>
+  </data>
+  <data name="NotificationsCloseList" xml:space="preserve">
+    <value>Fermer la liste</value>
+  </data>
+  <data name="NotificationsComplete" xml:space="preserve">
+    <value>Marquer comme terminé</value>
+  </data>
+  <data name="NotificationsMarkAllComplete" xml:space="preserve">
+    <value>Tout marquer comme terminé</value>
+  </data>
+  <data name="NotificationsOpenFull" xml:space="preserve">
+    <value>Ouvrir la liste complète</value>
+  </data>
+  <data name="NotificationsPending" xml:space="preserve">
+    <value>À traiter</value>
+  </data>
+  <data name="NotificationsConfirmMarkAllComplete" xml:space="preserve">
+    <value>Voulez-vous vraiment marquer toutes les notifications en attente comme terminées ?</value>
+  </data>
+  <data name="EndLeaseSuccess" xml:space="preserve">
+    <value>Contrat terminé et unité libérée avec succès.</value>
+  </data>
+  <data name="LeaseStateActive" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="TituloTerminarContrato" xml:space="preserve">
+    <value>Terminer le contrat</value>
+  </data>
+  <data name="EndLeaseSuccessWithDebt" xml:space="preserve">
+    <value>Contrat terminé, mais une dette reste en cours :</value>
+  </data>
+  <data name="LeaseState" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="LeaseFilterHistory" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="EndLeaseSelectActive" xml:space="preserve">
+    <value>Sélectionnez un contrat actif dans la grille.</value>
+  </data>
+  <data name="LeaseFilterAll" xml:space="preserve">
+    <value>Tous</value>
+  </data>
+  <data name="LeaseStateHistorical" xml:space="preserve">
+    <value>Historique</value>
+  </data>
+  <data name="EndLeaseConfirmText" xml:space="preserve">
+    <value>Voulez-vous vraiment terminer le contrat de</value>
+  </data>
+  <data name="LeaseFilterActive" xml:space="preserve">
+    <value>Actifs</value>
+  </data>
+  <data name="TituloDataSaida" xml:space="preserve">
+    <value>Date de sortie</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetter" xml:space="preserve">
+    <value>Aucune lettre de révocation n'a été enregistrée comme envoyée. Le délai légal est de {0} jours avant la fin du contrat ; confirmez qu'il a été respecté avant de continuer.</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetterNoDeadline" xml:space="preserve">
+    <value>Aucune lettre de révocation n'a été enregistrée comme envoyée. Confirmez que le délai légal a été respecté avant de continuer.</value>
+  </data>
+  <data name="EndLeaseRevocationResponseOverdue" xml:space="preserve">
+    <value>Lettre de révocation envoyée le {0} ; le délai de réponse de {1} jours a expiré le {2}. Confirmez la décision avant de continuer.</value>
+  </data>
+  <data name="EndLeaseRevocationAwaitingResponse" xml:space="preserve">
+    <value>Lettre de révocation envoyée le {0} ; réponse attendue jusqu'au {1} ({2} jours).</value>
+  </data>
+  <data name="EndLeaseRevocationShortNotice" xml:space="preserve">
+    <value>Lettre envoyée le {0}, moins de {1} jours avant la fin du contrat ({2}). Confirmez que le délai légal a été respecté.</value>
+  </data>
+  <data name="ArchiveMsg" xml:space="preserve">
+    <value>Archiver</value>
+  </data>
+  <data name="ArchiveTenantConfirmText" xml:space="preserve">
+    <value>Voulez-vous vraiment archiver le locataire</value>
+  </data>
+  <data name="ArchiveGuarantorConfirmText" xml:space="preserve">
+    <value>Voulez-vous vraiment archiver le garant</value>
+  </data>
+  <data name="ArchiveSuccessTenant" xml:space="preserve">
+    <value>Locataire archivé avec succès.</value>
+  </data>
+  <data name="ArchiveSuccessGuarantor" xml:space="preserve">
+    <value>Garant archivé avec succès.</value>
+  </data>
+  <data name="ArchiveActiveLeaseTenant" xml:space="preserve">
+    <value>Impossible d'archiver : le locataire a un contrat actif.</value>
+  </data>
+  <data name="ArchiveActiveLeaseGuarantor" xml:space="preserve">
+    <value>Impossible d'archiver : le garant a un contrat actif.</value>
+  </data>
+  <data name="ArchiveNotFound" xml:space="preserve">
+    <value>Enregistrement introuvable.</value>
+  </data>
+  <data name="ArchiveFailed" xml:space="preserve">
+    <value>Impossible d'archiver l'enregistrement. Consultez le journal, s'il vous plaît.</value>
   </data>
 </root>

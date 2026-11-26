@@ -4177,4 +4177,199 @@
   <data name="ArrendamentoPrerequisitosEmFalta" xml:space="preserve">
     <value>You cannot create a lease until a landlord, property, unit, tenant and guarantor have been registered.</value>
   </data>
+  <data name="NotificationRentLetterTitle" xml:space="preserve">
+    <value>Rent update letter must be sent</value>
+  </data>
+  <data name="NotificationRentUpdateMissingLetter" xml:space="preserve">
+    <value>the rent update letter was not sent!</value>
+  </data>
+  <data name="NotificationRentLettersBody" xml:space="preserve">
+    <value>The decree is published in October; letters must be sent before the end of the year.</value>
+  </data>
+  <data name="NotificationLeaseEndingTitle" xml:space="preserve">
+    <value>Tenant {0}'s lease ({1}) is about to end</value>
+  </data>
+  <data name="NotificationLeaseEndingBody" xml:space="preserve">
+    <value>Renew the end date, or send a termination letter</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalBody" xml:space="preserve">
+    <value>Automatic renewal is active; confirm the lease term.</value>
+  </data>
+  <data name="NotificationLeaseEndingSuggested" xml:space="preserve">
+    <value>Renew the end date, or send a termination letter.</value>
+  </data>
+  <data name="NotificationLeaseEndingAutoRenewalSuggested" xml:space="preserve">
+    <value>Update the lease end date (1, 3 or more years) or confirm the renewal.</value>
+  </data>
+  <data name="NotificationRentDueSoonTitle" xml:space="preserve">
+    <value>Rent due soon — {0} ({1})</value>
+  </data>
+  <data name="NotificationRentDueSoonBody" xml:space="preserve">
+    <value>Payment date: {0}.</value>
+  </data>
+  <data name="NotificationRentDueSoonSuggested" xml:space="preserve">
+    <value>Confirm the payment date and prepare the rent entry.</value>
+  </data>
+  <data name="NotificationPaymentOverdueTitle" xml:space="preserve">
+    <value>Overdue rent — {0}</value>
+  </data>
+  <data name="NotificationPaymentOverdueBody" xml:space="preserve">
+    <value>{0} payment(s) missing, totalling {1}.</value>
+  </data>
+  <data name="NotificationPaymentOverdueSuggested" xml:space="preserve">
+    <value>Review the overdue entries and send a warning letter to the tenant.</value>
+  </data>
+  <data name="NotificationLateLetterMissingTitle" xml:space="preserve">
+    <value>Missing overdue-rent warning letters — {0}</value>
+  </data>
+  <data name="NotificationLateLetterMissingBody" xml:space="preserve">
+    <value>{0} months in arrears and only {1} letter(s) recorded.</value>
+  </data>
+  <data name="NotificationLateLetterMissingSuggested" xml:space="preserve">
+    <value>Issue the missing warning letters before proceeding with termination.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueTitle" xml:space="preserve">
+    <value>Termination letter with no reply — {0} ({1})</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueBody" xml:space="preserve">
+    <value>Sent on {0}; {1}-day deadline exceeded.</value>
+  </data>
+  <data name="NotificationLetterResponseOverdueSuggested" xml:space="preserve">
+    <value>Contact the tenant, record the reply, or proceed with the objection to renewal.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingTitle" xml:space="preserve">
+    <value>Lease marked as issued without a document — {0} ({1})</value>
+  </data>
+  <data name="NotificationContractDocumentMissingBody" xml:space="preserve">
+    <value>The lease is marked as issued but no generated file is recorded.</value>
+  </data>
+  <data name="NotificationContractDocumentMissingSuggested" xml:space="preserve">
+    <value>Generate the lease again or correct the issued flag.</value>
+  </data>
+  <data name="NotificationsToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="NotificationsYesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="NotificationsMinutesShort" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="NotificationsHoursShort" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="NotificationsDaysShort" xml:space="preserve">
+    <value>{0} d</value>
+  </data>
+  <data name="NotificationsMarkedComplete" xml:space="preserve">
+    <value>Notification marked as done</value>
+  </data>
+  <data name="NotificationsReopened" xml:space="preserve">
+    <value>Notification reopened</value>
+  </data>
+  <data name="NotificationsCompleted" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="NotificationsMarkedAllComplete" xml:space="preserve">
+    <value>Notifications marked as done</value>
+  </data>
+  <data name="NotificationsReopen" xml:space="preserve">
+    <value>Reopen</value>
+  </data>
+  <data name="NotificationsCloseList" xml:space="preserve">
+    <value>Close list</value>
+  </data>
+  <data name="NotificationsComplete" xml:space="preserve">
+    <value>Mark done</value>
+  </data>
+  <data name="NotificationsMarkAllComplete" xml:space="preserve">
+    <value>Mark all as done</value>
+  </data>
+  <data name="NotificationsOpenFull" xml:space="preserve">
+    <value>Open full list</value>
+  </data>
+  <data name="NotificationsPending" xml:space="preserve">
+    <value>To do</value>
+  </data>
+  <data name="NotificationsConfirmMarkAllComplete" xml:space="preserve">
+    <value>Are you sure you want to mark all pending notifications as done?</value>
+  </data>
+  <data name="EndLeaseSuccess" xml:space="preserve">
+    <value>Lease ended and unit released successfully.</value>
+  </data>
+  <data name="LeaseStateActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="TituloTerminarContrato" xml:space="preserve">
+    <value>End lease</value>
+  </data>
+  <data name="EndLeaseSuccessWithDebt" xml:space="preserve">
+    <value>Lease ended, but there is outstanding debt:</value>
+  </data>
+  <data name="LeaseState" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="LeaseFilterHistory" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="EndLeaseSelectActive" xml:space="preserve">
+    <value>Select an active lease in the grid.</value>
+  </data>
+  <data name="LeaseFilterAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="LeaseStateHistorical" xml:space="preserve">
+    <value>Historical</value>
+  </data>
+  <data name="EndLeaseConfirmText" xml:space="preserve">
+    <value>Are you sure you want to end the lease for</value>
+  </data>
+  <data name="LeaseFilterActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="TituloDataSaida" xml:space="preserve">
+    <value>Leave date</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetter" xml:space="preserve">
+    <value>No revocation letter has been recorded as sent. The legal notice period is {0} days before the lease end date - confirm it was met before continuing.</value>
+  </data>
+  <data name="EndLeaseNoRevocationLetterNoDeadline" xml:space="preserve">
+    <value>No revocation letter has been recorded as sent. Confirm that the legal notice period was met before continuing.</value>
+  </data>
+  <data name="EndLeaseRevocationResponseOverdue" xml:space="preserve">
+    <value>Revocation letter sent on {0}; the {1}-day response period ended on {2}. Confirm the decision before continuing.</value>
+  </data>
+  <data name="EndLeaseRevocationAwaitingResponse" xml:space="preserve">
+    <value>Revocation letter sent on {0}; awaiting a response until {1} ({2} days).</value>
+  </data>
+  <data name="EndLeaseRevocationShortNotice" xml:space="preserve">
+    <value>Letter sent on {0}, less than {1} days before the lease end date ({2}). Confirm that the legal notice period was met.</value>
+  </data>
+  <data name="ArchiveMsg" xml:space="preserve">
+    <value>Archive</value>
+  </data>
+  <data name="ArchiveTenantConfirmText" xml:space="preserve">
+    <value>Are you sure you want to archive the tenant</value>
+  </data>
+  <data name="ArchiveGuarantorConfirmText" xml:space="preserve">
+    <value>Are you sure you want to archive the guarantor</value>
+  </data>
+  <data name="ArchiveSuccessTenant" xml:space="preserve">
+    <value>Tenant archived successfully.</value>
+  </data>
+  <data name="ArchiveSuccessGuarantor" xml:space="preserve">
+    <value>Guarantor archived successfully.</value>
+  </data>
+  <data name="ArchiveActiveLeaseTenant" xml:space="preserve">
+    <value>Cannot archive: the tenant has an active lease.</value>
+  </data>
+  <data name="ArchiveActiveLeaseGuarantor" xml:space="preserve">
+    <value>Cannot archive: the guarantor has an active lease.</value>
+  </data>
+  <data name="ArchiveNotFound" xml:space="preserve">
+    <value>Record not found.</value>
+  </data>
+  <data name="ArchiveFailed" xml:space="preserve">
+    <value>Could not archive the record. Please check the log.</value>
+  </data>
 </root>

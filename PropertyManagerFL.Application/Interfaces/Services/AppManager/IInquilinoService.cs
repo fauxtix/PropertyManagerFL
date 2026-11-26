@@ -1,4 +1,5 @@
 ﻿using PropertyManagerFL.Application.ViewModels.Arrendamentos;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
@@ -24,6 +25,7 @@ namespace PropertyManagerFL.Application.Interfaces.Services.AppManager
         Task<bool> InsereInquilino(InquilinoVM inquilino);
         Task<bool> AtualizaInquilino(int id, InquilinoVM inquilino);
         Task<bool> ApagaInquilino(int id);
+        Task<ArchiveResult> ArchiveInquilino(int id);
 
         Task<int> CriaDocumentoInquilino(DocumentoInquilinoVM documento);
         Task<bool> AtualizaDocumentoInquilino(int id, DocumentoInquilinoVM document);

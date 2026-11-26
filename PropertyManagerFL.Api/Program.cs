@@ -34,6 +34,7 @@ builder.Services.AddFluentValidationConfiguration();
 builder.Services.AddAutoMapperConfiguration();
 builder.Services.AddDatabaseConfiguration(configuration);
 builder.Services.AddDependencyInjectionConfiguration();
+builder.Services.AddHostedService<NotificationSeedingHostedService>();
 builder.Services.AddSwaggerConfiguration();
 
 builder.Host.ConfigureAppConfiguration((hostingContext, config) =>

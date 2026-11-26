@@ -77,6 +77,7 @@ public static class DependencyInjectionConfig
         services.AddScoped<WrapperNotifications>();
         services.AddScoped<INotificationService, WrapperNotifications>();
         services.AddScoped<NotificationClientService>();
+        services.AddScoped<INotificationTextFormatter, NotificationTextFormatter>();
 
     }
 }

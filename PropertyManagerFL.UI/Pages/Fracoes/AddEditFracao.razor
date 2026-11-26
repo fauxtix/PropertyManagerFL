@@ -145,6 +145,7 @@ else
                                 <div class="col-md-5">
                                     <div class="group-ckeckbox">
                                         <SfCheckBox CssClass="e-customsize" Label="@L["TituloAtiva"]" TChecked="bool" @bind-Checked=@PropertyUnit.Ativa
+                                                    ValueChange="OnAtivaChanged"
                                                     LabelPosition="Syncfusion.Blazor.Buttons.LabelPosition.Before"></SfCheckBox>
                                     </div>
 
@@ -333,7 +334,11 @@ else
             if (PropertyUnit.Ativa)
                 idxSituationState = PropertyUnit!.Situacao;
             else
+            {
+                // Uma fração inativa não pode continuar "Alugada".
                 idxSituationState = await UnitsService!.GetIDSituacao_ByDescription("Reservada");
+                PropertyUnit.Situacao = idxSituationState;
+            }
 
             idxConservationState = PropertyUnit!.Conservacao;
             idxProperty = PropertyUnit!.Id_Imovel;
@@ -412,6 +417,18 @@ else
     {
         idxSituationState = args.Value;
         PropertyUnit!.Situacao = idxSituationState;
+    }
+
+    /// <summary>
+    /// Desativar a fração também altera a situação: uma fração inativa nunca deve ficar "Alugada".
+    /// </summary>
+    protected async Task OnAtivaChanged(Syncfusion.Blazor.Buttons.ChangeEventArgs<bool> args)
+    {
+        PropertyUnit.Ativa = args.Checked;
+        idxSituationState = await UnitsService!.GetIDSituacao_ByDescription(args.Checked ? "Livre" : "Reservada");
+        PropertyUnit.Situacao = idxSituationState;
+        UnitStatus = await LookupTablesService!.GetDescription(idxSituationState, "SituacaoFracao");
+        StateHasChanged();
     }
 
     private async Task FindLastValuesEntered()

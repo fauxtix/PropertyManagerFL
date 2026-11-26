@@ -1,4 +1,5 @@
 ﻿using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
@@ -11,6 +12,7 @@ namespace PropertyManagerFL.Application.Interfaces.Repositories
         Task<int> InsereInquilino(NovoInquilino inquilino);
         Task<Inquilino> AtualizaInquilino(AlteraInquilino inquilino);
         Task ApagaInquilino(int id);
+        Task<ArchiveResult> ArchiveInquilino(int id);
         Task<string> GetNomeInquilino(int id);
         int GetFirstId_Inquilino();
         int GetFirstIdInquilino();

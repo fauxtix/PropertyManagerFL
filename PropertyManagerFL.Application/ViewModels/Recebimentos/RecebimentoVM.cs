@@ -15,6 +15,7 @@ namespace PropertyManagerFL.Application.ViewModels.Recebimentos
         public int ID_Propriedade { get; set; }
         public int ID_TipoRecebimento { get; set; }
         public int ID_Inquilino { get; set; }
+        public int? ID_Arrendamento { get; set; }
         public bool GeradoPeloPrograma { get; set; } = false;
         public string? Imovel { get; set; }
         public string? TipoRecebimento { get; set; }

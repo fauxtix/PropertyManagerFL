@@ -1,6 +1,6 @@
 # Base de dados — instalação (SQL Server)
 
-> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. Create an empty `PropertyManagerDB`, create the `[Identity]` schema, then run the scripts in the order below. The scripts are **not idempotent**: run them once, on an empty database. The full script `SqlData_Script/PropertyManagerDB.sql` is an alternative to the individual scripts, not an extra step: it is generated from the cleaned reference database, creates the `[Identity]` schema itself and contains **no operational/sample data**. These scripts are for **fresh Dev/test installs only** — never use them to create or update the Production database. Existing Dev/test databases need only the small `SuggestedAction` upgrade below. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
+> **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. **Create an empty `PropertyManagerDB` first** — none of the scripts contains `CREATE DATABASE` or `DROP DATABASE`. Then choose **one** fresh-install path: run the individual scripts in the order below, or run the generated all-in-one `SqlData_Script/PropertyManagerDB.sql`. The full script was regenerated on 2026-11-26 and is in sync with the modular scripts; it creates the `[Identity]` schema itself and contains **no operational/sample data**. Never run both paths. Existing Dev/test databases need the idempotent `EndLeaseAndArchiving.sql` migration described in section 4 (and possibly the one-time `SuggestedAction` upgrade below). Production is created/updated outside CD by whoever administers SQL Server — for a local deploy, that is you — always with a backup. The CD publishes the apps only; it never runs SQL. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
 
 ## 1. Pré-requisitos
 
@@ -17,6 +17,16 @@ O projeto foi desenvolvido com uma instância `SQLEXPRESS`, mas serve qualquer i
 
 > As migrações EF estão desativadas (`Api/Configuration/DataBaseConfig.cs`). A criação da base de dados é **manual**.
 
+Resumo para quem faz `clone`:
+
+| Situação | O que fazer |
+|---|---|
+| BD nova para testar a app localmente | Criar a BD vazia, depois escolher **um** dos dois caminhos de instalação da secção 3 |
+| BD Dev/test já existente | Aplicar a migração idempotente da secção 4 (com backup) |
+| Deploy IIS/Produção | O CD publica só a aplicação; a BD é criada/atualizada pelo administrador do SQL Server, fora do CD |
+
+Nos dois caminhos de instalação fresca a BD **já tem de existir**: os ficheiros começam com `USE [PropertyManagerDB]` (ou `USE [master]` nos logins IIS) e não criam nem largam bases de dados.
+
 ## 2. Ficheiros disponíveis
 
 ### `PropertyManagerFL.Infrastructure/Database/`
@@ -31,23 +41,29 @@ O projeto foi desenvolvido com uma instância `SQLEXPRESS`, mas serve qualquer i
 | `UsersAndSchemas.sql` | Schema `[Identity]`, users `IIS APPPOOL\*`, permissão `db_owner` |
 | `Login_App.sql` | Login `IIS APPPOOL\PropertyManagerFL` (executado em `master`) |
 | `Login_Api.sql` | Login `IIS APPPOOL\PropertyManagerAPI` (executado em `master`) |
+| `EndLeaseAndArchiving.sql` | **Migração idempotente** para bases de dados Dev/test já existentes: arquivamento de inquilino/fiador, `ID_Arrendamento` nos movimentos de renda, `HistoricoArrendamentos`, `usp_Arrendamentos_EndLease`, `usp_Inquilinos_Archive` e `usp_Fiadores_Archive` |
 | `23012024_160350.Bak` | Backup antigo — alternativa aos scripts |
 
 ### `SqlData_Script/PropertyManagerDB.sql`
 
-Script completo **gerado** da base de dados de referência já limpa (`PropertyManagerDB_Production`, 2026-11-25). Cria o schema `[Identity]`, as 78 tabelas, 2 funções, 6 vistas e 294 procedures, e carrega **apenas** os dados de referência/configuração: distritos, concelhos, população, tabelas de *lookup*, roles, a conta `admin@propertymanager.pt` e a linha de `ApplicationSettings`.
+Script completo **gerado** do snapshot limpo de 2026-11-25 mais a migração idempotente de 2026-11-26. Cria o schema `[Identity]`, 79 tabelas, 2 funções, 6 vistas e 297 procedures de utilizador, e carrega **apenas** os dados de referência/configuração: distritos, concelhos, população, tabelas de *lookup*, roles, a conta `admin@propertymanager.pt` e a linha de `ApplicationSettings`.
 
 **Não contém dados operacionais nem dados de exemplo** — imóveis, fracções, inquilinos, arrendamentos, recibos, documentos, mensagens, notificações e logs ficam vazios. Criar dados de teste é da responsabilidade de quem faz o clone, com nomes fictícios; nunca reutilizar dados reais de inquilinos.
 
 Valores sanitizados no `INSERT` de `ApplicationSettings`: `ApiKey` e os dois caminhos de backup são *placeholders* (`REPLACE_WITH_...`) e os campos de identidade SMTP ficam `NULL`. Substituir pelos valores reais antes de usar a aplicação. A conta `admin` é genérica: alterar a palavra-passe após a instalação.
 
-**Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. A pasta `SqlData_Script` contém apenas este ficheiro — os antigos `Sps_Arrendamentos.sql` e `RentsDB.db.sql` foram removidos. Não editar este ficheiro à mão — regenerá-lo a partir de uma BD limpa com SMO.
+**Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. A pasta `SqlData_Script` contém apenas este ficheiro — os antigos `Sps_Arrendamentos.sql` e `RentsDB.db.sql` foram removidos. O snapshot foi regenerado a 2026-11-26 e está sincronizado com os scripts modulares, incluindo `HistoricoArrendamentos`, `ID_Arrendamento`, `usp_Arrendamentos_EndLease`, `usp_Inquilinos_Archive` e `usp_Fiadores_Archive`. Não editar à mão — regenerar a partir de uma BD limpa com SMO sempre que o esquema/procedures mudarem.
 
-> **Não usar em Produção.** A base de dados de Produção (`PropertyManagerDB_Production`) é gerida pelo responsável da infraestrutura (backups e manutenção). Estes scripts servem apenas para instalações novas em Development/teste.
+> **Não usar para criar ou atualizar Produção.** Aqui, “responsável da infraestrutura/DBA” significa simplesmente quem administra o SQL Server desse ambiente — num deploy no teu PC, és tu. O `cd.yml` publica API/UI e **não corre SQL**. Em `PropertyManagerDB_Production`, fazer backup e aplicar apenas a migração da secção 4, com autorização; nunca os scripts completos.
 
 ## 3. Instalação passo a passo (scripts individuais)
 
-1. No SSMS, criar uma base de dados vazia com o nome **`PropertyManagerDB`**.
+1. No SSMS (ou `sqlcmd`), criar uma base de dados vazia com o nome **`PropertyManagerDB`**. Nenhum dos scripts cria ou larga a BD:
+
+   ```sql
+   CREATE DATABASE [PropertyManagerDB];
+   GO
+   ```
 2. Criar o schema `[Identity]`, necessário antes de `WorkingTables.sql`:
 
    ```sql
@@ -93,6 +109,8 @@ sqlcmd -S .\SQLEXPRESS -E -i SqlData_Script\PropertyManagerDB.sql -b
 
 O script começa com `USE [PropertyManagerDB]`, pelo que a base de dados já tem de existir. O schema `[Identity]` é criado pelo próprio script — não executar o passo 2 da secção 3 neste caminho.
 
+> ℹ️ `SqlData_Script/PropertyManagerDB.sql` é um *snapshot* gerado e **não deve ser editado à mão**. Foi regenerado a 2026-11-26 a partir do snapshot limpo anterior + `EndLeaseAndArchiving.sql` e verificado num BD vazio (contagens de objetos e todas as 79 tabelas). Após futuras alterações de esquema/procedures, tem de ser regenerado novamente. Numa BD já existente, use a migração idempotente da secção 4 — nunca o snapshot.
+
 ### Alternativa B — restaurar o backup
 
 No SSMS: botão direito em **Databases → Restore Database… → Device → Add…** e escolher `PropertyManagerFL.Infrastructure/Database/23012024_160350.Bak`. O backup é antigo: confirme depois se contém os objetos da secção 4 e atualize-os com os scripts atuais se necessário. **Não use dados reais de inquilinos** num ambiente partilhado.
@@ -105,18 +123,46 @@ No SSMS: botão direito em **Databases → Restore Database… → Device → Ad
 - Para repetir a instalação, largar e recriar a base de dados.
 - Não executar em conjunto os scripts individuais e o script completo.
 
+### Atualizar uma base de dados Dev/test já existente (fim de contrato)
+
+`EndLeaseAndArchiving.sql` é **idempotente** e deve ser executado uma vez em cada base de dados Dev/test antes de usar a página de arrendamentos com a nova opção “Terminar contrato”:
+
+```powershell
+sqlcmd -S .\SQLEXPRESS -E -d PropertyManagerDB `
+  -i PropertyManagerFL.Infrastructure\Database\EndLeaseAndArchiving.sql -b
+```
+
+O script:
+- cria/repara os defaults de `Inquilinos.Ativo` e `Fiadores.Ativo` (`1`) e preenche valores `NULL`;
+- adiciona `ID_Arrendamento` a `Recebimentos` e `RecebimentosTemp`, com *backfill* pelo contrato mais recente da mesma fração/inquilino;
+- cria `HistoricoArrendamentos`;
+- substitui as procedures de inserção de renda, inserção/alteração de inquilino e fiador, listas de disponíveis e verificação de fração livre;
+- cria `usp_Arrendamentos_EndLease`, que termina o contrato, liberta a fração, arquiva inquilino/fiador (apenas se não tiver outro contrato ativo), grava o histórico e calcula a dívida — tudo numa transação com `TRY/CATCH`/`ROLLBACK`;
+- cria `usp_Inquilinos_Archive` e `usp_Fiadores_Archive` para o botão **Arquivar**: `Ativo=0`, nota com a data da decisão e bloqueio quando existe contrato ativo. Nunca apagam registos.
+
+Instalações frescas já incluem estas alterações nos scripts modulares e no snapshot regenerado; **não executar a migração após uma instalação fresca**. Em `PropertyManagerDB_Production`, só executar com autorização e backup prévio: o “responsável” é quem administra o SQL Server (num deploy local, o próprio utilizador). O CD não aplica esta migração.
+
 ## 5. Verificação
 
 Depois da instalação, executar na `PropertyManagerDB`:
 
 ```sql
-SELECT (SELECT COUNT(*) FROM sys.tables)                         AS Tabelas,
-       (SELECT COUNT(*) FROM sys.views)                          AS Vistas,
-       (SELECT COUNT(*) FROM sys.procedures)                     AS Procedures,
+SELECT (SELECT COUNT(*) FROM sys.tables  WHERE is_ms_shipped=0) AS Tabelas,      -- 79
+       (SELECT COUNT(*) FROM sys.views   WHERE is_ms_shipped=0) AS Vistas,       -- 6
+       (SELECT COUNT(*) FROM sys.objects WHERE type IN ('FN','IF','TF') AND is_ms_shipped=0) AS Funcoes, -- 2
+       (SELECT COUNT(*) FROM sys.procedures WHERE is_ms_shipped=0) AS Procedures, -- 297
        (SELECT COUNT(*) FROM sys.schemas WHERE name = 'Identity') AS SchemaIdentity;
 
 SELECT name FROM sys.procedures
 WHERE name LIKE 'usp_Notifications_%' ORDER BY name;   -- esperadas: 8
+
+SELECT name FROM sys.procedures
+WHERE name IN ('usp_Arrendamentos_EndLease','usp_Inquilinos_Archive','usp_Fiadores_Archive')
+ORDER BY name;                                        -- esperadas: 3
+
+SELECT name FROM sys.tables WHERE name = 'HistoricoArrendamentos';
+SELECT COL_LENGTH('dbo.Recebimentos','ID_Arrendamento')     AS RecebimentosID,
+       COL_LENGTH('dbo.RecebimentosTemp','ID_Arrendamento') AS RecebimentosTempID; -- 4 e 4
 
 SELECT COUNT(*) AS Notificacoes FROM dbo.Notifications; -- 0 numa BD nova
 ```
@@ -136,6 +182,21 @@ O sino e a página `/notifications` mostram, além do texto do aviso, uma **suge
 - **contrato marcado como emitido sem documento gerado**.
 
 Estas regras são calculadas no servidor; não é preciso configurar nada para as ver.
+
+### Alertas como tarefas e povoamento inicial
+
+Cada aviso é uma tarefa: `ReadAt` passa a significar **concluído em** (`IsCompleted`), não "lido". Abrir o aviso não altera esse estado; o botão **Concluir/Reabrir** é que o altera. Um aviso concluído não é recriado pelos refreshes seguintes.
+
+Ao arrancar, a API executa `SeedAlertsForAllUsersAsync` para todos os utilizadores em `dbo.AspNetUsers`, pelo que uma base nova fica com os alertas pendentes desde o primeiro minuto. A operação é idempotente (não duplica avisos). Também está disponível `POST /api/Notifications/alerts/refresh-all` (protegido pela ApiKey).
+
+Ao atualizar uma BD que já continha notificações com o significado antigo de "lida", essas linhas **não devem** ser interpretadas como concluídas. Faça primeiro um backup e limpe a caixa de entrada uma única vez, deixando o arranque da API gerar os alertas pendentes:
+
+```sql
+-- apenas após backup e com a aplicação parada
+DELETE FROM dbo.Notifications;
+```
+
+Não é necessária nenhuma alteração de *stored procedures* nem de colunas para esta mudança.
 
 ### Atualização de uma BD já criada (coluna `SuggestedAction`)
 

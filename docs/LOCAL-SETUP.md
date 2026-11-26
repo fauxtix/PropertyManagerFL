@@ -1,6 +1,6 @@
 # Configuração local (.NET 10)
 
-> **TL;DR (EN):** Prerequisites: .NET 10 SDK (`global.json`), SQL Server Developer/Community with `PropertyManagerDB` created ([DATABASE.md](DATABASE.md)), SSMS/`sqlcmd`, your own Syncfusion keys ([SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md)) and SMTP settings. Set secrets **per project** with `dotnet user-secrets set --project ...`, set `ASPNETCORE_ENVIRONMENT=Development`, then run the API (`https://localhost:5001`) and the UI (`https://localhost:7181`) in two terminals. These are the original **Kestrel** ports and are **different from the IIS/Production ports (4300/4310)**, so both can run on the same machine. GitHub Secrets are **not** copied by a clone.
+> **TL;DR (EN):** Prerequisites: .NET 10 SDK (`global.json`), SQL Server Developer/Community, SSMS/`sqlcmd`, your own Syncfusion keys ([SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md)) and SMTP settings. **Create an empty `PropertyManagerDB` first** — no repo script contains `CREATE DATABASE`; then install the schema with one of the two paths in [DATABASE.md](DATABASE.md). Set secrets **per project** with `dotnet user-secrets set --project ...`, set `ASPNETCORE_ENVIRONMENT=Development`, then run the API (`https://localhost:5001`) and the UI (`https://localhost:7181`) in two terminals. These are the original **Kestrel** ports and are **different from the IIS/Production ports (4300/4310)**, so both can run on the same machine. GitHub Secrets are **not** copied by a clone.
 
 ## 1. Pré-requisitos
 
@@ -12,7 +12,7 @@
 - [ ] **Credenciais SMTP** (a UI exige a secção `EmailConfiguration` no arranque; valores de exemplo servem se não for testar envio de correio).
 - [ ] **Git** e, opcionalmente, **GitHub CLI (`gh`)**.
 
-> Um `git clone` **não copia** os GitHub Secrets do repositório nem os user-secrets do mantenedor. Cada pessoa precisa da sua BD, das suas credenciais e das suas licenças.
+> Um `git clone` **não copia** os GitHub Secrets do repositório nem os user-secrets do mantenedor. Cada pessoa cria a sua BD manualmente e precisa das suas credenciais e licenças. O CD publica a aplicação, mas não cria nem atualiza a BD — ver [DATABASE.md](DATABASE.md) e [PRODUCTION.md](PRODUCTION.md).
 
 ## 2. Portas e configuração incluída
 

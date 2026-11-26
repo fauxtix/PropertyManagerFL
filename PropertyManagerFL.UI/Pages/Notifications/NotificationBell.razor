@@ -8,6 +8,7 @@
 @inject NavigationManager Navigation
 @inject IStringLocalizer<App> L
 @inject ILogger<NotificationBell> Logger
+@inject INotificationTextFormatter Formatter
 
 <div class="notification-shell" @onkeydown="HandleKeyDown">
     @if (ShowPanel)
@@ -24,10 +25,10 @@
             aria-expanded="@ShowPanel.ToString().ToLowerInvariant()"
             @onclick="TogglePanelAsync">
         <i class="oi oi-bell" aria-hidden="true"></i>
-        @if (UnseenCount > 0)
+        @if (BadgeCount > 0)
         {
             <span class="e-badge e-badge-danger e-badge-pill notification-count" aria-hidden="true">
-                @(UnseenCount > 9 ? "9+" : UnseenCount.ToString())
+                @(BadgeCount > 9 ? "9+" : BadgeCount.ToString())
             </span>
         }
     </button>
@@ -37,7 +38,14 @@
         <div class="notification-panel" role="dialog" aria-label="@L["TituloNotificacoes"]">
             <div class="notification-panel-header">
                 <span class="notification-panel-title">@L["TituloNotificacoes"]</span>
-                <button type="button" class="notification-close" title="@L["Close"]" @onclick="ClosePanel">×</button>
+                <span class="notification-header-actions">
+                    <button type="button" class="notification-expand"
+                            title="@L["NotificationsOpenFull"]" aria-label="@L["NotificationsOpenFull"]"
+                            @onclick="OpenFullPageAsync">
+                        <i class="fa fa-external-link" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="notification-close" title="@L["Close"]" @onclick="ClosePanel">×</button>
+                </span>
             </div>
 
             <SfTab @bind-SelectedItem="SelectedTab" CssClass="notification-tabs">
@@ -54,30 +62,44 @@
                                 <div class="notification-list e-list e-list-template">
                                     @foreach (var item in VisibleItems)
                                     {
-                                        <div class="e-list-wrapper notification-item @(item.IsRead ? "" : "notification-item-unread")"
+                                        <div class="e-list-wrapper notification-item @(item.IsCompleted ? "notification-item-completed" : "notification-item-unread")"
                                              @onclick="() => OpenItemAsync(item)">
                                             <span class="notification-item-icon notification-severity-@item.Severity.ToLowerInvariant()">
                                                 <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
                                             </span>
                                             <div class="e-list-content notification-item-body">
-                                                <span class="notification-item-title">@item.Title</span>
+                                                <span class="notification-item-title">@Formatter.Title(item)</span>
                                                 @if (!string.IsNullOrWhiteSpace(item.Body))
                                                 {
-                                                    <span class="notification-item-text">@item.Body</span>
+                                                    <span class="notification-item-text">@Formatter.Body(item)</span>
                                                 }
                                                 @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
                                                 {
                                                     <span class="notification-item-suggestion">
-                                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                                        @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                        <i class="fa fa-lightbulb" aria-hidden="true"></i>
+                                                        @L["NotificationsSuggestedAction"] @Formatter.SuggestedAction(item)
                                                     </span>
                                                 }
-                                                <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
+                                                <span class="notification-item-time">@Formatter.RelativeTime(item.CreatedAt)</span>
                                             </div>
-                                            @if (!item.IsRead)
+                                            @if (item.IsCompleted)
                                             {
-                                                <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                                <span class="notification-completed-label" title="@L["NotificationsCompleted"]">
+                                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                                </span>
                                             }
+                                            else
+                                            {
+                                                <span class="notification-unread-dot" aria-label="@L["NotificationsPending"]"></span>
+                                            }
+                                            <button type="button"
+                                                    class="notification-toggle"
+                                                    title="@(item.IsCompleted ? L["NotificationsReopen"] : L["NotificationsComplete"])"
+                                                    aria-label="@(item.IsCompleted ? L["NotificationsReopen"] : L["NotificationsComplete"])"
+                                                    @onclick="() => ToggleCompleteAsync(item)"
+                                                    @onclick:stopPropagation="true">
+                                                <i class="fa @(item.IsCompleted ? "fa-undo" : "fa-square-check")" aria-hidden="true"></i>
+                                            </button>
                                         </div>
                                     }
                                 </div>
@@ -85,16 +107,16 @@
                         </ContentTemplate>
                     </TabItem>
                     <TabItem>
-                        <ChildContent><TabHeader Text="@L["NotificationsUnread"]"></TabHeader></ChildContent>
+                        <ChildContent><TabHeader Text="@L["NotificationsPending"]"></TabHeader></ChildContent>
                         <ContentTemplate>
-                            @if (!UnreadItems.Any())
+                            @if (!PendingItems.Any())
                             {
                                 <SfMessage Severity="MessageSeverity.Info">@L["NotificationsEmpty"]</SfMessage>
                             }
                             else
                             {
                                 <div class="notification-list e-list e-list-template">
-                                    @foreach (var item in UnreadItems)
+                                    @foreach (var item in PendingItems)
                                     {
                                         <div class="e-list-wrapper notification-item notification-item-unread"
                                              @onclick="() => OpenItemAsync(item)">
@@ -102,21 +124,29 @@
                                                 <i class="fa @IconFor(item.Kind)" aria-hidden="true"></i>
                                             </span>
                                             <div class="e-list-content notification-item-body">
-                                                <span class="notification-item-title">@item.Title</span>
+                                                <span class="notification-item-title">@Formatter.Title(item)</span>
                                                 @if (!string.IsNullOrWhiteSpace(item.Body))
                                                 {
-                                                    <span class="notification-item-text">@item.Body</span>
+                                                    <span class="notification-item-text">@Formatter.Body(item)</span>
                                                 }
                                                 @if (!string.IsNullOrWhiteSpace(item.SuggestedAction))
                                                 {
                                                     <span class="notification-item-suggestion">
-                                                        <i class="fa fa-lightbulb-o" aria-hidden="true"></i>
-                                                        @L["NotificationsSuggestedAction"] @item.SuggestedAction
+                                                        <i class="fa fa-lightbulb" aria-hidden="true"></i>
+                                                        @L["NotificationsSuggestedAction"] @Formatter.SuggestedAction(item)
                                                     </span>
                                                 }
-                                                <span class="notification-item-time">@RelativeTime(item.CreatedAt)</span>
+                                                <span class="notification-item-time">@Formatter.RelativeTime(item.CreatedAt)</span>
                                             </div>
-                                            <span class="notification-unread-dot" aria-label="@L["NotificationsUnread"]"></span>
+                                            <span class="notification-unread-dot" aria-label="@L["NotificationsPending"]"></span>
+                                            <button type="button"
+                                                    class="notification-toggle"
+                                                    title="@L["NotificationsComplete"]"
+                                                    aria-label="@L["NotificationsComplete"]"
+                                                    @onclick="() => ToggleCompleteAsync(item)"
+                                                    @onclick:stopPropagation="true">
+                                                <i class="fa fa-square-check" aria-hidden="true"></i>
+                                            </button>
                                         </div>
                                     }
                                 </div>
@@ -127,13 +157,28 @@
             </SfTab>
 
             <div class="notification-panel-footer">
-                <SfButton CssClass="e-small e-flat" Disabled="@(UnreadCount == 0)" OnClick="MarkAllReadAsync">
-                    @L["NotificationsMarkAllRead"]
+                <SfButton CssClass="e-small e-flat" Disabled="@(PendingCount == 0)" OnClick="OpenMarkAllDialog">
+                    @L["NotificationsMarkAllComplete"]
                 </SfButton>
-                <a href="/notifications" class="notification-view-all" @onclick="ClosePanel">@L["NotificationsViewAll"]</a>
             </div>
         </div>
     }
 </div>
 
 <SfToast @ref="ToastObj" CssClass="e-toast-success" Title="@ToastTitle" Content="@ToastMessage"></SfToast>
+
+<SfDialog @bind-Visible="ConfirmAllDialogVisible" Width="420px" IsModal="true"
+          CloseOnEscape="true" ShowCloseIcon="true"
+          Header="@L["NotificationsMarkAllComplete"]">
+    <DialogTemplates>
+        <Content>
+            <p class="notification-dialog-message">@L["NotificationsConfirmMarkAllComplete"]</p>
+        </Content>
+        <FooterTemplate>
+            <div class="notification-dialog-actions">
+                <SfButton CssClass="e-small e-flat" OnClick="CancelMarkAll">@L["Cancelar"]</SfButton>
+                <SfButton CssClass="e-small e-primary" OnClick="ConfirmMarkAllAsync">@L["NotificationsMarkAllComplete"]</SfButton>
+            </div>
+        </FooterTemplate>
+    </DialogTemplates>
+</SfDialog>

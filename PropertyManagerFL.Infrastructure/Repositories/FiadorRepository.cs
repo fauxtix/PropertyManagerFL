@@ -2,6 +2,7 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using PropertyManagerFL.Application.Interfaces.Repositories;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.LookupTables;
 using PropertyManagerFL.Infrastructure.Context;
@@ -73,6 +74,36 @@ namespace PropertyManagerFL.Infrastructure.Repositories
             {
                 await connection.ExecuteAsync("usp_Fiadores_Delete",
                 param: parameters, commandType: CommandType.StoredProcedure);
+            }
+        }
+
+        public async Task<ArchiveResult> ArchiveFiador(int id)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+            parameters.Add("@Success", dbType: DbType.Boolean, direction: ParameterDirection.Output);
+            parameters.Add("@Code", dbType: DbType.String, size: 32, direction: ParameterDirection.Output);
+            parameters.Add("@Message", dbType: DbType.String, size: 512, direction: ParameterDirection.Output);
+
+            try
+            {
+                using (var connection = _context.CreateConnection())
+                {
+                    await connection.ExecuteAsync("usp_Fiadores_Archive",
+                        param: parameters, commandType: CommandType.StoredProcedure);
+                }
+
+                return new ArchiveResult
+                {
+                    Success = parameters.Get<bool>("@Success"),
+                    Code = parameters.Get<string>("@Code") ?? string.Empty,
+                    Message = parameters.Get<string>("@Message") ?? string.Empty
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Operation failed");
+                return new ArchiveResult { Success = false, Code = "ERROR", Message = ex.Message };
             }
         }
 

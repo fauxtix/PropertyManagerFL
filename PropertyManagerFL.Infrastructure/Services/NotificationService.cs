@@ -11,8 +11,8 @@ namespace PropertyManagerFL.Infrastructure.Services;
 
 /// <summary>
 /// Server-side notification operations and the single rules engine for operational alerts.
-/// Alerts are materialised into the user's inbox and are also consumed by the Arrendamentos
-/// page, which only formats the localized text.
+/// Alerts are materialised into the user's inbox; the bell/inbox is the only surface that
+/// renders them, so completion state is respected everywhere.
 /// </summary>
 public class NotificationService : INotificationService
 {
@@ -81,7 +81,7 @@ public class NotificationService : INotificationService
             ResourceType = n.ResourceType,
             ResourceId = n.ResourceId,
             CreatedAt = n.CreatedAt,
-            IsRead = n.ReadAt.HasValue
+            IsCompleted = n.ReadAt.HasValue
         }).ToList();
     }
 
@@ -91,6 +91,12 @@ public class NotificationService : INotificationService
     public async Task<bool> MarkReadAsync(int id, string recipientUserId)
         => await _notifications.MarkReadAsync(id, recipientUserId);
 
+    public async Task<bool> SetCompletedAsync(int id, string recipientUserId, bool completed)
+        => await _notifications.SetCompletedAsync(id, recipientUserId, completed);
+
+    public async Task<int> MarkAllCompleteAsync(string recipientUserId)
+        => await _notifications.MarkAllReadAsync(recipientUserId);
+
     public async Task<int> MarkAllReadAsync(string recipientUserId)
         => await _notifications.MarkAllReadAsync(recipientUserId);
 
@@ -98,7 +104,7 @@ public class NotificationService : INotificationService
         => await _notifications.MarkSeenAsync(recipientUserId);
 
     /// <summary>
-    /// Computes the operational alerts shown in the bell and on the Arrendamentos page.
+    /// Computes the operational alerts materialised into the bell/inbox.
     /// Best-effort: any data-source failure is logged and the remaining rules still run.
     /// </summary>
     public async Task<IEnumerable<NotificationAlertVM>> GetAlertsAsync()
@@ -107,7 +113,11 @@ public class NotificationService : INotificationService
         try
         {
             var settings = await _appSettings.GetSettingsAsync();
-            var leases = (await _leases.GetAll() ?? Enumerable.Empty<ArrendamentoVM>()).ToList();
+            // Terminated leases stay in the database for history but must not keep producing
+            // operational alerts (rent due, renewal, revocation letters, etc.).
+            var leases = (await _leases.GetAll() ?? Enumerable.Empty<ArrendamentoVM>())
+                .Where(l => l.Ativo && l.Data_Saida == default)
+                .ToList();
 
             // Shared snapshots. Each source is optional: a failure must not suppress unrelated rules.
             var payments = new List<RecebimentoVM>();
@@ -395,28 +405,38 @@ public class NotificationService : INotificationService
     private static int MonthsUntil(DateTime endDate)
     {
         var today = DateTime.Today;
+        // Expired terms still need action (renew the term or send a revocation letter).
+        // They stay pending in the inbox until the user completes them; the inbox dedupe
+        // prevents duplicate rows and a completed alert is not recreated on refresh.
         if (endDate.Date < today) return 0;
         return Math.Abs(12 * (today.Year - endDate.Year) + today.Month - endDate.Month);
     }
 
+    private static string AlertKey(string kind, string? resourceType, int? resourceId)
+        => $"{kind}|{resourceType ?? string.Empty}|{resourceId?.ToString() ?? string.Empty}";
+
     /// <summary>
-    /// Computes current alerts and inserts any that have not already been delivered today.
+    /// Computes current alerts and inserts only those not already in the user's inbox.
     /// Called when the bell/inbox loads so operational warnings appear in the personal inbox.
     /// </summary>
     public async Task<int> RefreshAlertsAsync(string recipientUserId)
     {
         if (string.IsNullOrWhiteSpace(recipientUserId)) return 0;
 
-        var since = DateTime.UtcNow.AddDays(-1);
         var inserted = 0;
         try
         {
+            // One row per (kind, resource) for this user, regardless of age or completion state.
+            // A concluded alert stays quiet until the user reopens it; no 24h resurrection.
+            var existing = await _notifications.GetForUserAsync(recipientUserId, 500);
+            var knownKeys = new HashSet<string>(existing.Select(n =>
+                AlertKey(n.Kind, n.ResourceType, n.ResourceId)), StringComparer.Ordinal);
+
             foreach (var alert in await GetAlertsAsync())
             {
                 try
                 {
-                    if (await _notifications.ExistsRecentAsync(recipientUserId, alert.Kind,
-                            alert.ResourceType, alert.ResourceId, since))
+                    if (!knownKeys.Add(AlertKey(alert.Kind, alert.ResourceType, alert.ResourceId)))
                         continue;
 
                     var id = await NotifyAsync(new CreateNotificationVM
@@ -442,6 +462,35 @@ public class NotificationService : INotificationService
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Alert refresh failed");
+        }
+        return inserted;
+    }
+
+    /// <summary>
+    /// Called once when the API starts so a fresh Production/Dev database gets its alerts
+    /// immediately, without waiting for somebody to open the bell. Idempotent: existing
+    /// notifications (pending or concluded) are never duplicated.
+    /// </summary>
+    public async Task<int> SeedAlertsForAllUsersAsync()
+    {
+        var inserted = 0;
+        try
+        {
+            foreach (var userId in await _notifications.GetRecipientUserIdsAsync())
+            {
+                try
+                {
+                    inserted += await RefreshAlertsAsync(userId);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Alert seeding failed for user {UserId}", userId);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Alert seeding failed");
         }
         return inserted;
     }

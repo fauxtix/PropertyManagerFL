@@ -36,7 +36,7 @@
                     <label asp-for="Input.Email" class="login-label">@localizerApp["lblEmail"].Value</label>
                     <div class="login-input-wrap">
                         <i class="fas fa-user login-input-icon" aria-hidden="true"></i>
-                        <input asp-for="Input.Email" value="admin@propertymanager.pt" class="form-control login-input"
+                        <input asp-for="Input.Email" class="form-control login-input"
                                placeholder="@localizerApp["lblEmail"].Value" required autofocus />
                     </div>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>

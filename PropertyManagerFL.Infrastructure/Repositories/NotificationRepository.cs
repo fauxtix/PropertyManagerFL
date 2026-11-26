@@ -46,6 +46,22 @@ public class NotificationRepository : INotificationRepository
         }
     }
 
+    public async Task<IReadOnlyList<string>> GetRecipientUserIdsAsync()
+    {
+        try
+        {
+            using var connection = _context.CreateConnection();
+            var ids = await connection.QueryAsync<string>(
+                "SELECT [Id] FROM [dbo].[AspNetUsers] ORDER BY [Id]");
+            return ids.ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Operation failed");
+            return Array.Empty<string>();
+        }
+    }
+
     public async Task<IEnumerable<Notification>> GetForUserAsync(string recipientUserId, int take)
     {
         try
@@ -101,6 +117,29 @@ public class NotificationRepository : INotificationRepository
         }
     }
 
+    public async Task<bool> SetCompletedAsync(int id, string recipientUserId, bool completed)
+    {
+        try
+        {
+            using var connection = _context.CreateConnection();
+            var parameters = new DynamicParameters();
+            parameters.Add("@Id", id);
+            parameters.Add("@RecipientUserId", recipientUserId);
+            // Completion/reopen is done here (rather than in a new stored procedure) so existing
+            // databases need no script upgrade and the generated SQL snapshot stays valid.
+            var sql = completed
+                ? "UPDATE [dbo].[Notifications] SET [ReadAt] = COALESCE([ReadAt], SYSDATETIME()) WHERE [Id] = @Id AND [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NULL"
+                : "UPDATE [dbo].[Notifications] SET [ReadAt] = NULL WHERE [Id] = @Id AND [RecipientUserId] = @RecipientUserId AND [ReadAt] IS NOT NULL";
+            var affected = await connection.ExecuteAsync(sql, param: parameters);
+            return affected > 0;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Operation failed");
+            return false;
+        }
+    }
+
     public async Task<int> MarkAllReadAsync(string recipientUserId)
     {
         try
@@ -108,7 +147,8 @@ public class NotificationRepository : INotificationRepository
             using var connection = _context.CreateConnection();
             var parameters = new DynamicParameters();
             parameters.Add("@RecipientUserId", recipientUserId);
-            return await connection.ExecuteAsync("usp_Notifications_MarkAllRead",
+            // The procedure SELECTs @@ROWCOUNT; ExecuteAsync would return -1 because of SET NOCOUNT ON.
+            return await connection.ExecuteScalarAsync<int>("usp_Notifications_MarkAllRead",
                 param: parameters, commandType: CommandType.StoredProcedure);
         }
         catch (Exception ex)
