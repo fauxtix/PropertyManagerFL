@@ -51,7 +51,7 @@ namespace Web.Blazor.Areas.Identity.Pages.Account
                 ModelState.AddModelError(string.Empty, ErrorMessage);
             }
 
-            returnUrl ??= Url.Content("~/");
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/");
 
             // Clear the existing external cookie to ensure a clean login process
             await HttpContext.SignOutAsync(IdentityConstants.ExternalScheme);
@@ -61,9 +61,12 @@ namespace Web.Blazor.Areas.Identity.Pages.Account
             ReturnUrl = returnUrl;
         }
 
-        public async Task<IActionResult> OnPostAsync(string? returnUrl = "")
+        public async Task<IActionResult> OnPostAsync(string? returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            // The login form has no hidden ReturnUrl field, so a POST without a query string
+            // arrives here with null. LocalRedirect("") throws ArgumentException; also reject
+            // external URLs to avoid an open redirect.
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : Url.Content("~/");
 
             if (ModelState.IsValid)
             {

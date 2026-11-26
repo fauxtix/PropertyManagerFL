@@ -1,5 +1,7 @@
 # Configuração local (.NET 10)
 
+> Para instalar a aplicação num PC limpo, seguir primeiro o guia linear [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md) — este ficheiro é a referência detalhada de configuração, portas e resolução de problemas.
+
 > **TL;DR (EN):** Prerequisites: .NET 10 SDK (`global.json`), SQL Server Developer/Community, SSMS/`sqlcmd`, your own Syncfusion keys ([SYNCFUSION-LICENSES.md](SYNCFUSION-LICENSES.md)) and SMTP settings. **Create an empty `PropertyManagerDB` first** — no repo script contains `CREATE DATABASE`; then install the schema with one of the two paths in [DATABASE.md](DATABASE.md). Set secrets **per project** with `dotnet user-secrets set --project ...`, set `ASPNETCORE_ENVIRONMENT=Development`, then run the API (`https://localhost:5001`) and the UI (`https://localhost:7181`) in two terminals. These are the original **Kestrel** ports and are **different from the IIS/Production ports (4300/4310)**, so both can run on the same machine. GitHub Secrets are **not** copied by a clone.
 
 ## 1. Pré-requisitos
@@ -116,6 +118,10 @@ Em `Production` os user-secrets **não** são carregados — ver [PRODUCTION.md]
 curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Imoveis/TableHasData
 curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Notifications/alerts
 
+# A caixa de entrada e o contador exigem também X-User-Id (a UI envia-o automaticamente)
+curl.exe -k -H "ApiKey: <api-key-local>" -H "X-User-Id: <id-utilizador>" https://localhost:5001/api/Notifications/unread-count
+curl.exe -k -H "ApiKey: <api-key-local>" -H "X-User-Id: <id-utilizador>" "https://localhost:5001/api/Notifications?take=1"
+
 # Modelos de carta (devem devolver ficheiros .dotx, não uma lista vazia)
 curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Templates/GetTemplatesFilenamesFromServer/pt-PT
 
@@ -123,9 +129,20 @@ curl.exe -k -H "ApiKey: <api-key-local>" https://localhost:5001/api/Templates/Ge
 curl.exe -k -I https://localhost:7181/
 ```
 
-Esperado: API `200` (com `true` no primeiro endpoint) e UI `302` para `Identity/Account/Login`. O endpoint de modelos deve devolver nomes de ficheiros `.dotx`; uma lista vazia significa que a API não encontrou `Reports\Docs` no content root. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`: cada aviso pode incluir uma sugestão de ação e os alertas cobrem rendas em atraso, cartas em falta, rendas a vencer, cartas sem resposta e contratos sem documento.
+Esperado: API `200` (com `true` no primeiro endpoint), `200`/`200` nos endpoints de notificações com `X-User-Id` e UI `302` para `Identity/Account/Login`. Sem `X-User-Id`, o contador e a caixa de entrada devolvem `400` — o `ApiKey` não basta. O `Id` vem de `SELECT Id, Email FROM dbo.AspNetUsers;` na BD de teste. O endpoint de modelos deve devolver nomes de ficheiros `.dotx`; uma lista vazia significa que a API não encontrou `Reports\Docs` no content root. Depois de autenticar, o sino de notificações aparece no layout e a caixa de entrada em `/notifications`: cada aviso pode incluir uma sugestão de ação e os alertas cobrem rendas em atraso, cartas em falta, rendas a vencer, cartas sem resposta e contratos sem documento.
 
 Se a base de dados foi criada antes desta alteração, aplicar primeiro o pequeno `ALTER` da coluna `SuggestedAction` indicado em [DATABASE.md](DATABASE.md).
+
+### Primeiro utilizador / primeiro login
+
+A UI exige confirmação de e-mail (`RequireConfirmedAccount = true`) e o registo envia o e-mail **antes** de mostrar a página de confirmação. Para um PC novo sem credenciais SMTP reais, o caminho recomendado é:
+
+1. Instalar e arrancar o [smtp4dev](https://github.com/rnwood/smtp4dev) (`winget install Rnwood.Smtp4dev`), com `ServerOptions__Urls=http://localhost:5002`, `ServerOptions__Port=2525`, `ServerOptions__AuthenticationRequired=true` e `ServerOptions__SmtpAllowAnyCredentials=true` — a porta 5000 já é usada pela API.
+2. Apontar as cinco chaves `EmailConfiguration:*` da UI para `localhost:2525` (utilizador/palavra-passe arbitrários, por exemplo `dev`/`dev`).
+3. Registar em `/Identity/Account/Register` e clicar em **Click here to confirm your account** na página *Register confirmation* (o link também chega ao interface web do smtp4dev).
+4. Fazer login com o e-mail e a palavra-passe escolhidos.
+
+A conta `admin@propertymanager.pt` incluída no snapshot não tem palavra-passe documentada: criar um utilizador próprio. O passo a passo completo está em [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md), §5.
 
 ## 5. Idiomas, temas e documentos
 
@@ -147,9 +164,13 @@ Se a base de dados foi criada antes desta alteração, aplicar primeiro o pequen
 | `Failed to bind to address http://localhost:4300` em Dev | O `applicationUrl` do perfil Kestrel ficou com a porta do IIS | Confirmar `5001`/`5000` na API e `7181`/`5152` na UI, além do `BaseUrl` de Development |
 | Porta ocupada | Outra aplicação está a usar 5001/5000/7181/5152 | Verificar com `netstat -ano | findstr :5001` |
 | Editor de cartas mostra "sem modelos" | A API não encontrou `Reports\Docs` no content root | Confirmar os `.dotx` na pasta da API e o endpoint `GetTemplatesFilenamesFromServer` |
+| Registo devolve `500` | SMTP inacessível ou sem AUTH; `SendEmailAsync` falha antes da confirmação | Arrancar smtp4dev com as variáveis da secção anterior e conferir `EmailConfiguration:*` |
+| `/Notifications/unread-count` ou `/Notifications` devolvem `400` | Falta `X-User-Id` | Usar o `Id` de `dbo.AspNetUsers`; ver os exemplos de smoke acima |
+| Não conseguir fazer login com `admin@propertymanager.pt` | Palavra-passe dessa conta do snapshot não é documentada | Registar e confirmar um utilizador próprio (ver secção anterior) |
 
 ## 7. Testes e deploy
 
 - Testes: `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
 - CI: `.github/workflows/ci.yml` (restore/build/test, sem BD).
 - Deploy IIS: ver [PRODUCTION.md](PRODUCTION.md).
+- Instalação completa num PC novo: [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md).

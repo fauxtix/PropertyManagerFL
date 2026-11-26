@@ -1,5 +1,7 @@
 # Produção — deploy IIS, segredos e verificação
 
+> Para preparar um servidor/PC novo do zero, ver o guia linear [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md), §7. Este ficheiro é a referência detalhada de segredos, IIS e verificação.
+
 > **TL;DR (EN):** Production uses GitHub Secrets (never committed). Deploy with `gh workflow run cd.yml --repo fauxtix/PropertyManagerFL --ref master`; it needs a self-hosted runner registered in **this repo** with label `iis-propertymanager`. The script injects secrets into the published `web.config` as environment variables (Production does not load user-secrets), except the connection string, which comes from `appsettings.Production.json`. Two Syncfusion secrets are required: `PM_SYNCFUSION_LICENSE` (UI) and `PM_SYNCFUSION_LICENSE_API` (API). Pools `PropertyManagerApi` and `PropertyManagerFL` already have SQL logins/`db_owner`. **The CD publishes the apps only: it never creates, drops or migrates a database.**
 
 > **Aviso:** a base de dados de Produção **nunca** é criada nem atualizada automaticamente pelos scripts ou pelo CD. “Responsável da infraestrutura/DBA” significa apenas quem administra o SQL Server desse ambiente — se fizer deploy no seu PC, é você. Com autorização e backup prévio, aplicar em `PropertyManagerDB_Production` apenas a migração idempotente `PropertyManagerFL.Infrastructure/Database/EndLeaseAndArchiving.sql`; nunca os scripts completos nem o snapshot. A ordem correta é: **BD criada/atualizada → CD → verificação**.
@@ -89,6 +91,16 @@ O mesmo padrão serve para qualquer outro segredo. **Nunca** imprimir os valores
 
 ## 3. IIS
 
+### Servidor/PC novo
+
+O `deploy-iis.ps1` cria sites e app pools se faltarem, mas **não instala o IIS nem o .NET Hosting Bundle/ANCM** (necessário para o elemento `system.webServer/aspNetCore` do `web.config`). Antes do primeiro deploy:
+
+1. Instalar o **IIS** e o **.NET Hosting Bundle** (contém o ASP.NET Core Module) na máquina do runner. O script atual não usa URL Rewrite.
+2. Registar o runner self-hosted **neste repositório/fork** com `[self-hosted, Windows, iis-propertymanager]`; em `gh`, usar `--repo <owner>/<repo>` se for fork.
+3. Criar/configurar a BD antes do deploy (secção 0) e, se os pools forem novos, executar `Login_App.sql`, `Login_Api.sql` e `UsersAndSchemas.sql` com `db_owner` — ver [DATABASE.md](DATABASE.md).
+4. Criar os GitHub Secrets da secção 2 **no mesmo repo/fork**; num fork os valores não são herdados do repositório original.
+5. Manter as portas 4300/4310 livres; em Development/Kestrel usar 5001/7181 para não haver conflito.
+
 | Item | Valor |
 |---|---|
 | Sites | `PropertyManagerFL.Api`, `PropertyManagerFL.UI` |
@@ -147,6 +159,8 @@ SELECT name FROM sys.tables WHERE name = 'HistoricoArrendamentos';
 SELECT COL_LENGTH('dbo.Recebimentos','ID_Arrendamento')     AS RecebimentosID,
        COL_LENGTH('dbo.RecebimentosTemp','ID_Arrendamento') AS RecebimentosTempID;
 ```
+
+Primeiro login num site novo: a UI exige e-mail confirmado e o registo envia o e-mail antes de mostrar a página de confirmação. Confirmar que os segredos `PM_EMAIL_*` apontam para um SMTP que funcione; o link de confirmação aparece também na página *Register confirmation*. A conta `admin@propertymanager.pt` do snapshot não tem palavra-passe documentada — criar um utilizador próprio. Ver [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md), §5.
 
 Na UI, fazer apenas um smoke não destrutivo: abrir **Terminar contrato** num contrato real e cancelar (o aviso de revogação é informativo), e abrir/cancelar a confirmação **Arquivar** num inquilino com contrato ativo (deve estar bloqueado). Para testar a operação real, criar um registo descartável com autorização e restore prévio.
 

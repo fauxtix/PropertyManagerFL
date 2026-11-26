@@ -15,11 +15,13 @@ Aplicação concebida para ajudar os senhorios na gestão das suas propriedades 
 - **Quem faz clone:** os GitHub Secrets **não vêm com o clone**. Cada pessoa cria a sua BD manualmente e precisa das suas credenciais e licenças. O CD publica a aplicação, mas **não cria nem atualiza bases de dados**. Nunca reutilizar chaves do mantenedor nem as committed.
 - **Produção:** deploy manual via GitHub Actions para IIS, com segredos injetados no `web.config` — **excepto a connection string**, que vem do `appsettings.Production.json` e aponta para `PropertyManagerDB_Production` — ver [PRODUCTION.md](docs/PRODUCTION.md).
 - **Testes:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
+- **Instalar noutro PC para testar:** seguir o guia único [INSTALL-NEW-PC.md](docs/INSTALL-NEW-PC.md) — pré-requisitos, BD, segredos, primeiro utilizador (smtp4dev), arranque, smoke e IIS/CD opcional.
 
 ### Guias
 
 | Guia | O que explica |
 |---|---|
+| [INSTALL-NEW-PC.md](docs/INSTALL-NEW-PC.md) | **Comece aqui num PC limpo**: checklist linear para Development e, opcionalmente, IIS/CD |
 | [DATABASE.md](docs/DATABASE.md) | Instalar SQL Server, criar `PropertyManagerDB`, ordem dos scripts, verificação |
 | [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) | Portas, user-secrets por projeto, arranque, temas/idiomas, resolução de problemas |
 | [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md) | **Qual chave escolher (versão/edição)**, onde configurá-la e como resolver avisos de licença |

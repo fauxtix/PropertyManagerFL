@@ -1,5 +1,7 @@
 # Base de dados — instalação (SQL Server)
 
+> Para um PC novo, seguir o guia linear [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md); este ficheiro é a referência detalhada dos scripts SQL.
+
 > **TL;DR (EN):** Install **SQL Server Developer** (dev/test) or **Community** (free, with limits), plus SSMS or `sqlcmd`. **Create an empty `PropertyManagerDB` first** — none of the scripts contains `CREATE DATABASE` or `DROP DATABASE`. Then choose **one** fresh-install path: run the individual scripts in the order below, or run the generated all-in-one `SqlData_Script/PropertyManagerDB.sql`. The full script was regenerated on 2026-11-26 and is in sync with the modular scripts; it creates the `[Identity]` schema itself and contains **no operational/sample data**. Never run both paths. Existing Dev/test databases need the idempotent `EndLeaseAndArchiving.sql` migration described in section 4 (and possibly the one-time `SuggestedAction` upgrade below). Production is created/updated outside CD by whoever administers SQL Server — for a local deploy, that is you — always with a backup. The CD publishes the apps only; it never runs SQL. See the [local setup](LOCAL-SETUP.md) and [Syncfusion licences](SYNCFUSION-LICENSES.md) guides.
 
 ## 1. Pré-requisitos
@@ -50,7 +52,17 @@ Script completo **gerado** do snapshot limpo de 2026-11-25 mais a migração ide
 
 **Não contém dados operacionais nem dados de exemplo** — imóveis, fracções, inquilinos, arrendamentos, recibos, documentos, mensagens, notificações e logs ficam vazios. Criar dados de teste é da responsabilidade de quem faz o clone, com nomes fictícios; nunca reutilizar dados reais de inquilinos.
 
-Valores sanitizados no `INSERT` de `ApplicationSettings`: `ApiKey` e os dois caminhos de backup são *placeholders* (`REPLACE_WITH_...`) e os campos de identidade SMTP ficam `NULL`. Substituir pelos valores reais antes de usar a aplicação. A conta `admin` é genérica: alterar a palavra-passe após a instalação.
+Valores sanitizados no `INSERT` de `ApplicationSettings`: `ApiKey` e os dois caminhos de backup são *placeholders* (`REPLACE_WITH_...`) e os campos de identidade SMTP ficam `NULL`. Substituir pelos valores reais antes de usar a aplicação — exemplo para um teste local:
+
+```sql
+UPDATE dbo.ApplicationSettings
+SET ApiKey = N'<valor-local-a-escolher>',
+    BackupBaseDados = N'C:\Backups\PropertyManagerFL\Backups\BaseDados',
+    BackupOutrosFicheiros = N'C:\Backups\PropertyManagerFL\Backups\Ficheiros'
+WHERE Id = 1;
+```
+
+> Este `ApiKey` da BD **não** é o cabeçalho verificado pelo `ApiKeyMiddleware` — esse vem dos user-secrets (Development) ou dos GitHub Secrets (Production) e tem de ser igual na API e na UI. Os campos SMTP da BD ficam `NULL`; a UI lê `EmailConfiguration` da configuração. A conta `admin@propertymanager.pt` é genérica e a palavra-passe não é documentada: **não a reutilizar**; registar um utilizador próprio pela UI (com e-mail confirmado — ver [INSTALL-NEW-PC.md](INSTALL-NEW-PC.md), §5).
 
 **Não é um passo adicional**: usar este script *substitui* a execução dos ficheiros individuais. Não executar ambos. A pasta `SqlData_Script` contém apenas este ficheiro — os antigos `Sps_Arrendamentos.sql` e `RentsDB.db.sql` foram removidos. O snapshot foi regenerado a 2026-11-26 e está sincronizado com os scripts modulares, incluindo `HistoricoArrendamentos`, `ID_Arrendamento`, `usp_Arrendamentos_EndLease`, `usp_Inquilinos_Archive` e `usp_Fiadores_Archive`. Não editar à mão — regenerar a partir de uma BD limpa com SMO sempre que o esquema/procedures mudarem.
 
@@ -113,7 +125,7 @@ O script começa com `USE [PropertyManagerDB]`, pelo que a base de dados já tem
 
 ### Alternativa B — restaurar o backup
 
-No SSMS: botão direito em **Databases → Restore Database… → Device → Add…** e escolher `PropertyManagerFL.Infrastructure/Database/23012024_160350.Bak`. O backup é antigo: confirme depois se contém os objetos da secção 4 e atualize-os com os scripts atuais se necessário. **Não use dados reais de inquilinos** num ambiente partilhado.
+No SSMS: botão direito em **Databases → Restore Database… → Device → Add…** e escolher `PropertyManagerFL.Infrastructure/Database/23012024_160350.Bak`. **Não recomendado num PC novo**: o backup é antigo, pode conter dados reais de inquilinos e não garante os objetos da secção 4; para testar, usar o snapshot limpo. Se ainda assim for usado, confirmar os objetos e nunca expor dados reais num ambiente partilhado.
 
 ## 4. Atenção: os scripts não são idempotentes
 

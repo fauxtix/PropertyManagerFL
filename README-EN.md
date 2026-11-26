@@ -15,11 +15,13 @@ Application designed to assist landlords in managing their properties and rental
 - **If you cloned this repo:** GitHub Secrets are **not copied by a clone**. Everyone creates their own database manually and needs their own credentials and licences. CD publishes the apps but **does not create or update databases**. Never reuse the maintainer's keys or commit any key.
 - **Production:** manual GitHub Actions deploy to IIS with secrets injected into `web.config` — **except the connection string**, which comes from `appsettings.Production.json` and points to `PropertyManagerDB_Production` — see [PRODUCTION.md](docs/PRODUCTION.md).
 - **Tests:** `dotnet test PropertyManagerFL.Tests/PropertyManagerFL.Tests.csproj`.
+- **Installing on another PC to test:** follow the single checklist in [INSTALL-NEW-PC.md](docs/INSTALL-NEW-PC.md) — prerequisites, database, secrets, first user (smtp4dev), startup, smoke test and optional IIS/CD.
 
 ### Guides
 
 | Guide | What it covers |
 |---|---|
+| [INSTALL-NEW-PC.md](docs/INSTALL-NEW-PC.md) | **Start here on a clean PC**: linear checklist for Development and, optionally, IIS/CD |
 | [DATABASE.md](docs/DATABASE.md) | Install SQL Server, create `PropertyManagerDB`, script order, verification |
 | [LOCAL-SETUP.md](docs/LOCAL-SETUP.md) | Ports, per-project user-secrets, running the apps, themes/languages, troubleshooting |
 | [SYNCFUSION-LICENSES.md](docs/SYNCFUSION-LICENSES.md) | **Which key to choose (version/edition)**, where to set it, how to fix licence warnings |
