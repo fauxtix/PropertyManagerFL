@@ -161,13 +161,33 @@ public partial class ExpensesDashboard
             CategoriesSummaryCurrentYear = currentYearByType.Where(p => p.YearOfExpenses == Year);
             CategoriesSummaryPreviousYear = previousYearByType.Where(p => p.YearOfExpenses == PreviousYear);
 
-            var sumOfExpenses = (totIMI + totIRS + totInsurance + ExpensesThisYear) / totRents;
-            var totIRSPercent = Math.Round((totIRS / totRents) * 100, 2);
-            var totIMIPercent = Math.Round((totIMI / totRents) * 100, 2);
-            var totInsurancePercent = Math.Round((totInsurance / totRents) * 100, 2);
-            var totOthersPercent = Math.Round((ExpensesThisYear / totRents) * 100, 2);
+            // A new installation can have no active units (and therefore no rents).
+            // Percentages are relative to annual rents; without a denominator there is no
+            // meaningful percentage to show, so keep the amounts and report 0% instead of
+            // letting Decimal division throw DivideByZeroException and break the dashboard.
+            decimal totIRSPercent;
+            decimal totIMIPercent;
+            decimal totInsurancePercent;
+            decimal totOthersPercent;
 
-            totExpensesPercent = Math.Round(sumOfExpenses * 100, 2);
+            if (totRents == 0)
+            {
+                totIRSPercent = 0;
+                totIMIPercent = 0;
+                totInsurancePercent = 0;
+                totOthersPercent = 0;
+                totExpensesPercent = 0;
+            }
+            else
+            {
+                var sumOfExpenses = (totIMI + totIRS + totInsurance + ExpensesThisYear) / totRents;
+                totIRSPercent = Math.Round((totIRS / totRents) * 100, 2);
+                totIMIPercent = Math.Round((totIMI / totRents) * 100, 2);
+                totInsurancePercent = Math.Round((totInsurance / totRents) * 100, 2);
+                totOthersPercent = Math.Round((ExpensesThisYear / totRents) * 100, 2);
+                totExpensesPercent = Math.Round(sumOfExpenses * 100, 2);
+            }
+
             var titOutrasDespesas = L["TituloOutrasPatologias"] + " " + L["TituloDespesas"];
             var titSeguros = L["TituloSeguros"];
             totExpensesList = new() {
