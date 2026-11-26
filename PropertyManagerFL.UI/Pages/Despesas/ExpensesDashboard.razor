@@ -316,9 +316,14 @@ else
                     </SfGrid>
                 </div>
             </div>
-            <div>
-                <ExpByTypePieChart PieData="@totExpensesList" />
-            </div>
+            @* The chart plots TaxPercent. With no rents (or no expense data) all values are 0,
+               so an empty pie adds no information — show it only when there is something to plot. *@
+            @if (totExpensesList.Any(e => e.TaxPercent > 0))
+            {
+                <div>
+                    <ExpByTypePieChart PieData="@totExpensesList" />
+                </div>
+            }
         </div>
     </div>
 }
