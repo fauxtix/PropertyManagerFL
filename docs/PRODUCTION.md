@@ -122,7 +122,8 @@ Notas importantes:
 # API: 401 sem chave, 200 com chave
 curl.exe -k -s -o NUL -w '%{http_code}' http://localhost:4300/api/Notifications/alerts
 curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' http://localhost:4300/api/Notifications/alerts
-curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' http://localhost:4300/api/Notifications/unread-count
+curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' -H 'X-User-Id: <id-utilizador>' http://localhost:4300/api/Notifications/unread-count
+curl.exe -k -s -o NUL -w '%{http_code}' -H 'ApiKey: <valor>' -H 'X-User-Id: <id-utilizador>' 'http://localhost:4300/api/Notifications?take=1'
 
 # Modelos de carta: tem de devolver nomes de ficheiros .dotx (nunca uma lista vazia)
 curl.exe -k -s -H 'ApiKey: <valor>' http://localhost:4300/api/Templates/GetTemplatesFilenamesFromServer/pt-PT
@@ -134,7 +135,7 @@ curl.exe -k -s -o NUL -w '%{http_code}' https://localhost:4310/
 netsh http show servicestate
 ```
 
-Esperado: `401`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`. O endpoint de modelos deve listar os `.dotx` (5 para `pt-PT`); lista vazia significa que a publicação não levou a pasta `Reports\Docs`.
+Esperado: `401`, `200`, `200`, `200`, `302` e as entradas `HTTP://*:4300/` e `HTTPS://*:4310/`. `/alerts` não precisa de `X-User-Id`; a caixa de entrada e o contador devolvem `400` sem esse header. O endpoint de modelos deve listar os `.dotx` (5 para `pt-PT`); lista vazia significa que a publicação não levou a pasta `Reports\Docs`.
 
 Depois da migração e do CD, confirmar também na BD de Produção (os resultados da secção 0 não podem estar vazios):
 
