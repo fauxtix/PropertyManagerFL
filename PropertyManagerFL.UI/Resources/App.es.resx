@@ -3899,6 +3899,24 @@ Puede copiar el detalle o informar del problema a través de correo electrónico
   <data name="lt-file-load-error" xml:space="preserve">
     <value>Error al cargar el archivo ({0}).</value>
   </data>
+  <data name="lt-template-ContratoArrendamento" xml:space="preserve">
+    <value>Contrato de alquiler</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendas" xml:space="preserve">
+    <value>Carta de actualización del alquiler</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendasManual" xml:space="preserve">
+    <value>Carta de actualización manual del alquiler</value>
+  </data>
+  <data name="lt-template-RevogacaoContrato" xml:space="preserve">
+    <value>Carta de revocación del contrato</value>
+  </data>
+  <data name="lt-template-AvisoRendasEmAtraso" xml:space="preserve">
+    <value>Aviso de demora en el pago del alquiler</value>
+  </data>
+  <data name="lt-template-with-language" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>General</value>
   </data>

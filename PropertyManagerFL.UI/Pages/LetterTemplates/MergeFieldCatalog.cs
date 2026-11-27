@@ -162,14 +162,13 @@ public static class MergeFieldCatalog
         .ToArray();
 
     /// <summary>
-    /// Devolve os campos válidos para o modelo seleccionado. Modelos com sufixo de idioma
-    /// (ex.: <c>AvisoRendasEmAtraso_Ingles</c>) são normalizados para o nome base.
-    /// Modelos desconhecidos recebem a lista completa, agrupada por categoria.
+    /// Remove a extensão e o sufixo de idioma de um nome de modelo
+    /// (ex.: <c>AvisoRendasEmAtraso_Ingles.dotx</c> → <c>AvisoRendasEmAtraso</c>).
     /// </summary>
-    public static IReadOnlyList<MergeField> GetFieldsForTemplate(string? templateFileName)
+    public static string NormalizeTemplateName(string? templateFileName)
     {
         if (string.IsNullOrWhiteSpace(templateFileName))
-            return AllFields;
+            return string.Empty;
 
         string name = Path.GetFileNameWithoutExtension(templateFileName.Trim());
 
@@ -181,6 +180,20 @@ public static class MergeFieldCatalog
                 break;
             }
         }
+
+        return name;
+    }
+
+    /// <summary>
+    /// Devolve os campos válidos para o modelo seleccionado. Modelos com sufixo de idioma
+    /// são normalizados para o nome base. Modelos desconhecidos recebem a lista completa,
+    /// agrupada por categoria.
+    /// </summary>
+    public static IReadOnlyList<MergeField> GetFieldsForTemplate(string? templateFileName)
+    {
+        string name = NormalizeTemplateName(templateFileName);
+        if (name.Length == 0)
+            return AllFields;
 
         return TemplateFields.TryGetValue(name, out MergeField[]? fields) ? fields : AllFields;
     }

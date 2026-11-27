@@ -46,6 +46,8 @@ public partial class LetterTemplates
 
     private string? selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
     private string? currentTemplateName;
+    private string? currentTemplateDisplayName;
+    private bool showTemplateLanguage;
     private bool PreviewVisible { get; set; }
     private bool PreviewBusy { get; set; }
     private byte[]? PreviewPdfBytes { get; set; }
@@ -112,22 +114,30 @@ public partial class LetterTemplates
             selectedCulture = Thread.CurrentThread.CurrentCulture.Name;
 
         FileList = (await documentsSevice!.GetTemplatesFilenamesFromServer(selectedCulture!)).ToList();
+        showTemplateLanguage = TemplateDisplayCatalog.HasMixedLanguages(FileList);
         FileNamesOnlyList = new();
         foreach (var item in FileList)
         {
             var filename = Path.GetFileNameWithoutExtension(item);
-            FileNamesOnlyList.Add(new TemplateFileName { Id = counter++, TemplateFile = filename });
+            FileNamesOnlyList.Add(new TemplateFileName
+            {
+                Id = counter++,
+                TemplateFile = GetTemplateDisplayName(filename),
+                FilePath = item
+            });
         }
 
         idxFileSelected = 0;
         filePath = string.Empty;
         currentTemplateName = string.Empty;
+        currentTemplateDisplayName = string.Empty;
         TemplatesLoaded = true;
 
         if (FileList.Count > 0)
         {
             filePath = FileList[0];
             currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
+            currentTemplateDisplayName = GetTemplateDisplayName(currentTemplateName);
         }
         else
         {
@@ -146,6 +156,7 @@ public partial class LetterTemplates
         fileName = action.FileData.Name;
         filePath = await documentsSevice!.GetTemplateFromServer(fileName);
         currentTemplateName = Path.GetFileNameWithoutExtension(fileName);
+        currentTemplateDisplayName = GetTemplateDisplayName(currentTemplateName);
         ext = Path.GetExtension(fileName);
         if (ext.ToLower() == ".doc")
         {
@@ -348,12 +359,36 @@ public partial class LetterTemplates
             return;
 
         ClosePreview();
-        filePath = FileList[idxFileSelected];
+        filePath = args.ItemData.FilePath ?? FileList[idxFileSelected];
         currentTemplateName = Path.GetFileNameWithoutExtension(filePath);
+        currentTemplateDisplayName = args.ItemData.TemplateFile ?? GetTemplateDisplayName(currentTemplateName);
         OnCreated();
 
         StateHasChanged();
     }
+    private string GetTemplateDisplayName(string? templateFileName)
+    {
+        TemplateDisplayParts parts = TemplateDisplayCatalog.GetDisplayParts(templateFileName);
+
+        string title = string.IsNullOrWhiteSpace(parts.TitleKey)
+            ? parts.FallbackTitle
+            : Localized(parts.TitleKey);
+
+        if (string.IsNullOrWhiteSpace(title) || title == parts.TitleKey)
+            title = parts.FallbackTitle;
+        if (string.IsNullOrWhiteSpace(title))
+            title = Path.GetFileNameWithoutExtension(templateFileName ?? string.Empty);
+
+        if (!showTemplateLanguage)
+            return title;
+
+        string? language = parts.LanguageKey is null ? null : Localized(parts.LanguageKey);
+        if (language == parts.LanguageKey)
+            language = null;
+
+        return TemplateDisplayCatalog.FormatTitle(title, language, Localized(TemplateDisplayCatalog.LanguageFormatKey));
+    }
+
     private string Localized(string key) => L?[key].Value ?? key;
 
     protected void DisplayResult(string titleCaption, string errorMessage, AlertMessageType alertMessageType = AlertMessageType.Error)
@@ -376,5 +411,6 @@ public partial class LetterTemplates
     {
         public int Id { get; set; }
         public string? TemplateFile { get; set; }
+        public string? FilePath { get; set; }
     }
 }

@@ -44,7 +44,7 @@ else
             <div class="lt-topbar-tools">
                 <div class="lt-topbar-template">
                     <SfDropDownList TValue="int" TItem="TemplateFileName" AllowFiltering="true" CssClass="e-dropdown-popup ml-5"
-                                    ShowClearButton="true" Width="250px" Index="@idxFileSelected"
+                                    ShowClearButton="true" Width="420px" Index="@idxFileSelected"
                                     FilterBarPlaceholder="@L["TituloSelecao"]" FilterType="Syncfusion.Blazor.DropDowns.FilterType.Contains"
                                     Placeholder="@L["Ficheiros"]" DataSource="@FileNamesOnlyList" FloatLabelType="FloatLabelType.Always">
                         <DropDownListTemplates TItem="TemplateFileName">
@@ -94,7 +94,7 @@ else
                       @bind-Visible="PreviewVisible">
                 <DialogTemplates>
                     <Header>
-                        <span class="lt-preview-caption">@L["lt-preview-title"] — @currentTemplateName</span>
+                        <span class="lt-preview-caption">@L["lt-preview-title"] — @currentTemplateDisplayName</span>
                     </Header>
                     <Content>
                         @if (PreviewBusy || PreviewPdfBytes is null)

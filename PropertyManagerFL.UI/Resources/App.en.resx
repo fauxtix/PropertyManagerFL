@@ -3907,6 +3907,24 @@
   <data name="lt-file-load-error" xml:space="preserve">
     <value>Error loading file ({0}).</value>
   </data>
+  <data name="lt-template-ContratoArrendamento" xml:space="preserve">
+    <value>Lease agreement</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendas" xml:space="preserve">
+    <value>Rent update letter</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendasManual" xml:space="preserve">
+    <value>Manual rent update letter</value>
+  </data>
+  <data name="lt-template-RevogacaoContrato" xml:space="preserve">
+    <value>Lease termination letter</value>
+  </data>
+  <data name="lt-template-AvisoRendasEmAtraso" xml:space="preserve">
+    <value>Late rent payment notice</value>
+  </data>
+  <data name="lt-template-with-language" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>General</value>
   </data>

@@ -22,9 +22,14 @@
 }
 
 .lt-topbar-template {
-    width: 250px;
+    width: 420px;
     max-width: 100%;
     min-width: 0;
+}
+
+/* O texto das cartas não deve ficar cortado; em ecrãs estreitos o controlo encolhe com o contentor. */
+.lt-topbar-template .e-dropdown-popup {
+    width: 100% !important;
 }
 
 .lt-topbar-upload {

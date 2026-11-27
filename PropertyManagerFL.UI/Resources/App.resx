@@ -2900,6 +2900,24 @@ Pode copiar o detalhe ou reportar o problema por e-mail.</value>
   <data name="lt-file-load-error" xml:space="preserve">
     <value>Erro ao carregar o ficheiro ({0}).</value>
   </data>
+  <data name="lt-template-ContratoArrendamento" xml:space="preserve">
+    <value>Contrato de arrendamento</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendas" xml:space="preserve">
+    <value>Carta de atualização de rendas</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendasManual" xml:space="preserve">
+    <value>Carta de atualização de rendas (manual)</value>
+  </data>
+  <data name="lt-template-RevogacaoContrato" xml:space="preserve">
+    <value>Revogação de contrato</value>
+  </data>
+  <data name="lt-template-AvisoRendasEmAtraso" xml:space="preserve">
+    <value>Aviso de rendas em atraso</value>
+  </data>
+  <data name="lt-template-with-language" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>Geral</value>
   </data>

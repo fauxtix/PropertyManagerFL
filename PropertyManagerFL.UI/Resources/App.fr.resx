@@ -3915,6 +3915,24 @@ Vérifiez les erreurs, s'il vous plaît</value>
   <data name="lt-file-load-error" xml:space="preserve">
     <value>Erreur lors du chargement du fichier ({0}).</value>
   </data>
+  <data name="lt-template-ContratoArrendamento" xml:space="preserve">
+    <value>Contrat de bail</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendas" xml:space="preserve">
+    <value>Lettre d'actualisation du loyer</value>
+  </data>
+  <data name="lt-template-CartaAtualizacaoRendasManual" xml:space="preserve">
+    <value>Lettre d'actualisation manuelle du loyer</value>
+  </data>
+  <data name="lt-template-RevogacaoContrato" xml:space="preserve">
+    <value>Lettre de révocation du contrat</value>
+  </data>
+  <data name="lt-template-AvisoRendasEmAtraso" xml:space="preserve">
+    <value>Avis de retard de paiement du loyer</value>
+  </data>
+  <data name="lt-template-with-language" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
   <data name="mf-cat-general" xml:space="preserve">
     <value>Général</value>
   </data>

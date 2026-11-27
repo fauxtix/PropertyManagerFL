@@ -5,32 +5,16 @@
 @using PropertyManagerFL.Application.ViewModels.Inquilinos
 @using static PropertyManagerFL.Application.Shared.Enums.AppDefinitions
 
-@* @inject IStringLocalizer<App> L
- *@
 @inherits ContactosBase
 
 @{
-    var Tool = (new List<object>() {
+    var Tool = (new List<object>()
+    {
         "Search",
         "PdfExport"
     });
 }
 
-
-@*<style>
-    .source-options {
-        display: flex;
-        justify-content: flex-start;
-        gap: 5px;
-        align-items: center;
-        margin-left: 5px;
-    }
-
-    .e-round-corner {
-        border-radius: 10px;
-    }
-</style>
-*@
 <PageTitle>@L["Contactos"]</PageTitle>
 <PageTitleComponent PageTitle="@L["Site_Menu_Contactos"]"></PageTitleComponent>
 
@@ -42,79 +26,224 @@ else
 {
     <SfTab>
         <TabItems>
-            <TabItem>
-                <HeaderTemplate>@L["Site_Menu_Contactos"]</HeaderTemplate>
-                <ContentTemplate>
 
-                    <div class="container-fluid">
-                        <div class="source-options">
-                            <SfButton CssClass="e-success e-round-corner mx-3 my-2 pull-left" IconCss="fa fa-plus" Content="@L["NewMsg"]"
-                                      @onclick="@onAddContact" IsPrimary="true">
+            @* =====================================================
+               CONTACTOS
+               ===================================================== *@
+
+            <TabItem>
+                <HeaderTemplate>
+                    @L["Site_Menu_Contactos"]
+                </HeaderTemplate>
+
+                <ContentTemplate>
+                    <div class="contacts-page">
+
+                        <div class="contacts-toolbar">
+                            <SfButton CssClass="e-primary e-round-corner contacts-new-button"
+                                      IconCss="fa fa-plus"
+                                      Content="@L["NewMsg"]"
+                                      @onclick="@onAddContact"
+                                      IsPrimary="true">
                             </SfButton>
                         </div>
-                        <div id="container">
-                            <div class="sample flex vertical-center">
-                                <div class="padding">
-                                    <SfListView ID="list" DataSource="@Contacts" CssClass="e-list-template">
-                                        <ListViewFieldSettings Id="Id" Text="Nome" TValue="ContactoVM" GroupBy="TipoContacto"></ListViewFieldSettings>
-                                        <ListViewTemplates TValue="ContactoVM">
-                                            <Template>
-                                                @{
-                                                    var contact = (context as ContactoVM);
-                                                    <div class="e-list-wrapper e-list-multi-line e-list-avatar" @onclick="@(e => EditContact(contact))">
-                                                        <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:var(--app-surface-alt)" />
-                                                        <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
-                                                        <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
-                                                        <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
-                                                        <span class="e-list-content" style="font-size:13px;">@contact.Notas</span>
-                                                    </div>
-                                                }
-                                            </Template>
-                                            <GroupTemplate>
-                                                <div>
-                                                    <span class="category fs-500 fw-bold"> @L["TituloTipo"]: @context.Text</span>
+
+                        @if (Contacts.Any())
+                        {
+                            <div class="contacts-grid">
+
+                                @foreach (var contact in Contacts)
+                                {
+                                    <article class="contact-card" @key="contact.Id">
+
+                                        <div class="contact-card-header">
+
+                                            <div class="contact-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+
+                                            <div class="contact-card-heading">
+                                                <div class="contact-name">
+                                                    @contact.Nome
                                                 </div>
-                                            </GroupTemplate>
-                                        </ListViewTemplates>
-                                    </SfListView>
-                                </div>
+
+                                                <span class="contact-type">
+                                                    @contact.TipoContacto
+                                                </span>
+                                            </div>
+
+                                            <button type="button"
+                                                    class="contact-edit-button"
+                                                    title="Editar contacto"
+                                                    aria-label="Editar contacto"
+                                                    @onclick="@(e => EditContact(contact))">
+                                                <i class="fas fa-pen"></i>
+                                                <span>Editar</span>
+                                            </button>
+
+                                        </div>
+
+                                        <div class="contact-card-divider"></div>
+
+                                        <div class="contact-card-body">
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.Contacto))
+                                            {
+                                                <div class="contact-detail">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-phone"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.Contacto
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.eMail))
+                                            {
+                                                <div class="contact-detail">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.eMail
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.Notas))
+                                            {
+                                                <div class="contact-notes">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-sticky-note"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.Notas
+                                                    </span>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                    </article>
+                                }
+
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="contacts-empty">
+                                <i class="fas fa-address-book"></i>
+                                <span>Não existem contactos registados.</span>
+                            </div>
+                        }
+
                     </div>
                 </ContentTemplate>
             </TabItem>
-            <TabItem>
-                <HeaderTemplate>@L["TituloMenuInquilinos"]</HeaderTemplate>
-                <ContentTemplate>
 
-                    <div id="container">
-                        <div class="sample flex vertical-center">
-                            <div class="padding">
-                                <SfListView ID="list" DataSource="@TenantContacts" CssClass="e-list-template">
-                                    <ListViewFieldSettings Id="Id" Text="Nome" TValue="ContactoVM" GroupBy="TipoContacto"></ListViewFieldSettings>
-                                    <ListViewTemplates TValue="ContactoVM">
-                                        <Template>
-                                            @{
-                                                var contact = (context as ContactoVM);
-                                                <div class="e-list-wrapper e-list-multi-line e-list-avatar">
-                                                    <img class="e-avatar e-avatar-circle" src="images/phone.png" style="background:var(--app-surface-alt)" />
-                                                    <span class="e-list-item-header"><strong>@contact.Nome</strong></span>
-                                                    <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Contacto</span>
-                                                    <span class="e-list-content" style="font-weight:500; font-size:14px;">@contact.Morada</span>
-                                                    <span class="e-list-content" style="font-size:13px;">@contact.eMail</span>
-                                                    <span class="e-list-content" style="font-size:13px;">@contact.Notas</span>
+
+            @* =====================================================
+               CONTACTOS DE INQUILINOS - APENAS CONSULTA
+               ===================================================== *@
+
+            <TabItem>
+                <HeaderTemplate>
+                    @L["TituloMenuInquilinos"]
+                </HeaderTemplate>
+
+                <ContentTemplate>
+                    <div class="contacts-page">
+
+                        @if (TenantContacts?.Any() == true)
+                        {
+                            <div class="contacts-grid">
+
+                                @foreach (var contact in TenantContacts)
+                                {
+                                    <article class="contact-card" @key="contact.Id">
+
+                                        <div class="contact-card-header">
+
+                                            <div class="contact-avatar">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+
+                                            <div class="contact-card-heading">
+                                                <div class="contact-name">
+                                                    @contact.Nome
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <div class="contact-card-divider"></div>
+
+                                        <div class="contact-card-body">
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.Contacto))
+                                            {
+                                                <div class="contact-detail">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-phone"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.Contacto
+                                                    </span>
                                                 </div>
                                             }
-                                        </Template>
-                                        <GroupTemplate>
-                                            <div>
-                                                <span class="category fs-500 fw-bold"> @L["TituloTipo"]: @context.Text</span>
-                                            </div>
-                                        </GroupTemplate>
-                                    </ListViewTemplates>
-                                </SfListView>
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.Morada))
+                                            {
+                                                <div class="contact-detail">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-map-marker-alt"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.Morada
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.eMail))
+                                            {
+                                                <div class="contact-detail">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.eMail
+                                                    </span>
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(contact.Notas))
+                                            {
+                                                <div class="contact-notes">
+                                                    <span class="contact-detail-icon">
+                                                        <i class="fas fa-sticky-note"></i>
+                                                    </span>
+                                                    <span class="contact-detail-text">
+                                                        @contact.Notas
+                                                    </span>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                    </article>
+                                }
+
                             </div>
-                        </div>
+                        }
+                        else
+                        {
+                            <div class="contacts-empty">
+                                <i class="fas fa-users"></i>
+                                <span>Não existem contactos de inquilinos.</span>
+                            </div>
+                        }
+
                     </div>
                 </ContentTemplate>
             </TabItem>
@@ -122,41 +251,64 @@ else
         </TabItems>
     </SfTab>
 
+
+    @* =====================================================
+       DIÁLOGO DE INSERÇÃO / EDIÇÃO
+       ===================================================== *@
+
     <SfDialog CssClass="responsive-dialog-30"
               Height="auto"
               IsModal="true"
               ShowCloseIcon="false"
               CloseOnEscape="false"
               @bind-Visible="AddEditVisibility">
+
         <DialogTemplates>
             <Content>
                 <AddEditContacto Contact="@SelectedContact"
                                  EditMode="@RecordMode"
-                                 HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar? EditCaption : NewCaption)" />
+                                 HeaderCaption="@(RecordMode == AppDefinitions.OpcoesRegisto.Gravar ? EditCaption : NewCaption)" />
             </Content>
+
             <FooterTemplate>
+
                 @if (RecordMode == AppDefinitions.OpcoesRegisto.Gravar && SelectedContact?.Id > 0)
                 {
                     <div class="text-left" style="float:left">
-                        <SfButton CssClass="e-danger e-round-corner" IconCss="fas fa-trash"
-                                  @onclick="DeleteContact" Content="@L["DeleteMsg"]">
+                        <SfButton CssClass="e-danger e-round-corner"
+                                  IconCss="fas fa-trash"
+                                  @onclick="DeleteContact"
+                                  Content="@L["DeleteMsg"]">
                         </SfButton>
                     </div>
                 }
+
                 <div class="text-right" style="float:right">
-                    <SfButton CssClass="e-primary e-round-corner" IconCss="fas fa-save"
-                              @onclick="SaveContactData" Content="@L["btnSalvar"]">
+                    <SfButton CssClass="e-primary e-round-corner"
+                              IconCss="fas fa-save"
+                              @onclick="SaveContactData"
+                              Content="@L["btnSalvar"]">
                     </SfButton>
-                    <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                              @onclick="CloseEditDialog" Content="@L["MSG_GoBack"]">
+
+                    <SfButton CssClass="e-outline e-round-corner"
+                              IconCss="fas fa-times"
+                              @onclick="CloseEditDialog"
+                              Content="@L["MSG_GoBack"]">
                     </SfButton>
                 </div>
+
             </FooterTemplate>
         </DialogTemplates>
-        <DialogAnimationSettings Effect="@Effect" Duration=500></DialogAnimationSettings>
+
+        <DialogAnimationSettings Effect="@Effect" Duration="500">
+        </DialogAnimationSettings>
     </SfDialog>
 
-    @*User exited insert/edit action with data changed.*@
+
+    @* =====================================================
+       AVISO DE ALTERAÇÕES NÃO GUARDADAS
+       ===================================================== *@
+
     <ConfirmAppWarning AlertMessageType="AlertMessageType.Warning"
                        DialogTitle="@L["Dados foram alterados! Confirma cancelamento?"]"
                        Message="@SelectedContact?.Nome"
@@ -165,14 +317,25 @@ else
                        OnConfirmationYes="IgnoreChangesAlert"
                        OnConfirmationNo="ContinueEdit" />
 
+
+    @* =====================================================
+       CONFIRMAÇÃO DE ELIMINAÇÃO
+       ===================================================== *@
+
     <ConfirmDeleteComponent AlertMessageType="AlertMessageType.Warning"
                             DialogTitle="@(L["DeleteMsg"] + " " + L["TituloCampo3Editoras"])"
-                            Message="@DeleteCaption" ConfirmationText="@L["MSG_ConfirmarOperacao"]"
+                            Message="@DeleteCaption"
+                            ConfirmationText="@L["MSG_ConfirmarOperacao"]"
                             Visible="@DeleteVisibility"
                             DialogWidth="20%"
                             DialogHeight="auto"
                             OnConfirmationYes="ConfirmDeleteYes"
                             OnConfirmationNo="ConfirmDeleteNo" />
+
+
+    @* =====================================================
+       ERROS DE VALIDAÇÃO
+       ===================================================== *@
 
     <ValidateErrorComponent Visible="@ErrorVisibility"
                             ValidationMessages="@ValidationMessages"
@@ -180,79 +343,418 @@ else
 
 }
 
-<SfToast ID="toast_custom" @ref="ToastObj" ShowProgressBar=true
-         Title="@ToastTitle" Icon="@ToastIcon"
+
+@* =========================================================
+   TOAST
+   ========================================================= *@
+
+<SfToast ID="toast_custom"
+         @ref="ToastObj"
+         ShowProgressBar="true"
+         Title="@ToastTitle"
+         Icon="@ToastIcon"
          Content="@ToastMessage"
-         CssClass="@ToastCss" Timeout="3000"
+         CssClass="@ToastCss"
+         Timeout="3000"
          ShowCloseButton="true">
+
     <ToastAnimationSettings>
-        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600"></ToastShowAnimationSettings>
-        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600"></ToastHideAnimationSettings>
+        <ToastShowAnimationSettings Effect="ToastEffect.FadeIn" Duration="600">
+        </ToastShowAnimationSettings>
+        <ToastHideAnimationSettings Effect="ToastEffect.FadeOut" Duration="600">
+        </ToastHideAnimationSettings>
     </ToastAnimationSettings>
+
     <ToastButtons>
-        <ToastButton Content="@L["MSG_GoBack"]" OnClick="@HideToast"></ToastButton>
+        <ToastButton Content="@L["MSG_GoBack"]"
+                     OnClick="@HideToast">
+        </ToastButton>
     </ToastButtons>
-    <ToastPosition X="Right" Y="Bottom"></ToastPosition>
+
+    <ToastPosition X="Right" Y="Bottom">
+    </ToastPosition>
 </SfToast>
 
+
+@* =========================================================
+   AVISO
+   ========================================================= *@
+
 <SfMessage Severity="MessageSeverity.Warning"
-           Visible=@WarningVisibility>@WarningMessage</SfMessage>
+           Visible="@WarningVisibility">
+    @WarningMessage
+</SfMessage>
+
+
+@* =========================================================
+   SPINNER
+   ========================================================= *@
 
 <SfSpinner @ref="SpinnerObj"
-           Label="@L["MSG_PreparandoDados"]" Size="50"
+           Label="@L["MSG_PreparandoDados"]"
+           Size="50"
            Type="SpinnerType.Bootstrap5"
            CssClass="e-spin-overlay" />
 
+
+@* =========================================================
+   CSS
+   ========================================================= *@
+
 <style>
-    .e-listview.e-control {
-        width: auto;
+
+    /* -----------------------------------------------------
+           CORES E SUPERFÍCIES
+           Tokens do tema da app (claro/escuro) em theme-tokens.css.
+           ----------------------------------------------------- */
+
+    .contacts-page {
+        --contact-bg: var(--app-surface);
+        --contact-text: var(--app-text-primary);
+        --contact-muted: var(--app-text-secondary);
+        --contact-border: var(--app-border);
+        --contact-border-strong: color-mix(in srgb, var(--app-border) 62%, var(--app-text-secondary));
+        --contact-shadow: var(--app-shadow),
+                          0 8px 22px color-mix(in srgb, var(--app-text-primary) 10%, transparent);
+        --contact-subtle: var(--app-surface-alt);
+        --contact-accent: var(--app-primary);
+        --contact-accent-hover: var(--app-primary-hover);
+        --contact-edit-bg: var(--app-success-bg);
+        --contact-edit-text: var(--app-success-text);
+        --contact-edit-border: var(--app-accent-green);
+        width: 100%;
+        padding: 18px 8px 24px;
+        color: var(--contact-text);
     }
 
-    #list .e-list-group-item {
-        /*height: 56px;
-                    line-height: 56px;*/
-
-        overflow: auto;
+    [data-theme="dark"] .contacts-page {
+        --contact-border-strong: color-mix(in srgb, var(--app-border) 70%, var(--app-bg));
+        --contact-shadow: var(--app-shadow),
+                          0 8px 22px color-mix(in srgb, var(--app-bg) 55%, transparent);
     }
 
-    #container .e-listview .e-list-item {
-        height: 120px;
-        width: 50%;
-        float: left;
-    }
 
-    #list .count {
-        float: right;
-    }
+    /* -----------------------------------------------------
+           BARRA DE FERRAMENTAS
+           ----------------------------------------------------- */
 
-    #container .e-listview {
-        box-shadow: 0 1px 4px #ddd;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .sample {
-        justify-content: left;
-        min-height: 280px;
-    }
-
-    .vertical-center {
-        align-items: center;
-    }
-
-    .padding {
-        padding: 4px;
-    }
-
-    .flex {
+    .contacts-toolbar {
         display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        margin: 0 0 24px;
+        padding: 0 2px;
     }
 
-    .flex__center {
+    /* Botão Novo — usa apenas tokens do tema (o e-success trazia verde Syncfusion) */
+    .contacts-toolbar .e-btn.e-primary,
+    .contacts-toolbar .e-css.e-btn.e-primary {
+        background-color: var(--contact-accent) !important;
+        border-color: var(--contact-accent) !important;
+        color: var(--app-on-primary) !important;
+    }
+
+        .contacts-toolbar .e-btn.e-primary:hover,
+        .contacts-toolbar .e-btn.e-primary:focus,
+        .contacts-toolbar .e-css.e-btn.e-primary:hover,
+        .contacts-toolbar .e-css.e-btn.e-primary:focus {
+            background-color: var(--contact-accent-hover) !important;
+            border-color: var(--contact-accent-hover) !important;
+        }
+
+
+    /* -----------------------------------------------------
+           GRELHA
+           ----------------------------------------------------- */
+
+    .contacts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 18px;
+        width: 100%;
+    }
+
+
+    /* -----------------------------------------------------
+           CARTÕES
+           ----------------------------------------------------- */
+
+    .contact-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        min-height: 180px;
+        overflow: hidden;
+        padding: 19px 19px 19px 27px;
+        background: var(--contact-bg);
+        color: var(--contact-text);
+        border: 1px solid var(--contact-border-strong);
+        border-radius: 13px;
+        box-shadow: var(--contact-shadow);
+        transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+        .contact-card::before {
+            content: "";
+            position: absolute;
+            inset: 1px auto 1px 1px;
+            width: 6px;
+            border-radius: 12px 0 0 12px;
+            background: var(--contact-accent);
+        }
+
+        .contact-card:hover {
+            border-color: var(--contact-accent);
+            box-shadow: var(--contact-shadow);
+            transform: translateY(-2px);
+        }
+
+
+    /* -----------------------------------------------------
+           CABEÇALHO
+           ----------------------------------------------------- */
+
+    .contact-card-header {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        min-width: 0;
+        margin-bottom: 15px;
+    }
+
+    .contact-avatar {
+        display: flex;
+        align-items: center;
         justify-content: center;
+        flex: 0 0 46px;
+        width: 46px;
+        height: 46px;
+        border-radius: 12px;
+        background: var(--contact-subtle);
+        border: 1px solid var(--contact-border);
+        color: var(--contact-muted);
+        font-size: 19px;
     }
 
-    .margin {
-        margin: 10px;
+    .contact-card-heading {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .contact-name {
+        color: var(--contact-text);
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.4;
+        overflow-wrap: anywhere;
+    }
+
+    .contact-type {
+        display: inline-block;
+        margin-top: 5px;
+        padding: 3px 9px;
+        border-radius: 5px;
+        background: var(--contact-subtle);
+        color: var(--contact-muted);
+        font-size: 11px;
+        font-weight: 600;
+        line-height: 1.4;
+    }
+
+
+    /* -----------------------------------------------------
+           BOTÃO EDITAR
+           Apenas nos cartões de Contactos.
+           ----------------------------------------------------- */
+
+    .contact-edit-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        flex-shrink: 0;
+        min-height: 34px;
+        padding: 0 10px;
+        border: 1px solid var(--contact-edit-border);
+        border-radius: 8px;
+        background: var(--contact-edit-bg);
+        color: var(--contact-edit-text);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+        .contact-edit-button i,
+        .contact-edit-button svg {
+            transition: transform 0.2s ease;
+        }
+
+        .contact-edit-button:hover {
+            border-color: var(--app-accent-green-strong);
+            box-shadow: 0 0 0 3px var(--contact-edit-bg);
+            transform: translateY(-1px);
+        }
+
+            .contact-edit-button:hover i,
+            .contact-edit-button:hover svg {
+                transform: rotate(-12deg) scale(1.08);
+            }
+
+        .contact-edit-button:focus-visible {
+            outline: 2px solid var(--contact-edit-text);
+            outline-offset: 3px;
+        }
+
+
+    /* -----------------------------------------------------
+           SEPARADOR INTERNO
+           ----------------------------------------------------- */
+
+    .contact-card-divider {
+        width: 100%;
+        height: 1px;
+        margin-bottom: 14px;
+        background: var(--contact-border);
+        opacity: 0.8;
+    }
+
+
+    /* -----------------------------------------------------
+           DETALHES
+           ----------------------------------------------------- */
+
+    .contact-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 11px;
+        min-width: 0;
+    }
+
+    .contact-detail {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        min-width: 0;
+        color: var(--contact-text);
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .contact-detail-icon {
+        display: inline-flex;
+        align-items: flex-start;
+        justify-content: center;
+        flex: 0 0 17px;
+        width: 17px;
+        margin-top: 3px;
+        color: var(--contact-muted);
+        font-size: 13px;
+    }
+
+    .contact-detail-text {
+        min-width: 0;
+        color: var(--contact-text);
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+
+    /* -----------------------------------------------------
+           NOTAS
+           ----------------------------------------------------- */
+
+    .contact-notes {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+        min-width: 0;
+        margin-top: 3px;
+        padding: 10px 11px;
+        border: 1px solid var(--contact-border);
+        border-radius: 8px;
+        background: var(--contact-subtle);
+        color: var(--contact-text);
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+        .contact-notes .contact-detail-icon {
+            margin-top: 2px;
+        }
+
+
+    /* -----------------------------------------------------
+           ESTADO VAZIO
+           ----------------------------------------------------- */
+
+    .contacts-empty {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 13px;
+        min-height: 210px;
+        padding: 30px;
+        border: 1px dashed var(--contact-border);
+        border-radius: 12px;
+        color: var(--contact-muted);
+        font-size: 14px;
+        text-align: center;
+    }
+
+        .contacts-empty i {
+            font-size: 32px;
+            opacity: 0.75;
+        }
+
+
+    /* -----------------------------------------------------
+           RESPONSIVIDADE
+           ----------------------------------------------------- */
+
+    @@media (max-width: 768px) {
+
+        .contacts-page {
+            padding: 14px 4px 20px;
+        }
+
+        .contacts-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 13px;
+        }
+
+        .contact-card {
+            padding: 16px 16px 16px 21px;
+        }
+    }
+
+    @@media (max-width: 520px) {
+
+        .contacts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .contacts-toolbar {
+            margin-bottom: 18px;
+        }
+
+        .contact-card {
+            min-height: 0;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+
+        .contact-card,
+        .contact-edit-button {
+            transition: none;
+        }
+
+            .contact-card:hover {
+                transform: none;
+            }
     }
 
 </style>
