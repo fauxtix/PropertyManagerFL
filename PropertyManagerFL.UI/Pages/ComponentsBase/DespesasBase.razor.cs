@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Despesas;
+using PropertyManagerFL.UI.DirtyTracking;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Spinner;
@@ -149,6 +149,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task onAddExpense(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
+            IsDirty = false;
 
             // Antes de inputar despesas, verificar se há registo de imóveis/frações...
 
@@ -165,14 +166,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             editRecord = false;
             SelectedExpense = new()
             {
-                DataMovimento = DateTime.UtcNow,
-                Valor_Pago = 0,
+                DataMovimento = DateTime.Today,
+                Valor_Pago = 1, // matches the numeric textbox Min=1 so opening the dialog is not a change
                 ID_TipoDespesa = 0,
                 ID_CategoriaDespesa = 0,
                 ID_ModoPagamento = 2, // transferência
                 NumeroDocumento = "",
                 Notas = ""
             };
+            OriginalSelectedExpense = DirtyState.Snapshot(SelectedExpense);
 
             EditExpenseDialogVisibility = true;
         }
@@ -314,10 +316,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task OnExpenseDoubleClickHandler(RecordDoubleClickEventArgs<DespesaVM> args)
         {
+            IsDirty = false;
             expenseId = args.RowData.Id;
             modulo = Modules.Pagamentos;
             SelectedExpense = await expensesService!.GetDespesa_ById(expenseId);
-            OriginalSelectedExpense = await expensesService.GetDespesa_ById(expenseId);
+            OriginalSelectedExpense = DirtyState.Snapshot(SelectedExpense);
 
             EditExpenseDialogVisibility = true;
 
@@ -327,12 +330,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnExpenseCommandClicked(CommandClickEventArgs<DespesaVM> args)
         {
+            IsDirty = false;
             expenseId = args.RowData.Id;
             modulo = Modules.Pagamentos;
             DeleteCaption = "";
 
             SelectedExpense = await expensesService!.GetDespesa_ById(expenseId);
-            OriginalSelectedExpense = await expensesService.GetDespesa_ById(expenseId);
+            OriginalSelectedExpense = DirtyState.Snapshot(SelectedExpense);
             DeleteCaption = SelectedExpense.DataMovimento.ToShortDateString(); ;
 
 
@@ -363,6 +367,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void IgnoreChangesAlert()
         {
+            SelectedExpense = DirtyState.Snapshot(OriginalSelectedExpense) ?? new DespesaVM();
             IsDirty = false;
             ErrorVisibility = false;
             EditExpenseDialogVisibility = false;
@@ -388,22 +393,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void CloseEditDialog()
         {
-            IsDirty = false;
             ErrorVisibility = false;
+            IsDirty = DirtyState.HasChanges(SelectedExpense, OriginalSelectedExpense);
 
-            var comparer_I = new ObjectsComparer.Comparer<DespesaVM>();
-            var currentData_I = SelectedExpense;
-            var originalData_I = OriginalSelectedExpense;
-            IEnumerable<Difference> differences_I;
-            var isEqual_I = comparer_I.Compare(currentData_I!, originalData_I!, out differences_I);
-            if (!isEqual_I)
-            {
-                IsDirty = true;
-            }
-            else
-            {
+            if (!IsDirty)
                 EditExpenseDialogVisibility = false;
-            }
         }
         protected async Task HideToast()
         {

@@ -3,7 +3,6 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase;
 using System.Globalization;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Contract;
@@ -12,6 +11,7 @@ using PropertyManagerFL.Application.ViewModels.AppSettings;
 using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
 using PropertyManagerFL.Core.Entities;
+using PropertyManagerFL.UI.DirtyTracking;
 using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Data;
 using Syncfusion.Blazor.Grids;
@@ -529,9 +529,10 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     {
         HideToolbar_LetterOptions();
 
+        IsDirty = false;
         LeaseId = args.RowData.Id;
         SelectedLease = await arrendamentosService!.GetArrendamento_ById(LeaseId);
-        OriginalLeaseData = await arrendamentosService.GetArrendamento_ById(LeaseId); // TODO should use 'Clone/MemberWise'
+        OriginalLeaseData = DirtyState.Snapshot(SelectedLease);
 
         AddEditLeaseVisibility = true;
         EditCaption = L["EditMsg"] + " " + L["TituloArrendamento"];
@@ -542,6 +543,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     {
         HideToolbar_LetterOptions();
 
+        IsDirty = false;
         LeaseId = args.RowData.Id;
         var optionId = args.CommandColumn.ID;
 
@@ -549,7 +551,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
         DeleteLeaseCaption = SelectedLease?.NomeInquilino;
 
-        OriginalLeaseData = await arrendamentosService.GetArrendamento_ById(LeaseId); // TODO should use 'Clone/MemberWise'
+        OriginalLeaseData = DirtyState.Snapshot(SelectedLease);
         if (args.CommandColumn.Type == CommandButtonType.Edit)
         {
             AddEditLeaseVisibility = true;
@@ -569,7 +571,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     {
         CoefficientId = args.RowData.Id;
         SelectedRentCoefficient = await arrendamentosService!.GetRentUpdatingCoefficient_ById(args.RowData.Id);
-        OriginalRentCoefficientData = await arrendamentosService.GetRentUpdatingCoefficient_ById(args.RowData.Id); // TODO should use 'Clone/MemberWise'
+        OriginalRentCoefficientData = DirtyState.Snapshot(SelectedRentCoefficient);
 
         if (args.CommandColumn.Type == CommandButtonType.Edit)
         {
@@ -585,7 +587,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
         CoefficientId = args.RowData.Id;
         SelectedRentCoefficient = await arrendamentosService!.GetRentUpdatingCoefficient_ById(args.RowData.Id);
-        OriginalRentCoefficientData = await arrendamentosService.GetRentUpdatingCoefficient_ById(args.RowData.Id); // TODO should use 'Clone/MemberWise'
+        OriginalRentCoefficientData = DirtyState.Snapshot(SelectedRentCoefficient);
 
         AddEditRentCoefficientVisibility = true;
         EditCaption = L["EditMsg"] + " " + L["TituloMenuCoeficientesRendas"];
@@ -594,29 +596,16 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     private void CheckIfLeaseData_Changed()
     {
-        var comparer = new ObjectsComparer.Comparer<ArrendamentoVM>();
-        IEnumerable<Difference> differences;
-        comparer.Compare(SelectedLease!, OriginalLeaseData!, out differences);
-        IsDirty = differences.Any();
+        IsDirty = DirtyState.HasChanges(SelectedLease, OriginalLeaseData);
     }
 
     protected void CloseEditDialog()
     {
-        IsDirty = false;
+        ErrorVisibility = false;
+        CheckIfLeaseData_Changed();
 
-        var comparer = new ObjectsComparer.Comparer<ArrendamentoVM>();
-        var currentData = SelectedLease;
-        var originalData = OriginalLeaseData;
-        IEnumerable<Difference> differences;
-        var isEqual_P = comparer.Compare(currentData!, originalData!, out differences);
-        if (!isEqual_P)
-        {
-            IsDirty = true;
-        }
-        else
-        {
+        if (!IsDirty)
             AddEditLeaseVisibility = false;
-        }
     }
 
     protected void ContinueEdit()
@@ -627,6 +616,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
 
     protected void IgnoreChangesAlert()
     {
+        SelectedLease = DirtyState.Snapshot(OriginalLeaseData) ?? new ArrendamentoVM();
         IsDirty = false;
         ErrorVisibility = false;
         AddEditLeaseVisibility = false;
@@ -1070,6 +1060,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     private void PrepareAndCreateNewLease()
     {
         RecordMode = OpcoesRegisto.Inserir;
+        IsDirty = false;
         NewCaption = L["NewMsg"] + " " + L["TituloArrendamento"];
 
         SelectedLease = new ArrendamentoVM()
@@ -1098,6 +1089,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             Valor_Renda = 0,
             SaldoInicial = 0
         };
+        OriginalLeaseData = DirtyState.Snapshot(SelectedLease);
 
         AddEditLeaseVisibility = true;
         StateHasChanged();
@@ -1106,6 +1098,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
     private void PrepareAndCreateExistingLease()
     {
         RecordMode = OpcoesRegisto.Inserir;
+        IsDirty = false;
         NewCaption = L["NewMsg"] + " " + L["TituloArrendamento"] + " - " + L["TituloContratoExistente"];
 
         SelectedLease = new ArrendamentoVM()
@@ -1134,6 +1127,7 @@ public class ArrendamentosBase : ComponentBase, IDisposable
             Valor_Renda = 0,
             SaldoInicial = 0
         };
+        OriginalLeaseData = DirtyState.Snapshot(SelectedLease);
 
         AddEditLeaseVisibility = true;
         StateHasChanged();

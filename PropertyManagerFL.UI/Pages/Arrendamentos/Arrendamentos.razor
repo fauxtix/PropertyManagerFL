@@ -332,7 +332,7 @@ else
                           Disabled="@(!CanAddLease)" @onclick="SaveLeaseData" Content="@L["btnSalvar"]">
                 </SfButton>
                 <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times"
-                          @onclick="(()=>AddEditLeaseVisibility = false)" Content="@L["BtnSalir"]">
+                          @onclick="CloseEditDialog" Content="@L["BtnSalir"]">
                 </SfButton>
             </div>
         </FooterTemplate>

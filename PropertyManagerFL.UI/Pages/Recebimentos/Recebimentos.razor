@@ -368,7 +368,7 @@ else
                                       @onclick="AddOrSaveTransaction" Content="@L["btnSalvar"]">
                             </SfButton>
                             <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]"
-                                      @onclick="@(() => EditTransationDialogVisibility = false)">
+                                      @onclick="CloseEditDialog">
                             </SfButton>
                         </div>
                     </FooterTemplate>

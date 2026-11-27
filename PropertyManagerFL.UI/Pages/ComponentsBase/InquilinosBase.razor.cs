@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
@@ -9,6 +8,7 @@ using PropertyManagerFL.Application.ViewModels.Arrendamentos;
 using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using PropertyManagerFL.UI.DirtyTracking;
 using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Data;
 using Syncfusion.Blazor.Grids;
@@ -232,11 +232,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task OnTenantDoubleClickHandler(RecordDoubleClickEventArgs<InquilinoVM> args)
         {
+            IsDirty = false;
             TenantId = args.RowData.Id;
             modulo = Modules.Inquilinos;
 
             SelectedTenant = await inquilinoService!.GetInquilino_ById(TenantId);
-            OriginalTenantData = await inquilinoService.GetInquilino_ById(TenantId); // TODO should use 'Clone/MemberWise'
+            OriginalTenantData = DirtyState.Snapshot(SelectedTenant);
             EditCaption = $"{L["EditMsg"]} {L["TituloInquilino"]}";
             RecordMode = OpcoesRegisto.Gravar;
             AddEditTenantVisibility = true;
@@ -245,13 +246,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnTenantCommandClicked(CommandClickEventArgs<InquilinoVM> args)
         {
+            IsDirty = false;
             modulo = Modules.Inquilinos;
 
-            SelectedTenant = args.RowData;
+            SelectedTenant = DirtyState.Snapshot(args.RowData) ?? new InquilinoVM();
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
-                OriginalTenantData = await inquilinoService.GetInquilino_ById(SelectedTenant.Id); // TODO should use 'Clone/MemberWise'
+                OriginalTenantData = DirtyState.Snapshot(SelectedTenant);
 
                 AddEditTenantVisibility = true;
                 EditCaption = $"{L["EditMsg"]} {L["TituloInquilino"]}";
@@ -267,14 +269,15 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnGuarantorCommandClicked(CommandClickEventArgs<FiadorVM> args)
         {
+            IsDirty = false;
             FiadorId = args.RowData.Id;
             modulo = Modules.Fiadores;
             DeleteCaption = $"{L["DeleteMsg"]} {L["TituloFiador"]}";
             EditCaption = $"{L["EditMsg"]} {L["TituloFiador"]}";
 
 
-            SelectedGuarantor = args.RowData;
-            OriginalGuarantorData = await FiadorService.GetFiador_ById(FiadorId); // TODO should use 'Clone/MemberWise'
+            SelectedGuarantor = DirtyState.Snapshot(args.RowData) ?? new FiadorVM();
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
             DeleteCaption = SelectedGuarantor.Nome;
 
 
@@ -293,11 +296,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task OnGuarantorDoubleClickHandler(RecordDoubleClickEventArgs<FiadorVM> args)
         {
+            IsDirty = false;
             FiadorId = args.RowData.Id;
             modulo = Modules.Fiadores;
 
-            SelectedGuarantor = args.RowData;
-            OriginalGuarantorData = await FiadorService.GetFiador_ById(FiadorId); // TODO should use 'Clone/MemberWise'
+            SelectedGuarantor = DirtyState.Snapshot(args.RowData) ?? new FiadorVM();
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
             EditCaption = $"{L["EditMsg"]} {L["TituloFiador"]}";
             RecordMode = OpcoesRegisto.Gravar;
             AddEditFiadorVisibility = true;
@@ -771,10 +775,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private void CheckIfTenantData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<InquilinoVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedTenant!, OriginalTenantData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedTenant, OriginalTenantData);
         }
 
         /// <summary>
@@ -784,6 +785,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddTenant(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             NewCaption = $"{L["NewMsg"]} {L["TituloInquilino"]}";
 
             SelectedTenant = new InquilinoVM()
@@ -806,6 +808,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ValidadeCC = DateTime.Now,
                 Vencimento = 0
             };
+            OriginalTenantData = DirtyState.Snapshot(SelectedTenant);
 
             AddEditTenantVisibility = true;
         }
@@ -838,6 +841,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddGuarantor(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             NewCaption = $"{L["NewMsg"]} {L["TituloFiador"]}";
             modulo = Modules.Fiadores;
 
@@ -858,6 +862,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ValidadeCC = DateTime.Now,
                 Vencimento = 0
             };
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
 
             AddEditFiadorVisibility = true;
         }
@@ -897,6 +902,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
         protected void IgnoreTenantChangesAlert()
         {
+            SelectedTenant = DirtyState.Snapshot(OriginalTenantData) ?? new InquilinoVM();
             IsDirty = false;
             ErrorVisibility = false;
             AddEditTenantVisibility = false;
@@ -904,6 +910,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
         protected void IgnoreGuarantorChangesAlert()
         {
+            SelectedGuarantor = DirtyState.Snapshot(OriginalGuarantorData) ?? new FiadorVM();
             IsDirty = false;
             ErrorVisibility = false;
             AddEditFiadorVisibility = false;
@@ -1062,48 +1069,28 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void CloseEditDialog()
         {
-            IsDirty = false;
             ErrorVisibility = false;
 
             if (modulo == Modules.Inquilinos)
             {
-                var comparer_I = new ObjectsComparer.Comparer<InquilinoVM>();
-                var currentData_I = SelectedTenant;
-                var originalData_I = OriginalTenantData;
-                IEnumerable<Difference> differences_I;
-                var isEqual_I = comparer_I.Compare(currentData_I!, originalData_I!, out differences_I);
-                if (!isEqual_I)
-                {
-                    IsDirty = true;
-                }
-                else
-                {
+                IsDirty = DirtyState.HasChanges(SelectedTenant, OriginalTenantData);
+                if (!IsDirty)
                     AddEditTenantVisibility = false;
-                }
-
             }
             else if (modulo == Modules.Fiadores)
             {
-                var comparer_f = new ObjectsComparer.Comparer<FiadorVM>();
-                var currentData_f = SelectedGuarantor;
-                var originalData_f = OriginalGuarantorData;
-                IEnumerable<Difference> differences_f;
-                var isEqual_f = comparer_f.Compare(currentData_f!, originalData_f!, out differences_f);
-                if (!isEqual_f)
-                {
-                    IsDirty = true;
-                }
-                else
-                {
+                IsDirty = DirtyState.HasChanges(SelectedGuarantor, OriginalGuarantorData);
+                if (!IsDirty)
                     AddEditFiadorVisibility = false;
-                }
             }
             StateHasChanged();
         }
 
         protected async Task EditFiador(int idFiador)
         {
+            IsDirty = false;
             SelectedGuarantor = await FiadorService!.GetFiador_ById(idFiador);
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
             AddEditFiadorVisibility = true;
             modulo = Modules.Fiadores;
         }

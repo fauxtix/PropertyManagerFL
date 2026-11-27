@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Documentos;
+using PropertyManagerFL.UI.DirtyTracking;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -124,18 +124,20 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async void OnRowSelected(RowSelectEventArgs<DocumentoVM> args)
         {
-            SelectedDocument = args.Data;
-            primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(SelectedDocument.Id);
+            // Do not overwrite SelectedDocument here: the grid row is a partial copy of the
+            // record and can arrive after the edit dialog captured its snapshot, making an
+            // untouched record look dirty (and saving could lose fields such as DocumentCategoryId).
+            primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(args.Data.Id);
         }
         protected async Task OnDocumentDoubleClickHandler(RecordDoubleClickEventArgs<DocumentoVM> args)
         {
+            IsDirty = false;
             DocumentId = args.RowData.Id;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
             AddEditVisibility = true;
             EditCaption = L["editionMsg"] + " " + L["TituloDocumento"]; ;
             RecordMode = OpcoesRegisto.Gravar;
-            SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
-            OriginalDocumentData = await DocumentsService.GetDocument_ById(DocumentId); // TODO should use 'Clone/MemberWise'
+            OriginalDocumentData = DirtyState.Snapshot(SelectedDocument);
 
             primaryIndex = await DocumentsGridObj!.GetRowIndexByPrimaryKeyAsync(SelectedDocument.Id);
             if (primaryIndex >= 0)
@@ -153,6 +155,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         {
             var data = args.RowData;
 
+            IsDirty = false;
             DocumentId = args.RowData.Id;
             SelectedDocument = await DocumentsService!.GetDocument_ById(DocumentId);
             var documentCategoryId = SelectedDocument.DocumentCategoryId;
@@ -167,7 +170,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             }
 
 
-            OriginalDocumentData = await DocumentsService.GetDocument_ById(DocumentId); // TODO should use 'Clone/MemberWise'
+            OriginalDocumentData = DirtyState.Snapshot(SelectedDocument);
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 AddEditVisibility = true;
@@ -412,10 +415,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private void CheckIfDocumentData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<DocumentoVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedDocument!, OriginalDocumentData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedDocument, OriginalDocumentData);
         }
 
         /// <summary>
@@ -425,6 +425,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddDocument(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             NewCaption = L["NewMsg"] + " " + L["TituloDocumento"];
 
             SelectedDocument = new DocumentoVM()
@@ -440,6 +441,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 Title = "",
                 URL = "",
             };
+            OriginalDocumentData = DirtyState.Snapshot(SelectedDocument);
 
             AddEditVisibility = true;
         }
@@ -450,21 +452,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// </summary>
         protected void CloseEditDialog()
         {
-            IsDirty = false;
+            ErrorVisibility = false;
+            CheckIfDocumentData_Changed();
 
-            //var comparer = new ObjectsComparer.Comparer<DocumentoVM>();
-            //var currentData = SelectedDocument;
-            //var originalData = OriginalDocumentData;
-            //IEnumerable<Difference> differences;
-            //var isEqual_P = comparer.Compare(currentData!, originalData!, out differences);
-            //if (!isEqual_P)
-            //{
-            //    IsDirty = true;
-            //}
-            //else
-            //{
-            AddEditVisibility = false;
-            //}
+            if (!IsDirty)
+                AddEditVisibility = false;
         }
 
         protected void ContinueEdit()
@@ -475,6 +467,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void IgnoreChangesAlert()
         {
+            SelectedDocument = DirtyState.Snapshot(OriginalDocumentData) ?? new DocumentoVM();
             IsDirty = false;
             ErrorVisibility = false;
             AddEditVisibility = false;

@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Fracoes;
 using PropertyManagerFL.Application.ViewModels.Imoveis;
+using PropertyManagerFL.UI.DirtyTracking;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -138,10 +138,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task PropertyDoubleClickHandler(RecordDoubleClickEventArgs<ImovelVM> args)
         {
+            IsDirty = false;
             PropertyId = args.RowData.Id;
             modulo = Modules.Imoveis;
             SelectedProperty = await propertiesService!.GetImovel_ById(PropertyId);
-            OriginalPropertyData = await propertiesService.GetImovel_ById(PropertyId); // TODO  should used 'Clone/MemberWise'?
+            OriginalPropertyData = DirtyState.Snapshot(SelectedProperty);
 
             AddEditPropertyVisibility = true;
             EditCaption = L["EditMsg"] + " " + L["TituloImovel"];
@@ -381,13 +382,14 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task OnPropertyCommandClicked(CommandClickEventArgs<ImovelVM> args)
         {
+            IsDirty = false;
             PropertyId = args.RowData.Id;
             modulo = Modules.Imoveis;
             DeletePropertyCaption = "";
             DeleteUnitCaption = "";
 
             SelectedProperty = await propertiesService!.GetImovel_ById(PropertyId);
-            OriginalPropertyData = await propertiesService.GetImovel_ById(PropertyId); // TODO  should have used 'Clone/MemberWise'
+            OriginalPropertyData = DirtyState.Snapshot(SelectedProperty);
 
             DeletePropertyCaption = SelectedProperty.Descricao;
 
@@ -408,12 +410,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task UnitDoubleClickHandler(RecordDoubleClickEventArgs<FracaoVM> args)
         {
+            IsDirty = false;
             UnitId = args.RowData.Id;
             modulo = Modules.Fracoes;
             SelectedUnit = await unitsService!.GetFracao_ById(UnitId);
             SelectedUnit.Apolice = await unitsService.GetApoliceFracao_ById(UnitId);
 
-            OriginalUnitData = await unitsService!.GetFracao_ById(UnitId);
+            OriginalUnitData = DirtyState.Snapshot(SelectedUnit);
             EditCaption = L["EditMsg"] + " " + L["TituloFracao"];
             RecordMode = OpcoesRegisto.Gravar;
             AddEditUnitVisibility = true;
@@ -426,12 +429,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task OnUnitCommandClicked(CommandClickEventArgs<FracaoVM> args)
         {
+            IsDirty = false;
             UnitId = args.RowData.Id;
             modulo = Modules.Fracoes;
             SelectedUnit = await unitsService!.GetFracao_ById(UnitId);
             SelectedUnit.Apolice = await unitsService.GetApoliceFracao_ById(UnitId);
 
-            OriginalUnitData = await unitsService!.GetFracao_ById(UnitId);
+            OriginalUnitData = DirtyState.Snapshot(SelectedUnit);
 
             DeleteUnitCaption = SelectedUnit.Descricao;
 
@@ -615,18 +619,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private void CheckIfPropertyData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<ImovelVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedProperty!, OriginalPropertyData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedProperty, OriginalPropertyData);
         }
 
         private void CheckIfUnitData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<FracaoVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedUnit!, OriginalUnitData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedUnit, OriginalUnitData);
         }
 
         /// <summary>
@@ -636,6 +634,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddUnit(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             modulo = Modules.Fracoes;
             NewCaption = L["NewMsg"] + " " + L["TituloFracao"];
             SelectedUnit = new FracaoVM()
@@ -675,6 +674,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                     Premio = 0
                 }
             };
+            OriginalUnitData = DirtyState.Snapshot(SelectedUnit);
 
             AddEditUnitVisibility = true;
         }
@@ -686,6 +686,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddProperty(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             modulo = Modules.Imoveis;
             NewCaption = L["NewMsg"] + " " + L["TituloImovel"];
 
@@ -704,6 +705,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 Notas = "",
                 Numero = ""
             };
+            OriginalPropertyData = DirtyState.Snapshot(SelectedProperty);
 
             AddEditPropertyVisibility = true;
         }
@@ -714,44 +716,20 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// </summary>
         protected void CloseEditDialog()
         {
-            IsDirty = false;
             ErrorVisibility = false;
 
             switch (modulo)
             {
                 case Modules.Imoveis:
-                    var comparer_P = new ObjectsComparer.Comparer<ImovelVM>();
-                    var currentData_P = SelectedProperty;
-                    var originalData_P = OriginalPropertyData;
-                    IEnumerable<Difference> differences_P;
-                    var isEqual_P = comparer_P.Compare(currentData_P!, originalData_P!, out differences_P);
-                    if (!isEqual_P)
-                    {
-                        IsDirty = true;
-                    }
-                    else
-                    {
+                    IsDirty = DirtyState.HasChanges(SelectedProperty, OriginalPropertyData);
+                    if (!IsDirty)
                         AddEditPropertyVisibility = false;
-
-                    }
-
                     break;
+
                 case Modules.Fracoes:
-
-                    var comparer_U = new ObjectsComparer.Comparer<FracaoVM>();
-                    var currentData_U = SelectedUnit;
-                    var originalData_U = OriginalUnitData;
-                    IEnumerable<Difference> differences_U;
-                    var isEqual_U = comparer_U.Compare(currentData_U!, originalData_U!, out differences_U);
-                    if (!isEqual_U)
-                    {
-                        IsDirty = true;
-                    }
-                    else
-                    {
+                    IsDirty = DirtyState.HasChanges(SelectedUnit, OriginalUnitData);
+                    if (!IsDirty)
                         AddEditUnitVisibility = false;
-                    }
-
                     break;
             }
         }
@@ -778,9 +756,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             switch (modulo)
             {
                 case Modules.Imoveis:
+                    SelectedProperty = DirtyState.Snapshot(OriginalPropertyData) ?? new ImovelVM();
                     AddEditPropertyVisibility = false;
                     break;
                 case Modules.Fracoes:
+                    SelectedUnit = DirtyState.Snapshot(OriginalUnitData) ?? new FracaoVM();
                     AddEditUnitVisibility = false;
                     break;
             }

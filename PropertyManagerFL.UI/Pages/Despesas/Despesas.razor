@@ -220,7 +220,7 @@ else
                                   @onclick="AddOrSaveExpense" Content="@L["btnSalvar"]">
                             </SfButton>
                             <SfButton CssClass="e-outline e-round-corner" IconCss="fas fa-times" Content="@L["MSG_GoBack"]"
-                                  @onclick="@(() => EditExpenseDialogVisibility = false)">
+                                  @onclick="CloseEditDialog">
                             </SfButton>
                         </div>
                     </FooterTemplate>

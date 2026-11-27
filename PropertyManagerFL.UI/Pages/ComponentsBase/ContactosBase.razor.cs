@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Contactos;
 using PropertyManagerFL.Application.ViewModels.Inquilinos;
+using PropertyManagerFL.UI.DirtyTracking;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
 using Syncfusion.Blazor.Popups;
@@ -130,9 +130,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task OnContactDoubleClickHandler(RecordDoubleClickEventArgs<ContactoVM> args)
         {
+            IsDirty = false;
             ContactId = args.RowData.Id;
             SelectedContact = await contactsService!.GetContacto_ById(ContactId);
-            OriginalContactData = await contactsService.GetContacto_ById(ContactId); // TODO should use 'Clone/MemberWise'
+            OriginalContactData = DirtyState.Snapshot(SelectedContact);
             AddEditVisibility = true;
             EditCaption = $"{L["EditMsg"]} {L["TituloCampo3Editoras"]}";
             RecordMode = OpcoesRegisto.Gravar;
@@ -145,12 +146,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// <returns></returns>
         public async Task OnContactCommandClicked(CommandClickEventArgs<ContactoVM> args)
         {
+            IsDirty = false;
             ContactId = args.RowData.Id;
             SelectedContact = await contactsService!.GetContacto_ById(ContactId);
 
             DeleteCaption = SelectedContact?.Nome;
 
-            OriginalContactData = await contactsService.GetContacto_ById(ContactId); // TODO should use 'Clone/MemberWise'
+            OriginalContactData = DirtyState.Snapshot(SelectedContact);
             if (args.CommandColumn.Type == CommandButtonType.Edit)
             {
                 AddEditVisibility = true;
@@ -317,10 +319,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
         private void CheckIfContactData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<ContactoVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedContact!, OriginalContactData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedContact, OriginalContactData);
         }
 
         /// <summary>
@@ -330,6 +329,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddContact(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
+            ContactId = 0;
             NewCaption = L["NewMsg"] + " " + L["TituloCampo3Editoras"];
 
             SelectedContact = new ContactoVM()
@@ -342,6 +343,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 Nome = "",
                 Notas = ""
             };
+            OriginalContactData = DirtyState.Snapshot(SelectedContact);
 
             AddEditVisibility = true;
         }
@@ -352,19 +354,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         /// </summary>
         protected void CloseEditDialog()
         {
-            IsDirty = false;
+            ErrorVisibility = false;
+            CheckIfContactData_Changed();
 
-            var comparer = new ObjectsComparer.Comparer<ContactoVM>();
-            IEnumerable<Difference> differences;
-            var isEqual_P = comparer.Compare(SelectedContact!, OriginalContactData!, out differences);
-            if (!isEqual_P)
-            {
-                IsDirty = true;
-            }
-            else
-            {
+            if (!IsDirty)
                 AddEditVisibility = false;
-            }
         }
 
         protected void ContinueEdit()
@@ -375,6 +369,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void IgnoreChangesAlert()
         {
+            SelectedContact = DirtyState.Snapshot(OriginalContactData) ?? new ContactoVM();
             IsDirty = false;
             ErrorVisibility = false;
             AddEditVisibility = false;
@@ -454,9 +449,10 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private protected async Task EditContact(ContactoVM contact)
         {
-            SelectedContact = contact;
+            IsDirty = false;
+            SelectedContact = DirtyState.Snapshot(contact) ?? new ContactoVM();
             ContactId = SelectedContact.Id;
-            OriginalContactData = await contactsService.GetContacto_ById(ContactId); // TODO should use 'Clone/MemberWise'
+            OriginalContactData = DirtyState.Snapshot(SelectedContact);
 
 
             AddEditVisibility = true;

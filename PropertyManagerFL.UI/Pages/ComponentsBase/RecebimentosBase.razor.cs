@@ -4,6 +4,7 @@ using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Common;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Recebimentos;
+using PropertyManagerFL.UI.DirtyTracking;
 using PropertyManagerFLApplication.Utilities;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Notifications;
@@ -127,6 +128,8 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         // Outros pagamentos - pagamento de rendas em módulo autónomo
         protected async Task onAddTransaction(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
+            IsDirty = false;
+
             // Antes de criar transação, verificar se há registo de frações/arrendamento disponíveis...
 
             var leases = await leasesService.GetAll();
@@ -152,7 +155,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
             editRecord = false;
             SelectedTransation = new()
             {
-                DataMovimento = DateTime.UtcNow,
+                DataMovimento = DateTime.Today,
                 Renda = false,
                 ID_Inquilino = 0,
                 ID_Propriedade = 0,
@@ -163,6 +166,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 GeradoPeloPrograma = false,
                 Notas = ""
             };
+            OriginalSelectedTransaction = DirtyState.Snapshot(SelectedTransation);
 
             EditTransationDialogVisibility = true;
         }
@@ -484,11 +488,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task PaymentDoubleClickHandler(RecordDoubleClickEventArgs<RecebimentoVM> args)
         {
+            IsDirty = false;
             transactionId = args.RowData.Id;
             modulo = Modules.Recebimentos;
 
             SelectedTransation = await transactionsService.GetRecebimento_ById(transactionId);
-            OriginalSelectedTransaction = await transactionsService.GetRecebimento_ById(transactionId);
+            OriginalSelectedTransaction = DirtyState.Snapshot(SelectedTransation);
             EditTransationDialogVisibility = true;
             EditCaption = L["Editar dados de pagamento"];
             RecordMode = OpcoesRegisto.Gravar;
@@ -497,12 +502,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnTransactionCommandClicked(CommandClickEventArgs<RecebimentoVM> args)
         {
+            IsDirty = false;
             transactionId = args.RowData.Id;
             modulo = Modules.Recebimentos;
             DeleteCaption = "";
 
             SelectedTransation = await transactionsService.GetRecebimento_ById(transactionId);
-            OriginalSelectedTransaction = await transactionsService.GetRecebimento_ById(transactionId);
+            OriginalSelectedTransaction = DirtyState.Snapshot(SelectedTransation);
             DeleteCaption = $"{SelectedTransation.DataMovimento.ToString("MMMM-yyyy").ToTitleCase()} - {SelectedTransation.Inquilino}";
 
             if (args.CommandColumn.Type == CommandButtonType.Edit)
@@ -623,8 +629,18 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         }
 
 
+        protected void CloseEditDialog()
+        {
+            ErrorVisibility = false;
+            IsDirty = DirtyState.HasChanges(SelectedTransation, OriginalSelectedTransaction);
+
+            if (!IsDirty)
+                EditTransationDialogVisibility = false;
+        }
+
         protected void IgnoreChangesAlert()
         {
+            SelectedTransation = DirtyState.Snapshot(OriginalSelectedTransaction) ?? new RecebimentoVM();
             IsDirty = false;
             ErrorVisibility = false;
             EditTransationDialogVisibility = false;

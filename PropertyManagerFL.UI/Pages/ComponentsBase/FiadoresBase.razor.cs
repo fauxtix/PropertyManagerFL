@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.Localization;
-using ObjectsComparer;
 using PropertyManagerFL.Application.Interfaces.Services.AppManager;
 using PropertyManagerFL.Application.Interfaces.Services.Validation;
 using PropertyManagerFL.Application.ViewModels.Common;
 using PropertyManagerFL.Application.ViewModels.Fiadores;
+using PropertyManagerFL.UI.DirtyTracking;
 using Syncfusion.Blazor.Grids;
 using Syncfusion.Blazor.Popups;
 using Syncfusion.Blazor.Spinner;
@@ -120,11 +120,12 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected async Task OnGuarantorDoubleClickHandler(RecordDoubleClickEventArgs<FiadorVM> args)
         {
+            IsDirty = false;
             guarantorId = args.RowData.Id;
             modulo = Modules.Fiadores;
 
             SelectedGuarantor = await Fiadoreservice!.GetFiador_ById(guarantorId);
-            OriginalGuarantorData = await Fiadoreservice.GetFiador_ById(guarantorId); // TODO should use 'Clone/MemberWise'
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
             EditCaption = L["Editar dados do Fiador"];
             RecordMode = OpcoesRegisto.Gravar;
             AddEditVisibility = true;
@@ -133,12 +134,13 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         public async Task OnGuarantorCommandClicked(CommandClickEventArgs<FiadorVM> args)
         {
+            IsDirty = false;
             guarantorId = args.RowData.Id;
             modulo = Modules.Fiadores;
             DeleteCaption = "";
 
             SelectedGuarantor = await Fiadoreservice!.GetFiador_ById(guarantorId);
-            OriginalGuarantorData = await Fiadoreservice.GetFiador_ById(guarantorId); // TODO should use 'Clone/MemberWise'
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
             DeleteCaption = SelectedGuarantor.Nome;
 
 
@@ -215,10 +217,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         private void CheckIfguarantorData_Changed()
         {
-            var comparer = new ObjectsComparer.Comparer<FiadorVM>();
-            IEnumerable<Difference> differences;
-            comparer.Compare(SelectedGuarantor!, OriginalGuarantorData!, out differences);
-            IsDirty = differences.Any();
+            IsDirty = DirtyState.HasChanges(SelectedGuarantor, OriginalGuarantorData);
         }
 
         /// <summary>
@@ -228,6 +227,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
         public void onAddguarantor(Microsoft.AspNetCore.Components.Web.MouseEventArgs args)
         {
             RecordMode = OpcoesRegisto.Inserir;
+            IsDirty = false;
             NewCaption = L["Novo Fiador"];
 
             SelectedGuarantor = new FiadorVM()
@@ -246,6 +246,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
                 ValidadeCC = DateTime.Now,
                 Vencimento = 0
             };
+            OriginalGuarantorData = DirtyState.Snapshot(SelectedGuarantor);
 
             AddEditVisibility = true;
         }
@@ -260,6 +261,7 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void IgnoreChangesAlert()
         {
+            SelectedGuarantor = DirtyState.Snapshot(OriginalGuarantorData) ?? new FiadorVM();
             IsDirty = false;
             ErrorVisibility = false;
             AddEditVisibility = false;
@@ -311,22 +313,11 @@ namespace PropertyManagerFL.UI.Pages.ComponentsBase
 
         protected void CloseEditDialog()
         {
-            IsDirty = false;
             ErrorVisibility = false;
+            CheckIfguarantorData_Changed();
 
-            var comparer = new ObjectsComparer.Comparer<FiadorVM>();
-            var currentData = SelectedGuarantor;
-            var originalData = OriginalGuarantorData;
-            IEnumerable<Difference> differences_I;
-            var isEqual = comparer.Compare(currentData!, originalData!, out differences_I);
-            if (!isEqual)
-            {
-                IsDirty = true;
-            }
-            else
-            {
+            if (!IsDirty)
                 AddEditVisibility = false;
-            }
         }
 
         public void Dispose()
