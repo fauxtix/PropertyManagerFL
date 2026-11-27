@@ -62,7 +62,7 @@ public partial class AppSettings
             {
                 new("geral", "Configuração geral", "fa-sliders"),
                 new("proprietario", "TituloMenuProprietario", "fa-user"),
-                new("modelos", "TituloModelosMenu", "fa-file-text-o")
+                new("modelos", "TituloModelosMenu", "fa-file-lines")
             }),
             new("coeficientes", "Gestão de coeficientes", "fa-calculator", new List<SettingsLeaf>
             {

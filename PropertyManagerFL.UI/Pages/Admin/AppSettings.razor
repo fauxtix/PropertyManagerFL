@@ -121,7 +121,7 @@ else
 
                                             <div class="row mt-2">
                                                 <div class="col-md-6">
-                                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                    <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                                Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@L["TituloDefaultLanguage"]</SfMessage>
                                                     <SfDropDownList TValue="string" CssClass="template"
                                                                     TItem="CountryModel"
@@ -146,7 +146,7 @@ else
                                                     </SfDropDownList>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                                    <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                                Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@L["TituloChaveApi"]</SfMessage>
                                                     <SfTextBox @bind-Value="settings.ApiKey" Placeholder="@L["TituloChaveApi"]"></SfTextBox>
                                                 </div>
@@ -187,14 +187,14 @@ else
                                         </div>
                                     </div>
                                     <SfMessage Visible="@InitializationMessageVisibility"
-                                               CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                               CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                Severity="MessageSeverity.Info" ShowCloseIcon=false ShowIcon=false>@InitializationMessage</SfMessage>
                                     break;
 
                                 case "email":
                                     <div class="row" id="msg-custom-section">
                                         <div class="form-group col-md-6 my-2 card w-50">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                            <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                        Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Outlook</SfMessage>
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -214,7 +214,7 @@ else
                                         </div>
 
                                         <div class="form-group col-md-6 my-2 ml-2 card w-50">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                            <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                        Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>GMail</SfMessage>
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -236,7 +236,7 @@ else
 
                                     <div class="row">
                                         <div class="form-group col-md-6 card w-50 mt-2">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                            <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                        Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>Hotmail</SfMessage>
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -259,7 +259,7 @@ else
                                         </div>
 
                                         <div class="form-group col-md-6 card w-50 mt-2">
-                                            <SfMessage CssClass="rounded" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
+                                            <SfMessage CssClass="rounded settings-message" Variant="MessageVariant.Filled" ContentAlignment="HorizontalAlign.Center"
                                                        Severity="MessageSeverity.Success" ShowCloseIcon=false ShowIcon=false>PaperCut</SfMessage>
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -268,10 +268,13 @@ else
                                                 <div class="col-md-6">
                                                     <SfNumericTextBox @bind-Value="settings.PaperCutPort" Placeholder="@L["TituloPorta"]" FloatLabelType="FloatLabelType.Always"></SfNumericTextBox>
                                                 </div>
-                                                <div class="settings-toggle-row">
-                                                    <span class="settings-toggle-label">@L["Enable Ssl"]</span>
-                                                    <SfSwitch @bind-Checked="settings.EnableSSL" OnLabel="@L["On"]" OffLabel="@L["Off"]"></SfSwitch>
+                                                <div class="col-md-6">
+                                                    <div class="settings-toggle-row">
+                                                        <span class="settings-toggle-label">@L["Enable Ssl"]</span>
+                                                        <SfSwitch @bind-Checked="settings.EnableSSL" OnLabel="@L["On"]" OffLabel="@L["Off"]"></SfSwitch>
+                                                    </div>
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>

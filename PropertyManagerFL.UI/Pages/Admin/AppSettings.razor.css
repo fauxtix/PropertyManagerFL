@@ -212,3 +212,39 @@
     margin-top: 2px;
     margin-left: 2px;
 }
+
+/* SfMessage em todas as tabs: compacto e com as cores dos tokens do tema.
+   align-self/flex evitam que o .card (grid) estique a mensagem (ex.: PaperCut). */
+::deep .settings-message.e-message {
+    box-sizing: border-box;
+    align-self: start;
+    flex: 0 0 auto;
+    width: 100%;
+    min-height: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 5px 10px !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600;
+    line-height: 1.25rem !important;
+}
+
+    ::deep .settings-message.e-message.e-info {
+        background-color: var(--app-info-bg) !important;
+        border-color: var(--app-info-text) !important;
+        color: var(--app-info-text) !important;
+    }
+
+    ::deep .settings-message.e-message.e-success {
+        background-color: var(--app-success-bg) !important;
+        border-color: var(--app-success-text) !important;
+        color: var(--app-success-text) !important;
+    }
+
+    ::deep .settings-message.e-message * {
+        color: inherit !important;
+        font-size: inherit !important;
+        line-height: inherit !important;
+    }
